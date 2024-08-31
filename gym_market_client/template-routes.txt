@@ -1,0 +1,15 @@
+/home
+/account
+	/sign-in
+	/sign-up
+	/profile
+	/course-joins
+
+/courses
+	/list
+	/details/id
+	
+/coach
+	/list
+	/statistics
+	/messages
