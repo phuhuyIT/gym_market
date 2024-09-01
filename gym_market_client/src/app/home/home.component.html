@@ -84,10 +84,10 @@
 			</div>
 
 			<div #dots class="dots">
-				<div [ngClass]="{ active: slideIndex == 1 }" class="dot"></div>
-				<div [ngClass]="{ active: slideIndex == 2 }" class="dot"></div>
-				<div [ngClass]="{ active: slideIndex == 3 }" class="dot"></div>
-				<div [ngClass]="{ active: slideIndex == 4 }" class="dot"></div>
+				<div (click)="onClickSlide(0)" [ngClass]="{ active: slideIndex == 1 }" class="dot"></div>
+				<div (click)="onClickSlide(1)" [ngClass]="{ active: slideIndex == 2 }" class="dot"></div>
+				<div (click)="onClickSlide(2)" [ngClass]="{ active: slideIndex == 3 }" class="dot"></div>
+				<div (click)="onClickSlide(3)" [ngClass]="{ active: slideIndex == 4 }" class="dot"></div>
 			</div>
 		</div>
 	</div>

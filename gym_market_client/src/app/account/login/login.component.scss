@@ -1,0 +1,63 @@
+
+.main{
+	width: 350px;
+	height: 500px;
+	// overflow: hidden;
+	border-radius: 10px;
+	box-shadow: 0px 0px 10px 2px #000;
+    
+}
+
+.signup{
+    @apply pb-10;
+}
+
+label{
+	font-size: 2.3em;
+	justify-content: center;
+	display: flex;
+	margin: 50px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: .5s ease-in-out;
+}
+
+input{
+    @apply px-2 py-4;
+	width: 60%;
+	height: 10px;
+	background: #e0dede;
+	justify-content: center;
+	display: flex;
+	margin: 20px auto;
+	border: none;
+	outline: none;
+	border-radius: 5px;
+}
+
+.btn-signup{
+	width: 60%;
+	height: 40px;
+	margin: 10px auto;
+	justify-content: center;
+	display: block;
+	color: #fff;
+	background: #dc2626;
+	font-size: 1em;
+	font-weight: bold;
+	margin-top: 30px;
+	outline: none;
+	border: none;
+	border-radius: 5px;
+	transition: .2s ease-in;
+	cursor: pointer;
+}
+
+.btn-signup:hover{
+	background: #b91c1c;
+}
+
+.hero_area {
+    @apply overflow-hidden;
+    background: url('/assets/images/us-bg.jpg');
+}
