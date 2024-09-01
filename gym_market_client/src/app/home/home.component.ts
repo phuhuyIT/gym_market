@@ -19,13 +19,12 @@ export class HomeComponent {
 
 	ngAfterViewInit() {
 		this.slideWidth = this.slides.nativeElement.offsetWidth;
-    
+
 		this.slideShow();
 	}
 
 	private slideShow() {
 		this.slideTimer = setInterval(() => {
-      
 			if (this.slideIndex >= this.slideLenth) {
 				this.slideIndex = 0;
 			}
@@ -33,6 +32,14 @@ export class HomeComponent {
 
 			this.slideIndex++;
 		}, 3000);
+	}
+
+	onClickSlide(index: number) {
+		this.slides.nativeElement.scrollLeft = index * this.slideWidth;
+		this.slideIndex = index + 1;
+		clearInterval(this.slideTimer);
+
+		this.slideShow();
 	}
 
 	ngOnDestroy() {
