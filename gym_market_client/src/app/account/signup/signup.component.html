@@ -1,27 +1,59 @@
 <div class="hero_area min-h-screen">
 	<app-header></app-header>
 
-	<div class="flex justify-center items-center px-4 py-10 h-[90dvh]" >
+	<div class="flex justify-center items-center px-4 py-10">
 		<div class="main">
 			<div class="signup">
-				<form>
+				<form [formGroup]="signUpForm">
 					<label class="text-red-700">Sign up</label>
-					<input type="text" placeholder="User name" required="" />
-					<input type="email" placeholder="Email" required="" />
-					<input type="password" placeholder="Password" required="" />
-					<input type="password" placeholder="Confirm Password" required="" />
-					<button class="btn-signup">Sign up</button>
+
+					@if(submit === true && signUpForm.hasError('required','fullName')) {
+					<small class="text-center block text-red-500">Vui lòng nhập tên</small>
+					}
+					<input
+						formControlName="fullName"
+						type="text"
+						placeholder="Full name"
+						required=""
+					/>
+
+					@if(submit === true && signUpForm.hasError('required','email')) {
+					<small class="text-center block text-red-500">Vui lòng nhập email</small>
+					} @if(submit === true && signUpForm.hasError('email','email')) {
+					<small class="text-center block text-red-500">Email sai định dạng</small>
+					}
+					<input formControlName="email" type="email" placeholder="Email" required="" />
+
+					@if(submit === true && signUpForm.hasError('required','password')) {
+					<small class="text-center block text-red-500">Vui lòng nhập mật khẩu</small>
+					}
+					<input
+						formControlName="password"
+						type="password"
+						placeholder="Password"
+						required=""
+					/>
+
+					@if(submit === true && signUpForm.hasError('required','confirmPassword')) {
+					<small class="text-center block text-red-500">Nhập lại mật khẩu</small>
+					} @if(submit === true && signUpForm.controls['confirmPassword'].dirty) {
+					<small class="text-center block text-red-500"
+						>Nhập lại mật khẩu không chính xác</small
+					>
+					}
+					<input
+						formControlName="confirmPassword"
+						type="password"
+						placeholder="Confirm Password"
+						required=""
+					/>
+					<select>
+						<option value="PT" selected>PT</option>
+						<option value="Member">Member</option>
+					</select>
+					<button (click)="onSignUp()" class="btn-signup">Sign up</button>
 				</form>
 			</div>
-
-			<!-- <div class="login">
-				<form>
-					<label for="chk" aria-hidden="true">Login</label>
-					<input type="email" name="email" placeholder="Email" required="" />
-					<input type="password" name="pswd" placeholder="Password" required="" />
-					<button>Login</button>
-				</form>
-			</div> -->
 		</div>
 	</div>
 </div>
