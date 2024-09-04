@@ -24,6 +24,9 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 entityType.SetTableName(tableName.Substring(6));
             }
         }
+
+        modelBuilder.SeedData();
+
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
