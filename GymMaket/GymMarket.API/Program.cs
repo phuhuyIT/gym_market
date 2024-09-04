@@ -2,8 +2,12 @@
 using GymMarket.API.Models;
 using GymMarket.API.Repositories;
 using GymMarket.API.Repositories.IRepositories;
+using GymMarket.API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,8 +62,41 @@ builder.Services.Configure<IdentityOptions>(options =>
     //options.SignIn.RequireConfirmedAccount = false;
 });
 
+// authenticate user using jwt
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = true;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        // validate the issuer (who ever is issuing the JWT)
+        ValidateIssuer = true,
+        ValidateIssuerSigningKey = true, // validate token based on the key we have provided in appsetting.json
+
+        // don't validate audience (angular side)
+        ValidateAudience = false,
+
+        //ValidAudience = builder.Configuration.GetSection("JWT:ValidAudience").Value,
+        // the issuer which in here is the api project url
+        ValidIssuer = builder.Configuration.GetSection("JWT:Issuer").Value,
+
+        // the issuer signin key based on JWT:Key
+        IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWT:Key").Value!))
+    };
+});
+
+
 // repositories
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
+// service
+builder.Services.AddScoped<JWTService>();
 
 var app = builder.Build();
 
