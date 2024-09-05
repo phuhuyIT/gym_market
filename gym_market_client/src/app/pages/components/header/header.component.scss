@@ -37,7 +37,7 @@
 }
 
 .account_option_item {
-	@apply block w-[140px] px-2 py-2 hover:bg-[#ef4444] hover:text-white duration-100;
+	@apply inline-block text-nowrap w-full px-2 py-2 hover:bg-[#ef4444] hover:text-white duration-100 text-left;
 }
 
 .account_option.a {

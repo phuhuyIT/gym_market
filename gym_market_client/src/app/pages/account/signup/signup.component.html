@@ -47,8 +47,8 @@
 						placeholder="Confirm Password"
 						required=""
 					/>
-					<select>
-						<option value="PT" selected>PT</option>
+					<select formControlName="role">
+						<option value="Trainer" selected>Trainer</option>
 						<option value="Member">Member</option>
 					</select>
 					<button (click)="onSignUp()" class="btn-signup">Sign up</button>

@@ -98,6 +98,14 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 // service
 builder.Services.AddScoped<JWTService>();
 
+
+// enable cors
+builder.Services.AddCors(c =>
+{
+    c.AddPolicy("AllowOrigin", option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -106,6 +114,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// enable cors
+app.UseCors(option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
 
 app.UseHttpsRedirection();
 

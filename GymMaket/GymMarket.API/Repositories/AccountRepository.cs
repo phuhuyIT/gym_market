@@ -56,9 +56,7 @@ namespace GymMarket.API.Repositories
                 var errors = rAddUser.Errors.Select(e => e.Description).ToList();
                 return new ApiResponse { StatusCode = 400, Errors = errors, Success = false };
             }
-
-
-
+            await userManager.AddToRoleAsync(user, model.Role);
             return new ApiResponse { StatusCode = 200, Success = true, Message = "Đăng ký thành công" };
         }
 
@@ -80,7 +78,7 @@ namespace GymMarket.API.Repositories
                 return new LoginResponse { StatusCode = 400, Success = false, Errors = ["Email hoặc mật khẩu không chính xác"] };
             }
 
-            var token = jWTService.CreateJWT(user);
+            var token = await jWTService.CreateJWT(user);
             return new LoginResponse { StatusCode = 200, Token = token, Success = true };
         }
     }
