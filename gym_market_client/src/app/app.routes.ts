@@ -9,6 +9,10 @@ export const routes: Routes = [
 		path: 'account',
 		loadChildren: () => import('./pages/account/account.routes').then(r => r.routes),
 	},
+	{
+		path: 'courses',
+		loadChildren: () => import('./pages/courses/course.routes').then(r => r.routes),
+	},
 	{ path: 'access-denied', component: AccessDeniedComponent, title: 'Access denied' },
 	{ path: '**', redirectTo: 'home' },
 ];

@@ -1,0 +1,32 @@
+.course-image-container {
+	width: 100%;
+	aspect-ratio: 16/9;
+	overflow: hidden;
+}
+
+.course-image-container img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.ul-items li {
+	list-style: '✅';
+}
+
+.ul-steps {
+
+}
+
+.ul-steps li {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;    
+    line-clamp: 1;
+}
+
+.ul-steps li::marker {
+	content: '✅';
+}
+
