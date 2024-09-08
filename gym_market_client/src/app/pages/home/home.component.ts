@@ -16,6 +16,11 @@ export class HomeComponent {
 	slideIndex: number = 1;
 	slideWidth: number = 0;
 	slideLenth = 4;
+	year = 0;
+
+	ngOnInit() {
+		this.year = new Date().getFullYear();
+	}
 
 	ngAfterViewInit() {
 		this.slideWidth = this.slides.nativeElement.offsetWidth;
