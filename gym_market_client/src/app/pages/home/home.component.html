@@ -84,11 +84,247 @@
 			</div>
 
 			<div #dots class="dots">
-				<div (click)="onClickSlide(0)" [ngClass]="{ active: slideIndex == 1 }" class="dot"></div>
-				<div (click)="onClickSlide(1)" [ngClass]="{ active: slideIndex == 2 }" class="dot"></div>
-				<div (click)="onClickSlide(2)" [ngClass]="{ active: slideIndex == 3 }" class="dot"></div>
-				<div (click)="onClickSlide(3)" [ngClass]="{ active: slideIndex == 4 }" class="dot"></div>
+				<div
+					(click)="onClickSlide(0)"
+					[ngClass]="{ active: slideIndex == 1 }"
+					class="dot"
+				></div>
+				<div
+					(click)="onClickSlide(1)"
+					[ngClass]="{ active: slideIndex == 2 }"
+					class="dot"
+				></div>
+				<div
+					(click)="onClickSlide(2)"
+					[ngClass]="{ active: slideIndex == 3 }"
+					class="dot"
+				></div>
+				<div
+					(click)="onClickSlide(3)"
+					[ngClass]="{ active: slideIndex == 4 }"
+					class="dot"
+				></div>
 			</div>
 		</div>
 	</div>
+
+	<section class="py-16 bg-[#71717a]">
+		<div class="contaner mx-auto">
+			<div class="text-center mb-8">
+				<h2 class="text-3xl font-semibold text-white">Exciting Courses</h2>
+			</div>
+
+			<div class="grid grid-cols-2 md:grid-cols-4 gap-2 p-2">
+				<div class="w-full bg-white shadow-lg">
+					<div class="p-6">
+						<div class="mb-4 flex justify-center items-center">
+							<img src="/assets/images/u-1.png" alt="" class="" />
+						</div>
+						<div class="text-center">
+							<h5 class="text-xl font-semibold mb-2">QUALITY EQUIPMENT</h5>
+							<p class="text-gray-600">
+								ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+								tempor
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="w-full bg-white shadow-lg">
+					<div class="p-6">
+						<div class="mb-4 flex justify-center items-center">
+							<img src="/assets/images/u-4.png" alt="" class="" />
+						</div>
+						<div class="text-center">
+							<h5 class="text-xl font-semibold mb-2">NUTRITION</h5>
+							<p class="text-gray-600">
+								ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+								tempor
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="w-full bg-white shadow-lg">
+					<div class="p-6">
+						<div class="mb-4 flex justify-center items-center">
+							<img src="/assets/images/u-2.png" alt="" class="" />
+						</div>
+						<div class="text-center">
+							<h5 class="text-xl font-semibold mb-2">HEALTHY DIET PLAN</h5>
+							<p class="text-gray-600">
+								ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+								tempor
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="w-full bg-white shadow-lg">
+					<div class="p-6">
+						<div class="mb-4 flex justify-center items-center">
+							<img src="/assets/images/u-3.png" alt="" class="" />
+						</div>
+						<div class="text-center">
+							<h5 class="text-xl font-semibold mb-2">SPORT TRAINING</h5>
+							<p class="text-gray-600">
+								ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+								tempor
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="py-16 bg-[#71717a]">
+		<div class="container mx-auto">
+			<div class="flex justify-center">
+				<div class="w-full lg:w-10/12">
+					<div class="text-center">
+						<h2 class="text-3xl font-semibold mb-4 text-white">
+							HEALTHY MIND, HEALTHY BODY
+						</h2>
+						<p class="text-white mb-6">
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+							tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+							veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+							commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+							velit esse cillumLorem ipsum dolor sit amet, consectetur adipiscing
+							elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+							Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+							ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+							reprehenderit in voluptate velit esse cillum
+						</p>
+						<div>
+							<a
+								href=""
+								class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+							>
+								Search Courses
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="py-16 bg-[#e5e7eb]">
+		<div class="container mx-auto">
+			<div class="text-center mb-8">
+				<h2 class="text-3xl font-semibold">Our Gym Trainers</h2>
+			</div>
+			<div class="grid grid-cols-3 gap-2">
+				<div class="">
+					<div class="bg-white shadow-lg p-6 text-center rounded-md">
+						<div class="mb-4">
+							<h5 class="text-xl font-semibold">Smirth Jon</h5>
+						</div>
+						<div class="mb-4">
+							<img
+								src="/assets/images/t1.jpg"
+								alt=""
+								class="w-full h-auto rounded-lg"
+							/>
+						</div>
+						<div class="flex justify-center gap-4">
+							<a href="" class="hover:opacity-75">
+								<img
+									src="/assets/images/facebook-logo.png"
+									alt=""
+									class="w-6 h-6"
+								/>
+							</a>
+							<a href="" class="hover:opacity-75">
+								<img src="/assets/images/twitter.png" alt="" class="w-6 h-6" />
+							</a>
+							<a href="" class="hover:opacity-75">
+								<img
+									src="/assets/images/instagram-logo.png"
+									alt=""
+									class="w-6 h-6"
+								/>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="">
+					<div class="bg-white shadow-lg p-6 text-center rounded-md">
+						<div class="mb-4">
+							<h5 class="text-xl font-semibold">Jean Doe</h5>
+						</div>
+						<div class="mb-4">
+							<img
+								src="/assets/images/t2.jpg"
+								alt=""
+								class="w-full h-auto rounded-lg"
+							/>
+						</div>
+						<div class="flex justify-center gap-4">
+							<a href="" class="hover:opacity-75">
+								<img
+									src="/assets/images/facebook-logo.png"
+									alt=""
+									class="w-6 h-6"
+								/>
+							</a>
+							<a href="" class="hover:opacity-75">
+								<img src="/assets/images/twitter.png" alt="" class="w-6 h-6" />
+							</a>
+							<a href="" class="hover:opacity-75">
+								<img
+									src="/assets/images/instagram-logo.png"
+									alt=""
+									class="w-6 h-6"
+								/>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="">
+					<div class="bg-white shadow-lg p-6 text-center rounded-md">
+						<div class="mb-4">
+							<h5 class="text-xl font-semibold">Alex Den</h5>
+						</div>
+						<div class="mb-4">
+							<img
+								src="/assets/images/t3.jpg"
+								alt=""
+								class="w-full h-auto rounded-lg"
+							/>
+						</div>
+						<div class="flex justify-center gap-4">
+							<a href="" class="hover:opacity-75">
+								<img
+									src="/assets/images/facebook-logo.png"
+									alt=""
+									class="w-6 h-6"
+								/>
+							</a>
+							<a href="" class="hover:opacity-75">
+								<img src="/assets/images/twitter.png" alt="" class="w-6 h-6" />
+							</a>
+							<a href="" class="hover:opacity-75">
+								<img
+									src="/assets/images/instagram-logo.png"
+									alt=""
+									class="w-6 h-6"
+								/>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<footer class="container mx-auto py-4 text-center uppercase">
+		<p>
+			&copy; {{year}} UTC2 - Vinh Tin - Nguyen Pham phu Huy - Nguyen Thi thanh
+		</p>
+	</footer>
 </div>
