@@ -1,15 +1,19 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule, FormsModule],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss'
 })
 export class SearchComponent {
   courses: any = [];
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
 
   ngOnInit() {
     this.courses = [
@@ -114,7 +118,19 @@ export class SearchComponent {
 
   onSubmit() {
     console.log(123);
-    
+  }
+
+   // Hàm chặn các ký tự không hợp lệ
+   preventInvalidInput(event: KeyboardEvent): void {
+    // Nếu ký tự là 'e', '+', '-', hoặc '.'
+    if (['e', 'E', '+', '-'].includes(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  onSearchPrice() {
+    console.log(this.minPrice);
+    console.log(this.maxPrice);
   }
 
 }
