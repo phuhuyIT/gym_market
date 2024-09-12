@@ -9,7 +9,7 @@ export const routes: Routes = [
 		children: [
 			{ path: 'search', component: SearchComponent, title: 'Tìm khóa học cho bạn' },
 			{
-				path: 'course-details',
+				path: 'course-details/:id',
 				component: CourseDetailsComponent,
 				title: 'Chi tiết khóa học',
 			},
