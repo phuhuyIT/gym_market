@@ -2,7 +2,10 @@
 	<div class="container mx-auto">
 		<nav class="flex items-center justify-between flex-wrap p-6 gap-3">
 			<a class="block navbar-brand text-xl font-bold" routerLink="/home">
-				<span class="uppercase">Fitness for life</span>
+				<div class="flex items-center justify-start gap-3">
+					<img class="w-14" src="/assets/fitness_logo.jpg" alt="">
+					<span class="uppercase">Fitness for life</span>
+				</div>
 			</a>
 
 
@@ -22,14 +25,14 @@
 							<a
 								class="nav-link block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900"
 								href="why.html"
-								>Why us</a
+								>Fitness Coach</a
 							>
 						</li>
 						<li class="nav-item">
 							<a
 								class="nav-link block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900"
 								href="trainer.html"
-								>Trainers</a
+								>Healthy Nutrion</a
 							>
 						</li>
 
@@ -41,7 +44,7 @@
 										(mouseover)="onShowAccountOption()"
 										(mouseleave)="onHiddenAccountOption()"
 									>
-										{{userStore.fullName()}}
+										{{userStore.fullName()}} <span><i class="fa-solid fa-caret-down"></i></span>
 									</div>
 	
 									<div
@@ -50,7 +53,8 @@
 										(mouseover)="onShowAccountOption()"
 										(mouseleave)="onHiddenAccountOption()"
 									>
-										<a routerLink="/account/login" class="account_option_item">Thông tin cá nhân</a>
+										<a routerLink="/account/profile" class="account_option_item">Thông tin cá nhân</a>
+										<a routerLink="/courses/my-courses/all" class="account_option_item">Khóa học của tôi</a>
 										<button (click)="logout()" class="account_option_item">Đăng xuất</button>
 									</div>
 								</div>
