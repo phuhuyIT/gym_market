@@ -50,5 +50,33 @@
 	
 	height: 0px;
 	opacity: 0;
-	
+}
+
+
+.image-card {
+	width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+}
+
+.image-card img {
+	width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-title-clamp {
+	@apply font-medium;
+	display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-clamp: 2;
+}
+
+#sticky-nav {
+	background-color: white;
+	z-index: 1;
+	position: sticky;
+	top: 0px;
 }
