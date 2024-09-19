@@ -63,7 +63,7 @@
 
 				<div class="col-span-3">
 					<div>
-						<h3 class="text-2xl font-medium">
+						<h3 class="text-[2.5rem] font-medium">
 							Fitness Coaching Gym Workouts and Bodybuilding
 						</h3>
 					</div>
@@ -123,35 +123,139 @@
 							them?’.
 						</p>
 						<br />
-
-						<p>
-							This course explains the process of setting up and sticking to a
-							complete gym workout programme. We outline the various exercises that
-							help you build muscle using compound and isolated exercises. We examine
-							the important process of recovery that will help you build muscle in
-							your legs, back, chest, arms and other desired body parts. The course
-							then delves into diet and supplements to help you maximise muscle
-							hypertrophy. This part of the course answers questions like ‘what are
-							the most important compound exercises?’ and ‘how much should I rest each
-							muscle group before working them again?’.
-						</p>
-						<br />
-
-						<p>
-							This course provides the concepts you need to help clients or yourself
-							understand the process of bodybuilding and use a gym workout programme
-							to achieve muscle hypertrophy and look great. You can confidently use
-							these concepts to assist both yourself and other people in drawing up
-							effective diet plans. We cover macronutrients and ‘use recovery’ for
-							muscle growth and walk you through each step of the process of building
-							muscle and regaining energy. Sign up to understand the concepts of
-							bodybuilding and create a gym workout plan that works for you and your
-							clients.
-						</p>
-						<br />
 					</div>
 
-					<div class="rounded-md border-2">
+					<!-- series -->
+					<div class="mt-4">
+						<div class="w-full h-full border-gray-200 border rounded-lg">
+							<div class="p-4 text-2xl font-medium border-b">4 Series</div>
+
+							<div class="p-4">
+								@for (item of cards; track $index) {
+								<div
+									class="mb-2 p-2 h-full border-gray-200 border rounded-lg flex justify-between items-start"
+								>
+									<div>
+										<div class="flex items-center">
+											<div class="flex-grow">
+												<h2
+													class="text-gray-900 title-font font-medium text-xl"
+												>
+													Henry Letham
+												</h2>
+												<p class="text-gray-500">CTO</p>
+											</div>
+										</div>
+
+										<!-- expand -->
+										<div
+											class="mt-2 overflow-hidden transition-[max-height] duration-700"
+											[ngClass]="{
+												'h-0': !item.isExpanded,
+												'h-auto': item.isExpanded
+											}"
+										>
+											<div>
+												<div>
+													<h4 class="font-medium text-md">Desciption</h4>
+													<p>
+														Provident suscipit natus quia aperiam
+														pariatur mollitia alias. Iure blanditiis
+														amet velit laudantium nemo ex. Deserunt
+														molestias aspernatur quia est sed dolorem
+														sapiente. Aspernatur velit quod ipsa autem
+														non. Eaque velit provident qui sit iusto
+														occaecati est aperiam quia. Culpa quia minus
+														ea eum veniam.
+													</p>
+												</div>
+
+												<div class="mt-3">
+													<h4 class="font-medium text-md">
+														What you'll learn
+													</h4>
+
+													<ul class="sub-courese-li ps-5">
+														<li>
+															Apply data lake methodologies in
+															planning and designing a data lake.
+														</li>
+														<li>
+															Describe the components and services
+															required for building an AWS data lake.
+														</li>
+														<li>
+															Compare the ways data can be ingested,
+															stored, and transformed in a data lake.
+														</li>
+														<li>
+															Explain how to secure a data lake with
+															appropriate permissions.
+														</li>
+													</ul>
+												</div>
+											</div>
+
+											<!-- pay -->
+											<div class="mt-4">
+												<h4 class="font-medium text-xl">Click to check</h4>
+												<div>
+													@if(item.select === true) {
+													<button
+														(click)="onSelect(item)"
+														class="border py-3 px-5 rounded-md hover:bg-indigo-400/40 text-xl text-[#dc2626]"
+													>
+														<i class="fa-solid fa-square-check"></i>
+													</button>
+													} @else {
+													<button
+														(click)="onSelect(item)"
+														class="border py-3 px-5 rounded-md hover:bg-indigo-400/40 text-xl text-[#fbbf24]"
+													>
+														<i class="fa-regular fa-square-check"></i>
+													</button>
+													}
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div>
+										<div class="">
+											<button
+												(click)="onExpandItem(item)"
+												class="border py-3 px-5 rounded-md hover:bg-indigo-400/40"
+											>
+												Details
+											</button>
+
+											<!-- @if(item.isExpanded === false) {
+
+											<button
+												(click)="onExpandItem(item)"
+												class="border py-3 px-5 rounded-md hover:bg-indigo-400/40 text-xl text-[#fbbf24]"
+											>
+												<i class="fa-regular fa-square-check"></i>
+											</button>
+
+											} @else {
+
+											<button
+												(click)="onExpandItem(item)"
+												class="border py-3 px-5 rounded-md hover:bg-indigo-400/40 text-xl text-[#dc2626]"
+											>
+												<i class="fa-solid fa-square-check"></i>
+											</button>
+											} -->
+										</div>
+									</div>
+								</div>
+								}
+							</div>
+						</div>
+					</div>
+
+					<div class="mt-4 rounded-md border-2">
 						<div class="px-4 py-2 border-b-2">
 							<h3 class="text-xl font-medium mb-2">Reviews and feedback</h3>
 							<div>
@@ -176,7 +280,7 @@
 							</div>
 						</div>
 
-                        <div class="border-b-2 p-6">
+						<div class="border-b-2 p-6">
 							<div class="flex justify-start items-center gap-2">
 								<img
 									width="70"
@@ -192,7 +296,7 @@
 							</div>
 						</div>
 
-                        <div class="border-b-2 p-6">
+						<div class="border-b-2 p-6">
 							<div class="flex justify-start items-center gap-2">
 								<img
 									width="70"
@@ -207,7 +311,6 @@
 								<p>Thank you good experience</p>
 							</div>
 						</div>
-
 
 						<div class="p-2 border-b-2">
 							<button class="mx-auto block text-sm text-center font-medium">
@@ -215,12 +318,178 @@
 							</button>
 						</div>
 					</div>
+
+					<!-- other -->
+					<div class="mt-3">
+						<div class="border-2 rounded-md p-2">
+							<!-- more course -->
+							<div class="more-course">
+								<div class="">
+									<h1 class="p-4 text-center text-2xl font-medium">
+										More courses
+									</h1>
+								</div>
+
+								<div class="grid grid-cols-4 gap-3">
+									@for (item of moreCourse; track $index) {
+									<div class="p-2 rounded-md border">
+										<div class="">
+											<div class="more-course-image">
+												<img [src]="item.image" alt="" />
+											</div>
+											<div class="more-course-title">
+												<h3>{{ item.name }}</h3>
+											</div>
+											<div>
+												<h3>hour: {{ item.hour }}</h3>
+											</div>
+											<div>
+												<h3>learners: {{ item.learners }}</h3>
+											</div>
+										</div>
+									</div>
+									}
+								</div>
+
+								<div class="text-center mt-1">
+									<a href="#" class="text-center text-[1.2rem] text-[#3b82f6]"
+										>More</a
+									>
+								</div>
+							</div>
+
+							<!-- other trainer -->
+							<div class="more-cours">
+								<div class="">
+									<h1 class="p-4 text-center text-2xl font-medium">
+										More trainer
+									</h1>
+								</div>
+
+										
+								<div class="grid grid-cols-3">
+									<div class="p-4 ">
+										<div class="rounded-lg h-64 overflow-hidden">
+											<img
+												alt="content"
+												class="object-cover object-center h-full w-full"
+												src="https://www.thimble.com/wp-content/uploads/2022/05/Personal-Trainer-Salary-Guide-1200x800.jpg"
+											/>
+										</div>
+										<h2
+											class="text-xl font-medium title-font text-gray-900 mt-5"
+										>
+											Shooting Stars
+										</h2>
+										<p class="text-base leading-relaxed mt-2">
+											Swag shoivdigoitch literally meditation subway
+											tile tumblr cold-pressed. Gastropub street art
+											beard dreamcatcher neutra, ethical XOXO
+											lumbersexual.
+										</p>
+										<a
+											class="text-indigo-500 inline-flex items-center mt-3"
+											>Learn More
+											<svg
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												class="w-4 h-4 ml-2"
+												viewBox="0 0 24 24"
+											>
+												<path d="M5 12h14M12 5l7 7-7 7"></path>
+											</svg>
+										</a>
+									</div>
+
+									<div class="p-4 ">
+										<div class="rounded-lg h-64 overflow-hidden">
+											<img
+												alt="content"
+												class="object-cover object-center h-full w-full"
+												src="https://backtobasics4lifefitness.com.au/wp-content/uploads/2020/06/Male-personal-trainer-supporting-male-with-weight-lifting-in-studio-Melbourne.jpg"
+											/>
+										</div>
+										<h2
+											class="text-xl font-medium title-font text-gray-900 mt-5"
+										>
+											The Catalyzer
+										</h2>
+										<p class="text-base leading-relaxed mt-2">
+											Swag shoivdigoitch literally meditation subway
+											tile tumblr cold-pressed. Gastropub street art
+											beard dreamcatcher neutra, ethical XOXO
+											lumbersexual.
+										</p>
+										<a
+											class="text-indigo-500 inline-flex items-center mt-3"
+											>Learn More
+											<svg
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												class="w-4 h-4 ml-2"
+												viewBox="0 0 24 24"
+											>
+												<path d="M5 12h14M12 5l7 7-7 7"></path>
+											</svg>
+										</a>
+									</div>
+
+									<div class="p-4">
+										<div class="rounded-lg h-64 overflow-hidden">
+											<img
+												alt="content"
+												class="object-cover object-center h-full w-full"
+												src="https://img.freepik.com/free-photo/handsome-black-man-is-engaged-gym_1157-29643.jpg?size=626&ext=jpg&ga=GA1.1.2008272138.1726012800&semt=ais_hybrid"
+											/>
+										</div>
+										<h2
+											class="text-xl font-medium title-font text-gray-900 mt-5"
+										>
+											The 400 Blows
+										</h2>
+										<p class="text-base leading-relaxed mt-2">
+											Swag shoivdigoitch literally meditation subway
+											tile tumblr cold-pressed. Gastropub street art
+											beard dreamcatcher neutra, ethical XOXO
+											lumbersexual.
+										</p>
+										<a
+											class="text-indigo-500 inline-flex items-center mt-3"
+											>Learn More
+											<svg
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												class="w-4 h-4 ml-2"
+												viewBox="0 0 24 24"
+											>
+												<path d="M5 12h14M12 5l7 7-7 7"></path>
+											</svg>
+										</a>
+									</div>
+
+								</div>
+
+								<div class="text-center mt-1">
+									<a href="#" class="text-center text-[1.2rem] text-[#3b82f6]"
+										>More</a
+									>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</section>
 
-	<footer class="container mx-auto py-4 text-center uppercase">
-		<p>&copy; {{ year }} UTC2 - Vinh Tin - Nguyen Pham phu Huy - Nguyen Thi thanh</p>
-	</footer>
+	<app-footer></app-footer>
 </div>

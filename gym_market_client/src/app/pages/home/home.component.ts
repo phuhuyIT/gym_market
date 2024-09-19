@@ -2,11 +2,12 @@ import { Component, ElementRef, NgModule, ViewChild } from '@angular/core';
 import { HeaderComponent } from '../components/header/header.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FooterComponent } from "../components/footer/footer.component";
 
 @Component({
 	selector: 'app-home',
 	standalone: true,
-	imports: [HeaderComponent, CommonModule, RouterLink],
+	imports: [HeaderComponent, CommonModule, RouterLink, FooterComponent],
 	templateUrl: './home.component.html',
 	styleUrl: './home.component.scss',
 })
