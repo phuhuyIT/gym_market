@@ -15,18 +15,43 @@
 }
 
 .ul-steps {
-
 }
 
 .ul-steps li {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;    
-    line-clamp: 1;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	line-clamp: 1;
 }
 
 .ul-steps li::marker {
 	content: '✅';
 }
 
+.sub-courese-li {
+}
+
+.sub-courese-li li::marker {
+	content: '✔️';
+}
+
+.more-course-image {
+	width: 100%;
+	aspect-ratio: 16/9;
+	overflow: hidden;
+}
+
+.more-course-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.more-course-title {
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	line-clamp: 3;
+}
