@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using GymMarket.API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace GymMarket.API.Data;
+namespace GymMarket.API.Models;
 
 public partial class GymMarketContext : DbContext
 {
@@ -40,9 +39,21 @@ public partial class GymMarketContext : DbContext
 
     public virtual DbSet<Payment> Payments { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<RoleClaim> RoleClaims { get; set; }
+
     public virtual DbSet<Student> Students { get; set; }
 
     public virtual DbSet<Trainer> Trainers { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<UserClaim> UserClaims { get; set; }
+
+    public virtual DbSet<UserLogin> UserLogins { get; set; }
+
+    public virtual DbSet<UserToken> UserTokens { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -465,6 +476,23 @@ public partial class GymMarketContext : DbContext
                 .HasConstraintName("FK_Payments_Student");
         });
 
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasIndex(e => e.NormalizedName, "RoleNameIndex")
+                .IsUnique()
+                .HasFilter("([NormalizedName] IS NOT NULL)");
+
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.NormalizedName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<RoleClaim>(entity =>
+        {
+            entity.HasIndex(e => e.RoleId, "IX_RoleClaims_RoleId");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.RoleClaims).HasForeignKey(d => d.RoleId);
+        });
+
         modelBuilder.Entity<Student>(entity =>
         {
             entity.HasKey(e => e.StudentId).HasName("PK__Students__A2F4E9AC7CF53A74");
@@ -477,10 +505,19 @@ public partial class GymMarketContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("Created_At");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .IsUnicode(false);
             entity.Property(e => e.HealthStatus)
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Health_Status");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Password)
+                .HasMaxLength(100)
+                .IsUnicode(false);
             entity.Property(e => e.ProfilePicture)
                 .HasMaxLength(255)
                 .IsUnicode(false)
@@ -488,9 +525,11 @@ public partial class GymMarketContext : DbContext
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_At");
-            entity.HasOne(d => d.AppUser).WithOne(p => p.Student)
-                .HasForeignKey<Student>(d => d.AppUserId)
-                .HasConstraintName("FK_Student_AppUser");
+            entity.Property(e => e.UserId).HasMaxLength(450);
+
+            entity.HasOne(d => d.User).WithMany(p => p.Students)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_Students_AspNetUsers");
         });
 
         modelBuilder.Entity<Trainer>(entity =>
@@ -508,6 +547,15 @@ public partial class GymMarketContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("Created_At");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Password)
+                .HasMaxLength(100)
+                .IsUnicode(false);
             entity.Property(e => e.ProfilePicture)
                 .HasMaxLength(255)
                 .IsUnicode(false)
@@ -518,9 +566,60 @@ public partial class GymMarketContext : DbContext
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_At");
-            entity.HasOne(d => d.AppUser).WithOne(p => p.Trainer)
-                .HasForeignKey<Trainer>(d => d.AppUserId)
-                .HasConstraintName("FK_Trainer_AppUser");
+            entity.Property(e => e.UserId).HasMaxLength(450);
+
+            entity.HasOne(d => d.User).WithMany(p => p.Trainers)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_Trainers_AspNetUsers");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
+
+            entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex")
+                .IsUnique()
+                .HasFilter("([NormalizedUserName] IS NOT NULL)");
+
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+            entity.Property(e => e.UserName).HasMaxLength(256);
+
+            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "UserRole",
+                    r => r.HasOne<Role>().WithMany().HasForeignKey("RoleId"),
+                    l => l.HasOne<User>().WithMany().HasForeignKey("UserId"),
+                    j =>
+                    {
+                        j.HasKey("UserId", "RoleId");
+                        j.ToTable("UserRoles");
+                        j.HasIndex(new[] { "RoleId" }, "IX_UserRoles_RoleId");
+                    });
+        });
+
+        modelBuilder.Entity<UserClaim>(entity =>
+        {
+            entity.HasIndex(e => e.UserId, "IX_UserClaims_UserId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserClaims).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<UserLogin>(entity =>
+        {
+            entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+
+            entity.HasIndex(e => e.UserId, "IX_UserLogins_UserId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserLogins).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<UserToken>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserTokens).HasForeignKey(d => d.UserId);
         });
 
         OnModelCreatingPartial(modelBuilder);
