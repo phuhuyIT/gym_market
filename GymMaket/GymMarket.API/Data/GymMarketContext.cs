@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using GymMarket.API.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Data;
 
-public partial class GymMarketContext : DbContext
+public partial class GymMarketContext : IdentityDbContext<AppUser>
 {
-    public GymMarketContext()
-    {
-    }
-
-    public GymMarketContext(DbContextOptions<GymMarketContext> options)
-        : base(options)
-    {
-    }
-
     public virtual DbSet<Course> Courses { get; set; }
 
     public virtual DbSet<CourseOption> CourseOptions { get; set; }
@@ -44,12 +37,17 @@ public partial class GymMarketContext : DbContext
 
     public virtual DbSet<Trainer> Trainers { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-LMTSK20\\SQLEXPRESS;Database=gym_market;Trusted_Connection=True;TrustServerCertificate=True;");
-
+    public GymMarketContext(DbContextOptions<GymMarketContext> options)
+        : base(options)
+    {
+    }
+   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        OnModelCreatingPartial(modelBuilder);
+
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Course>(entity =>
         {
             entity.HasKey(e => e.CourseId).HasName("PK__Courses__37E005FB71A00E15");
@@ -489,7 +487,7 @@ public partial class GymMarketContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_At");
             entity.HasOne(d => d.AppUser).WithOne(p => p.Student)
-                .HasForeignKey<Student>(d => d.AppUserId)
+                .HasForeignKey<Student>(d => d.UserId)
                 .HasConstraintName("FK_Student_AppUser");
         });
 
@@ -519,11 +517,9 @@ public partial class GymMarketContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_At");
             entity.HasOne(d => d.AppUser).WithOne(p => p.Trainer)
-                .HasForeignKey<Trainer>(d => d.AppUserId)
+                .HasForeignKey<Trainer>(d => d.UserId)
                 .HasConstraintName("FK_Trainer_AppUser");
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

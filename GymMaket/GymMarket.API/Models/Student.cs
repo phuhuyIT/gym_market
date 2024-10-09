@@ -35,5 +35,5 @@ public partial class Student
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
-    public virtual User? AppUser { get; set; }
+    public virtual AppUser? AppUser { get; set; }
 }
