@@ -33,5 +33,5 @@ public partial class Trainer
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
 
-    public virtual User? AppUser { get; set; }
+    public virtual AppUser? AppUser { get; set; }
 }

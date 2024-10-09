@@ -43,7 +43,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = false; // Không bắt buộc chữ in 
     options.Password.RequiredLength = 8; // Số ký tự tối thiểu của password 
     options.Password.RequiredUniqueChars = 1; // Số ký tự riêng biệt 
-  
+
     // Cấu hình Lockout - khóa user 
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khóa 5 phút
     options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lầ thì khóa 
