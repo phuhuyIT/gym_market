@@ -90,9 +90,15 @@ namespace GymMarket.API.Controllers
             }
         }
         [HttpDelete]
-        public async Task<IActionResult> Delete()
+        public async Task<IActionResult> Delete(string Id)
         {
-
+            var existingTrainer = await _trainerRepository.Get(Id);
+            if (existingTrainer == null)
+            {
+                return NotFound($"Trainer with Id {Id} not found");
+            }
+            await _trainerRepository.Delete(existingTrainer);
+            return Ok("Đã Xóa Thành Công");
         }
 
 
