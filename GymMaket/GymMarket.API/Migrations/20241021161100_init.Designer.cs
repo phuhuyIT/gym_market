@@ -4,6 +4,7 @@ using GymMarket.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymMarket.API.Migrations
 {
     [DbContext(typeof(GymMarketContext))]
-    partial class GymMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20241021161100_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,36 +171,6 @@ namespace GymMarket.API.Migrations
                     b.HasIndex("TrainerId");
 
                     b.ToTable("Courses");
-
-                    b.HasData(
-                        new
-                        {
-                            CourseId = "C001",
-                            Category = "Yoga",
-                            Description = "A beginner-level yoga course.",
-                            Duration = 30,
-                            EndDate = new DateTime(2024, 12, 1, 22, 0, 45, 328, DateTimeKind.Local).AddTicks(4573),
-                            MaxParticipants = 20,
-                            Price = 100m,
-                            Rating = 4.6m,
-                            StartDate = new DateTime(2024, 11, 1, 22, 0, 45, 328, DateTimeKind.Local).AddTicks(4544),
-                            Title = "Beginner Yoga",
-                            TrainerId = "TR001"
-                        },
-                        new
-                        {
-                            CourseId = "C002",
-                            Category = "Fitness",
-                            Description = "An advanced course for fitness enthusiasts.",
-                            Duration = 30,
-                            EndDate = new DateTime(2024, 12, 6, 22, 0, 45, 328, DateTimeKind.Local).AddTicks(4586),
-                            MaxParticipants = 25,
-                            Price = 150m,
-                            Rating = 4.9m,
-                            StartDate = new DateTime(2024, 11, 6, 22, 0, 45, 328, DateTimeKind.Local).AddTicks(4585),
-                            Title = "Advanced Fitness",
-                            TrainerId = "TR002"
-                        });
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.CourseOption", b =>
@@ -793,22 +766,6 @@ namespace GymMarket.API.Migrations
                         .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Trainers");
-
-                    b.HasData(
-                        new
-                        {
-                            TrainerId = "TR001",
-                            Certification = "YogaStrong",
-                            Name = "John Doe",
-                            Rating = 4.5m
-                        },
-                        new
-                        {
-                            TrainerId = "TR002",
-                            Certification = "GymStrong",
-                            Name = "Jane Smith",
-                            Rating = 4.8m
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -836,29 +793,6 @@ namespace GymMarket.API.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "25501994-44dd-44b8-bb7d-1b2af376f1be",
-                            ConcurrencyStamp = "1",
-                            Name = "Admin",
-                            NormalizedName = "Admin"
-                        },
-                        new
-                        {
-                            Id = "32b89678-1f5d-43c8-8dbd-4251902bdfa4",
-                            ConcurrencyStamp = "2",
-                            Name = "Trainer",
-                            NormalizedName = "Trainer"
-                        },
-                        new
-                        {
-                            Id = "345996a0-0f9e-4f4e-a7a5-1cbc7a110cc7",
-                            ConcurrencyStamp = "3",
-                            Name = "Member",
-                            NormalizedName = "Member"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
