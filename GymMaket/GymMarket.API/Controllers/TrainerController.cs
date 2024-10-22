@@ -2,6 +2,7 @@
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Controllers
 {
@@ -35,23 +36,64 @@ namespace GymMarket.API.Controllers
             {
                 return BadRequest("Trainer data is null");
             }
+
             try
             {
+                trainer.CreatedAt = DateTime.UtcNow;
+                trainer.UpdatedAt = DateTime.UtcNow;
                 var createTrainer = await _trainerRepository.Add(trainer);
-                return Ok("Created");
+
+                return Ok(new { message = "Trainer created successfully.", trainerId = createTrainer.TrainerId });
+            }
+            catch (DbUpdateException dbEx)
+            {
+               
+                var innerMessage = dbEx.InnerException?.Message ?? dbEx.Message;
+                return BadRequest($"Database update error: {innerMessage}");
+            }
+            catch (Exception ex)
+            {
+                // Bắt các lỗi khác
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetById(string Id)
+        {
+            var trainers = await _trainerRepository.Get(Id);
+            if (trainers == null)
+            {
+                return BadRequest("Trainer data is null");
+            }
+            return Ok(trainers);
+        }
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> Update(string Id,[FromBody] Trainer trainer)
+        {
+            if (trainer == null)
+            {
+                return BadRequest();
+            }
+            var existingTrainer = await _trainerRepository.Get(Id);
+            if (existingTrainer == null)
+            {
+                return NotFound($"Trainer with Id {Id} not found");
+            }
+            try
+            {
+
+                await _trainerRepository.Update(existingTrainer);
+                return Ok("Trainer is Update Successfull");
             }catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-        //[HttpPut("update")]
-        //public async Task<IActionResult> Update([FromForm] Trainer trainer)
-        //{
-        //    if (trainer == null)
-        //    {
-        //        return
-        //    }
-        //}
+        [HttpDelete]
+        public async Task<IActionResult> Delete()
+        {
+
+        }
 
 
     }
