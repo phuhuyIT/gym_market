@@ -28,5 +28,6 @@ namespace GymMarket.API.Controllers
             var response = await accountRepository.Login(model);
             return StatusCode(response.StatusCode, new { response.Message, response.Errors, response.Success, response.Token });
         }
+
     }
 }
