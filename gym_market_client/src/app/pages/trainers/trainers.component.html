@@ -1,1 +1,12 @@
-<p>trainers works!</p>
+<div>
+    <h1>Danh sách Huấn luyện viên</h1>
+    <ul>
+      <li *ngFor="let trainer of trainers">
+        <h2>{{ trainer.name }}</h2>
+        <p>ID: {{ trainer.trainerId }}</p>
+        <p>Chứng chỉ: {{ trainer.certification }}</p>
+        <p>Đánh giá: {{ trainer.rating }}</p>
+        <hr>
+      </li>
+    </ul>
+  </div>
