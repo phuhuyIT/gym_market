@@ -16,6 +16,12 @@ namespace GymMarket.API.Controllers
         {
             _courseRepository = courseRepository;
         }
+        [HttpGet("get-list")]
+        public async Task<IActionResult> GetList()
+        {
+            var courses = await _courseRepository.GetAll();
+            return Ok(courses);
+        }
         [HttpGet("top-rated")]
         public async Task<IActionResult> GetTopRated(int topCount)
         {
@@ -23,9 +29,9 @@ namespace GymMarket.API.Controllers
             return Ok(topRated);
         }
         [HttpGet("newcourses")]
-        public async Task<IActionResult> GetNewCourse()
+        public async Task<IActionResult> GetNewCourse(int topCount)
         {
-            var newCourse = await _courseRepository.GetNewestCoursesAsync(5);
+            var newCourse = await _courseRepository.GetNewestCoursesAsync(topCount);
             return Ok(newCourse);
 
         }
@@ -34,7 +40,7 @@ namespace GymMarket.API.Controllers
         {
             if (course == null)
             {
-                return BadRequest("Trainer data is null");
+                return BadRequest(" data is null");
             }
 
             try
@@ -43,7 +49,7 @@ namespace GymMarket.API.Controllers
                 course.EndDate = DateTime.UtcNow;
                 var createCourse = await _courseRepository.Add(course);
 
-                return Ok(new { message = "Course created successfully.", courseId = createCourse.CourseId });
+                return Ok();
             }
             catch (DbUpdateException dbEx)
             {
