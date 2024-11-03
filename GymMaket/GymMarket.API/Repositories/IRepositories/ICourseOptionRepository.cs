@@ -2,7 +2,7 @@
 
 namespace GymMarket.API.Repositories.IRepositories
 {
-    public interface ICourseOptionRepository: IGenericRepository<CourseOption>
+    public interface ICourseOptionRepository: IGenericRepository<CourseOption, string>
     {
         Task<IEnumerable<CourseOption>> GetByCourseIdAsync(string courseId);
     }

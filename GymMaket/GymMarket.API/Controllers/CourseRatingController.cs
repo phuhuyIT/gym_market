@@ -10,7 +10,7 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class CourseRatingController : GenericController<CourseRating, string>
     {
-        public CourseRatingController(IGenericRepository<CourseRating> repository, IMapper mapper) : base(repository, mapper)
+        public CourseRatingController(IGenericRepository<CourseRating, string> repository, IMapper mapper) : base(repository, mapper)
         {
         }
 
