@@ -14,4 +14,5 @@ public partial class CourseOption
     public decimal? Price { get; set; }
 
     public virtual ICollection<CourseRegistrationOption> CourseRegistrationOptions { get; set; } = new List<CourseRegistrationOption>();
+    public virtual ICollection<CourseRating> CourseRatings { get; set; } = new List<CourseRating>();
 }
