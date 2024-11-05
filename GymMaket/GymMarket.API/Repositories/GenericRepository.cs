@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GymMarket.API.Repositories
 {
-    public abstract class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey> where TEntity : class
+    public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey> where TEntity : class
     {
         private readonly GymMarketContext _context;
         private readonly DbSet<TEntity> _dbSet;
