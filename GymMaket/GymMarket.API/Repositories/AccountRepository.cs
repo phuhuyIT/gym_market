@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace GymMarket.API.Repositories
 {
-    public class AccountRepository : IAccountRepository
+    public class AccountRepository : GenericRepository<AppUser>, IAccountRepository
     {
-        private readonly GymMarketContext context;
+        private readonly GymMarketContext _context;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly SignInManager<AppUser> signInManager;
         private readonly JWTService jWTService;
@@ -22,7 +22,7 @@ namespace GymMarket.API.Repositories
             JWTService jWTService,
             UserManager<AppUser> userManager)
         {
-            this.context = context;
+            _context = context;
             this.roleManager = roleManager;
             this.signInManager = signInManager;
             this.jWTService = jWTService;

@@ -48,6 +48,7 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
         base.OnModelCreating(modelBuilder);
 
+
         modelBuilder.Entity<Course>(entity =>
         {
             entity.HasKey(e => e.CourseId).HasName("PK__Courses__37E005FB71A00E15");

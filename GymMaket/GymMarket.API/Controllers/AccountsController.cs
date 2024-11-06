@@ -14,7 +14,7 @@ namespace GymMarket.API.Controllers
         {
             this.accountRepository = accountRepository;
         }
-
+       
         [HttpPost("sign-up")]
         public async Task<IActionResult> SignUp(SignUpDto model)
         {
