@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ErrorModalComponent } from './pages/components/error-modal/error-modal.component';
 import { AccountService } from './services/account.service';
+import { ErrorModalComponent } from './pages-client/components/error-modal/error-modal.component';
 
 @Component({
   selector: 'app-root',
