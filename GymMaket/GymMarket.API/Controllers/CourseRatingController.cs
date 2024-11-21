@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GymMarket.API.DTOs.CourseRating;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +9,7 @@ namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseRatingController : GenericController<CourseRating, string>
+    public class CourseRatingController : GenericController<CourseRatingCreateDTO, CourseRatingUpdateDTO, CourseRating, string>
     {
         public CourseRatingController(IGenericRepository<CourseRating, string> repository, IMapper mapper) : base(repository, mapper)
         {
