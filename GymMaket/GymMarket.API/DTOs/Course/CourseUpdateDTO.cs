@@ -32,5 +32,6 @@ namespace GymMarket.API.DTOs.Course
 
         [Range(1, int.MaxValue)]
         public int? MaxParticipants { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }
