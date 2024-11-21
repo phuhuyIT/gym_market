@@ -7,7 +7,7 @@ namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public abstract class GenericController<TEntity, TKey> : ControllerBase where TEntity : class
+    public abstract class GenericController<TCreateDto, TUpdateDto, TEntity, TKey> : ControllerBase where TEntity : class where TUpdateDto: class where TCreateDto : class
     {
         protected readonly IGenericRepository<TEntity, TKey> _repository;
         protected readonly IMapper _mapper;
@@ -38,7 +38,7 @@ namespace GymMarket.API.Controllers
 
         // POST: api/[controller]
         [HttpPost]
-        public virtual async Task<IActionResult> Create<TCreateDto>([FromBody] TCreateDto createDto) where TCreateDto : class
+        public virtual async Task<IActionResult> Create([FromBody] TCreateDto createDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -50,7 +50,7 @@ namespace GymMarket.API.Controllers
 
         // PUT: api/[controller]/{id}
         [HttpPut("{id}")]
-        public virtual IActionResult Update<TUpdateDto>([FromBody] TUpdateDto updateDto) where TUpdateDto : class
+        public virtual IActionResult Update([FromBody] TUpdateDto updateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
