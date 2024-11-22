@@ -12,7 +12,7 @@ export const routes: Routes = [
 			{ path: '', redirectTo: 'courses', pathMatch: 'full' },
 			{ path: 'courses', component: CourseListComponent, title: 'courses' },
 			{ path: 'add-course', component: AddCourseComponent, title: 'add course' },
-			{ path: 'update-course', component: UpdateCourseComponent, title: 'update course' },
+			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'update course' },
 		],
 	},
 ];

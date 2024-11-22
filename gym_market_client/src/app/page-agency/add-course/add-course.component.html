@@ -1,1 +1,186 @@
-<p>add-course works!</p>
+<div class="wrapper">
+	<div class="container mx-auto">
+		<div class="pt-5">
+			<form [formGroup]="form">
+				<div class="grid gap-6 mb-6 md:grid-cols-2">
+					<!-- title -->
+					<div class="col-span-2">
+						<label for="title" class="block mb-2 text-sm font-medium text-gray-900"
+							>Title</label
+						>
+						<input
+							formControlName="title"
+							type="text"
+							id="title"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							placeholder="Title"
+							required
+						/>
+					</div>
+
+					<!-- description -->
+					<div class="col-span-2">
+						<label
+							for="description"
+							class="block mb-2 text-sm font-medium text-gray-900"
+							>Mô tả</label
+						>
+						<textarea
+							formControlName="description"
+							id="description"
+							rows="10"
+							class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+							placeholder="Write your thoughts here..."
+						></textarea>
+					</div>
+
+					<!-- type -->
+					<div>
+						<label for="type" class="block mb-2 text-sm font-medium text-gray-900"
+							>Type</label
+						>
+						<select
+							formControlName="type"
+							id="type"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						>
+							<option value="Yoga" selected>Yoga</option>
+							<option value="Cardio">Cardio</option>
+							<option value="Strength">Strength training</option>
+							<option value="Pilates">Pilates</option>
+							<option value="Stretching">Stretching</option>
+							<option value="Cross fit">Cross fit</option>
+						</select>
+					</div>
+
+					<!-- category -->
+					<div>
+						<label for="category" class="block mb-2 text-sm font-medium text-gray-900"
+							>Category</label
+						>
+						<select
+							formControlName="category"
+							id="category"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						>
+							<option value="Yoga" selected>Yoga</option>
+							<option value="Cardio">Cardio</option>
+							<option value="Strength">Strength training</option>
+							<option value="Pilates">Pilates</option>
+							<option value="Stretching">Stretching</option>
+							<option value="Cross fit">Cross fit</option>
+						</select>
+					</div>
+
+					<!-- price -->
+					<div>
+						<label for="price" class="block mb-2 text-sm font-medium text-gray-900"
+							>Price</label
+						>
+						<input
+							formControlName="price"
+							type="number"
+							id="price"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							placeholder=""
+							required
+						/>
+					</div>
+
+					<!-- addtional price -->
+					<div>
+						<label
+							for="addtional-price"
+							class="block mb-2 text-sm font-medium text-gray-900"
+							>Price bổ sung</label
+						>
+						<input
+							formControlName="additionalPrice"
+							type="number"
+							id="addtional-price"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							placeholder=""
+							required
+						/>
+					</div>
+				</div>
+
+				<div class="col-span-2">
+					<div class="grid grid-cols-4 gap-6">
+						<!-- Ngày bắt đầu -->
+						<div class="mb-6">
+							<label class="block mb-2 text-sm font-medium text-gray-900"
+								>Ngày bắt đầu</label
+							>
+							<input placeholder="dd-mm-yyyy" 
+								formControlName="startDate"
+								type="date"
+								id="start-date"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								placeholder="john.doe@company.com"
+								required
+							/>
+                            
+						</div>
+
+						<!-- ngày kết thúc -->
+						<div class="mb-6">
+							<label
+								for="end-date"
+								class="block mb-2 text-sm font-medium text-gray-900"
+								>Ngày kết thúc</label
+							>
+							<input
+								formControlName="endDate"
+								type="date"
+								id="end-date"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								required
+							/>
+						</div>
+
+						<!-- duration -->
+						<div class="mb-6">
+							<label
+								for="duration"
+								class="block mb-2 text-sm font-medium text-gray-900"
+								>Duration</label
+							>
+							<input
+								formControlName="duration"
+								type="number"
+								id="duration"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								required
+							/>
+						</div>
+
+						<!-- maxParticipants -->
+						<div class="mb-6">
+							<label
+								for="duration"
+								class="block mb-2 text-sm font-medium text-gray-900"
+								>Số người tham gia tối đa</label
+							>
+							<input
+								formControlName="maxParticipants"
+								type="number"
+								id="duration"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								required
+							/>
+						</div>
+					</div>
+				</div>
+
+				<button 
+                    (click)="submit()"
+					type="submit"
+					class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+				>
+					Thêm
+				</button>
+			</form>
+		</div>
+	</div>
+</div>

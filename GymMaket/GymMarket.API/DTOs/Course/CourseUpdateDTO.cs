@@ -4,7 +4,7 @@ namespace GymMarket.API.DTOs.Course
 {
     public class CourseUpdateDTO
     {
-
+        public string CourseId { get; set; } = string.Empty;
         [StringLength(200)]
         public string? Title { get; set; }
 
