@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Login } from '../models/account/login.model';
-import { SignUp } from '../models/account/signup.model';
-import { environment } from '../../environments/environment.development';
+import { Login } from '../../models/account/login.model';
+import { SignUp } from '../../models/account/signup.model';
+import { environment } from '../../../environments/environment.development';
 import { jwtDecode } from 'jwt-decode';
-import { UserStore } from '../stores/user.store';
+import { UserStore } from '../../stores/user.store';
 import { patchState } from '@ngrx/signals';
 
 @Injectable({
