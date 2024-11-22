@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { patchState } from '@ngrx/signals';
 import { ErrorModalStore } from '../../../stores/error-modal.store';
-import { AccountService } from '../../../services/account.service';
+import { AccountService } from '../account.service';
 
 @Component({
 	selector: 'app-signup',

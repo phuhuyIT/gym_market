@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { UserStore } from '../../../stores/user.store';
-import { AccountService } from '../../../services/account.service';
+import { AccountService } from '../../../pages-client/account/account.service';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
