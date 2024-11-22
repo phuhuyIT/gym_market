@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { patchState } from '@ngrx/signals';
-import { ErrorModalStore } from '../../../stores/error-modal.store';
+import { ErrorModalStore } from '../../stores/error-modal.store';
 
 @Component({
   selector: 'app-error-modal',
