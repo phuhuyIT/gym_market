@@ -14,7 +14,7 @@ public partial class CourseRegistration
     public string? RegistrationType { get; set; }
 
     public string? Mode { get; set; }
-
+        
     public string? Status { get; set; }
 
     public string? PaymentStatus { get; set; }
