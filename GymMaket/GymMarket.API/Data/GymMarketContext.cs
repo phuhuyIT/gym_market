@@ -47,6 +47,7 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
         OnModelCreatingPartial(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
+        
 
         modelBuilder.Entity<Course>(entity =>
         {
@@ -520,6 +521,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey<Trainer>(d => d.UserId)
                 .HasConstraintName("FK_Trainer_AppUser");
         });
+
+        modelBuilder.SeedData();
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

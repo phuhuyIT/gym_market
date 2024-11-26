@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { HeaderComponent } from '../../components/header/header.component';
+import { HeaderComponent } from '../../pages-client/components/header/header.component';
 import {
 	FormBuilder,
 	FormControl,
@@ -7,10 +7,11 @@ import {
 	ReactiveFormsModule,
 	Validators,
 } from '@angular/forms';
-import { AccountService } from '../account.service';
+import { AccountService } from '../../pages-client/account/account.service';
 import { Router } from '@angular/router';
-import { ErrorModalStore } from '../../../stores/error-modal.store';
+import { ErrorModalStore } from '../../stores/error-modal.store';
 import { patchState } from '@ngrx/signals';
+import { GuestService } from '../guest.service';
 
 @Component({
 	selector: 'app-login',
@@ -27,12 +28,12 @@ export class LoginComponent {
 	constructor(
 		private formBuilder: FormBuilder,
 		private router: Router,
-		private accountService: AccountService
+		private guestService: GuestService
 	) {}
 
 	ngOnInit() {
-		if (this.accountService.isLogedIn() === true) {
-			console.log(this.accountService.isLogedIn());
+		if (this.guestService.isLogedIn() === true) {
+			console.log(this.guestService.isLogedIn());
 
 			this.router.navigateByUrl('/home');
 		}
@@ -55,10 +56,10 @@ export class LoginComponent {
 		}
 
 		console.log(this.signUpForm.value);
-		this.accountService.login(this.signUpForm.value).subscribe({
+		this.guestService.login(this.signUpForm.value).subscribe({
 			next: (res: any) => {
 				// console.log(res);
-				this.accountService.saveToken(res.token);
+				this.guestService.saveToken(res.token);
 				this.router.navigateByUrl('/home');
 			},
 			error: err => {
