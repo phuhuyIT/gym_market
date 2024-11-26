@@ -5,6 +5,7 @@ using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Repositories
 {
@@ -29,18 +30,18 @@ namespace GymMarket.API.Repositories
             this.userManager = userManager;
         }
 
-        public async Task<ApiResponse> SignUp(SignUpDto model)
+        public async Task<SignupResponse> SignUp(SignUpDto model)
         {
             var userExist = await userManager.FindByEmailAsync(model.Email);
             if (userExist != null)
             {
-                return new ApiResponse { StatusCode = 400, Errors = ["Email này đã tồn tại. Vui lòng sử dụng email khác"], Success = false };
+                return new SignupResponse { StatusCode = 400, Errors = ["Email này đã tồn tại. Vui lòng sử dụng email khác"], Success = false };
             }
 
             var role = await roleManager.FindByNameAsync(model.Role);
             if (role == null)
             {
-                return new ApiResponse { StatusCode = 400, Errors = ["Vai trò không tồn tại"], Success = false };
+                return new SignupResponse { StatusCode = 400, Errors = ["Vai trò không tồn tại"], Success = false };
             }
 
             var user = new AppUser
@@ -54,10 +55,10 @@ namespace GymMarket.API.Repositories
             if (rAddUser.Succeeded == false)
             {
                 var errors = rAddUser.Errors.Select(e => e.Description).ToList();
-                return new ApiResponse { StatusCode = 400, Errors = errors, Success = false };
+                return new SignupResponse { StatusCode = 400, Errors = errors, Success = false };
             }
             await userManager.AddToRoleAsync(user, model.Role);
-            return new ApiResponse { StatusCode = 200, Success = true, Message = "Đăng ký thành công" };
+            return new SignupResponse { StatusCode = 200, Success = true, Message = "Đăng ký thành công", UserId = user.Id };
         }
 
         public async Task<LoginResponse> Login(LoginDto model)

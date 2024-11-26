@@ -19,7 +19,7 @@ namespace GymMarket.API.Controllers
         public async Task<IActionResult> SignUp(SignUpDto model)
         {
             var response = await accountRepository.SignUp(model);
-            return StatusCode(response.StatusCode, new { response.Message, response.Errors, response.Success });
+            return StatusCode(response.StatusCode, new { response.Message, response.Errors, response.Success, response.UserId });
         }
 
         [HttpPost("login")]
