@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GymMarket.API.DTOs.Course;
+using GymMarket.API.DTOs.CourseOption;
 using GymMarket.API.DTOs.Trainer;
 using GymMarket.API.Models;
 
@@ -19,6 +20,14 @@ namespace GymMarket.API.MappingProfiles
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<TrainerCreateDTO, Trainer>()
+                .ReverseMap()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<CourseOptionCreateDTO, CourseOption>()
+                .ReverseMap()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<CourseOptionUpdateDTO, CourseOption>()
                 .ReverseMap()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
