@@ -89,7 +89,7 @@ export class UpdateCourseComponent {
 					errors: ['Không tìm thấy course'],
 					isShow: true,
 				});
-				this.router.navigateByUrl('/course-agency/courses');
+				this.router.navigateByUrl('/agency/courses');
 			},
 		});
 	}

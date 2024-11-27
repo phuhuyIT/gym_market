@@ -3,7 +3,7 @@
 		<nav class="flex items-center justify-between flex-wrap p-6 gap-3">
 			<a class="block navbar-brand text-xl font-bold" routerLink="/home">
 				<div class="flex items-center justify-start gap-3">
-					<img class="w-14" src="/assets/fitness_logo.jpg" alt="">
+					<img class="w-14" src="/assets/fitness_logo.jpg" alt="" />
 					<span class="uppercase">Fitness for life</span>
 				</div>
 			</a>
@@ -34,54 +34,45 @@
 							>
 						</li>
 
-						@if(userStore.id() !== null) {
-							<li class="nav-item">
-								<div class="account">
-									<div
-										class="p-2 block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900 cursor-pointer"
-										(mouseover)="onShowAccountOption()"
-										(mouseleave)="onHiddenAccountOption()"
-									>
-										{{userStore.fullName()}} <span><i class="fa-solid fa-caret-down"></i></span>
-									</div>
-	
-									<div
-										class="account_option duration-300 "
-										[ngClass]="{ 'a': showAccountOption == true, 'b': showAccountOption == false }"
-										(mouseover)="onShowAccountOption()"
-										(mouseleave)="onHiddenAccountOption()"
-									>
-										<a routerLink="/account/profile" class="account_option_item">Thông tin cá nhân</a>
-										<a routerLink="/courses/my-courses/all" class="account_option_item">Khóa học đã đăng ký</a>
-										<a routerLink="/course-agency/courses" class="account_option_item">Quản lý khóa học</a>
-										<button (click)="logout()" class="account_option_item">Đăng xuất</button>
-									</div>
+						<li class="nav-item">
+							<div class="account">
+								<div
+									class="p-2 block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900 cursor-pointer"
+									(mouseover)="onShowAccountOption()"
+									(mouseleave)="onHiddenAccountOption()"
+								>
+									{{ userStore.fullName() }}
+									<span><i class="fa-solid fa-caret-down"></i></span>
 								</div>
-							</li>
-						}
-						@else {
-							<li class="nav-item">
-								<div class="account">
-									<div
-										class="p-2 block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900 cursor-pointer"
-										(mouseover)="onShowAccountOption()"
-										(mouseleave)="onHiddenAccountOption()"
+
+								<div
+									class="account_option duration-300"
+									[ngClass]="{
+										a: showAccountOption == true,
+										b: showAccountOption == false
+									}"
+									(mouseover)="onShowAccountOption()"
+									(mouseleave)="onHiddenAccountOption()"
+								>
+									<a routerLink="/account/profile" class="account_option_item"
+										>Thông tin cá nhân</a
 									>
-										Account
-									</div>
-	
-									<div
-										class="account_option duration-300 "
-										[ngClass]="{ 'a': showAccountOption == true, 'b': showAccountOption == false }"
-										(mouseover)="onShowAccountOption()"
-										(mouseleave)="onHiddenAccountOption()"
+									<a
+										routerLink="/courses/my-courses/all"
+										class="account_option_item"
+										>Khóa học đã đăng ký</a
 									>
-										<a routerLink="/account/login" class="account_option_item">Login</a>
-										<a routerLink="/account/sign-up"class="account_option_item">Sign up</a>
-									</div>
+									<a
+										routerLink="/course-agency/courses"
+										class="account_option_item"
+										>Quản lý khóa học</a
+									>
+									<button (click)="logout()" class="account_option_item">
+										Đăng xuất
+									</button>
 								</div>
-							</li>
-						}
+							</div>
+						</li>
 					</ul>
 				</div>
 			</div>

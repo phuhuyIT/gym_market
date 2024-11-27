@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserStore } from '../../../stores/user.store';
-import { AccountService } from '../../account/account.service';
+import { AccountService } from '../../../services/account.service';
 
 @Component({
 	selector: 'app-header',
@@ -27,6 +27,6 @@ export class HeaderComponent {
 
 	logout() {
 		this.accountService.logout();
-		this.router.navigateByUrl('/account/login');
+		this.router.navigateByUrl('');
 	}
 }
