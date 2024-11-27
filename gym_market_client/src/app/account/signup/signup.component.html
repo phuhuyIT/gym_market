@@ -1,0 +1,57 @@
+<div class="hero_area min-h-screen">
+	<div class="flex justify-center items-center px-4 py-10">
+		<div class="main">
+			<div class="signup">
+				<form [formGroup]="signUpForm">
+					<label class="text-red-700">Sign up</label>
+
+					@if(submit === true && signUpForm.hasError('required','fullName')) {
+					<small class="text-center block text-red-500">Vui lòng nhập tên</small>
+					}
+					<input
+						formControlName="fullName"
+						type="text"
+						placeholder="Full name"
+						required=""
+					/>
+
+					@if(submit === true && signUpForm.hasError('required','email')) {
+					<small class="text-center block text-red-500">Vui lòng nhập email</small>
+					} @if(submit === true && signUpForm.hasError('email','email')) {
+					<small class="text-center block text-red-500">Email sai định dạng</small>
+					}
+					<input formControlName="email" type="email" placeholder="Email" required="" />
+
+					@if(submit === true && signUpForm.hasError('required','password')) {
+					<small class="text-center block text-red-500">Vui lòng nhập mật khẩu</small>
+					}
+					<input
+						formControlName="password"
+						type="password"
+						placeholder="Password"
+						required=""
+					/>
+
+					@if(submit === true && signUpForm.hasError('required','confirmPassword')) {
+					<small class="text-center block text-red-500">Nhập lại mật khẩu</small>
+					} @if(submit === true && signUpForm.controls['confirmPassword'].dirty) {
+					<small class="text-center block text-red-500"
+						>Nhập lại mật khẩu không chính xác</small
+					>
+					}
+					<input
+						formControlName="confirmPassword"
+						type="password"
+						placeholder="Confirm Password"
+						required=""
+					/>
+					<select formControlName="role">
+						<option value="Trainer" selected>Trainer</option>
+						<option value="Student">Student</option>
+					</select>
+					<button (click)="onSignUp()" class="btn-signup">Sign up</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

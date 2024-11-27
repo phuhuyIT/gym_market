@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { ErrorModalComponent } from './components/error-modal/error-modal.component';
 import { LoaderComponent } from "./components/loader/loader.component";
 import { NoticeComponent } from "./components/notice/notice.component";
-import { GuestService } from './guest/guest.service';
+import { AccountService } from './services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -14,9 +14,9 @@ import { GuestService } from './guest/guest.service';
 })
 export class AppComponent {
   title = 'Fitness_Client';
-  guestService = inject(GuestService)
+  accountService = inject(AccountService)
   
   ngOnInit() {
-    this.guestService.checkLogin();
+    this.accountService.checkLogin();
   }
 }

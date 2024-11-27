@@ -63,7 +63,7 @@ export class AddCourseComponent {
 		this.courseAgencyService.addCourse(model).subscribe({
 			next: (res: any) => {
 				// console.log(res);
-				this.router.navigateByUrl('/course-agency/courses');
+				this.router.navigateByUrl('/agency/courses');
 			},
 			error: err => {
 				let result = [];
