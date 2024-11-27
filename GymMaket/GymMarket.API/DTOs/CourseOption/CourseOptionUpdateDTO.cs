@@ -4,6 +4,9 @@ namespace GymMarket.API.DTOs.CourseOption
 {
     public class CourseOptionUpdateDTO
     {
+        [Required(ErrorMessage = "OptionId is required.")]
+        public string OptionId { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "OptionName is required.")]
         [StringLength(100, ErrorMessage = "OptionName cannot exceed 100 characters.")]
         public string? OptionName { get; set; }

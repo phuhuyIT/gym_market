@@ -11,10 +11,10 @@ export const routes: Routes = [
         component: CourseAgencyComponent,
 		children: [
 			{ path: '', redirectTo: 'courses', pathMatch: 'full' },
-			{ path: 'courses', component: CourseListComponent, title: 'courses' },
-			{ path: 'add-course', component: AddCourseComponent, title: 'add course' },
-			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'update course' },
-			{ path: 'course-option-list', component: CourseOptionListComponent, title: 'course options' },
+			{ path: 'courses', component: CourseListComponent, title: 'Danh sách khóa huấn luyện' },
+			{ path: 'add-course', component: AddCourseComponent, title: 'Thêm course' },
+			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Cập nhật course' },
+			{ path: 'course-option-list', component: CourseOptionListComponent, title: 'Danh sách option của course' },
 		],
 	},
 ];

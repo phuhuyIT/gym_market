@@ -1,1 +1,318 @@
-<p>course-option-list works!</p>
+<div class="wrapper">
+	<div class="container mx-auto">
+		<div class="grid grid-cols-12">
+			<div class="col-span-3 border-e border-e-gray-400">
+				<div class="p-3">
+					<!-- SEARCH BUTTON -->
+
+					<div class="mb-3">
+						<div class="flex items-center justify-start gap-2">
+							<input
+								[(ngModel)]="searchString"
+								type="text"
+								id="first_name"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+								placeholder="Tên"
+								required
+							/>
+
+							<button
+								(click)="onShowAddModal(true)"
+								type="button"
+								class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-nowrap"
+							>
+								Thêm
+							</button>
+						</div>
+					</div>
+
+					<!-- SEARCH BUTTON -->
+					<button
+						(click)="search()"
+						type="button"
+						class="w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+					>
+						Tìm kiếm
+					</button>
+				</div>
+			</div>
+
+			<div class="col-span-9">
+				<div class="p-3">
+					<!-- list -->
+					<div class="overflow-y-scroll h-[700px]">
+						@for (item of courseOptionTemps; track $index) {
+						<div class="border rounded-xl mb-3 overflow-hidden grid grid-cols-12 gap-2">
+							<div class="col-span-2 flex items-center justify-center">
+								<img class="" src="/assets/application.png" alt="" />
+							</div>
+
+							<div class="col-span-8">
+								<h1 class="font-medium text-xl">Tên: {{ item.optionName }}</h1>
+								<p class="clamp">Mô tả: {{ item.description }}</p>
+								<div>
+									<div class="inline-block me-5">
+										<span class="font-bold">Giá:</span>
+										<span> {{ item.price }}</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-span-2">
+								<div class="h-full border p-3">
+									<button
+										(click)="onShowUpdateModal(true, item)"
+										type="button"
+										class="block w-full focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+									>
+										Cập nhật
+									</button>
+
+									<button
+										(click)="onShowDeleteModel(true, item.optionId)"
+										type="button"
+										class="block w-full focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+									>
+										Xóa
+									</button>
+								</div>
+							</div>
+						</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@if(isShowDeleteModal === true) {
+<div class="fixed z-10 inset-0 overflow-y-auto" id="my-modal">
+	<div
+		class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+	>
+		<div class="fixed inset-0 transition-opacity" aria-hidden="true">
+			<div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+		</div>
+		<span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true"
+			>&#8203;</span
+		>
+		<div
+			class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="modal-headline"
+		>
+			<div>
+				<div
+					class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100"
+				>
+					<svg
+						class="h-6 w-6 text-red-600"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+						aria-hidden="true"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
+					</svg>
+				</div>
+				<div class="mt-3 text-center sm:mt-5">
+					<h3 class="text-lg leading-6 font-medium text-red-500" id="modal-headline">
+						Bạn có muốn xóa khóa học này không?
+					</h3>
+				</div>
+			</div>
+			<div class="mt-5 sm:mt-6 flex justify-center items-center gap-4">
+				<button
+					(click)="onRemove()"
+					class="rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm"
+				>
+					Có
+				</button>
+
+				<button
+					(click)="onShowDeleteModel(false, '')"
+					class="rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:text-sm"
+				>
+					Trở lại
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+} @if(isShowAddCourseOptionModal === true) {
+<div class="fixed top-0 left-0 w-full h-full bg-[#ecfeff]/50">
+	<div class="flex justify-center items-center h-full">
+		<div class="bg-white p-10 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+			<div class="mb-3 text-center">
+				<h1 class="font-semibold text-3xl">Thêm course options</h1>
+			</div>
+
+			<form [formGroup]="addCourseOptionForm" class="">
+				<!-- optionName -->
+				<div class="col-span-2">
+					<label for="title" class="block mb-2 text-sm font-medium text-gray-900"
+						>Tên tùy chọn</label
+					>
+					<input
+						formControlName="optionName"
+						type="text"
+						id="title"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						placeholder="Tên tùy chọn"
+						required
+					/>
+					@if(addCourseOptionForm.controls['optionName'].value === '') {
+					<small class="text-red-500">Tên không được để trống</small>
+					}
+				</div>
+
+				<!-- description -->
+				<div class="col-span-2">
+					<label for="title" class="block mb-2 text-sm font-medium text-gray-900"
+						>Mô tả</label
+					>
+					<textarea
+						rows="4"
+						formControlName="description"
+						id="title"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						placeholder="Mô tả"
+						required
+					></textarea>
+					@if(addCourseOptionForm.controls['description'].value === '') {
+					<small class="text-red-500">Mô tả không được để trống</small>
+					}
+				</div>
+
+				<!-- price -->
+				<div class="col-span-2">
+					<label for="title" class="block mb-2 text-sm font-medium text-gray-900"
+						>Giá</label
+					>
+					<input
+						formControlName="price"
+						type="number"
+						id="title"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						placeholder="0"
+						required
+					/>
+					@if(addCourseOptionForm.controls['price'].value <= 0) {
+					<small class="text-red-500">Giá phải lớn hơn 0</small>
+					}
+				</div>
+
+				<div class="mt-3">
+					<button
+						(click)="addCourseOptionSubmit()"
+						type="button"
+						class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 duration-100"
+					>
+						Thêm
+					</button>
+
+					<button
+						(click)="onShowAddModal(false)"
+						type="button"
+						class="text-red-600 border-2 border-red-400 hover:bg-red-600 hover:text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 duration-100"
+					>
+						Trở lại
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+} @if(isShowUpdateCourseOptionModal === true) {
+<div class="fixed top-0 left-0 w-full h-full bg-[#ecfeff]/50">
+	<div class="flex justify-center items-center h-full">
+		<div class="bg-white p-10 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+			<div class="mb-3 text-center">
+				<h1 class="font-semibold text-3xl">Cập nhật course options</h1>
+			</div>
+
+			<form [formGroup]="updateCourseOptionForm" class="">
+				<!-- optionName -->
+				<div class="col-span-2">
+					<label for="title" class="block mb-2 text-sm font-medium text-gray-900"
+						>Tên tùy chọn</label
+					>
+					<input
+						formControlName="optionName"
+						type="text"
+						id="title"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						placeholder="Tên tùy chọn"
+						required
+					/>
+					@if(updateCourseOptionForm.controls['optionName'].value === '') {
+					<small class="text-red-500">Tên không được để trống</small>
+					}
+				</div>
+
+				<!-- description -->
+				<div class="col-span-2">
+					<label for="title" class="block mb-2 text-sm font-medium text-gray-900"
+						>Mô tả</label
+					>
+					<textarea
+						rows="4"
+						formControlName="description"
+						id="title"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						placeholder="Mô tả"
+						required
+					></textarea>
+					@if(updateCourseOptionForm.controls['description'].value === '') {
+					<small class="text-red-500">Mô tả không được để trống</small>
+					}
+				</div>
+
+				<!-- price -->
+				<div class="col-span-2">
+					<label for="title" class="block mb-2 text-sm font-medium text-gray-900"
+						>Giá</label
+					>
+					<input
+						formControlName="price"
+						type="number"
+						id="title"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						placeholder="0"
+						required
+					/>
+					@if(updateCourseOptionForm.controls['price'].value <= 0) {
+					<small class="text-red-500">Giá phải lớn hơn 0</small>
+					}
+				</div>
+
+				<div class="mt-3">
+					<button
+						(click)="updateCourseOptionSubmit()"
+						type="button"
+						class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 duration-100"
+					>
+						Cập nhật
+					</button>
+
+					<button
+						(click)="onShowUpdateModal(false, null)"
+						type="button"
+						class="text-red-600 border-2 border-red-400 hover:bg-red-600 hover:text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 duration-100"
+					>
+						Trở lại
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+}
