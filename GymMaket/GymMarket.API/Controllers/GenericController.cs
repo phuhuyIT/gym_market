@@ -50,13 +50,13 @@ namespace GymMarket.API.Controllers
 
         // PUT: api/[controller]/{id}
         [HttpPut("{id}")]
-        public virtual IActionResult Update([FromBody] TUpdateDto updateDto)
+        public virtual async Task<IActionResult> Update([FromBody] TUpdateDto updateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var entity = _mapper.Map<TUpdateDto, TEntity>(updateDto);
-            _repository.Update(entity);
+            await _repository.Update(entity);
             return NoContent();
         }
 

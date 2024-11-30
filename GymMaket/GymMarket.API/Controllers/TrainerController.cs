@@ -2,7 +2,6 @@
 using GymMarket.API.DTOs.Trainer;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers

@@ -1,6 +1,6 @@
 ﻿using GymMarket.API.Data;
 using GymMarket.API.DTOs.Account;
-using GymMarket.API.DTOs.Response;
+using GymMarket.API.DTOs.Response.Account;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;

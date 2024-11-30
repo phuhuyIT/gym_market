@@ -7,7 +7,7 @@ import { ErrorModalStore } from '../../stores/error-modal.store';
 import { TrainerSignup } from '../models/trainer-sign-up.model';
 import { StudentSignup } from '../models/student-sign-up.model';
 import { LoaderModalStore } from '../../stores/loader.store';
-import { AccountService } from '../../services/account.service';
+import { AccountService } from '../account.service';
 
 @Component({
 	selector: 'app-signup',
@@ -80,9 +80,11 @@ export class SignupComponent {
 				} else if (this.signUpForm.controls['role'].value === 'Student') {
 					this.studentSignup(res);
 				}
+				patchState(this.loaderStore, { isShow: false });
 			},
 			error: err => {
 				patchState(this.errorStore, { isShow: true, errors: err.error.errors });
+				patchState(this.loaderStore, { isShow: false });
 			},
 		});
 	}
@@ -117,6 +119,7 @@ export class SignupComponent {
 					}
 				}
 				patchState(this.errorStore, { isShow: true, errors: result });
+				patchState(this.loaderStore, { isShow: false });
 			},
 		});
 	}
@@ -148,6 +151,7 @@ export class SignupComponent {
 					}
 				}
 				patchState(this.errorStore, { isShow: true, errors: result });
+				patchState(this.loaderStore, { isShow: false });
 			},
 		});
 	}

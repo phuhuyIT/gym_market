@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using GymMarket.API.DTOs.Course;
 using GymMarket.API.DTOs.CourseOption;
+using GymMarket.API.DTOs.Response.User;
+using GymMarket.API.DTOs.Student;
 using GymMarket.API.DTOs.Trainer;
 using GymMarket.API.Models;
 
@@ -23,6 +25,10 @@ namespace GymMarket.API.MappingProfiles
                 .ReverseMap()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
+            CreateMap<TrainerUpdateDTO, Trainer>()
+                .ReverseMap()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
             CreateMap<CourseOptionCreateDTO, CourseOption>()
                 .ReverseMap()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
@@ -31,6 +37,13 @@ namespace GymMarket.API.MappingProfiles
                 .ReverseMap()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
+            CreateMap<StudentCreateDTO, Student>()
+               .ReverseMap()
+               .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<StudentUpdateDTO, Student>()
+              .ReverseMap()
+              .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }
 }
