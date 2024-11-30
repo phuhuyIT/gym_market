@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { ErrorModalComponent } from './components/error-modal/error-modal.component';
 import { LoaderComponent } from "./components/loader/loader.component";
 import { NoticeComponent } from "./components/notice/notice.component";
-import { AccountService } from './services/account.service';
+import { AccountService } from './account/account.service';
 
 @Component({
   selector: 'app-root',

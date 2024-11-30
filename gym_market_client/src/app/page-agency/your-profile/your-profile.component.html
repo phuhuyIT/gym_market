@@ -1,0 +1,136 @@
+<div class="wrapper">
+	<div class="max-w-[1000px] mx-auto">
+		<div class="grid grid-cols-12 shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-md">
+			<div class="col-span-4">
+				<div class="p-4">
+					<div class="mb-4">
+						<img [src]="trainerInfo.profilePicture" alt="Image is not valid" />
+					</div>
+
+					<div class="text-center text-3xl">
+						<button
+							routerLink="/agency/edit-profile"
+							type="button"
+							class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+						>
+							Chỉnh sửa hồ sơ
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-span-8">
+				<div class="p-4">
+					<!-- full name -->
+					<div class="mb-3">
+						<label class="block mb-1 text-sm font-medium text-gray-900">Tên</label>
+						<input
+							type="text"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							[value]="userInfo.fullName"
+							disabled
+						/>
+					</div>
+
+					<!-- địa chỉ -->
+					<div class="mb-3">
+						<label class="block mb-1 text-sm font-medium text-gray-900">Địa chỉ</label>
+						<input
+							type="text"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							[value]="userInfo.address"
+							disabled
+						/>
+					</div>
+
+					<div class="grid grid-cols-2 gap-2">
+						<!-- email -->
+						<div class="mb-3">
+							<label class="block mb-1 text-sm font-medium text-gray-900"
+								>Email</label
+							>
+							<input
+								type="text"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								[value]="userInfo.email"
+								disabled
+							/>
+						</div>
+
+						<!-- phone number -->
+						<div class="mb-3">
+							<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
+								>Điện thoại</label
+							>
+							<input
+								type="text"
+								id="title"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								[value]="userInfo.phoneNumber"
+								disabled
+							/>
+						</div>
+					</div>
+
+					<!-- bio -->
+					<div class="mb-3">
+						<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
+							>Bio</label
+						>
+						<input
+							type="text"
+							id="title"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							[value]="trainerInfo.bio"
+							disabled
+						/>
+					</div>
+
+					<!-- rating -->
+					<div class="mb-3">
+						<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
+							>Rating</label
+						>
+						<input
+							type="text"
+							id="title"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							[value]="trainerInfo.rating"
+							disabled
+						/>
+					</div>
+
+					<!-- Experience -->
+					<div class="mb-3">
+						<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
+							>Năm kinh nghiệm</label
+						>
+
+                        <input
+							type="text"
+							id="title"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							[value]="trainerInfo.experience"
+							disabled
+						/>
+					</div>
+
+					<!-- Certification -->
+					<div class="mb-3">
+						<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
+							>Chứng chỉ</label
+						>
+						<textarea
+							rows="4"
+							type="text"
+							id="title"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							disabled
+							>{{ trainerInfo.certification }}</textarea
+						>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

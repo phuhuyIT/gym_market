@@ -4,6 +4,9 @@ namespace GymMarket.API.DTOs.Trainer
 {
     public class TrainerUpdateDTO
     {
+        [Required(ErrorMessage = "TrainerId is required.")]
+        public string TrainerId { get; set; }
+
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
         public string? Name { get; set; }
@@ -12,9 +15,9 @@ namespace GymMarket.API.DTOs.Trainer
         [EmailAddress(ErrorMessage = "Invalid email address format.")]
         public string? Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required.")]
-        [StringLength(50, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 50 characters.")]
-        public string? Password { get; set; }
+        //[Required(ErrorMessage = "Password is required.")]
+        //[StringLength(50, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 50 characters.")]
+        //public string? Password { get; set; }
 
         [StringLength(200, ErrorMessage = "Certification cannot exceed 200 characters.")]
         public string? Certification { get; set; }

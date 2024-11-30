@@ -1,5 +1,5 @@
 import { Component, inject, Input } from '@angular/core';
-import { AccountService } from '../../../services/account.service';
+import { AccountService } from '../../../account/account.service';
 import { UserStore } from '../../../stores/user.store';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';

@@ -1,5 +1,5 @@
 ﻿using GymMarket.API.DTOs.Account;
-using GymMarket.API.DTOs.Response;
+using GymMarket.API.DTOs.Response.Account;
 
 namespace GymMarket.API.Repositories.IRepositories
 {

@@ -53,13 +53,13 @@ namespace GymMarket.API.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public void Update<TUpdateDto>(TUpdateDto entity) where TUpdateDto : class
+        public async Task Update<TUpdateDto>(TUpdateDto entity) where TUpdateDto : class
         {
             // map TUpdateDto to TEntity
             var mapEntity = _mapper.Map<TUpdateDto, TEntity>(entity);
             _dbSet.Attach(mapEntity);
             _context.Entry(mapEntity).State = EntityState.Modified;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public void Remove(TEntity entity)

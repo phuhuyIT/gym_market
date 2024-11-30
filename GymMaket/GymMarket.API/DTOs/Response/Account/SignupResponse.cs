@@ -1,4 +1,4 @@
-﻿namespace GymMarket.API.DTOs.Response
+﻿namespace GymMarket.API.DTOs.Response.Account
 {
     public class SignupResponse : ApiResponse
     {
