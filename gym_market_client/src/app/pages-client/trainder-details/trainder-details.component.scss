@@ -1,0 +1,30 @@
+#avatar {
+	@apply absolute top-[-100px];
+	left: 50%;
+	transform: translateX(-50%);
+
+	clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+}
+
+#ss {
+	background: url('https://demos.creative-tim.com/argon-dashboard-pro-material-ui-v4/static/media/img-1-1000x600.3869811c.jpg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.clamp-title {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	line-clamp: 2;
+}
+
+.clamp-des {
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	line-clamp: 3;
+}

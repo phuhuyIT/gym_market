@@ -120,6 +120,9 @@ export class CourseOptionListComponent {
 
 	onShowAddModal(flag: boolean) {
 		this.isShowAddCourseOptionModal = flag;
+		if (flag === false) {
+			this.resetAddForm();
+		}
 	}
 
 	addCourseOptionSubmit() {
@@ -145,6 +148,7 @@ export class CourseOptionListComponent {
 				this.courseOptions.push(model);
 				this.courseOptionTemps = this.courseOptions;
 				this.isShowAddCourseOptionModal = false;
+				this.resetAddForm();
 			},
 			error: err => {
 				patchState(this.loaderStore, { isShow: false });
@@ -162,10 +166,7 @@ export class CourseOptionListComponent {
 		this.isShowUpdateCourseOptionModal = flag;
 
 		if (flag === false) {
-			this.updateCourseOptionForm.controls['optionId'].setValue('');
-			this.updateCourseOptionForm.controls['optionName'].setValue('');
-			this.updateCourseOptionForm.controls['description'].setValue('');
-			this.updateCourseOptionForm.controls['price'].setValue(0);
+			this.resetUpdateForm();
 		} else {
 			this.updateCourseOptionForm.controls['optionId'].setValue(option.optionId);
 			this.updateCourseOptionForm.controls['optionName'].setValue(option.optionName);
@@ -204,6 +205,7 @@ export class CourseOptionListComponent {
 					option.description = this.updateCourseOptionForm.controls['description'].value;
 					option.price = this.updateCourseOptionForm.controls['price'].value;
 				}
+				this.resetUpdateForm();
 			},
 			error: err => {
 				patchState(this.loaderStore, { isShow: false });
@@ -215,5 +217,19 @@ export class CourseOptionListComponent {
 				}
 			},
 		});
+	}
+
+	private resetAddForm() {
+		this.addCourseOptionForm.controls['optionId'].setValue('');
+		this.addCourseOptionForm.controls['optionName'].setValue('');
+		this.addCourseOptionForm.controls['description'].setValue('');
+		this.addCourseOptionForm.controls['price'].setValue(0);
+	}
+
+	private resetUpdateForm() {
+		this.updateCourseOptionForm.controls['optionId'].setValue('');
+		this.updateCourseOptionForm.controls['optionName'].setValue('');
+		this.updateCourseOptionForm.controls['description'].setValue('');
+		this.updateCourseOptionForm.controls['price'].setValue(0);
 	}
 }

@@ -98,6 +98,7 @@ export class UpdateProfileComponent {
 			profilePicture: this.updateForm.controls['profilePicture'].value,
 			rating: 0,
 			updatedAt: new Date(),
+            userId: this.userStore.id()
 		};
 
 		patchState(this.loader, { isShow: true });

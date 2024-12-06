@@ -5,7 +5,7 @@ namespace GymMarket.API.DTOs.Trainer
     public class TrainerUpdateDTO
     {
         [Required(ErrorMessage = "TrainerId is required.")]
-        public string TrainerId { get; set; }
+        public string TrainerId { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
@@ -36,5 +36,7 @@ namespace GymMarket.API.DTOs.Trainer
 
         public DateTime? UpdatedAt { get; set; }
 
+        [Required(ErrorMessage = "TrainerId is required.")]
+        public string UserId { get; set; } = string.Empty;
     }
 }

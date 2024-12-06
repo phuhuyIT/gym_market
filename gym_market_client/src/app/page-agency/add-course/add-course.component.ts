@@ -56,7 +56,7 @@ export class AddCourseComponent {
 			return;
 		}
 		const decoded: any = jwtDecode(token);
-		const trainerId = decoded.Id;
+		const trainerId = decoded.trainerId;
 		const courseId = crypto.randomUUID();
 
 		const model = { ...this.form.value, trainerId, courseId };

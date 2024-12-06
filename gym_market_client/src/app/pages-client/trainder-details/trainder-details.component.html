@@ -1,132 +1,237 @@
-<div>
-	<header class="header_section shadow-md">
-		<div class="container mx-auto b">
-			<nav class="flex items-center justify-between flex-wrap p-6 gap-3">
-				<a class="block navbar-brand text-xl font-bold" routerLink="/home">
-					<div class="flex justify-start items-center gap-2">
-						<img src="/assets/fitness_logo.jpg" class="w-14" alt="" />
-						<span class="uppercase">Fitness for life</span>
-					</div>
-				</a>
+<div class="wrapper bg-[#e2e8f0] p-5">
+	<div class="grid grid-cols-12 gap-5 mb-5">
+		<div class="col-span-4">
+			<div class="rounded-md overflow-hidden shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+				<div id="ss" class="h-40"></div>
 
-				<div class="block lg:flex lg:items-center lg:w-auto">
-					<div class="flex flex-col lg:flex-row lg:ml-auto items-center justify-between">
-						<ul class="lg:flex lg:space-x-10">
-							<li class="nav-item">
-								<a
-									routerLink="/home"
-									routerLinkActive="active"
-									class="nav-link block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900"
-									>Home <span class="sr-only">(current)</span></a
-								>
-							</li>
-							<li class="nav-item">
-								<a
-									class="nav-link block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900"
-									href="why.html"
-									>Why us</a
-								>
-							</li>
-							<li class="nav-item">
-								<a
-									class="nav-link block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900"
-									href="trainer.html"
-									>Trainers</a
-								>
-							</li>
-						</ul>
+				<div class="bg-white p-4 pt-16 relative">
+					<div id="avatar" class="">
+						<img
+							class="w-36 mx-auto"
+							src="https://demos.creative-tim.com/argon-dashboard-pro-material-ui-v4/static/media/team-4-800x800.99c612eb.jpg"
+							alt=""
+						/>
+					</div>
+
+					<!-- name -->
+					<div>
+						<h4 class="text-3xl text-center">Benson Lowndes</h4>
+					</div>
+
+					<!-- bio -->
+					<div>
+						<h4 class="text-xl text-center">
+							porttitor lorem id ligula suspendisse ornare consequat lectus
+						</h4>
+					</div>
+
+					<div class="flex justify-around items-center">
+						<div class="text-lg font-bold">Rating: 4</div>
+						<div class="text-lg font-bold">Experience: 10</div>
 					</div>
 				</div>
-			</nav>
+			</div>
 		</div>
-	</header>
 
-	<section class="mt-5">
-		<div class="max-full md:max-w-[860px] mx-auto">
-			<div class="border-b py-5">
-				<div>
-					<h1 class="font-medium text-[2rem]">{{ name }}</h1>
-				</div>
-				<div>
-					<span class="text-gray-400"
-						>Arnold Schwarzenegger pics, biography, contest history, and more! Learn
-						about your favorite pro bodybuilder.</span
-					>
+		<div class="col-span-8">
+			<div class="bg-white p-4 rounded-md overflow-hidden shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+				<div class="text-xl font-medium border-b mb-3">Information</div>
+
+				<div class="grid grid-cols-2 grid-rows-2 gap-4">
+					<div>
+						<label for="first_name" class="block mb-2 text-sm font-medium text-gray-900"
+							>Name</label
+						>
+						<input
+							type="text"
+							id="first_name"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							value="Maureen Turcotte"
+						/>
+					</div>
+
+					<div>
+						<label for="first_name" class="block mb-2 text-sm font-medium text-gray-900"
+							>Email</label
+						>
+						<input
+							type="text"
+							id="first_name"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							required
+							value="doloremque@gmail.com"
+						/>
+					</div>
+
+					<div>
+						<label for="first_name" class="block mb-2 text-sm font-medium text-gray-900"
+							>Address</label
+						>
+						<input
+							type="text"
+							id="first_name"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							value="97376 Murazik Gateway"
+						/>
+					</div>
+
+					<div>
+						<label for="first_name" class="block mb-2 text-sm font-medium text-gray-900"
+							>Phone</label
+						>
+						<input
+							type="text"
+							id="first_name"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							value="732.357.8796"
+						/>
+					</div>
+
+					<div class="col-span-2">
+						<label for="first_name" class="block mb-1 text-sm font-medium text-gray-900"
+							>Certification</label
+						>
+						<textarea
+							class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						>
+Omnis tenetur vel est magni explicabo. Eos distinctio error aut quam et. Sit reiciendis nisi qui fuga beatae officiis quia. Omnis tempore velit reiciendis eveniet et autem debitis dolorem.</textarea
+						>
+					</div>
 				</div>
 			</div>
+		</div>
+	</div>
 
-			<div class="py-8">
-				<img
-					src="https://www.bodybuilding.com/fun/images/2015/default-feature-box-830x467.jpg"
-					alt=""
-				/>
-			</div>
+	<div class="bg-white p-4 rounded-md overflow-hidden">
+		<div class="font-medium text-3xl border-b text-center p-3 mb-3">Courses</div>
 
-			<div class="flex items-center gap-2">
-				<div>
+		<div class="grid grid-cols-4 gap-4">
+			<div>
+				<a
+					href="#"
+					class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+				>
 					<img
-						class="rounded-full"
-						src="https://www.bodybuilding.com/images/authors/pro-profiles-writer-box_200x114_2.jpg"
+						class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
+						src="https://flowbite.com/docs/images/blog/image-4.jpg"
 						alt=""
 					/>
-				</div>
-				<div>
-					<div><a class="text-[1.5rem] text-blue-600" href="#">Profiles</a></div>
-					<div>August 07, 2018</div>
-				</div>
+					<div class="flex flex-col justify-between p-4 leading-normal">
+						<h5
+							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+						>
+							omnis enim sed
+						</h5>
+						<p class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400">
+							Velit laboriosam accusantium dolore est. Ipsam molestiae nostrum
+							voluptates sed laborum. Vitae veniam itaque magnam at molestiae.
+							Quisquam dignissimos quod quibusdam dolorum et. Consequatur aut eos
+							officiis et. Ad dicta molestias beatae veniam quos mollitia eum
+							dolores.\nAtque itaque qui sapiente. Nihil nemo molestiae omnis.
+							Praesentium quis ullam placeat. Accusamus quia eos numquam asperiores
+							voluptatem autem magni.\nFacilis vel ut quaerat tempore qui blanditiis
+							quia. Culpa temporibus tempora. Rerum non ut. Cum sunt nisi eos aut
+							commodi vitae fugiat non. Qui ullam temporibus aspernatur enim ut a
+							adipisci et.
+						</p>
+					</div>
+				</a>
 			</div>
 
-			<div class="py-8">
-				<ul class="text-[1.2rem] list-disc">
-					<li>
-						<div><span class="font-medium">Name:</span> Arnold Alois Schwarzenegger</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Website:</span> www.schwarzenegger.com</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Location:</span> Los Angeles, CA</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Born:</span> July 30, 1947</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Birthplace:</span> Graz, Austria</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Height:</span> 6'2"</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Off-Season Weight:</span> Around 260 lbs.</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Competition Weight:</span> Around 235 lbs.</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Arms:</span> 22"</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Chest:</span> 57"</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Waist:</span> 34"</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Thighs:</span> 28.5"</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Calves:</span> 20"</div>
-					</li>
-					<li>
-						<div><span class="font-medium">Favorite Exercise:</span> Bent-Over Rows</div>
-					</li>
-				</ul>
+			<div>
+				<a
+					href="#"
+					class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+				>
+					<img
+						class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
+						src="https://flowbite.com/docs/images/blog/image-4.jpg"
+						alt=""
+					/>
+					<div class="flex flex-col justify-between p-4 leading-normal">
+						<h5
+							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+						>
+							Voluptatem nihil vel dicta aut aut quo veritatis nisi itaque.
+						</h5>
+						<p class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400">
+							Cumque cum accusamus eius quia sit dolorem ullam earum. Sint
+							necessitatibus aperiam sint quia et ullam minima aspernatur tempore. Ex
+							non inventore. Perferendis saepe doloribus accusantium sit repellendus
+							sequi animi reprehenderit exercitationem.\n \nUnde nostrum repellendus
+							accusamus ab. Illum quia doloribus. Atque eos cumque corporis aperiam
+							quo. Sint dolore voluptatibus est voluptatem. Minus et autem culpa ut
+							officiis quaerat architecto. Id accusamus dolorem sunt voluptatem
+							quaerat officiis dolor.\n \nLibero quia dolor iste quis quidem sint
+							atque molestiae. Quia accusamus incidunt excepturi quod maxime
+							doloremque et quaerat. Ducimus et iusto et non consequatur cum ut
+							deleniti autem. Unde voluptatem ut eos sed mollitia sequi. Nobis
+							suscipit rerum et. Consequatur cupiditate magnam dignissimos omnis hic
+							qui quis odit.
+						</p>
+					</div>
+				</a>
 			</div>
 
-            <div>
-                
-            </div>
+			<div>
+				<a
+					href="#"
+					class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+				>
+					<img
+						class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
+						src="https://flowbite.com/docs/images/blog/image-4.jpg"
+						alt=""
+					/>
+					<div class="flex flex-col justify-between p-4 leading-normal">
+						<h5
+							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+						>
+							doloribus velit rem
+						</h5>
+						<p class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400">
+							Nostrum molestiae est error repellendus temporibus in. Similique labore
+							est et deleniti nisi illo voluptas. Omnis est voluptas repudiandae error
+							eum ea. Enim ut voluptatem vero iste. Ut nihil quo repellat eaque aut
+							aspernatur est.\n \nOfficiis adipisci maxime aperiam tempore sit.
+							Molestiae dolores ullam excepturi. Et distinctio qui voluptate ducimus
+							et cumque. Dolorem autem vel corporis velit.\n \nAspernatur molestiae
+							deleniti dolorem alias totam quia ex. Libero ad dolorum repellendus
+							neque. Nostrum iste nam possimus fugit dolorem dolorum.
+						</p>
+					</div>
+				</a>
+			</div>
 
+			<div>
+				<a
+					href="#"
+					class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+				>
+					<img
+						class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
+						src="https://flowbite.com/docs/images/blog/image-4.jpg"
+						alt=""
+					/>
+					<div class="flex flex-col justify-between p-4 leading-normal">
+						<h5
+							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+						>
+							rerum accusantium necessitatibus
+						</h5>
+						<p class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400">
+							Aperiam et ut. Repudiandae architecto blanditiis voluptatibus. Nesciunt
+							id sit necessitatibus. Et velit repudiandae voluptate aut.\nCum neque
+							voluptates occaecati laboriosam praesentium. Saepe quae sit doloribus.
+							Consequuntur asperiores mollitia. Impedit ipsa amet adipisci voluptate
+							aut quibusdam.\nVeritatis aut doloremque ut quia ea delectus id quis.
+							Qui sunt delectus odit dolorem magnam veritatis consectetur. Dolore
+							consequatur porro deserunt eius. Sequi dicta quam. Optio voluptatibus
+							quasi eveniet. Ex autem eaque ducimus dicta voluptate excepturi velit.
+						</p>
+					</div>
+				</a>
+			</div>
 		</div>
-	</section>
+	</div>
 </div>

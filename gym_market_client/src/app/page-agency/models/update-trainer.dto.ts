@@ -8,4 +8,5 @@ export interface UpdateTrainerProfileDto {
 	rating: number;
 	profilePicture: string;
 	updatedAt: Date;
+    userId: string | null;
 }

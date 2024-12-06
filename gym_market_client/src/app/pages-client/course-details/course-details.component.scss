@@ -1,0 +1,159 @@
+* {
+	font-family: 'Lora', Georgia, times, serif;
+}
+
+#banner {
+	background: url('https://img.freepik.com/free-photo/flat-lay-cellphone-red-dumbbells-sport-equipment-white-background-sport-wear-sport-fashion-sport-accessories-sport-equipment-top-view_1428-712.jpg?t=st=1733058099~exp=1733061699~hmac=df20a659a6d490ab50a2ce96ad0faf5b3a50af99b503aeea8d8ea7fde095e901&w=1380');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+#des {
+	background: rgba(255, 255, 255, 0.45);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.buy-course {
+	position: relative;
+	overflow: hidden;
+	display: block;
+	padding: 10px;
+	margin: auto;
+	border: 5px solid #2563eb;
+	text-align: center;
+	text-transform: uppercase;
+	box-shadow: 8px 8px 0 0px #2563eb;
+	-webkit-box-shadow: 8px 8px 0 0px #2563eb;
+	-moz-box-shadow: 8px 8px 0 0px #2563eb;
+	transition: all 0.3s;
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	color: #2563eb;
+	font-size: 14px;
+	font-family: oswald;
+	text-transform: uppercase;
+	text-decoration: none;
+}
+.buy-course .txt {
+	display: block;
+	z-index: 10;
+	position: relative;
+}
+.buy-course .bubble_inner {
+	position: absolute;
+	display: block;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+.buy-course .bubble_inner .bubble {
+	position: absolute;
+	top: 0;
+	display: block;
+	width: 25%;
+	height: 100%;
+	border-radius: 50% 50% 0 0;
+	background-color: #2563eb;
+	transform: scaleY(1) translateY(37px);
+	-webkit-transform: scaleY(1) translateY(37px);
+	-moz-transform: scaleY(1) translateY(37px);
+	transition: all 0.5s 0.5s;
+	-webkit-transition: all 0.5s 0.5s;
+	-moz-transition: all 0.3s 0.5s;
+}
+.buy-course .bubble_inner .bubble:nth-child(1) {
+	left: 0;
+	transition-delay: 0.06s;
+	-webkit-transition-delay: 0.06s;
+	-moz-transition-delay: 0.06s;
+}
+.buy-course .bubble_inner .bubble:nth-child(2) {
+	left: 25%;
+	transition-delay: 0.12s;
+	-webkit-transition-delay: 0.12s;
+	-moz-transition-delay: 0.12s;
+}
+.buy-course .bubble_inner .bubble:nth-child(3) {
+	left: 50%;
+	transition-delay: 0.18s;
+	-webkit-transition-delay: 0.18s;
+	-moz-transition-delay: 0.18s;
+}
+.buy-course .bubble_inner .bubble:nth-child(4) {
+	left: 75%;
+	transition-delay: 0.24s;
+	-webkit-transition-delay: 0.24s;
+	-moz-transition-delay: 0.24s;
+}
+.buy-course:hover {
+	box-shadow: 0px 0px 0 0px #2563eb;
+	-webkit-box-shadow: 0px 0px 0 0px #2563eb;
+	-moz-box-shadow: 0px 0px 0 0px #2563eb;
+}
+.buy-course:hover .txt {
+	color: #fff;
+}
+.buy-course:hover .bubble_inner .bubble {
+	transform: scaleY(2) translateY(-8px);
+	-webkit-transform: scaleY(2) translateY(-8px);
+	-moz-transform: scaleY(2) translateY(-8px);
+}
+
+.add-review {
+    overflow:hidden;
+    position:relative;
+    display:block;
+    width:166px;
+    height:38px;
+    margin:auto;
+    line-height:40px;
+    border:1px solid #2563eb;
+    color:#2563eb;
+    text-align:center;
+    text-decoration:none;
+    text-transform:uppercase;
+    font-size:14px;
+    font-family:oswald;
+}
+.add-review span {
+    position:relative;
+    transition:color .25s ease-out;
+    -webkit-transition:color .5s ease-out;
+    -moz-transition:color .5s ease-out;
+}
+.add-review:hover span {
+    color:#fff;
+}
+.add-review .hover {
+   position:absolute;
+    top:0;
+    left:0;
+    display:block;
+    width:100%;
+    height:100%;
+    background:#2563eb;
+    border:1px solid transparent;
+   transform:scale(1,0);
+    -webkit-transform:scale(1,0);
+    -moz-transform:scale(1,0);
+    -ms-transform:scale(1,0);
+    transform-origin:center top;
+    -webkit-transform-origin:center top;
+    -moz-transform-origin:center top;
+    -ms-transform-origin:center top;
+   transition:all .2s ease-out;
+    -webkit-transition:all .2s ease-out;
+    -moz-transition:all .2s ease-out;
+}
+.add-review:hover .hover {
+   transform:scale(1,1);
+   -webkit-transform:scale(1,1);
+   -moz-transform:scale(1,1);
+   -ms-transform:scale(1,1);
+}
