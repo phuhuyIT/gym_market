@@ -1,16 +1,9 @@
 <div class="wrapper">
 	<div id="banner" class="bg-red-400 h-[80dvh] w-full flex justify-center items-center mb-10">
 		<div class="w-1/2">
-			<p id="title" class="text-center text-4xl font-bold p-4">omnis enim sed</p>
+			<p id="title" class="text-center text-4xl font-bold p-4">{{ course.title }}</p>
 			<p id="des" class="text-center text-xl p-5">
-				Velit laboriosam accusantium dolore est. Ipsam molestiae nostrum voluptates sed
-				laborum. Vitae veniam itaque magnam at molestiae. Quisquam dignissimos quod
-				quibusdam dolorum et. Consequatur aut eos officiis et. Ad dicta molestias beatae
-				veniam quos mollitia eum dolores.\nAtque itaque qui sapiente. Nihil nemo molestiae
-				omnis. Praesentium quis ullam placeat. Accusamus quia eos numquam asperiores
-				voluptatem autem magni.\nFacilis vel ut quaerat tempore qui blanditiis quia. Culpa
-				temporibus tempora. Rerum non ut. Cum sunt nisi eos aut commodi vitae fugiat non.
-				Qui ullam temporibus aspernatur enim ut a adipisci et.
+				{{ course.description }}
 			</p>
 		</div>
 	</div>
@@ -47,7 +40,7 @@
 						</div>
 					</div>
 
-					<!-- rating -->
+					<!-- add rating -->
 					<div>
 						<div class="text-xl font-bold">Add your review</div>
 
@@ -56,14 +49,14 @@
 								<label
 									for="first_name"
 									class="block mb-2 text-lg font-medium text-gray-900"
-									>Add your rate</label
+									>Your rate</label
 								>
 								<input
-									type="text"
-									id="first_name"
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+									type="number"
+									class="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 									placeholder="John"
-									required
+									(keydown)="preventInvalidInput($event)"
+									[(ngModel)]="rate"
 								/>
 							</div>
 
@@ -74,22 +67,50 @@
 									>Comment</label
 								>
 								<textarea
-									id="message"
+									[(ngModel)]="comment"
 									rows="4"
-									class="block p-2.5 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 "
+									class="block p-2.5 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
 									placeholder="Write your thoughts here..."
 								></textarea>
 							</div>
 
-                            <div class="mt-3">
-                                <button class="add-review">
-                                    <span class="hover"></span>
-                                    <span>Preview</span>
-                               </button>
-                            </div>
-
+							<div class="mt-3">
+								<button class="add-review" (click)="addRating()">
+									<span class="hover"></span>
+									<span>Add Preview</span>
+								</button>
+							</div>
 						</div>
 					</div>
+
+                    <!-- list ratings -->
+                    <div class="border border-gray-200 p-2 rounded-md mb-4 mt-2">
+						<div class="text-xl font-bold">Ratings</div>
+
+						<div>
+							@for (op of (showAll ? ratings : ratings.slice(0, 3)); track $index) {
+							<div>
+								<div class="mb-3">
+									<div class="border-t py-3 rounded-lg">
+										<h2 class="text-lg font-bold text-gray-900 title-font mb-2">
+											{{ op.reviewComment }}
+										</h2>
+
+										<p class="leading-relaxed text-base">
+											Rate: {{ op.ratingValue }}
+										</p>
+									</div>
+								</div>
+							</div>
+							}
+						</div>
+
+                        <button class="add-review" (click)="toggleShowAll()">
+                            <span class="hover"></span>
+                            <span>{{ showAll ? 'Show Less' : 'Show More' }}</span>
+                        </button>
+					</div>
+
 				</div>
 
 				<div class="col-span-2 border-s p-3">
@@ -103,7 +124,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								value="Pilates"
+								[value]="course.type"
 							/>
 						</div>
 
@@ -116,7 +137,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								value="Stretching"
+								[value]="course.category"
 							/>
 						</div>
 
@@ -129,7 +150,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								value="5000.00"
+								[value]="course.price"
 							/>
 						</div>
 
@@ -142,7 +163,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								value="300.00"
+								[value]="course.additionalPrice"
 							/>
 						</div>
 
@@ -155,7 +176,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								value="2024-11-27"
+								[value]="course.startDate"
 							/>
 						</div>
 
@@ -168,7 +189,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								value="2024-12-07"
+								[value]="course.endDate"
 							/>
 						</div>
 
@@ -181,7 +202,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								value="10"
+								[value]="course.duration"
 							/>
 						</div>
 
@@ -194,7 +215,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								value="4"
+								[value]="course.maxParticipants"
 							/>
 						</div>
 
@@ -207,7 +228,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								value="4"
+								[value]="course.rating !== null ? course.rating : 0"
 							/>
 						</div>
 

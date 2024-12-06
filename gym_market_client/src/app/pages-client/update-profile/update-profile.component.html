@@ -1,0 +1,109 @@
+<div class="wrapper">
+	<div class="max-w-[1000px] mx-auto">
+		<div class="shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-md p-5">
+			<div class="">
+				<div class="mb-4">
+					<img
+						class="w-[300px] mx-auto"
+						[src]="updateForm.controls['profilePicture'].value"
+						alt="Image is not valid"
+					/>
+				</div>
+			</div>
+
+			<form [formGroup]="updateForm" class="">
+				<!-- avatar url -->
+				<div class="mb-3">
+					<label class="block mb-1 text-sm font-medium text-gray-900"
+						>Nhập url hình ảnh</label
+					>
+					<input
+						formControlName="profilePicture"
+						type="text"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+					/>
+					@if(updateForm.controls['profilePicture'].value === '' ||
+					updateForm.controls['profilePicture'].value === null) {
+					<small class="text-red-500">Không được để trống</small>
+					}
+				</div>
+
+				<!-- full name -->
+				<div class="mb-3">
+					<label class="block mb-1 text-sm font-medium text-gray-900">Tên</label>
+					<input
+						formControlName="fullName"
+						type="text"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+					/>
+					@if(updateForm.controls['fullName'].value === '' ||
+					updateForm.controls['fullName'].value === null) {
+					<small class="text-red-500">Không được để trống</small>
+					}
+				</div>
+
+				<!-- địa chỉ -->
+				<div class="mb-3">
+					<label class="block mb-1 text-sm font-medium text-gray-900">Địa chỉ</label>
+					<input
+						formControlName="address"
+						type="text"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+					/>@if(updateForm.controls['address'].value === '' ||
+					updateForm.controls['address'].value === null) {
+					<small class="text-red-500">Không được để trống</small>
+					}
+				</div>
+
+				<div class="grid grid-cols-2 gap-2">
+					<!-- email -->
+					<div class="mb-3">
+						<label class="block mb-1 text-sm font-medium text-gray-900">Email</label>
+						<input
+							[value]="updateForm.controls['email'].value"
+							disabled
+							type="text"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						/>
+						<!-- @if(updateForm.controls['email'].value === '' ||
+						updateForm.controls['email'].value === null) {
+						<small class="text-red-500">Không được để trống</small>
+						} @if(updateForm.hasError('email','email')) {
+						<small class="text-red-500">Email sai định dạng</small>
+						} -->
+					</div>
+
+					<!-- phone number -->
+					<div class="mb-3">
+						<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
+							>Điện thoại</label
+						>
+						<input
+							formControlName="phoneNumber"
+							type="text"
+							id="title"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						/>@if(updateForm.controls['phoneNumber'].value === ''||
+						updateForm.controls['phoneNumber'].value === null) {
+						<small class="text-red-500">Không được để trống</small>
+						}
+					</div>
+				</div>
+
+				
+
+				
+
+				<div>
+					<button
+						(click)="onUpdate()"
+						type="button"
+						class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+					>
+						Cập nhật
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

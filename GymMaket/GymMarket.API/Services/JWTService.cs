@@ -29,6 +29,7 @@ namespace GymMarket.API.Services
         public async Task<string> CreateJWT(AppUser user)
         {
             var trainerId = await context.Trainers.AsNoTracking().Where(t => t.UserId == user.Id).Select(t => t.TrainerId).FirstOrDefaultAsync();
+            var studentId = await context.Students.AsNoTracking().Where(t => t.UserId == user.Id).Select(t => t.StudentId).FirstOrDefaultAsync();
             var userClaims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -36,6 +37,7 @@ namespace GymMarket.API.Services
                 new Claim(ClaimTypes.Name, user.FullName!),
                 new Claim(ClaimTypes.HomePhone, string.IsNullOrEmpty(user.PhoneNumber) == false ? user.PhoneNumber : ""),
                 new Claim("trainerId", string.IsNullOrEmpty(trainerId) == false ? trainerId : ""),
+                new Claim("studentId", string.IsNullOrEmpty(studentId) == false ? studentId : ""),
             };
 
             var userRoles = await userManager.GetRolesAsync(user);

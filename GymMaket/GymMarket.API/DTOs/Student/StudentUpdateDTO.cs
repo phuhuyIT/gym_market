@@ -4,6 +4,8 @@ namespace GymMarket.API.DTOs.Student
 {
     public class StudentUpdateDTO
     {
+        [Required(ErrorMessage = "StudentId is required.")]
+        public string StudentId { get; set; } = null!;
 
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]

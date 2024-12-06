@@ -28,5 +28,7 @@ export class CourseAgencyService {
 		return this.http.delete(`${environment.baseApi}/course/${id}`);
 	}
 
-    
+    getCoursesOftrainer(trainerId: string) {
+        return this.http.get(`${environment.baseApi}/Course/get-courses-of-trainer/${trainerId}`);
+    }
 }

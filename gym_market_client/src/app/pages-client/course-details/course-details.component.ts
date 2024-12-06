@@ -1,39 +1,134 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CourseAgencyService } from '../../page-agency/course-agency.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CourseOptionService } from '../../page-agency/course-option.service';
+import { LoaderModalStore } from '../../stores/loader.store';
+import { patchState } from '@ngrx/signals';
+import { FormsModule } from '@angular/forms';
+import { UserStore } from '../../stores/user.store';
+import { CourseRatingService } from '../course-rating.service';
+import { ErrorModalStore } from '../../stores/error-modal.store';
 
 @Component({
 	selector: 'app-course-details',
 	standalone: true,
-	imports: [],
+	imports: [FormsModule],
 	templateUrl: './course-details.component.html',
 	styleUrl: './course-details.component.scss',
 })
 export class CourseDetailsComponent {
 	courseOptions: any;
-	constructor() {}
+	course: any;
+	loader = inject(LoaderModalStore);
+	courseId: string = '';
+	userStore = inject(UserStore);
+	errorModal = inject(ErrorModalStore);
+
+	// rating
+	rate: number = 0;
+	comment: string = '';
+	ratings: any = [];
+	showAll: boolean = false;
+
+	constructor(
+		private courseService: CourseAgencyService,
+		private activatedRoute: ActivatedRoute,
+		private courseOptionService: CourseOptionService,
+		private router: Router,
+		private courseRatingService: CourseRatingService
+	) {}
 
 	ngOnInit() {
-		this.courseOptions = [
-			{
-				optionId: '43fbd34c-5620-4e08-b9d0-98f95e3dedcd',
-				optionName: 'Omnis amet esse debitis suscipit suscipit voluptatem.',
-				description:
-					'Quibusdam earum facilis omnis qui iure pariatur consequatur laboriosam sequi. Assumenda quia consequatur quaerat sit voluptatem soluta corporis dignissimos. Eum sunt nihil molestiae sint occaecati quo illo et. Voluptas nesciunt exercitationem libero. Voluptas sunt et suscipit cupiditate eligendi. Distinctio aspernatur rem sunt rerum ut.',
-				price: 1000000.0,
+		this.courseOptions = [];
+
+		this.getCourse();
+		this.getCourseOPtion();
+		this.getCourseRating();
+	}
+
+	private getCourse() {
+		patchState(this.loader, { isShow: true });
+		this.activatedRoute.params.subscribe({
+			next: (params: any) => {
+				// console.log(params.id); // {id: '2', name: 'hoc'}
+				this.courseId = params.id;
+				this.courseService.getCourse(params.id).subscribe({
+					next: (res: any) => {
+						this.course = res;
+						// patchState(this.loader, { isShow: false });
+					},
+					error: err => {
+						this.router.navigateByUrl('/client/home-client');
+					},
+				});
 			},
-			{
-				optionId: 'a2d9acaa-74d7-455b-b52f-4d69618a3d6a',
-				optionName: 'A harum tempore magni et reprehenderit.',
-				description:
-					'Velit laboriosam accusantium dolore est. Ipsam molestiae nostrum voluptates sed laborum. Vitae veniam itaque magnam at molestiae. Quisquam dignissimos quod quibusdam dolorum et. Consequatur aut eos officiis et. Ad dicta molestias beatae veniam quos mollitia eum dolores.\n \nAtque itaque qui sapiente. Nihil nemo molestiae omnis. Praesentium quis ullam placeat. Accusamus quia eos numquam asperiores voluptatem autem magni.\n \n',
-				price: 400.0,
+		});
+	}
+
+	private getCourseOPtion() {
+		patchState(this.loader, { isShow: true });
+		this.courseOptionService.getCourseOptionsOftrainer().subscribe({
+			next: (res: any) => {
+				// console.log(res);
+				this.courseOptions = res;
+				// patchState(this.loader, { isShow: true });
 			},
-			{
-				optionId: 'ac92f682-5559-4909-8b29-543ab81a178e',
-				optionName: 'Qui expedita nesciunt sapiente voluptatem ut illo.',
-				description:
-					'Cupiditate nihil autem sunt sed ex iure fuga dolores quis. Quis et accusantium vero voluptates consequuntur. Cumque repellat cum reiciendis. Libero incidunt dignissimos. Animi esse voluptatem est reiciendis aut sunt est libero.',
-				price: 4.0,
+		});
+	}
+
+	private getCourseRating() {
+		patchState(this.loader, { isShow: true });
+		this.courseRatingService.getCourseRatings(this.courseId).subscribe({
+			next: (res: any) => {
+				// console.log(res);
+				this.ratings = res;
+				patchState(this.loader, { isShow: false });
 			},
-		];
+		});
+	}
+
+	preventInvalidInput(event: KeyboardEvent): void {
+		// Nếu ký tự là 'e', '+', '-', hoặc '.'
+		if (['e', 'E', '+', '-'].includes(event.key)) {
+			event.preventDefault();
+		}
+	}
+
+	addRating() {
+		const t = {
+			ratingId: crypto.randomUUID(),
+			courseId: this.courseId,
+			studentId: this.userStore.studentId(),
+			ratingValue: this.rate,
+			reviewComment: this.comment,
+		};
+
+		this.ratings.push(t);
+		// console.log(t);
+
+		if (this.rate > 5 || this.rate < 0) {
+			patchState(this.errorModal, {
+				errors: ['RatingValue must be between 0 and 5.'],
+				isShow: true,
+			});
+
+			return;
+		}
+
+		patchState(this.loader, { isShow: true });
+		this.courseRatingService.addRating(t).subscribe({
+			next: (res: any) => {
+				// console.log(res);
+				patchState(this.loader, { isShow: false });
+			},
+			error: err => {
+				console.log(err);
+				patchState(this.loader, { isShow: false });
+			},
+		});
+	}
+
+	toggleShowAll() {
+		this.showAll = !this.showAll;
 	}
 }

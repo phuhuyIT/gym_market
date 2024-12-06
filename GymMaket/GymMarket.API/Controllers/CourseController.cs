@@ -11,14 +11,26 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class CourseController : GenericController<CourseCreateDTO, CourseUpdateDTO, Course, string>
     {
-        public CourseController(IGenericRepository<Course, string> repository, IMapper mapper) : base(repository, mapper)
+        private readonly ICourseRepository courseRepository;
+
+        public CourseController(IGenericRepository<Course, string> repository, 
+            IMapper mapper, ICourseRepository courseRepository
+            ) : base(repository, mapper)
         {
+            this.courseRepository = courseRepository;
         }
 
         
         protected override string GetEntityId(Course entity)
         {
             return entity.CourseId;
+        }
+
+        [HttpGet("get-courses-of-trainer/{trainerId}")]
+        public async Task<IActionResult> GetCoursesOfTrainer(string trainerId)
+        {
+            var courses = await courseRepository.GetCoursesOfTrainer(trainerId);
+            return Ok(courses);
         }
     }
 }
