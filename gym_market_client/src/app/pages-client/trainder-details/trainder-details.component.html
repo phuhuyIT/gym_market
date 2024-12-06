@@ -6,29 +6,31 @@
 
 				<div class="bg-white p-4 pt-16 relative">
 					<div id="avatar" class="">
-						<img
-							class="w-36 mx-auto"
-							src="https://demos.creative-tim.com/argon-dashboard-pro-material-ui-v4/static/media/team-4-800x800.99c612eb.jpg"
-							alt=""
-						/>
+						<img class="w-36 mx-auto" [src]="trainerInfo.profilePicture" alt="" />
 					</div>
 
 					<!-- name -->
 					<div>
-						<h4 class="text-3xl text-center">Benson Lowndes</h4>
+						<h4 class="text-3xl text-center">{{ trainerInfo.name }}</h4>
 					</div>
 
 					<!-- bio -->
 					<div>
 						<h4 class="text-xl text-center">
-							porttitor lorem id ligula suspendisse ornare consequat lectus
+							{{ trainerInfo.bio }}
 						</h4>
 					</div>
 
 					<div class="flex justify-around items-center">
-						<div class="text-lg font-bold">Rating: 4</div>
-						<div class="text-lg font-bold">Experience: 10</div>
+						<div class="text-lg font-bold">Rating: {{ trainerInfo.rating }}</div>
+						<div class="text-lg font-bold">
+							Experience: {{ trainerInfo.experience }}
+						</div>
 					</div>
+
+                    <div class="mt-2">
+                        <button type="button" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">Send message</button>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -44,9 +46,9 @@
 						>
 						<input
 							type="text"
-							id="first_name"
+							disabled
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							value="Maureen Turcotte"
+							value="{{ trainerInfo.name }}"
 						/>
 					</div>
 
@@ -56,10 +58,10 @@
 						>
 						<input
 							type="text"
-							id="first_name"
+							disabled
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							required
-							value="doloremque@gmail.com"
+							value="{{ userInfo.email }}"
 						/>
 					</div>
 
@@ -69,9 +71,9 @@
 						>
 						<input
 							type="text"
-							id="first_name"
+							disabled
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							value="97376 Murazik Gateway"
+							value="{{ userInfo.address }}"
 						/>
 					</div>
 
@@ -81,7 +83,7 @@
 						>
 						<input
 							type="text"
-							id="first_name"
+							disabled
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							value="732.357.8796"
 						/>
@@ -92,9 +94,9 @@
 							>Certification</label
 						>
 						<textarea
+							disabled
 							class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-						>
-Omnis tenetur vel est magni explicabo. Eos distinctio error aut quam et. Sit reiciendis nisi qui fuga beatae officiis quia. Omnis tempore velit reiciendis eveniet et autem debitis dolorem.</textarea
+							>{{ trainerInfo.certification }}</textarea
 						>
 					</div>
 				</div>
@@ -106,6 +108,7 @@ Omnis tenetur vel est magni explicabo. Eos distinctio error aut quam et. Sit rei
 		<div class="font-medium text-3xl border-b text-center p-3 mb-3">Courses</div>
 
 		<div class="grid grid-cols-4 gap-4">
+			@for (item of coursesOfTrainer.slice(0, 4); track $index) {
 			<div>
 				<a
 					href="#"
@@ -113,125 +116,22 @@ Omnis tenetur vel est magni explicabo. Eos distinctio error aut quam et. Sit rei
 				>
 					<img
 						class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
-						src="https://flowbite.com/docs/images/blog/image-4.jpg"
+						src="/assets/gym_logo.png"
 						alt=""
 					/>
 					<div class="flex flex-col justify-between p-4 leading-normal">
 						<h5
 							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
 						>
-							omnis enim sed
+							{{ item.title }}
 						</h5>
 						<p class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400">
-							Velit laboriosam accusantium dolore est. Ipsam molestiae nostrum
-							voluptates sed laborum. Vitae veniam itaque magnam at molestiae.
-							Quisquam dignissimos quod quibusdam dolorum et. Consequatur aut eos
-							officiis et. Ad dicta molestias beatae veniam quos mollitia eum
-							dolores.\nAtque itaque qui sapiente. Nihil nemo molestiae omnis.
-							Praesentium quis ullam placeat. Accusamus quia eos numquam asperiores
-							voluptatem autem magni.\nFacilis vel ut quaerat tempore qui blanditiis
-							quia. Culpa temporibus tempora. Rerum non ut. Cum sunt nisi eos aut
-							commodi vitae fugiat non. Qui ullam temporibus aspernatur enim ut a
-							adipisci et.
+							{{ item.desciption }}
 						</p>
 					</div>
 				</a>
 			</div>
-
-			<div>
-				<a
-					href="#"
-					class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-				>
-					<img
-						class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
-						src="https://flowbite.com/docs/images/blog/image-4.jpg"
-						alt=""
-					/>
-					<div class="flex flex-col justify-between p-4 leading-normal">
-						<h5
-							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-						>
-							Voluptatem nihil vel dicta aut aut quo veritatis nisi itaque.
-						</h5>
-						<p class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400">
-							Cumque cum accusamus eius quia sit dolorem ullam earum. Sint
-							necessitatibus aperiam sint quia et ullam minima aspernatur tempore. Ex
-							non inventore. Perferendis saepe doloribus accusantium sit repellendus
-							sequi animi reprehenderit exercitationem.\n \nUnde nostrum repellendus
-							accusamus ab. Illum quia doloribus. Atque eos cumque corporis aperiam
-							quo. Sint dolore voluptatibus est voluptatem. Minus et autem culpa ut
-							officiis quaerat architecto. Id accusamus dolorem sunt voluptatem
-							quaerat officiis dolor.\n \nLibero quia dolor iste quis quidem sint
-							atque molestiae. Quia accusamus incidunt excepturi quod maxime
-							doloremque et quaerat. Ducimus et iusto et non consequatur cum ut
-							deleniti autem. Unde voluptatem ut eos sed mollitia sequi. Nobis
-							suscipit rerum et. Consequatur cupiditate magnam dignissimos omnis hic
-							qui quis odit.
-						</p>
-					</div>
-				</a>
-			</div>
-
-			<div>
-				<a
-					href="#"
-					class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-				>
-					<img
-						class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
-						src="https://flowbite.com/docs/images/blog/image-4.jpg"
-						alt=""
-					/>
-					<div class="flex flex-col justify-between p-4 leading-normal">
-						<h5
-							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-						>
-							doloribus velit rem
-						</h5>
-						<p class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400">
-							Nostrum molestiae est error repellendus temporibus in. Similique labore
-							est et deleniti nisi illo voluptas. Omnis est voluptas repudiandae error
-							eum ea. Enim ut voluptatem vero iste. Ut nihil quo repellat eaque aut
-							aspernatur est.\n \nOfficiis adipisci maxime aperiam tempore sit.
-							Molestiae dolores ullam excepturi. Et distinctio qui voluptate ducimus
-							et cumque. Dolorem autem vel corporis velit.\n \nAspernatur molestiae
-							deleniti dolorem alias totam quia ex. Libero ad dolorum repellendus
-							neque. Nostrum iste nam possimus fugit dolorem dolorum.
-						</p>
-					</div>
-				</a>
-			</div>
-
-			<div>
-				<a
-					href="#"
-					class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-				>
-					<img
-						class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
-						src="https://flowbite.com/docs/images/blog/image-4.jpg"
-						alt=""
-					/>
-					<div class="flex flex-col justify-between p-4 leading-normal">
-						<h5
-							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-						>
-							rerum accusantium necessitatibus
-						</h5>
-						<p class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400">
-							Aperiam et ut. Repudiandae architecto blanditiis voluptatibus. Nesciunt
-							id sit necessitatibus. Et velit repudiandae voluptate aut.\nCum neque
-							voluptates occaecati laboriosam praesentium. Saepe quae sit doloribus.
-							Consequuntur asperiores mollitia. Impedit ipsa amet adipisci voluptate
-							aut quibusdam.\nVeritatis aut doloremque ut quia ea delectus id quis.
-							Qui sunt delectus odit dolorem magnam veritatis consectetur. Dolore
-							consequatur porro deserunt eius. Sequi dicta quam. Optio voluptatibus
-							quasi eveniet. Ex autem eaque ducimus dicta voluptate excepturi velit.
-						</p>
-					</div>
-				</a>
-			</div>
+			}
 		</div>
 	</div>
 </div>

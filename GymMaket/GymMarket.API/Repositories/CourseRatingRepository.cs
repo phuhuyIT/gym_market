@@ -1,27 +1,63 @@
 ﻿using AutoMapper;
 using GymMarket.API.Data;
+using GymMarket.API.DTOs.CourseRating;
+using GymMarket.API.DTOs.Response;
 using GymMarket.API.Models;
-using GymMarket.API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Repositories
 {
-    public class CourseRatingRepository : GenericRepository<CourseRating, string>, ICourseRatingRepository
+    public class CourseRatingRepository
     {
         private readonly GymMarketContext _context;
-        public CourseRatingRepository(GymMarketContext context, IMapper mapper) : base(context, mapper)
+        private readonly IMapper mapper;
+
+        public CourseRatingRepository(GymMarketContext context, IMapper mapper)
         {
             _context = context;
+            this.mapper = mapper;
         }
 
-         async Task<IEnumerable<CourseRating>> ICourseRatingRepository.GetByCourseIdAsync(string courseId)
+        public async Task<ApiResponse> AddCourseRating(CourseRatingCreateDTO courseRatingCreateDTO)
         {
-            var courseRating = await (from c in _context.Courses
-                                       join cor in _context.CourseRatings on c.CourseId equals cor.CourseId
-                                       where c.CourseId == courseId
-                                       select cor).ToListAsync();
+            var courseRating = new CourseRating
+            {
+                CourseId = courseRatingCreateDTO.CourseId,
+                RatingId = courseRatingCreateDTO.RatingId,
+                RatingValue = courseRatingCreateDTO.RatingValue,
+                ReviewComment = courseRatingCreateDTO.ReviewComment,
+                StudentId = courseRatingCreateDTO.StudentId,
+            };
 
-            return courseRating;
+            var ratings = await _context.CourseRatings
+                   .AsNoTrackingWithIdentityResolution().Where(c => c.CourseId == courseRating.CourseId)
+                   .Select(c => c.RatingValue)
+                   .ToListAsync();
+
+            var verageRating = (ratings.Sum() + courseRating.RatingValue) / (ratings.Count() + 1);
+
+            var course = await _context.Courses
+                .AsNoTrackingWithIdentityResolution()
+                .Where(c => c.CourseId == courseRating.CourseId)
+                .FirstOrDefaultAsync();
+            if (course != null)
+            {
+                course.Rating = verageRating;
+                _context.Courses.Update(course);
+            }
+            _context.CourseRatings.Add(courseRating);
+            var r = await _context.SaveChangesAsync();
+            if(r > 0)
+            {
+                return new DTOs.Response.ApiResponse { Message = "Thêm thành công", StatusCode = 200, Success = true };
+            }
+            return new DTOs.Response.ApiResponse { Message = "Thêm thất bại. Vui lòng thử lại.", StatusCode = 400, Success = false };
+        }
+
+        public async Task<List<CourseRating>> GetCourseRatings(string courseId)
+        {
+            var ratings = await _context.CourseRatings.AsNoTrackingWithIdentityResolution().Where(c => c.CourseId == courseId).ToListAsync();
+            return ratings;
         }
     }
 }

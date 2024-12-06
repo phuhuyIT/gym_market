@@ -95,8 +95,9 @@ builder.Services.AddAuthentication(options =>
 // repositories
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICourseOptionRepository, CourseOptionRepository>();
-builder.Services.AddScoped<ICourseRatingRepository, CourseRatingRepository>();
+builder.Services.AddScoped<CourseRatingRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 // service
 builder.Services.AddScoped<JWTService>();

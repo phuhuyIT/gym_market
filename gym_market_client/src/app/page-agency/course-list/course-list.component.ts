@@ -7,6 +7,7 @@ import { patchState } from '@ngrx/signals';
 import { ErrorModalStore } from '../../stores/error-modal.store';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { FormsModule } from '@angular/forms';
+import { UserStore } from '../../stores/user.store';
 
 @Component({
 	selector: 'app-course-list',
@@ -23,6 +24,7 @@ export class CourseListComponent {
 	courseIdToDelete: string = '';
 	errorModalStore = inject(ErrorModalStore);
 	noticeStore = inject(NoticeModalStore);
+    userStore = inject(UserStore)
 
 	searchString: string = '';
 
@@ -31,7 +33,7 @@ export class CourseListComponent {
 	ngOnInit() {
 		patchState(this.loaderStore, { isShow: true });
 
-		this.courseAgencyService.getCourses().subscribe({
+		this.courseAgencyService.getCoursesOftrainer(this.userStore.trainerId()).subscribe({
 			next: (res: any) => {
 				// console.log(res);
 				this.courses = res;

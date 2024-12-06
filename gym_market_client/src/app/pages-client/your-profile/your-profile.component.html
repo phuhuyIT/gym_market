@@ -4,12 +4,12 @@
 			<div class="col-span-4">
 				<div class="p-4">
 					<div class="mb-4">
-						<img [src]="" alt="Image is not valid" />
+						<img [src]="studentInfo.profilePicture" alt="Image is not valid" />
 					</div>
 
 					<div class="text-center text-3xl">
 						<button
-							routerLink="/agency/edit-profile"
+							routerLink="/client/update-profile"
 							type="button"
 							class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
 						>
@@ -27,7 +27,7 @@
 						<input
 							type="text"
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							[value]=""
+							[value]="userInfo.fullName"
 							disabled
 						/>
 					</div>
@@ -38,7 +38,7 @@
 						<input
 							type="text"
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							[value]=""
+							[value]="userInfo.address"
 							disabled
 						/>
 					</div>
@@ -52,7 +52,7 @@
 							<input
 								type="text"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								[value]=""
+								[value]="userInfo.email"
 								disabled
 							/>
 						</div>
@@ -66,68 +66,28 @@
 								type="text"
 								id="title"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								[value]=""
+								[value]="userInfo.phoneNumber"
 								disabled
 							/>
 						</div>
 					</div>
 
-					<!-- bio -->
-					<div class="mb-3">
-						<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
-							>Bio</label
-						>
-						<input
-							type="text"
-							id="title"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							[value]=""
-							disabled
-						/>
-					</div>
+			
 
-					<!-- rating -->
-					<div class="mb-3">
-						<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
-							>Rating</label
-						>
-						<input
-							type="text"
-							id="title"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							[value]=""
-							disabled
-						/>
-					</div>
-
+					
 					<!-- Experience -->
 					<div class="mb-3">
 						<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
-							>Năm kinh nghiệm</label
+							>Health Status</label
 						>
 
                         <input
 							type="text"
 							id="title"
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							[value]=""
+							[value]="studentInfo.healthStatus"
 							disabled
 						/>
-					</div>
-
-					<!-- Certification -->
-					<div class="mb-3">
-						<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
-							>Chứng chỉ</label
-						>
-						<textarea
-							rows="4"
-							type="text"
-							id="title"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							disabled
-							></textarea
-						>
 					</div>
 				</div>
 			</div>

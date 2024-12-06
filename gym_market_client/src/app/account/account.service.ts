@@ -75,7 +75,8 @@ export class AccountService {
 				fullName: decoded.unique_name,
 				id: decoded.nameid,
 				phoneNumber: decoded.homePhone,
-                trainerId: decoded.trainerId
+                trainerId: decoded.trainerId,
+                studentId: decoded.studentId,
 			});
 		}
 	}
