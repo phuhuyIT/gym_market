@@ -16,4 +16,8 @@ export class TrainerService {
     updateTrainerProfile(model: UpdateTrainerProfileDto, trainerId: string) {
         return this.http.put(`${environment.baseApi}/trainer/${trainerId}`, model);
     }
+
+    getTrainers() {
+        return this.http.get(`${environment.baseApi}/trainer`);
+    }
 }

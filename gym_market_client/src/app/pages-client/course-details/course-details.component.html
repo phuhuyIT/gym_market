@@ -1,0 +1,230 @@
+<div class="wrapper">
+	<div id="banner" class="bg-red-400 h-[80dvh] w-full flex justify-center items-center mb-10">
+		<div class="w-1/2">
+			<p id="title" class="text-center text-4xl font-bold p-4">omnis enim sed</p>
+			<p id="des" class="text-center text-xl p-5">
+				Velit laboriosam accusantium dolore est. Ipsam molestiae nostrum voluptates sed
+				laborum. Vitae veniam itaque magnam at molestiae. Quisquam dignissimos quod
+				quibusdam dolorum et. Consequatur aut eos officiis et. Ad dicta molestias beatae
+				veniam quos mollitia eum dolores.\nAtque itaque qui sapiente. Nihil nemo molestiae
+				omnis. Praesentium quis ullam placeat. Accusamus quia eos numquam asperiores
+				voluptatem autem magni.\nFacilis vel ut quaerat tempore qui blanditiis quia. Culpa
+				temporibus tempora. Rerum non ut. Cum sunt nisi eos aut commodi vitae fugiat non.
+				Qui ullam temporibus aspernatur enim ut a adipisci et.
+			</p>
+		</div>
+	</div>
+
+	<div class="container mx-auto">
+		<!-- details -->
+		<div class="shadow-[0_3px_10px_rgb(0,0,0,0.2)] p-5 rounded-md overflow-hidden">
+			<div class="grid grid-cols-6">
+				<div class="col-span-4 p-3">
+					<!-- course option -->
+					<div class="border border-gray-200 p-2 rounded-md mb-4">
+						<div class="text-xl font-bold">Course options</div>
+
+						<div>
+							@for (op of courseOptions; track $index) {
+							<div>
+								<div class="mb-3">
+									<div class="border-t py-3 rounded-lg">
+										<h2 class="text-lg font-bold text-gray-900 title-font mb-2">
+											{{ op.optionName }}
+										</h2>
+
+										<p class="leading-relaxed text-base">
+											{{ op.description }}
+										</p>
+
+										<p class="leading-relaxed text-base">
+											<span class="font-bold">Price</span>: {{ op.price }}
+										</p>
+									</div>
+								</div>
+							</div>
+							}
+						</div>
+					</div>
+
+					<!-- rating -->
+					<div>
+						<div class="text-xl font-bold">Add your review</div>
+
+						<div>
+							<div>
+								<label
+									for="first_name"
+									class="block mb-2 text-lg font-medium text-gray-900"
+									>Add your rate</label
+								>
+								<input
+									type="text"
+									id="first_name"
+									class="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+									placeholder="John"
+									required
+								/>
+							</div>
+
+							<div>
+								<label
+									for="message"
+									class="block mb-2 text-lg font-medium text-gray-900"
+									>Comment</label
+								>
+								<textarea
+									id="message"
+									rows="4"
+									class="block p-2.5 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 "
+									placeholder="Write your thoughts here..."
+								></textarea>
+							</div>
+
+                            <div class="mt-3">
+                                <button class="add-review">
+                                    <span class="hover"></span>
+                                    <span>Preview</span>
+                               </button>
+                            </div>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="col-span-2 border-s p-3">
+					<div class="text-3xl font-semibold">Course details</div>
+
+					<div class="grid grid-cols-1 grid-rows-1 gap-4">
+						<div>
+							<label class="block mb-2 text-sm font-medium text-gray-900">Type</label>
+							<input
+								type="text"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								placeholder="John"
+								disabled
+								value="Pilates"
+							/>
+						</div>
+
+						<div>
+							<label class="block mb-2 text-sm font-medium text-gray-900"
+								>Category</label
+							>
+							<input
+								type="text"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								placeholder="John"
+								disabled
+								value="Stretching"
+							/>
+						</div>
+
+						<div>
+							<label class="block mb-2 text-sm font-medium text-gray-900"
+								>Price</label
+							>
+							<input
+								type="text"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								placeholder="John"
+								disabled
+								value="5000.00"
+							/>
+						</div>
+
+						<div>
+							<label class="block mb-2 text-sm font-medium text-gray-900"
+								>Additional Price</label
+							>
+							<input
+								type="text"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								placeholder="John"
+								disabled
+								value="300.00"
+							/>
+						</div>
+
+						<div>
+							<label class="block mb-2 text-sm font-medium text-gray-900"
+								>Start Date</label
+							>
+							<input
+								type="text"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								placeholder="John"
+								disabled
+								value="2024-11-27"
+							/>
+						</div>
+
+						<div>
+							<label class="block mb-2 text-sm font-medium text-gray-900"
+								>End Date</label
+							>
+							<input
+								type="text"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								placeholder="John"
+								disabled
+								value="2024-12-07"
+							/>
+						</div>
+
+						<div>
+							<label class="block mb-2 text-sm font-medium text-gray-900"
+								>Duration</label
+							>
+							<input
+								type="text"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								placeholder="John"
+								disabled
+								value="10"
+							/>
+						</div>
+
+						<div>
+							<label class="block mb-2 text-sm font-medium text-gray-900"
+								>Max Participants</label
+							>
+							<input
+								type="text"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								placeholder="John"
+								disabled
+								value="4"
+							/>
+						</div>
+
+						<div>
+							<label class="block mb-2 text-sm font-medium text-gray-900"
+								>Rating</label
+							>
+							<input
+								type="text"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								placeholder="John"
+								disabled
+								value="4"
+							/>
+						</div>
+
+						<div class="">
+							<button class="w-full code_view actionBtn9 buy-course">
+								<span class="txt">Add to card</span>
+								<span class="bubble_inner">
+									<span class="bubble"></span>
+									<span class="bubble"></span>
+									<span class="bubble"></span>
+									<span class="bubble"></span>
+								</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

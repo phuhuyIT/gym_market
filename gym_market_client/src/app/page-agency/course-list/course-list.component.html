@@ -1,8 +1,7 @@
 <div class="wrapper">
-	<div class="container mx-auto">
-		<div class="grid grid-cols-12">
-
-			<div class="col-span-3 border-e border-e-gray-400">
+	<div class="mx-auto">
+		<div class="grid grid-cols-12 p-4">
+			<div class="col-span-2">
 				<div class="p-3">
 					<!-- SEARCH BUTTON -->
 
@@ -38,99 +37,80 @@
 				</div>
 			</div>
 
-			<div class="col-span-9">
-				<div class="p-3">
-					<!-- list -->
-					<div class="overflow-y-scroll h-[700px]">
-						@for (item of coursestemp; track $index) {
-						<div class="border rounded-xl mb-3 overflow-hidden grid grid-cols-12 gap-2">
-							<div class="col-span-2">
-								<img
-									class="w-full"
-									src="https://yt3.googleusercontent.com/ytc/AGIKgqNh8xK1GI0_yiSfDSOAZfFcezJwI21S-UFRvMxQvA=s900-c-k-c0x00ffffff-no-rj"
-									alt=""
-								/>
-							</div>
+			<div class="col-span-10">
+				<div class=" overflow-x-auto shadow-md sm:rounded-lg min-h-screen">
+					<table class="w-full text-sm text-left rtl:text-right text-gray-500">
+						<thead class="text-xs text-gray-700 uppercase bg-gray-50">
+							<tr>
+								<th scope="col" class="px-6 py-3"></th>
+								<th scope="col" class="px-6 py-3">Title</th>
+								<th scope="col" class="px-6 py-3">Description</th>
+								<th scope="col" class="px-6 py-3">Type</th>
+								<th scope="col" class="px-6 py-3">Category</th>
+								<th scope="col" class="px-6 py-3">Price</th>
+								<th scope="col" class="px-6 py-3">Additional Price</th>
+								<th scope="col" class="px-6 py-3">Start date</th>
+								<th scope="col" class="px-6 py-3">End date</th>
+								<th scope="col" class="px-6 py-3">Duration</th>
+								<th scope="col" class="px-6 py-3">Max Participants</th>
+								<th scope="col" class="px-6 py-3">Rating</th>
+								<th scope="col" class="px-6 py-3">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							@for (item of coursestemp; track $index) {
+							<tr
+								class="odd:bg-white even:bg-gray-900 odd:text-gray-900 even:text-white"
+							>
+								<th>
+									<div class="flex items-center justify-center">
+										<img
+											class="w-10 rounded-full"
+											src="https://yt3.googleusercontent.com/ytc/AGIKgqNh8xK1GI0_yiSfDSOAZfFcezJwI21S-UFRvMxQvA=s900-c-k-c0x00ffffff-no-rj"
+											alt=""
+										/>
+									</div>
+								</th>
 
-							<div class="col-span-8">
-								<h1 class="font-medium text-xl">{{ item.title }}</h1>
-								<p class="clamp">{{ item.description }}</p>
-								<div>
-									<div class="inline-block me-5">
-										<span class="font-bold">Type:</span>
-										<span> {{ item.type }}</span>
-									</div>
-									<div class="inline-block">
-										<span class="font-bold">Category:</span>
-										<span> {{ item.category }}</span>
-									</div>
-								</div>
+								<th scope="row" class="px-6 py-4 font-medium">
+                                    <div class=" clamp w-[70px]">
+                                        {{ item.title }}
+                                    </div>
+								</th>
+								<td class="px-6 py-4">
+                                    <div class=" clamp w-[200px]">
+                                        {{ item.description }}
+                                    </div>
+                                </td>
+								<td class="px-6 py-4">{{ item.type }}</td>
+								<td class="px-6 py-4">{{ item.category }}</td>
+								<td class="px-6 py-4">{{ item.price }}</td>
+								<td class="px-6 py-4">{{ item.additionalPrice }}</td>
+								<td class="px-6 py-4">
+									{{ item.startDate | date : 'dd/MM/yyyy' }}
+								</td>
+								<td class="px-6 py-4">{{ item.endDate | date : 'dd/MM/yyyy' }}</td>
+								<td class="px-6 py-4">{{ item.duration }}</td>
+								<td class="px-6 py-4">{{ item.maxParticipants }}</td>
+								<td class="px-6 py-4">{{ item.rating }}</td>
 
-								<div>
-									<div class="inline-block me-5">
-										<span class="font-bold">Price:</span>
-										<span> {{ item.price }} </span>
-									</div>
-									<div class="inline-block">
-										<span class="font-bold">Additional price: </span>
-										<span> {{ item.additionalPrice }} </span>
-									</div>
-								</div>
-
-								<div>
-									<div class="inline-block me-5">
-										<span class="font-bold">Ngày bắt đầu:</span>
-										<span>
-											{{ item.startDate | date : 'dd/MM/yyyy' }}
-										</span>
-									</div>
-									<div class="inline-block">
-										<span class="font-bold">Ngày kết thúc: </span>
-										<span> {{ item.endDate | date : 'dd/MM/yyyy' }} </span>
-									</div>
-								</div>
-
-								<div>
-									<div class="inline-block me-5">
-										<span class="font-bold">Duration: </span>
-										<span>{{ item.duration }}</span>
-									</div>
-									<div class="inline-block">
-										<span class="font-bold">Số người tham gia tối đa: </span>
-										<span>{{ item.maxParticipants }}</span>
-									</div>
-								</div>
-
-								<p>
-									<span class="font-bold">Rating: </span>
-									<span>{{ item.rating }}</span>
-								</p>
-							</div>
-
-							<div class="col-span-2">
-								<div class="h-full border p-3">
-									<button
-										[routerLink]="
-											'/agency/update-course/' + item.courseId
-										"
-										type="button"
-										class="block w-full focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+								<td class="px-6 py-4">
+									<a
+										[routerLink]="'/agency/update-course/' + item.courseId"
+										class="font-medium text-blue-600 hover:underline"
+										>Edit</a
 									>
-										Cập nhật
-									</button>
-
-									<button
+                                    <br>
+                                    <button
 										(click)="onShowDeleteModel(true, item.courseId)"
-										type="button"
-										class="block w-full focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+										class="font-medium text-red-600 hover:underline"
+										>Delete</button
 									>
-										Xóa
-									</button>
-								</div>
-							</div>
-						</div>
-						}
-					</div>
+								</td>
+							</tr>
+							}
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
