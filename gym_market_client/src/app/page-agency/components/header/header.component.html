@@ -56,11 +56,15 @@
 									(mouseleave)="onHiddenAccountOption()"
 								>
 									<a routerLink="/agency/your-profile" class="account_option_item"
-										>Thông tin cá nhân</a
+										>Profile</a
+									>
+
+                                    <a routerLink="/chat/chat-list" class="account_option_item"
+										>Chats</a
 									>
 
 									<button (click)="logout()" class="account_option_item">
-										Đăng xuất
+										Logout
 									</button>
 								</div>
 							</div>

@@ -77,6 +77,7 @@ export class AccountService {
 				phoneNumber: decoded.homePhone,
                 trainerId: decoded.trainerId,
                 studentId: decoded.studentId,
+                avatar: decoded.avatar,
 			});
 		}
 	}

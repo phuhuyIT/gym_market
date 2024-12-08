@@ -5,7 +5,6 @@ using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Repositories
 {

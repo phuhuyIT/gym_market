@@ -1,12 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { TrainerService } from '../../page-agency/trainer.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { TrainerInfoDto } from '../../page-agency/models/trainer-inf0.dto';
 import { UserService } from '../../user/user.service';
 import { UserInfoDto } from '../../user/models/user-info.dto';
 import { CourseAgencyService } from '../../page-agency/course-agency.service';
+import { ConversationService } from '../../chat/conversation.service';
+import { UserStore } from '../../stores/user.store';
 
 @Component({
 	selector: 'app-trainder-details',
@@ -23,11 +25,15 @@ export class TrainderDetailsComponent {
 	userInfo!: UserInfoDto;
 	coursesOfTrainer: any;
 
+	userStore = inject(UserStore);
+
 	constructor(
 		private trainerService: TrainerService,
 		private activatedRoute: ActivatedRoute,
 		private userService: UserService,
-		private courseAgencyService: CourseAgencyService
+		private courseAgencyService: CourseAgencyService,
+		private conversationService: ConversationService,
+        private router: Router
 	) {}
 
 	ngOnInit() {
@@ -91,6 +97,27 @@ export class TrainderDetailsComponent {
 			next: (res: any) => {
 				// console.log(res);
 				this.coursesOfTrainer = res;
+			},
+		});
+	}
+
+	// create conversation
+	onSendMessage() {
+		const model = {
+			senderId: this.userStore.id(),
+			recieveId: this.userInfo.id,
+		};
+
+		patchState(this.loader, { isShow: true });
+		this.conversationService.createConversation(model).subscribe({
+			next: (res: any) => {
+				// console.log(res);
+				patchState(this.loader, { isShow: false });
+                this.router.navigateByUrl('/chat/chat-list')
+			},
+			error: err => {
+				// console.log(err);
+				patchState(this.loader, { isShow: false });
 			},
 		});
 	}

@@ -1,4 +1,5 @@
 ﻿using GymMarket.API.Data;
+using GymMarket.API.Hubs;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories;
 using GymMarket.API.Repositories.IRepositories;
@@ -98,6 +99,7 @@ builder.Services.AddScoped<ICourseOptionRepository, CourseOptionRepository>();
 builder.Services.AddScoped<CourseRatingRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<ConversationRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 // service
 builder.Services.AddScoped<JWTService>();
@@ -109,6 +111,7 @@ builder.Services.AddCors(c =>
     c.AddPolicy("AllowOrigin", option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
+builder.Services.AddSignalR();
 
 
 var app = builder.Build();
@@ -121,13 +124,16 @@ if (app.Environment.IsDevelopment())
 }
 
 // enable cors
-app.UseCors(option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
+//app.UseCors(option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200"));
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseWebSockets();
+app.MapHub<ChatHub>("hubs/chat");
 
 app.MapControllers();
 

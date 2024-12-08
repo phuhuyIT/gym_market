@@ -61,6 +61,7 @@ export class LoginComponent {
 				// console.log(res);
 				patchState(this.loader, { isShow: false });
 				this.accountService.saveToken(res.token);
+				this.accountService.checkLogin();
                 const role = this.accountService.getRole();
 
                 if(role === ROLES.TRAINER) {
