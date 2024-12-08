@@ -1,0 +1,98 @@
+<div class="bg-gray-100">
+	<div class="grid grid-cols-10 min-h-screen">
+		<div class="col-span-3 p-5">
+			<div class="bg-white rounded-xl p-3 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+				<div class="text-2xl font-bold border-b">Chats</div>
+
+				<div class="h-[90vh] overflow-y-scroll">
+					@for (item of chats; track $index) {
+					<div
+						(click)="getMessages(item)"
+						class="flex gap-2 rounded-xl p-2 hover:bg-gray-200 duration-100 cursor-pointer"
+						[ngClass]="{ 'bg-[#fecaca]': item.hasNewMessage === true }"
+					>
+						<img class="w-20 rounded-full" [src]="item.avatar" alt="" />
+						<div class="">
+							<div class="text-lg font-medium">{{ item.conversationName }}</div>
+							<div class="text-sm">{{ item.lastMessage }}</div>
+						</div>
+                        
+					</div>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-span-7 p-5">
+			<div class="bg-white h-full rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+				<div class="flex gap-2 rounded-xl p-2 border-b-2">
+					<img class="w-16 rounded-full" [src]="conversationUrl" alt="" />
+					<div class="flex items-center">
+						<div class="text-lg font-medium">{{ conversationName }}</div>
+					</div>
+				</div>
+
+				<div>
+					<div class="h-[81vh] overflow-y-scroll p-3">
+						@for (message of messages; track $index) { @if(message.senderId ===
+						userStore.id()) {
+						<div class="flex mb-4 items-start justify-start">
+                            <div class="w-[300px]"></div>
+							<div class="flex-1">
+								<div class="w-full rounded-xl p-2 bg-[#3b82f6] text-white">
+									{{ message.content }}
+								</div>
+							</div>
+
+							<div class="w-[60px] p-2">
+								<img class="mx-auto w-6 rounded-full" [src]="userStore.avatar()" alt="" />
+							</div>
+						</div>
+						} @else {
+						<div class="flex mb-4 items-start justify-start">
+							<div class="w-[60px] p-2">
+								<img class="w-6 rounded-full" [src]="conversationUrl" alt="" />
+							</div>
+							<div class="flex-1">
+								<div class="rounded-xl p-2 bg-[#e5e7eb] text-[#111827]">
+									{{ message.content }}
+								</div>
+							</div>
+                            <div class="w-[300px]"></div>
+						</div>
+						} }
+					</div>
+
+					@if(conversationName !== '') {
+					<div class="bg-[#cbd5e1] flex p-2 gap-2 items-center">
+						<input
+							[(ngModel)]="message"
+							type="text"
+							class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5"
+						/>
+						<button
+							(click)="sendMessage()"
+							class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-6"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+								/>
+							</svg>
+						</button>
+					</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

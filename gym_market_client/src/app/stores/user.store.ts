@@ -5,10 +5,9 @@ type UserStore = {
 	id: string | null;
 	phoneNumber: string;
 	Address: string;
-	Avatar: string;
-	Status: string;
-	Email: string;
-	PhoneNumber: string;
+	avatar: string;
+	atatus: string;
+	amail: string;
 	trainerId: string;
 	studentId: string;
 };
@@ -18,10 +17,9 @@ const initalState: UserStore = {
 	id: null,
 	phoneNumber: '',
 	Address: '',
-	Avatar: '',
-	Status: '',
-	Email: '',
-	PhoneNumber: '',
+	avatar: '',
+	atatus: '',
+	amail: '',
 	trainerId: '',
 	studentId: '',
 };

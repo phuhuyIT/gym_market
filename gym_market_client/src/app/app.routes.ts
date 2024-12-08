@@ -20,6 +20,10 @@ export const routes: Routes = [
 		loadChildren: () => import('./page-agency/course-agency.routes').then(r => r.routes),
 		canActivate: [agencyGuard],
 	},
+    {
+		path: 'chat',
+		loadChildren: () => import('./chat/chat.routes').then(r => r.routes),
+	},
     { path: 'access-denied', component: NotFoundComponent, title: 'Access denied' },
 	{ path: '**', redirectTo: '/guest/access-denied' },
 ];

@@ -38,6 +38,7 @@ namespace GymMarket.API.Services
                 new Claim(ClaimTypes.HomePhone, string.IsNullOrEmpty(user.PhoneNumber) == false ? user.PhoneNumber : ""),
                 new Claim("trainerId", string.IsNullOrEmpty(trainerId) == false ? trainerId : ""),
                 new Claim("studentId", string.IsNullOrEmpty(studentId) == false ? studentId : ""),
+                new Claim("avatar", string.IsNullOrEmpty(user.Avatar) == false ? user.Avatar : "https://cdn-icons-png.flaticon.com/512/1999/1999625.png"),
             };
 
             var userRoles = await userManager.GetRolesAsync(user);
