@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Minio;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -101,8 +102,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ConversationRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+
 // service
 builder.Services.AddScoped<JWTService>();
+builder.Services.AddScoped<MinIOService>();
 
 
 // enable cors
@@ -113,6 +116,15 @@ builder.Services.AddCors(c =>
 
 builder.Services.AddSignalR();
 
+builder.Services.AddSingleton<IMinioClient>(sp =>
+{
+    var config = builder.Configuration.GetSection("MinIO");
+    var client = new MinioClient()
+                    .WithEndpoint(config["Endpoint"])
+                    .WithCredentials(config["AccessKey"], config["SecretKey"])
+                    .Build();
+    return client;
+});
 
 var app = builder.Build();
 

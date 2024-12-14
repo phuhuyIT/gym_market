@@ -40,6 +40,7 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
     public virtual DbSet<Conversation> Conversations { get; set; }
     public virtual DbSet<UserMessage> UserMessages { get; set; }
     public virtual DbSet<ConversationParticipant> ConversationParticipants { get; set; }
+    public virtual DbSet<FileCourse> FileCourses { get; set; }
 
     public GymMarketContext(DbContextOptions<GymMarketContext> options)
         : base(options)

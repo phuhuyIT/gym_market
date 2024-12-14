@@ -2,6 +2,7 @@
 using GymMarket.API.DTOs.Course;
 using GymMarket.API.DTOs.CourseOption;
 using GymMarket.API.DTOs.CourseRating;
+using GymMarket.API.DTOs.FileMinIO;
 using GymMarket.API.DTOs.Student;
 using GymMarket.API.DTOs.Trainer;
 using GymMarket.API.Models;
@@ -47,6 +48,12 @@ namespace GymMarket.API.MappingProfiles
 
             CreateMap<CourseRatingCreateDTO, CourseRating>()
               .ReverseMap();
+
+            CreateMap<Course, GetCourseDto>()
+                .ReverseMap();
+
+            CreateMap<FileCourse, GetFileDto>()
+                .ReverseMap();
         }
     }
 }

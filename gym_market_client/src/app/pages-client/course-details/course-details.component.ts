@@ -30,6 +30,9 @@ export class CourseDetailsComponent {
 	ratings: any = [];
 	showAll: boolean = false;
 
+    images: any = [];
+    videos: any = [];
+
 	constructor(
 		private courseService: CourseAgencyService,
 		private activatedRoute: ActivatedRoute,
@@ -55,6 +58,8 @@ export class CourseDetailsComponent {
 				this.courseService.getCourse(params.id).subscribe({
 					next: (res: any) => {
 						this.course = res;
+                        this.images = res.getFileDtos.filter((c: any) => c.typeFile === 'IMAGE').map((c: any) => c.url);
+                        this.videos = res.getFileDtos.filter((c: any) => c.typeFile === 'VIDEO').map((c: any) => c.url);
 						// patchState(this.loader, { isShow: false });
 					},
 					error: err => {

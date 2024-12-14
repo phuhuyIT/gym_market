@@ -22,6 +22,12 @@ export class UpdateCourseComponent {
 	errorStore = inject(ErrorModalStore);
 	noticeStore = inject(NoticeModalStore);
 
+	dataImages: any = []; // lưu data của images để hiển thị trên view
+	private imagesAdd: any = []; // chứa đối tượng file để tải lên server
+
+	dataVideos: any = []; // lưu data của video để hiển thị trên view
+	private videosAdd: any = []; // chứa đối tượng file để tải lên server
+
 	constructor(
 		private activatedRoute: ActivatedRoute,
 		private courseAgencyService: CourseAgencyService,
@@ -81,6 +87,10 @@ export class UpdateCourseComponent {
 		this.courseAgencyService.getCourse(id).subscribe({
 			next: (res: any) => {
 				// console.log(res);
+				const images = res.getFileDtos.filter((c: any) => c.typeFile === 'IMAGE').map((c: any) => c.url);
+				const videos = res.getFileDtos.filter((c: any) => c.typeFile === 'VIDEO').map((c: any) => c.url);
+				this.dataImages = images;
+				this.dataVideos = videos;
 				this.course = res;
 				this.initCourse();
 			},
@@ -94,10 +104,72 @@ export class UpdateCourseComponent {
 		});
 	}
 
+	onSlectImage(event: any) {
+		if (event.target.files.length > 0) {
+			for (let file of event.target.files) {
+				this.imagesAdd.push(file);
+
+				const reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = event => {
+					const data = event.target?.result;
+					this.dataImages.push(data);
+				};
+			}
+		}
+	}
+
+	onClearImages(input: any) {
+		this.dataImages = [];
+		this.imagesAdd = [];
+
+		input.value = '';
+	}
+
+	onClearVideo(input: any) {
+		this.dataVideos = [];
+		this.videosAdd = [];
+
+		input.value = '';
+	}
+
+	onSlectVideo(event: any) {
+		if (event.target.files.length > 0) {
+			for (let file of event.target.files) {
+				this.videosAdd.push(file);
+
+				const videoUrl = URL.createObjectURL(file);
+				this.dataVideos.push(videoUrl);
+			}
+		}
+	}
+
 	submit() {
+		const form = new FormData();
+		form.append('CourseId', this.form.controls['courseId'].value);
+		form.append('Title', this.form.controls['title'].value);
+		form.append('Description', this.form.controls['description'].value);
+		form.append('Type', this.form.controls['type'].value);
+		form.append('Category', this.form.controls['category'].value);
+		form.append('Price', this.form.controls['price'].value);
+		form.append('AdditionalPrice', this.form.controls['additionalPrice'].value);
+		form.append('StartDate', this.form.controls['startDate'].value);
+		form.append('EndDate', this.form.controls['endDate'].value);
+		form.append('Duration', this.form.controls['duration'].value);
+		form.append('MaxParticipants', this.form.controls['maxParticipants'].value);
+		form.append('TrainerId', this.form.controls['trainerId'].value);
+
+		for (let file of this.imagesAdd) {
+			form.append('Images', file);
+		}
+
+		for (let file of this.videosAdd) {
+			form.append('Videos', file);
+		}
+
 		patchState(this.loaderStore, { isShow: true });
 
-		this.courseAgencyService.updateCourse(this.form.value).subscribe({
+		this.courseAgencyService.updateCourse(form).subscribe({
 			next: (res: any) => {
 				patchState(this.loaderStore, { isShow: false });
 				patchState(this.noticeStore, { isShow: true, message: 'Cập nhật thành công' });

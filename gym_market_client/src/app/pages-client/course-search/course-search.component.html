@@ -35,7 +35,7 @@
 					>
 						<img
 							class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
-							src="/assets/gym_logo.png"
+							[src]="item.getFileDtos!== null && item.getFileDtos.length > 0 ? item.getFileDtos[0].url : '/assets/gym_logo.png'"
 							alt=""
 						/>
 						<div class="flex flex-col justify-between p-4 leading-normal">
