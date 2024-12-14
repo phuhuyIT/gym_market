@@ -13,15 +13,15 @@ export class CourseAgencyService {
 	}
 
 	getCourses() {
-		return this.http.get(`${environment.baseApi}/course`);
+		return this.http.get(`${environment.baseApi}/course/get-courses`);
 	}
 
 	getCourse(id: string) {
-		return this.http.get(`${environment.baseApi}/course/${id}`);
+		return this.http.get(`${environment.baseApi}/Course/get-course/${id}`);
 	}
 
 	updateCourse(model: any) {
-		return this.http.put(`${environment.baseApi}/course/${model.courseId}`, model);
+		return this.http.put(`${environment.baseApi}/Course/update-course/`, model);
 	}
 
 	removeCourse(id: string) {
