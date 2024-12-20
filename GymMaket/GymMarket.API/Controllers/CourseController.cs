@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GymMarket.API.DTOs.Course;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,22 +14,22 @@ namespace GymMarket.API.Controllers
     {
         private readonly ICourseRepository courseRepository;
 
-        public CourseController(IGenericRepository<Course, string> repository, 
+        public CourseController(IGenericRepository<Course, string> repository,
             IMapper mapper, ICourseRepository courseRepository
             ) : base(repository, mapper)
         {
             this.courseRepository = courseRepository;
         }
-        
+
         protected override string GetEntityId(Course entity)
         {
             return entity.CourseId;
         }
 
         [HttpPut("update-course")]
-        public async Task<IActionResult> UpdateCourse([FromForm]CourseUpdateDTO courseUpdate)
+        public async Task<IActionResult> UpdateCourse([FromForm] CourseUpdateDTO courseUpdate)
         {
-           var res = await courseRepository.UpdateCourse(courseUpdate);
+            var res = await courseRepository.UpdateCourse(courseUpdate);
             return StatusCode(res.StatusCode, new { res.Message, res.Errors });
         }
 
@@ -44,7 +45,7 @@ namespace GymMarket.API.Controllers
         {
             var course = await courseRepository.GetCourse(id);
 
-            if(course == null)
+            if (course == null)
             {
                 return BadRequest("không tìm thấy coourse");
             }
@@ -64,3 +65,4 @@ namespace GymMarket.API.Controllers
         }
     }
 }
+
