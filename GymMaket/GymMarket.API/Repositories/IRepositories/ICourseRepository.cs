@@ -10,5 +10,7 @@ namespace GymMarket.API.Repositories.IRepositories
         Task<ApiResponse> UpdateCourse(CourseUpdateDTO courseUpdateDTO);
         Task<GetCourseDto?> GetCourse(string courseId);
         Task<List<GetCourseDto>> GetCourses();
+        Task<IEnumerable<Course>> SearchAndFilterCoursesAsync(string? keyword, string? decription,
+    decimal? minPrice, decimal? maxPrice, int? minDuration, int? maxDuration, double? minRating, string? category);
     }
 }
