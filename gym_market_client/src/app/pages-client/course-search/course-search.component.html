@@ -1,5 +1,5 @@
 <div>
-	<header class="header_section shadow-md">
+	<!-- <header class="header_section shadow-md">
 		<div class="container mx-auto">
 			<nav class="flex items-center justify-between flex-wrap p-6 gap-3">
 				<div class="flex-1">
@@ -22,35 +22,99 @@
 				</div>
 			</nav>
 		</div>
-	</header>
+	</header> -->
 
-	<section class="text-gray-600 body-font">
-		<div class="container px-5 py-10 mx-auto">
-			<div class="grid grid-cols-4 gap-4">
-				@for (item of courses; track $index) {
-				<div>
-					<a
-						routerLink="/client/course-details/{{item.courseId}}"
-						class="overflow-hidden flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-					>
-						<img
-							class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
-							[src]="item.getFileDtos!== null && item.getFileDtos.length > 0 ? item.getFileDtos[0].url : '/assets/gym_logo.png'"
-							alt=""
-						/>
-						<div class="flex flex-col justify-between p-4 leading-normal">
-							<h5
-								class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-							>
-								{{item.title}}
-							</h5>
-							<p class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400">
-								{{item.description}}
-							</p>
+	<section class="body-font">
+		<div class="grid grid-cols-12 gap-10">
+			<div class="col-span-2 p-5 border-r">
+				<div class="">
+					<div class="text-[1.05rem]">
+						<div class="select-none bg-gray-200 rounded-md p-3 mb-2">
+							<span> <i class="fa-regular fa-rectangle-list"></i> Category </span>
 						</div>
-					</a>
+
+						<div class="">
+							<div
+								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
+							>
+								⊙ Yoga
+							</div>
+							<div
+								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
+							>
+								⊙ Cardio
+							</div>
+							<div
+								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
+							>
+								⊙ Strength training
+							</div>
+							<div
+								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
+							>
+								⊙ Pilates
+							</div>
+							<div
+								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
+							>
+								⊙ Stretching
+							</div>
+							<div
+								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
+							>
+								⊙ Cross fit
+							</div>
+						</div>
+					</div>
 				</div>
-				}
+			</div>
+
+			<div class="col-span-10 p-5">
+				<div class=" mb-10">
+					<div class="text-[1.5rem] font-medium">Yoga</div>
+
+					<div class="inline-flex items-center mt-3 justify-center border border-gray-300 p-2.5 rounded-lg">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+						<input
+							type="text"
+							class="bg-gray-50  text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block outline-none px-4"
+                            placeholder="Search for courses"
+                        />
+					</div>
+				</div>
+
+				<div class="grid grid-cols-4 gap-4">
+					@for (item of courses; track $index) {
+					<div>
+						<a
+							routerLink="/client/course-details/{{ item.courseId }}"
+							class="overflow-hidden flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+						>
+							<img
+								class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
+								[src]="
+									item.getFileDtos !== null && item.getFileDtos.length > 0
+										? item.getFileDtos[0].url
+										: '/assets/gym_logo.png'
+								"
+								alt=""
+							/>
+							<div class="flex flex-col justify-between p-4 leading-normal">
+								<h5
+									class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+								>
+									{{ item.title }}
+								</h5>
+								<p
+									class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400"
+								>
+									{{ item.description }}
+								</p>
+							</div>
+						</a>
+					</div>
+					}
+				</div>
 			</div>
 		</div>
 	</section>

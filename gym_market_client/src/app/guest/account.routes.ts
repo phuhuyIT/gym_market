@@ -3,6 +3,7 @@ import { GuestComponent } from './account.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { CheckBmiComponent } from './check-bmi/check-bmi.component';
 
 export const routes: Routes = [
 	{
@@ -13,6 +14,7 @@ export const routes: Routes = [
 			{ path: 'home', component: HomeComponent, title: 'guest' },
 			{ path: 'login', component: LoginComponent, title: 'Login' },
 			{ path: 'sign-up', component: SignupComponent, title: 'Sign up' },
+			{ path: 'check-bmi', component: CheckBmiComponent, title: 'Check BMI' },
 		],
 	},
 ];

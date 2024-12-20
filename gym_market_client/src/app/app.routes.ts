@@ -7,7 +7,7 @@ import { NotFoundComponent } from './components/access-denied/not-found.componen
 export const routes: Routes = [
 	{
 		path: '',
-		loadChildren: () => import('./account/account.routes').then(r => r.routes),
+		loadChildren: () => import('./guest/account.routes').then(r => r.routes),
 		canActivate: [guestGuard],
 	},
 	{

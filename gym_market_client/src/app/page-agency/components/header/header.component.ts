@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { UserStore } from '../../../stores/user.store';
-import { AccountService } from '../../../account/account.service';
+import { AccountService } from '../../../guest/account.service';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
