@@ -1,0 +1,501 @@
+<div class="hero_area">
+	<div class="bg-[#F4F6F8] p-6">
+		<div class="banner-header text-center max-w-[1000px] mx-auto">
+			<div class="flex justify-center items-center gap-2">
+				<div class="p-2 text-[3rem] font-bold">Body fast Checker using AI</div>
+
+				<div>
+					<svg
+						class="w-12 h-12 text-[#65a30d]"
+						aria-hidden="true"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						fill="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							d="M11 21V2.352A3.451 3.451 0 0 0 9.5 2a3.5 3.5 0 0 0-3.261 2.238A3.5 3.5 0 0 0 4.04 8.015a3.518 3.518 0 0 0-.766 1.128c-.042.1-.064.209-.1.313a3.34 3.34 0 0 0-.106.344 3.463 3.463 0 0 0 .02 1.468A4.017 4.017 0 0 0 2.3 12.5l-.015.036a3.861 3.861 0 0 0-.216.779A3.968 3.968 0 0 0 2 14c.003.24.027.48.072.716a4 4 0 0 0 .235.832c.006.014.015.027.021.041a3.85 3.85 0 0 0 .417.727c.105.146.219.285.342.415.072.076.148.146.225.216.1.091.205.179.315.26.11.081.2.14.308.2.02.013.039.028.059.04v.053a3.506 3.506 0 0 0 3.03 3.469 3.426 3.426 0 0 0 4.154.577A.972.972 0 0 1 11 21Zm10.934-7.68a3.956 3.956 0 0 0-.215-.779l-.017-.038a4.016 4.016 0 0 0-.79-1.235 3.417 3.417 0 0 0 .017-1.468 3.387 3.387 0 0 0-.1-.333c-.034-.108-.057-.22-.1-.324a3.517 3.517 0 0 0-.766-1.128 3.5 3.5 0 0 0-2.202-3.777A3.5 3.5 0 0 0 14.5 2a3.451 3.451 0 0 0-1.5.352V21a.972.972 0 0 1-.184.546 3.426 3.426 0 0 0 4.154-.577A3.506 3.506 0 0 0 20 17.5v-.049c.02-.012.039-.027.059-.04.106-.064.208-.13.308-.2s.214-.169.315-.26c.077-.07.153-.14.225-.216a4.007 4.007 0 0 0 .459-.588c.115-.176.215-.361.3-.554.006-.014.015-.027.021-.041.087-.213.156-.434.205-.659.013-.057.024-.115.035-.173.046-.237.07-.478.073-.72a3.948 3.948 0 0 0-.066-.68Z"
+						/>
+					</svg>
+				</div>
+			</div>
+		</div>
+
+		<div class="banner-body container mx-auto flex justify-center flex-wrap gap-4 p-5">
+			<div class="max-w-[800px] text-[1.5rem]">
+				<div class="text-[#65a30d] font-medium text-center">
+					"Discover your health the easy way!"
+				</div>
+				<div class="p-2 text-center">
+					With advanced AI technology, our body fat measurement function helps you easily
+					and quickly determine your body's health status through a few basic parameters
+					such as height, weight, age, and gender. There is no need for complicated or
+					expensive equipment, with just a few simple steps, you will get accurate results
+					and useful tips to improve your health. Discover your body and start your smart
+					health journey today!
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="bg-[#fff] p-6">
+		<div class="text-[2rem] flex items-center justify-center gap-2 py-5">
+			<div>Choose your <span class="text-[#65a30d]">GENDER</span></div>
+			<select
+				[(ngModel)]="gender"
+				class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-44"
+			>
+				<option selected value="male">MALE</option>
+				<option value="female">FEMALE</option>
+			</select>
+		</div>
+
+		<div class="container mx-auto">
+			<div class="grid grid-cols-12 gap-10">
+				<div
+					class="p-5 rounded-lg bg-[#f0fdf4] col-span-8 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]"
+				>
+					<div class="font-medium text-[2rem] py-7">Your indicators</div>
+
+					@if(gender === 'male') {
+					<div class="grid grid-cols-2 gap-5">
+						<!-- age -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2">Age (years)</label>
+								<input
+									[(ngModel)]="age"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="age"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- weight -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2">Weight (lbs)</label>
+
+								<input
+									[(ngModel)]="weight"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="weight"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- height -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Height (inches)</label
+								>
+								<input
+									[(ngModel)]="height"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="height"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Neck circumference -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Neck circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="neckCircumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="neckCircumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Chest circumference (cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Chest circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="chestCircumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="chestCircumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Abdomen 2 circumference (cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Abdomen 2 circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="abdomen_2_Circumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="abdomen_2_Circumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Hip circumference (cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Hip circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="hipCircumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="hipCircumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Thigh circumference (cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Thigh circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="thighCircumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="thighCircumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Knee circumference (cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Knee circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="kneeCircumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="kneeCircumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Ankle circumference (cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Ankle circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="ankleCircumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="ankleCircumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Biceps (extended) circumference (cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Biceps (extended) circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="biceps_extended_Circumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="biceps_extended_Circumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Forearm circumference (cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Forearm circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="forearmCircumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="forearmCircumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Wrist circumference (cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Wrist circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="wristCircumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="wristCircumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+					</div>
+					} @else {
+					<div class="grid grid-cols-2 gap-5">
+						<!-- age -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2">Age (years)</label>
+								<input
+									[(ngModel)]="age"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="age"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- weight -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2">Weight (lbs)</label>
+
+								<input
+									[(ngModel)]="weight"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="weight"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- height -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Height (inches)
+								</label>
+								<input
+									[(ngModel)]="height"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="height"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Neck circumference -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Neck circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="neckCircumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="neckCircumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Waist(cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2">Waist (cm)</label>
+								<input
+									[(ngModel)]="waist"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="waist"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+
+						<!-- Hip circumference (cm) -->
+						<div>
+							<div
+								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
+							>
+								<label for="default-range" class="block mb-2"
+									>Hip circumference (cm)</label
+								>
+								<input
+									[(ngModel)]="hipCircumference"
+									type="text"
+									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+								/>
+							</div>
+							<input
+								type="range"
+								[(ngModel)]="hipCircumference"
+								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
+							/>
+						</div>
+					</div>
+					}
+
+					<div>
+						<button class="check-body-fast-btn">
+							<span class="hover">
+								<span class="txt">Check</span>
+							</span>
+						</button>
+					</div>
+				</div>
+
+				<div
+					class="p-5 rounded-lg bg-[#f0fdf4] col-span-4 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]"
+				>
+					<div class="font-medium text-[2rem] py-7 text-center">BMI Calculator</div>
+
+					<div class="text-center text-3xl">
+						{{ bmi.toFixed(2) }}
+					</div>
+
+					<button class="check-body-fast-btn" (click)="calculateBMI()">
+						<span class="hover">
+							<span class="txt">Calculate</span>
+						</span>
+					</button>
+
+					<div class="mt-5">
+						<h2 class="mb-2 text-lg font-semibold text-gray-900 text-center">
+							How to evaluate:
+						</h2>
+						<ul class="max-w-md space-y-1 text-gray-900 list-disc list-inside">
+							<li>BMI &#60;16: Skinny level III</li>
+							<li>16 ≤ BMI &#60;17: Skinny level II</li>
+							<li>17 ≤ BMI &#60;18.5: Skinny level I</li>
+							<li>18.5 ≤ BMI &#60;25: Normal</li>
+							<li>25 ≤ BMI &#60;30: Overweight</li>
+							<li>30 ≤ BMI 35: Obesity grade 1</li>
+							<li>35 ≤ BMI &#60;40: Obesity grade II</li>
+							<li>BMI >40: Obesity grade III</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

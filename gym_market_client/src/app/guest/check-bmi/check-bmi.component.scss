@@ -1,0 +1,102 @@
+/*********** Baseline, reset styles ***********/
+input[type='range'] {
+	-webkit-appearance: none;
+	appearance: none;
+	background: transparent;
+	cursor: pointer;
+}
+
+/* Removes default focus */
+input[type='range']:focus {
+	outline: none;
+}
+
+/******** Chrome, Safari, Opera and Edge Chromium styles ********/
+/* slider track */
+input[type='range']::-webkit-slider-runnable-track {
+	background-color: #99ffaa;
+	border-radius: 0.5rem;
+	height: 0.5rem;
+}
+
+/* slider thumb */
+input[type='range']::-webkit-slider-thumb {
+	-webkit-appearance: none; /* Override default look */
+	appearance: none;
+	margin-top: -4px; /* Centers thumb on the track */
+	background-color: #0a9400;
+	border-radius: 0.5rem;
+	height: 1rem;
+	width: 1rem;
+}
+
+input[type='range']:focus::-webkit-slider-thumb {
+	outline: 3px solid #0a9400;
+	outline-offset: 0.125rem;
+}
+
+//
+.check-body-fast-btn {
+	overflow: hidden;
+	position: relative;
+	display: block;
+	width: 168px;
+	height: 40px;
+	margin: auto;
+	border: 1px solid #4c4c4d;
+	text-align: center;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	line-height: 40px;
+	color: #bbf7d0;
+	font-size: 14px;
+	font-family: oswald;
+	text-decoration: none;
+	text-transform: uppercase;
+    border-radius: 5px;
+}
+.check-body-fast-btn span {
+	display: block;
+}
+.check-body-fast-btn .hover:after {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	opacity: 0;
+	display: block;
+	content: '';
+	width: 0%;
+	height: 40px;
+	background-color: #bbf7d0;
+	border: 1px solid transparent;
+	transform: skewX(-40deg);
+	-webkit-transform: skewX(-40deg);
+	-moz-transform: skewX(-40deg);
+	transform-origin: center center;
+	-webkit-transform-origin: center center;
+	-ms-transform-origin: center center;
+	-moz-transform-origin: center center;
+	transition: all 0.35s, opacity 0.4s;
+	-webkit-transition: all 0.35s, opacity 0.4s;
+	-moz-transition: all 0.35s, opacity 0.4s;
+}
+.check-body-fast-btn .hover .txt {
+	z-index: 1;
+	position: relative;
+	color: #4c4c4d;
+	transition: color 0.35s;
+	-webkit-transition: color 0.35s;
+	-moz-transition: color 0.35s;
+}
+.check-body-fast-btn:hover .hover .txt {
+	color: #14532d;
+}
+.check-body-fast-btn .hover:hover:after {
+	opacity: 1;
+	left: 3%;
+	width: 95%;
+	transform: skewX(-40deg);
+	-webkit-transform: skewX(-40deg);
+	-moz-transform: skewX(-40deg);
+}
