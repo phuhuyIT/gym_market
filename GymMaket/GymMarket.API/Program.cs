@@ -98,6 +98,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICourseOptionRepository, CourseOptionRepository>();
 builder.Services.AddScoped<CourseRatingRepository>();
+builder.Services.AddScoped<CourseRegistrationRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ConversationRepository>();

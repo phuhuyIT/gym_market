@@ -25,7 +25,20 @@ namespace GymMarket.API.Controllers
         {
             return entity.CourseId;
         }
-
+        [HttpGet("search-and-filter")]
+        public async Task<IActionResult> SearchAndFilterCourses(
+  [FromQuery] string? keyword,
+  [FromQuery] string? coachName,
+  [FromQuery] decimal? minPrice,
+  [FromQuery] decimal? maxPrice,
+  [FromQuery] int? minDuration,
+  [FromQuery] int? maxDuration,
+  [FromQuery] double? minRating,
+  [FromQuery] string? category)
+        {
+            var courses = await courseRepository.SearchAndFilterCoursesAsync(keyword, coachName, minPrice, maxPrice, minDuration, maxDuration, minRating, category);
+            return Ok(courses);
+        }
         [HttpPut("update-course")]
         public async Task<IActionResult> UpdateCourse([FromForm] CourseUpdateDTO courseUpdate)
         {
@@ -63,6 +76,7 @@ namespace GymMarket.API.Controllers
             }
             return Ok(courses);
         }
+
     }
 }
 
