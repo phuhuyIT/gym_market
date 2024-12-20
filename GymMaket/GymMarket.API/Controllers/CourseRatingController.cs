@@ -29,5 +29,6 @@ namespace GymMarket.API.Controllers
             var ratings = await courseRatingRepository.GetCourseRatings(courseId);
             return Ok(ratings);
         }
+       
     }
 }
