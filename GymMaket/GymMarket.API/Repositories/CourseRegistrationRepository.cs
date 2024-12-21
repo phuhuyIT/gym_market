@@ -15,6 +15,13 @@ namespace GymMarket.API.Repositories
         public async Task<CourseRegistration?> RegisterCourseAsync(string courseId, string studentId, CourseRegistration registration)
         {
             // Set initial properties for the registration
+            // Set default RegistrationId if it's not already set
+            if (string.IsNullOrWhiteSpace(registration.RegistrationId))
+            {
+                registration.RegistrationId = Guid.NewGuid().ToString(); // Use a unique GUID
+            }
+
+            // Set initial properties for the registration
             registration.CourseId = courseId;
             registration.StudentId = studentId;
             registration.Status = "Pending Payment";

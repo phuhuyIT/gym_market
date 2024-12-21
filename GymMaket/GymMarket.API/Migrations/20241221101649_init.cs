@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GymMarket.API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitIdentity : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -55,6 +55,22 @@ namespace GymMarket.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ConversationParticipants",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LastMessage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HasNewMessage = table.Column<bool>(type: "bit", nullable: false),
+                    ConversationId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConversationParticipants", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Course_Options",
                 columns: table => new
                 {
@@ -66,6 +82,22 @@ namespace GymMarket.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__Course_O__3260905ED3772281", x => x.Option_ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FileCourses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourseId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ObjectId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TypeFile = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FileCourses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,6 +207,27 @@ namespace GymMarket.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Conversations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SenderId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RecieveId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Conversations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Conversations_AspNetUsers_RecieveId",
+                        column: x => x.RecieveId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Students",
                 columns: table => new
                 {
@@ -221,6 +274,27 @@ namespace GymMarket.API.Migrations
                     table.ForeignKey(
                         name: "FK_Trainer_AppUser",
                         column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SenderId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConversationId = table.Column<int>(type: "int", nullable: false),
+                    AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserMessages_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
@@ -281,7 +355,8 @@ namespace GymMarket.API.Migrations
                     Course_ID = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     Student_ID = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     Rating_Value = table.Column<decimal>(type: "decimal(3,2)", nullable: true),
-                    Review_Comment = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Review_Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CourseOptionOptionId = table.Column<string>(type: "varchar(50)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -291,6 +366,11 @@ namespace GymMarket.API.Migrations
                         column: x => x.Course_ID,
                         principalTable: "Courses",
                         principalColumn: "Course_ID");
+                    table.ForeignKey(
+                        name: "FK_Course_Ratings_Course_Options_CourseOptionOptionId",
+                        column: x => x.CourseOptionOptionId,
+                        principalTable: "Course_Options",
+                        principalColumn: "Option_ID");
                     table.ForeignKey(
                         name: "FK_Course_Ratings_Student",
                         column: x => x.Student_ID,
@@ -540,9 +620,19 @@ namespace GymMarket.API.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Conversations_RecieveId",
+                table: "Conversations",
+                column: "RecieveId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Course_Ratings_Course_ID",
                 table: "Course_Ratings",
                 column: "Course_ID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Course_Ratings_CourseOptionOptionId",
+                table: "Course_Ratings",
+                column: "CourseOptionOptionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Course_Ratings_Student_ID",
@@ -642,6 +732,11 @@ namespace GymMarket.API.Migrations
                 column: "UserId",
                 unique: true,
                 filter: "[UserId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMessages_AppUserId",
+                table: "UserMessages",
+                column: "AppUserId");
         }
 
         /// <inheritdoc />
@@ -663,10 +758,19 @@ namespace GymMarket.API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ConversationParticipants");
+
+            migrationBuilder.DropTable(
+                name: "Conversations");
+
+            migrationBuilder.DropTable(
                 name: "Course_Ratings");
 
             migrationBuilder.DropTable(
                 name: "Course_Registration_Options");
+
+            migrationBuilder.DropTable(
+                name: "FileCourses");
 
             migrationBuilder.DropTable(
                 name: "Health_Indicators");
@@ -682,6 +786,9 @@ namespace GymMarket.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Payments");
+
+            migrationBuilder.DropTable(
+                name: "UserMessages");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
