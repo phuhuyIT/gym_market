@@ -18,7 +18,7 @@ namespace GymMarket.API.Repositories
             this.mapper = mapper;
         }
 
-        public async Task<ApiResponse> AddCourseRating(CourseRatingCreateDTO courseRatingCreateDTO)
+        public async Task<ApiResponse> AddCourseRating(CourseRatingCreateDto courseRatingCreateDTO)
         {
             var courseRating = new CourseRating
             {
