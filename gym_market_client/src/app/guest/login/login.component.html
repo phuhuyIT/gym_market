@@ -6,17 +6,17 @@
 					<label class="text-red-700">Welcome</label>
 
 					@if(submit === true && signUpForm.controls['email'].hasError('email') ) {
-					<small class="text-red-500 text-center">Email sai định dạng</small>
+					<small class="text-red-500 text-center">Email is invalid</small>
 					}
 
 					<input formControlName="email" type="email" placeholder="Email" required="" />
 					<input
 						formControlName="password"
 						type="password"
-						placeholder="Mật khẩu"
+						placeholder="Password"
 						required=""
 					/>
-					<button (click)="onSignIn()" class="btn-signup">Đăng nhập</button>
+					<button (click)="onSignIn()" class="btn-signup">login</button>
 				</form>
 			</div>
 
