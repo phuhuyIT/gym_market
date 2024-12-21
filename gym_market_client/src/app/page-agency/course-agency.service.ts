@@ -12,8 +12,8 @@ export class CourseAgencyService {
 		return this.http.post(`${environment.baseApi}/course`, model);
 	}
 
-	getCourses() {
-		return this.http.get(`${environment.baseApi}/course/get-courses`);
+	getCourses(pageIndex: number, pageSize: number) {
+		return this.http.get(`${environment.baseApi}/course/get-courses?pageIndex=${pageIndex}&pageSize=${pageSize}`);    
 	}
 
 	getCourse(id: string) {

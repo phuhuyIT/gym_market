@@ -132,12 +132,13 @@ namespace GymMarket.API.Repositories
             return courseDto;
         }
 
-        public async Task<List<GetCourseDto>> GetCourses()
+        public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = 15)
         {
             var course = await _context.Courses
                 .AsNoTrackingWithIdentityResolution()
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
-
 
             var courseDto = _mapper.Map<List<Course>, List<GetCourseDto>>(course);
 

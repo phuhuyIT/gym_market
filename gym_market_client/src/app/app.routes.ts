@@ -8,7 +8,7 @@ export const routes: Routes = [
 	{
 		path: '',
 		loadChildren: () => import('./guest/account.routes').then(r => r.routes),
-		canActivate: [guestGuard],
+		
 	},
 	{
 		path: 'client',
