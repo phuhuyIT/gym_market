@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Renderer2 } from '@angular/core';
 import { CourseAgencyService } from '../../page-agency/course-agency.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseOptionService } from '../../page-agency/course-option.service';
@@ -8,11 +8,14 @@ import { FormsModule } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
 import { CourseRatingService } from '../course-rating.service';
 import { ErrorModalStore } from '../../stores/error-modal.store';
+import { DatePipe } from '@angular/common';
+import { CouresRegistrationService } from '../coures-registration.service';
+import { NoticeModalStore } from '../../stores/notice.store';
 
 @Component({
 	selector: 'app-course-details',
 	standalone: true,
-	imports: [FormsModule],
+	imports: [FormsModule, DatePipe],
 	templateUrl: './course-details.component.html',
 	styleUrl: './course-details.component.scss',
 })
@@ -23,6 +26,7 @@ export class CourseDetailsComponent {
 	courseId: string = '';
 	userStore = inject(UserStore);
 	errorModal = inject(ErrorModalStore);
+	noticeStore = inject(NoticeModalStore);
 
 	// rating
 	rate: number = 0;
@@ -30,15 +34,20 @@ export class CourseDetailsComponent {
 	ratings: any = [];
 	showAll: boolean = false;
 
-    images: any = [];
-    videos: any = [];
+	images: any = [];
+	videos: any = [];
+
+	// show image
+	url: string | null = null;
 
 	constructor(
 		private courseService: CourseAgencyService,
 		private activatedRoute: ActivatedRoute,
 		private courseOptionService: CourseOptionService,
 		private router: Router,
-		private courseRatingService: CourseRatingService
+		private courseRatingService: CourseRatingService,
+		private renderer: Renderer2,
+		private couresRegistrationService: CouresRegistrationService
 	) {}
 
 	ngOnInit() {
@@ -58,8 +67,12 @@ export class CourseDetailsComponent {
 				this.courseService.getCourse(params.id).subscribe({
 					next: (res: any) => {
 						this.course = res;
-                        this.images = res.getFileDtos.filter((c: any) => c.typeFile === 'IMAGE').map((c: any) => c.url);
-                        this.videos = res.getFileDtos.filter((c: any) => c.typeFile === 'VIDEO').map((c: any) => c.url);
+						this.images = res.getFileDtos
+							.filter((c: any) => c.typeFile === 'IMAGE')
+							.map((c: any) => c.url);
+						this.videos = res.getFileDtos
+							.filter((c: any) => c.typeFile === 'VIDEO')
+							.map((c: any) => c.url);
 						// patchState(this.loader, { isShow: false });
 					},
 					error: err => {
@@ -135,5 +148,39 @@ export class CourseDetailsComponent {
 
 	toggleShowAll() {
 		this.showAll = !this.showAll;
+	}
+
+	showImage(url: string | null) {
+		this.url = url;
+
+		if (url) {
+			this.renderer.addClass(document.body, 'no-scroll');
+		} else {
+			this.renderer.removeClass(document.body, 'no-scroll');
+		}
+	}
+
+	addToCard() {
+		patchState(this.loader, { isShow: true });
+		this.couresRegistrationService
+			.registerCourse(this.courseId, this.userStore.studentId())
+			.subscribe({
+				next: (res: any) => {
+					console.log(res);
+					patchState(this.loader, { isShow: false });
+					patchState(this.noticeStore, {
+						isShow: true,
+						message: 'Register course successfully!',
+					});
+				},
+				error: err => {
+					console.log(err);
+					patchState(this.loader, { isShow: false });
+					patchState(this.errorModal, {
+						isShow: true,
+						errors: ['Register course failed!'],
+					});
+				},
+			});
 	}
 }

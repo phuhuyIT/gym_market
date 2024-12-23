@@ -1,4 +1,5 @@
-﻿using GymMarket.API.Models;
+﻿using GymMarket.API.DTOs.CourseRegistration;
+using GymMarket.API.Models;
 using GymMarket.API.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,13 +19,10 @@ namespace GymMarket.API.Controllers
 
 
         [HttpPost("register-course")]
-        public async Task<IActionResult> RegisterCourse([FromQuery] string courseId, [FromQuery] string studentId)
+        public async Task<IActionResult> RegisterCourse(RegisterCourseDto dto)
         {
-
-            var registration = new CourseRegistration();
-
             // Gọi hàm đăng ký trong repository
-            var result = await _courseRegistrationRepository.RegisterCourseAsync(courseId, studentId, registration);
+            var result = await _courseRegistrationRepository.RegisterCourseAsync(dto);
 
             if (result != null)
             {
@@ -45,7 +43,6 @@ namespace GymMarket.API.Controllers
             return BadRequest(new { Message = "Hủy đăng ký thất bại. Vui lòng kiểm tra lại thông tin." });
         }
 
-
         [HttpPost("initialize-payment/{registrationId}")]
         public async Task<IActionResult> InitializePayment(string registrationId, [FromQuery] decimal initialPayment)
         {
@@ -55,6 +52,13 @@ namespace GymMarket.API.Controllers
                 return Ok(new { Message = "Khởi tạo thanh toán thành công!" });
             }
             return BadRequest(new { Message = "Khởi tạo thanh toán thất bại. Vui lòng thử lại." });
+        }
+
+        [HttpGet("get-course-registrations/{studentId}")]
+        public async Task<IActionResult> GetCourseRegistrations(string studentId)
+        {
+            var list = await _courseRegistrationRepository.GetCourseRegistrations(studentId);
+            return Ok(list);
         }
     }
 }

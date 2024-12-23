@@ -66,9 +66,9 @@ namespace GymMarket.API.Controllers
         }
 
         [HttpGet("get-courses")]
-        public async Task<IActionResult> GetCourses([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 15)
+        public async Task<IActionResult> GetCourses([FromQuery] string? category = null, [FromQuery] string? searchString = null, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 15)
         {
-            var courses = await courseRepository.GetCourses(pageIndex, pageSize);
+            var courses = await courseRepository.GetCourses(pageIndex, pageSize, searchString, category);
 
             if (courses == null)
             {

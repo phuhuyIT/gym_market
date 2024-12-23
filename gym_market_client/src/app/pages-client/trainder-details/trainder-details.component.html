@@ -6,7 +6,7 @@
 
 				<div class="bg-white p-4 pt-16 relative">
 					<div id="avatar" class="">
-						<img class="w-36 mx-auto" [src]="trainerInfo.profilePicture" alt="" />
+						<img class="w-36 h-36 mx-auto" [src]="trainerInfo.profilePicture" alt="" />
 					</div>
 
 					<!-- name -->
@@ -28,9 +28,15 @@
 						</div>
 					</div>
 
-                    <div class="mt-2">
-                        <button (click)="onSendMessage()" type="button" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">Send message</button>
-                    </div>
+					<div class="mt-2">
+						<button
+							(click)="onSendMessage()"
+							type="button"
+							class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+						>
+							Send message
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -109,24 +115,31 @@
 
 		<div class="grid grid-cols-4 gap-4">
 			@for (item of coursesOfTrainer.slice(0, 4); track $index) {
-			<div>
+
+			<div
+				class="rounded-xl shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:shadow-[0px_0px_5px_3px_#84cc16] duration-150"
+			>
 				<a
-					href="#"
-					class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+					routerLink="/client/course-details/{{ item.courseId }}"
+					class="md:flex-row md:max-w-xl"
 				>
 					<img
-						class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
-						src="/assets/gym_logo.png"
+						class="object-contain min-w-[200px] max-w-[200px] min-h-[185px] max-h-[185px] rounded-t-lg md:h-auto md:w-48 md:rounded-none md:rounded-s-lg0 mx-auto"
+						[src]="
+							item.getFileDtos !== null && item.getFileDtos.length > 0
+								? item.getFileDtos[0].url
+								: '/assets/gym_logo.png'
+						"
 						alt=""
 					/>
 					<div class="flex flex-col justify-between p-4 leading-normal">
 						<h5
-							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900"
 						>
 							{{ item.title }}
 						</h5>
-						<p class="clamp-des mb-3 font-normal text-gray-700 dark:text-gray-400">
-							{{ item.desciption }}
+						<p class="clamp-des mb-3 font-normal text-gray-700">
+							{{ item.description }}
 						</p>
 					</div>
 				</a>

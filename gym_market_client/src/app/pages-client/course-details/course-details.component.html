@@ -9,51 +9,49 @@
 	</div>
 
 	<div class="container mx-auto">
-        <!-- ảnh và video -->
-				<div class="grid grid-cols-2 gap-4 mb-3">
-					<!-- anh -->
-					<div>
-						<div class="mb-3">
-							<label
-								class="block mb-2 text-3xl font-medium text-gray-900"
-								for="multiple_files"
-								>Images</label
-							>
-						</div>
-
-						<div class="grid grid-cols-3 md:grid-cols-2 gap-4">
-							@for (image of images; track $index) {
-							<div class="break-inside-avoid mb-2">
-								<img class="h-auto max-w-full rounded-lg" [src]="image" alt="" />
-							</div>
-							}
-						</div>
-					</div>
-
-					<!-- video -->
-					<div>
-						<div class="mb-3">
-							<label
-								class="block mb-2 text-3xl font-medium text-gray-900"
-								for="multiple_files"
-								>Videos</label
-							>
-						</div>
-
-						<div class="grid grid-cols-1 gap-4">
-							@for (video of videos; track $index) {
-							<div class="break-inside-avoid mb-2">
-								<video class="w-full" controls>
-									<source [src]="video" type="video/mp4" />
-									Your browser does not support the video tag.
-								</video>
-							</div>
-							}
-						</div>
-					</div>
+		<!-- ảnh và video -->
+		<div class="grid grid-cols-2 gap-4 mb-3">
+			<!-- anh -->
+			<div>
+				<div class="mb-3">
+					<label
+						class="block mb-2 text-3xl font-medium text-gray-900"
+						for="multiple_files"
+						>Images</label
+					>
 				</div>
 
+				<div class="grid grid-cols-3 md:grid-cols-2 gap-4">
+					@for (image of images; track $index) {
+					<div class="break-inside-avoid mb-2" (click)="showImage(image)">
+						<img class="h-auto max-w-full rounded-lg" [src]="image" alt="" />
+					</div>
+					}
+				</div>
+			</div>
 
+			<!-- video -->
+			<div>
+				<div class="mb-3">
+					<label
+						class="block mb-2 text-3xl font-medium text-gray-900"
+						for="multiple_files"
+						>Videos</label
+					>
+				</div>
+
+				<div class="grid grid-cols-1 gap-4">
+					@for (video of videos; track $index) {
+					<div class="break-inside-avoid mb-2">
+						<video class="w-full" controls>
+							<source [src]="video" type="video/mp4" />
+							Your browser does not support the video tag.
+						</video>
+					</div>
+					}
+				</div>
+			</div>
+		</div>
 
 		<!-- details -->
 		<div class="shadow-[0_3px_10px_rgb(0,0,0,0.2)] p-5 rounded-md overflow-hidden">
@@ -129,8 +127,8 @@
 						</div>
 					</div>
 
-                    <!-- list ratings -->
-                    <div class="border border-gray-200 p-2 rounded-md mb-4 mt-2">
+					<!-- list ratings -->
+					<div class="border border-gray-200 p-2 rounded-md mb-4 mt-2">
 						<div class="text-xl font-bold">Ratings</div>
 
 						<div>
@@ -151,12 +149,11 @@
 							}
 						</div>
 
-                        <button class="add-review" (click)="toggleShowAll()">
-                            <span class="hover"></span>
-                            <span>{{ showAll ? 'Show Less' : 'Show More' }}</span>
-                        </button>
+						<button class="add-review" (click)="toggleShowAll()">
+							<span class="hover"></span>
+							<span>{{ showAll ? 'Show Less' : 'Show More' }}</span>
+						</button>
 					</div>
-
 				</div>
 
 				<div class="col-span-2 border-s p-3">
@@ -222,7 +219,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								[value]="course.startDate"
+								[value]="course.startDate | date: 'dd/MM/yyyy'"
 							/>
 						</div>
 
@@ -235,7 +232,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								[value]="course.endDate"
+								[value]="course.endDate | date: 'dd/MM/yyyy'"
 							/>
 						</div>
 
@@ -279,7 +276,7 @@
 						</div>
 
 						<div class="">
-							<button class="w-full code_view actionBtn9 buy-course">
+							<button (click)="addToCard()" class="w-full code_view actionBtn9 buy-course">
 								<span class="txt">Add to card</span>
 								<span class="bubble_inner">
 									<span class="bubble"></span>
@@ -295,3 +292,25 @@
 		</div>
 	</div>
 </div>
+
+<!-- show image -->
+@if(url) {
+
+<div class="fixed top-0 left-0 w-full h-full z-50">
+	<div class="fixed top-0 right-0 p-5 z-50">
+		<button
+			class="bg-white w-16 h-16 rounded-full flex justify-center items-center"
+			(click)="showImage(null)"
+		>
+			<span class="text-[1rem]"><i class="fa-solid fa-x"></i></span>
+		</button>
+	</div>
+
+	<div
+		class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center"
+	>
+		<img class="h-auto max-w-lg rounded-lg" [src]="url" alt="image description" />
+	</div>
+</div>
+
+}

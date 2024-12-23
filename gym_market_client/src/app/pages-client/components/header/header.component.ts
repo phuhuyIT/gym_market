@@ -15,6 +15,25 @@ export class HeaderComponent {
 	showAccountOption = false;
 	userStore = inject(UserStore);
 
+    navbarItems: any = [
+        {
+            link: '/home',
+            name: 'Home'
+        },
+        {
+            link: '/home',
+            name: 'Home'
+        },
+        {
+            link: '/client/food-nutrition-calculator',
+            name: 'Food Nutrition'
+        },
+        {
+            link: '/client/find-trainer',
+            name: 'Trainers'
+        }
+    ]
+
 	constructor(private accountService: AccountService, private router: Router) {}
 
 	onShowAccountOption() {

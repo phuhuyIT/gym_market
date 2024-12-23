@@ -1,26 +1,38 @@
 ﻿using AutoMapper;
 using GymMarket.API.Data;
+using GymMarket.API.DTOs.Course;
+using GymMarket.API.DTOs.CourseRegistration;
+using GymMarket.API.DTOs.FileMinIO;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Repositories
 {
     public class CourseRegistrationRepository : GenericRepository<CourseRegistration, string>
     {
         private readonly GymMarketContext _context;
+        private readonly IMapper _mapper;
+
         public CourseRegistrationRepository(GymMarketContext context, IMapper mapper) : base(context, mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
+
         // Registers a course for a student and initializes status as 'Pending Payment'
-        public async Task<CourseRegistration?> RegisterCourseAsync(string courseId, string studentId, CourseRegistration registration)
+        public async Task<CourseRegistration?> RegisterCourseAsync(RegisterCourseDto dto)
         {
+            var registration = new CourseRegistration();
+
             // Set initial properties for the registration
-            registration.CourseId = courseId;
-            registration.StudentId = studentId;
+            registration.CourseId = dto.CourseId;
+            registration.StudentId = dto.StudentId;
             registration.Status = "Pending Payment";
             registration.PaymentStatus = "Not Started";
             registration.CreatedAt = DateTime.UtcNow;
             registration.UpdatedAt = DateTime.UtcNow;
+            registration.RegistrationId = Guid.NewGuid().ToString();
 
             // Add the registration to the database
             await _context.CourseRegistrations.AddAsync(registration);
@@ -72,6 +84,34 @@ namespace GymMarket.API.Repositories
                 return true;
             }
             return false;
+        }
+
+        public async Task<List<GetCourseDto>> GetCourseRegistrations (string studentId)
+        {
+            //List<CourseRegistration> list = await _context.CourseRegistrations
+            //    .AsNoTrackingWithIdentityResolution()
+            //    .Where(c => c.StudentId == studentId)
+            //    .ToListAsync();
+
+            var list = await (from cr in _context.CourseRegistrations
+                               join c in _context.Courses on cr.CourseId equals c.CourseId
+                               where cr.StudentId == studentId
+                               select c).ToListAsync();
+            var courseDto = _mapper.Map<List<Course>, List<GetCourseDto>>(list);
+
+            foreach (var c in courseDto)
+            {
+                var courseFiles = await _context.FileCourses
+                   .AsNoTrackingWithIdentityResolution()
+                   .Where(course => course.CourseId == c.CourseId)
+                   .ToListAsync();
+
+                var courseFileImages = courseFiles.Where(c => c.TypeFile == "IMAGE").ToList();
+
+                var courseFileDtos = _mapper.Map<List<FileCourse>, List<GetFileDto>>(courseFileImages);
+                c.GetFileDtos = courseFileDtos;
+            }
+            return courseDto;
         }
     }
 }
