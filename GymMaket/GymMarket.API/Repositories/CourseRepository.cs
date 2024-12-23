@@ -7,7 +7,6 @@ using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;
 using Microsoft.EntityFrameworkCore;
-using Minio.DataModel.Notification;
 
 namespace GymMarket.API.Repositories
 {
@@ -45,14 +44,29 @@ namespace GymMarket.API.Repositories
             return course;
         }
 
-
-        async Task<ICollection<Course>> ICourseRepository.GetCoursesOfTrainer(string trainerId)
+        async Task<ICollection<GetCourseDto>> ICourseRepository.GetCoursesOfTrainer(string trainerId)
         {
-            var courses = await _context.Courses.AsNoTrackingWithIdentityResolution()
+            var course = await _context.Courses
+                .AsNoTrackingWithIdentityResolution()
                 .Where(c => c.TrainerId == trainerId)
                 .ToListAsync();
 
-            return courses;
+            var courseDto = _mapper.Map<List<Course>, List<GetCourseDto>>(course);
+
+            foreach (var c in courseDto)
+            {
+                var courseFiles = await _context.FileCourses
+                   .AsNoTrackingWithIdentityResolution()
+                   .Where(course => course.CourseId == c.CourseId)
+                   .ToListAsync();
+
+                var courseFileImages = courseFiles.Where(c => c.TypeFile == "IMAGE").ToList();
+
+                var courseFileDtos = _mapper.Map<List<FileCourse>, List<GetFileDto>>(courseFileImages);
+                c.GetFileDtos = courseFileDtos;
+            }
+
+            return courseDto;
         }
 
         public async Task<ApiResponse> UpdateCourse(CourseUpdateDTO courseUpdateDTO)
@@ -132,17 +146,21 @@ namespace GymMarket.API.Repositories
             return courseDto;
         }
 
-        public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = 15)
+        public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = 15, string? searchString = null, string? category = null)
         {
             var course = await _context.Courses
                 .AsNoTrackingWithIdentityResolution()
+                .Where(c =>
+                            ((string.IsNullOrEmpty(searchString) != true && c.Title!.ToLower().Contains(searchString.ToLower())) || string.IsNullOrEmpty(searchString) == true)
+                         && ((string.IsNullOrEmpty(category) != true && c.Category!.ToLower().Contains(category.ToLower())) || string.IsNullOrEmpty(category) == true)
+                )
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
             var courseDto = _mapper.Map<List<Course>, List<GetCourseDto>>(course);
 
-            foreach(var c in courseDto)
+            foreach (var c in courseDto)
             {
                 var courseFiles = await _context.FileCourses
                    .AsNoTrackingWithIdentityResolution()
@@ -154,7 +172,7 @@ namespace GymMarket.API.Repositories
                 var courseFileDtos = _mapper.Map<List<FileCourse>, List<GetFileDto>>(courseFileImages);
                 c.GetFileDtos = courseFileDtos;
             }
-           
+
             return courseDto;
         }
 

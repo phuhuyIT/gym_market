@@ -11,28 +11,18 @@
 			<div class="block lg:flex lg:items-center lg:w-auto text-gray-900">
 				<div class="flex flex-col lg:flex-row lg:ml-auto items-center justify-between">
 					<ul class="lg:flex lg:space-x-10">
-						<li class="nav-item">
-							<a
-								routerLink="/home"
-								routerLinkActive="active"
-								class="nav-link block mt-4 lg:inline-block lg:mt-0"
-								>Home <span class="sr-only">(current)</span></a
-							>
-						</li>
-						<li class="nav-item">
-							<a
-								routerLink="/client/course-search"
-								class="nav-link block mt-4 lg:inline-block lg:mt-0"
-								>Search</a
-							>
-						</li>
-						<li class="nav-item">
-							<a
-								routerLink="/client/find-trainer"
-								class="nav-link block mt-4 lg:inline-block lg:mt-0"
-								>Trainers</a
-							>
-						</li>
+
+                        @for (item of navbarItems; track $index) {
+                            <li class="nav-item">
+                                <a
+                                    [routerLink]="item.link"
+                                    routerLinkActive="active"
+                                    class="nav-link block mt-4 lg:inline-block lg:mt-0"
+                                    >{{item.name}} <span class="sr-only">(current)</span></a
+                                >
+                            </li>
+                        }
+						
 
 						<li class="nav-item">
 							<div class="account">
@@ -58,7 +48,7 @@
 										>Thông tin cá nhân</a
 									>
 									<a
-										routerLink="/courses/my-courses/all"
+										routerLink="/client/course-registration"
 										class="account_option_item"
 										>Khóa học đã đăng ký</a
 									>

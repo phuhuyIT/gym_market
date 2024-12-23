@@ -102,6 +102,7 @@ builder.Services.AddScoped<CourseRegistrationRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ConversationRepository>();
+builder.Services.AddScoped<FoodNutritionRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
 // service

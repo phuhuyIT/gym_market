@@ -12,8 +12,15 @@ export class CourseAgencyService {
 		return this.http.post(`${environment.baseApi}/course`, model);
 	}
 
-	getCourses(pageIndex: number, pageSize: number) {
-		return this.http.get(`${environment.baseApi}/course/get-courses?pageIndex=${pageIndex}&pageSize=${pageSize}`);    
+	getCourses(
+		pageIndex: number,
+		pageSize: number,
+		searchString: string | null,
+		category: string | null
+	) {
+		return this.http.get(
+			`${environment.baseApi}/course/get-courses?pageIndex=${pageIndex}&pageSize=${pageSize}&searchString=${searchString}&category=${category}`
+		);
 	}
 
 	getCourse(id: string) {
@@ -28,7 +35,7 @@ export class CourseAgencyService {
 		return this.http.delete(`${environment.baseApi}/course/${id}`);
 	}
 
-    getCoursesOftrainer(trainerId: string) {
-        return this.http.get(`${environment.baseApi}/Course/get-courses-of-trainer/${trainerId}`);
-    }
+	getCoursesOftrainer(trainerId: string) {
+		return this.http.get(`${environment.baseApi}/Course/get-courses-of-trainer/${trainerId}`);
+	}
 }

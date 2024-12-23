@@ -909,3 +909,1743 @@ Insert into FileCourses (CourseId, ObjectId, Url, TypeFile) Values ('fc995911-7a
 Insert into FileCourses (CourseId, ObjectId, Url, TypeFile) Values ('fa3180d6-5fc0-4430-ad3d-ed644ca4dafe','ff3b5c9b-c6ad-4e8d-924c-5296c828916b.jpg','http://localhost:8000/imagecourses/ff3b5c9b-c6ad-4e8d-924c-5296c828916b.jpg','IMAGE')
 Insert into FileCourses (CourseId, ObjectId, Url, TypeFile) Values ('fc995911-7ae2-4647-9641-7b64c1479f24','ff9056ad-87ae-4922-8546-a2047700222b.jpg','http://localhost:8000/imagecourses/ff9056ad-87ae-4922-8546-a2047700222b.jpg','IMAGE')
 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream cheese', 51) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('neufchatel cheese', 215) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('requeijao cremoso light catupiry', 49) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ricotta cheese', 30) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream cheese low fat', 30) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream cheese fat free', 19) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gruyere cheese', 116) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheddar cheese', 113) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('parmesan cheese', 71) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('romano cheese', 19) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('parmesan cheese grated', 21) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('port salut cheese', 465) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('swiss cheese', 98) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('goat cheese hard', 128) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gouda cheese', 100) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pepper jack cheese lucerne', 75) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('caraway cheese', 106) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gjetost cheese', 1058) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tilsit cheese', 136) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('goat cheese', 103) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('brick cheese', 111) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('asadero cheese', 402) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('camembert cheese', 90) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('provolone cheese reduced fat', 310) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('roquefort cheese', 314) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('queso blanco cheese', 366) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('queso seco cheese', 315) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('goat cheese soft', 75) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mozzarella cheese', 90) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chihuahua cheese', 494) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('limburger cheese', 98) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('muenster cheese', 486) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('queso fresco cheese', 365) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('brie cheese', 100) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pimento cheese', 525) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mexican cheese', 316) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('feta cheese', 80) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mozzarella cheese fat free', 159) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('provolone cheese', 463) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('anejo cheese', 492) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('honey', 64) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('apple butter', 35) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fruit jam', 56) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate hazelnut spread', 100) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('peanut butter', 88) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('peanut spread', 101) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken spread', 88) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese spread', 708) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tahini', 86) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('orange marmalade', 49) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('american cheese spread', 46) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('apricot jam', 48) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chunky peanut butter', 94) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ham and cheese spread', 37) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken and rice casserole homade', 27) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('picnic loaf', 65) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('corn tamale', 309) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('baked potato with cheese sauce bacon', 451) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chinese egg roll', 223) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('butter croissant', 231) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('enchilada with cheese beef', 323) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('corned beef hash with potatoes', 387) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg cheese bacon', 436) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bagel with ham egg cheese', 483) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('quesadilla with chicken', 529) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('corn rice', 110) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('kung pao chicken', 779) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beef empanada', 298) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('frijoles with cheese', 225) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('burrito with beef', 285) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken sandwich', 350) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('enchilada with cheese', 374) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pork egg roll', 189) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('corn on the cob with butter', 155) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pancakes with butter syrup', 260) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('burrito with beans', 224) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('scrambled eggs', 100) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('baked potato with sour cream', 393) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('turkey and gravy', 161) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken egg roll', 158) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vegetable egg roll', 153) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ham cheese roll', 67) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with ham', 386) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('lemon chicken', 1440) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hummus', 435) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('croissant with egg cheese', 368) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('enchirito with cheese beef beans', 344) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sweet sour pork', 38) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crab cake', 160) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg dinner roll', 107) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('english muffin with egg cheese sausage', 472) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('buttermilk pancakes', 86) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('omelet', 94) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('taco with chicken cheese lettuce', 185) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spinach souffle', 230) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('english muffin with cheese sausage', 365) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('potato gratin', 328) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg', 436) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('french fries deep fried', 222) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sweet sour chicken', 46) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('burrito with beans beef', 460) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('nachos with cinnamon sugar', 592) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('arroz con grandules', 209) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chili con carne', 271) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('arroz con abichuelas', 223) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with sausage', 412) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vegetarian stew', 304) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken sandwich with cheese', 632) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg steak', 410) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('taco salad', 212) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('succotash', 213) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('nachos with cheese jalapeno peppers', 608) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg ham', 442) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ladyfingers', 103) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mozzarella steak fried', 102) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tamale navajo', 285) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('blueberry pancakes', 84) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chimichanga with beef cheese', 443) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg cheese sandwich', 340) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg bacon', 458) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pupusas con queso', 300) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('apple croissant', 145) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('refried red beans', 336) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tostada with guacamole', 180) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken sandwich', 468) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fried rice', 228) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pupusas del cerdo', 283) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('turkey pot pie', 699) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese croissant', 331) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chimichanga with beef', 425) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('french toast with butter', 178) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ham egg cheese sandwich', 347) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('english muffin with butter', 189) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('savoury noodle one pan dinner tandaco', 172) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ham cheese sandwich', 352) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sweet gefilte fish', 35) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('poached egg', 72) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tostada with beef cheese', 315) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tostada with beans cheese', 223) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pork tamale', 247) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('nachos with cheese', 274) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pulled pork in barbecue sauce', 418) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('baked potato with cheese sauce', 474) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('baked beans', 310) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('arroz con frijoles', 220) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('taco with beef cheese lettuce', 156) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('burrito with beans cheese beef', 165) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg mix', 30) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('falafel', 57) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('taco salad with chili con carne', 193) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wonton wrappers', 93) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hushpuppies', 512) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken pot pie', 598) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('general tsos chicken', 1578) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('burrito with beans cheese', 379) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vegetarian fillets', 247) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg sausage', 505) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken chow mein', 513) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fruit burrito', 231) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('arroz con leche', 369) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('caramel custard flan', 444) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gelatin dessert', 167) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate milk dessert', 229) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate mousse', 338) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('dulce de leche', 60) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('apple crisp', 454) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spinach spaghetti cooked', 182) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('corn pasta cooked', 176) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spaghetti with meat sauce', 255) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pasta with meatballs in tomato sauce', 273) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese tortellini', 332) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pasta with sliced franks in tomato sauce', 227) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('lasagna', 166) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('macaroni cheese', 310) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vegetable lasagna', 316) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spinach egg noodles cooked', 211) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese lasagna', 316) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pasta with tomato sauce', 176) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spinach pasta cooked', 37) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vegetable chicken soup', 166) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bean ham soup', 198) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream of chicken soup', 227) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tomato soup canned', 139) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg drop soup', 65) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('scotch broth', 197) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream of onion soup', 268) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken broth dry', 10) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vegetable soup with beef broth', 162) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chili with beans canned', 287) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beef noodle soup', 168) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('consomme dry', 17) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken mushroom soup', 126) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beef vegetable soup', 120) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('black bean soup', 234) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('split pea soup with ham bacon', 189) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream of mushroom soup', 199) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('green pea soup', 320) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken broth soup', 78) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken mushroom chowder soup', 431) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken dumplings soup', 235) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken vegetable soup', 148) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('turkey vegetable soup', 72) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wonton soup', 71) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beef stock', 31) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mushroom barley soup', 186) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gazpacho soup', 70) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beef mushroom soup', 186) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken rice soup', 127) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pepperpot soup', 100) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vegetable soup', 149) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chili beef soup', 308) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken soup', 174) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bean with frankfurters soup', 188) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pea soup', 161) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('turkey soup', 135) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('stockpot soup', 201) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hot sour soup', 91) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese soup', 203) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream of potato soup', 186) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bean with bacon soup', 106) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fish stock', 40) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('split pea soup with ham', 381) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beef broth soup', 17) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('lentil soup with ham', 139) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tomato soup', 98) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fish broth', 39) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chili without beans canned', 283) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('minestrone soup', 167) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('clam chowder soup', 154) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tomato vegetable soup', 54) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream of rice coup', 127) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream of celery soup', 181) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken gravy', 188) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tomato rice soup', 240) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vegetable beef soup', 128) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tomato beef noodle soup', 281) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('oyster stew soup', 118) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ramen noodle soup dry', 371) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken noodle soup', 145) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken bouillon dry', 11) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream of asparagus soup', 174) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('turkey noodle soup', 139) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream of shrimp soup', 181) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bean with pork soup', 335) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken broth', 12) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beef broth powder', 8) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('split pea soup', 180) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('escarole soup', 61) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken stock', 86) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tomato bisque soup', 248) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('shark fin soup', 99) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('onion soup', 113) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken gumbo soup', 113) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crab soup', 95) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tripe soup', 148) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('little india little lunch', 164) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('original chicken sandwich chick fil a', 125) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sausage mcmuffin mcdonalds', 383) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sausage mcgriddles mcdonalds', 421) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken drumstick kentucky fried chicken', 70) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken crispy drumsticks kentucky fried chicken', 156) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit kentucky fried chicken', 185) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('english muffin mcdonalds', 97) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('french fries mcdonalds', 378) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hotdog', 383) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('french fries burger king', 207) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('original taco with beef cheese lettuce taco bell', 158) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hotdog with chili', 296) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken crispy wings kentucky fried chicken', 148) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg white delight mcdonalds', 250) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('french toast sticks burger king', 73) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mcchicken mcdonalds', 358) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('nachos supreme taco bell', 480) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken wing kentucky fried chicken', 104) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken strips burger king', 105) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken breast kentucky fried chicken', 214) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sausage biscuit mcdonalds', 440) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sausage burrito mcdonalds', 339) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('onion rings fried', 27) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('onion rings burger king', 379) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('turkey patty fried', 79) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hotcakes with syrup mcdonalds', 601) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken thigh kentucky fried chicken', 163) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('corn dog', 195) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken box mcdonalds', 70) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('potato wedges kentucky fried chicken', 379) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('scrambled eggs mcdonalds', 98) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg mcmuffin mcdonalds', 287) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('nachos taco bell', 362) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit large mcdonalds', 310) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken strips kentucky fried chicken', 129) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hotcakes mcdonalds', 113) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken crispy breast kentucky fried chicken', 375) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hotcakes sausage mcdonalds', 776) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken mcnuggets mcdonalds', 48) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chips chipotle', 151) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('biscuit mcdonalds', 261) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rice bowl with chicken', 36) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spaghetti with meatballs', 200) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('meat ravioli canned', 259) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese ravioli canned', 186) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('premium crispy chicken ranch blt sandwich mcdonalds', 586) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('steak sandwich', 459) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheeseburger burger king', 380) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheeseburger mcdonalds', 313) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('double cheeseburger', 643) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('double hamburger', 942) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('premium grilled chicken classic sandwich mcdonalds', 366) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('big n tasty with cheese mcdonalds', 573) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('premium grilled chicken club sandwich mcdonalds', 493) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('quarter pounder mcdonalds', 417) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('premium crispy chicken classic sandwich mcdonalds', 524) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('veggie burger', 124) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('quarter pounder with cheese mcdonalds', 513) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beef sandwich steak raw', 173) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheeseburger', 292) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('premium grilled chicken ranch blt sandwich mcdonalds', 412) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('double whopper with cheese burger king', 1061) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('big mac mcdonalds', 563) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sandwich with cold cuts', 833) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('filet o fish mcdonalds', 378) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hand breaded chicken tenders carls jr', 57) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('grilled chicken sandwich wendys', 370) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sandwich with roast beef', 410) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hamburger burger king', 258) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('big n tasty mcdonalds', 524) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('roast beef sandwich', 364) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('roast beef sandwich with cheese', 473) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hamburger', 255) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('premium fish sandwich burger king', 572) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whopper burger king', 790) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sandwich with tuna salad', 584) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('original chicken sandwich burger king', 569) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('double whopper burger king', 942) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('premium crispy chicken club sandwich mcdonalds', 635) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hamburger mcdonalds', 251) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pepperoni pizza dominos', 308) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sausage pizza', 325) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pepperoni pizza', 313) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pepperoni pizza pizza hut', 269) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese pizza pizza hut', 260) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese pizza', 285) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese pizza dominos', 278) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('meat vegetable pizza', 332) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sucker raw', 146) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('northern pike raw', 348) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('haddock cooked', 135) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('burbot cooked', 104) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pollock cooked', 356) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rainbow smelt raw', 27) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whitefish cooked', 265) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('walleye pike raw', 148) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('carp cooked', 275) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wolffish cooked', 293) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('snapper cooked', 218) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('roe cooked', 58) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('anchovy raw', 37) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('herring raw', 291) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cod raw', 189) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tilapia raw', 111) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whiting cooked', 84) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('skipjack tuna cooked', 407) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('salmon cooked', 733) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chum salmon cooked', 474) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('american shad cooked', 363) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('shark cooked', 65) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('trout cooked', 118) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('swordfish raw', 196) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rainbow trout cooked', 119) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fish sandwich with cheese', 374) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('jellyfish dried', 21) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mullet raw', 139) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('halibut cooked', 353) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('lingcod raw', 213) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('orange roughy cooked', 30) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cisco raw', 77) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('florida pompano cooked', 186) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('snapper raw', 218) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fish sandwich', 565) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('haddock raw', 143) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ocean perch raw', 51) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cuttlefish cooked', 45) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cod cooked', 189) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('seatrout raw', 248) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('flounder raw', 114) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spot cooked', 79) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('walleye pike cooked', 148) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('perch raw', 55) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pumpkin seed sunfish raw', 43) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('salt mackerel', 415) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mackerel cooked', 231) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tilapia cooked', 111) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('drum raw', 236) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('atlantic croaker fried', 192) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pumpkin seed sunfish cooked', 42) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wolffish raw', 294) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bluefin tuna cooked', 276) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('scup cooked', 68) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('herring cooked', 290) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bluefish raw', 186) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sheepshead cooked', 234) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bass cooked', 91) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pout cooked', 279) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chinook salmon raw', 709) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rockfish raw', 172) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tilefish raw', 371) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('scup raw', 174) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sablefish cooked', 755) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tuna salad', 383) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('coho salmon cooked', 255) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('roe raw', 20) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sea bass raw', 125) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pink salmon cooked', 349) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sockeye salmon cooked', 493) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whitefish raw', 265) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('greenland halibut cooked', 760) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('northern pike cooked', 350) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('salmon raw', 824) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('turbot cooked', 388) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('surimi', 28) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chinook salmon cooked', 711) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mullet cooked', 140) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chum salmon raw', 3) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('butterfish raw', 47) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sea bass cooked', 125) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('greenland halibut raw', 759) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('halibut raw', 371) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sturgeon cooked', 184) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fish fillet fried', 211) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rainbow trout raw', 111) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pout raw', 278) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rainbow smelt cooked', 35) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('monkfish raw', 22) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('trout raw', 117) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('shark raw', 37) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('burbot raw', 104) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('dolphinfish cooked', 173) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crayfish cooked', 25) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('dolphinfish raw', 173) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('perch cooked', 54) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cusk raw', 106) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bluefin tuna raw', 41) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('milkfish cooked', 54) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('carp raw', 277) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sturgeon raw', 30) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('orange roughy raw', 22) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('catfish fried', 199) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cuttlefish raw', 22) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bass raw', 90) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('flounder cooked', 109) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('milkfish raw', 42) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('eel raw', 375) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('catfish raw', 189) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fish sticks', 78) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('coho salmon raw', 254) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('monkfish cooked', 27) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('yellowtail cooked', 546) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('yellowfin tuna cooked', 37) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ling cooked', 168) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('eel cooked', 67) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sablefish raw', 753) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('salmon nuggets', 60) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('yellowtail raw', 546) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('butterfish cooked', 47) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('caviar', 42) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pollock raw', 355) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('catfish cooked', 206) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whiting raw', 83) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pink salmon raw', 404) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('yellowfin tuna raw', 31) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mackerel raw', 230) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('turbot raw', 388) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cusk cooked', 106) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('atlantic croaker raw', 82) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sucker cooked', 148) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spot raw', 79) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('drum cooked', 236) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crayfish raw', 3) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tilefish cooked', 441) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bluefish cooked', 186) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('grouper cooked', 238) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sheepshead raw', 257) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('herring kippered', 87) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('grouper raw', 238) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ocean perch cooked', 48) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('ling raw', 168) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('lingcod cooked', 329) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('florida pompano raw', 184) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rockfish cooked', 162) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('seatrout cooked', 247) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sockeye salmon raw', 562) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('swordfish cooked', 182) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('american shad raw', 362) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sardine canned in oil', 310) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('anchovy canned in oil', 8) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('salmon canned', 520) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sardines in tomato sauce canned', 165) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sockeye salmon canned', 563) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tuna canned', 102) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pink salmon canned', 530) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cod canned', 328) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('eastern oyster canned', 110) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chum salmon canned', 520) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tuna canned in oil', 331) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wild pink salmon oceans', 320) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('shrimp canned', 128) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('alaska king crab raw', 144) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('scallops fried', 64) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('shrimp cooked', 7) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('clams fried', 19) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('alaska king crab cooked', 130) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('scallops cooked', 11) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('squid fried', 140) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('oyster raw', 41) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('abalone', 89) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('queen crab raw', 25) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whelk cooked', 78) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('oyster cooked', 41) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('eastern oyster cooked', 8) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('blue mussels cooked', 344) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('octopus raw', 23) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spiny lobster cooked', 233) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('blue mussels raw', 129) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('queen crab cooked', 98) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('dungeness crab cooked', 140) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('dungeness crab raw', 140) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('shrimp fried', 52) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('shrimp raw', 4) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('blue crab cooked', 71) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('shrimp imitation', 29) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('conch baked', 165) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('squid raw', 26) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('scallop raw', 10) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('lobster raw', 116) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('scallop imitation', 28) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('blue crab raw', 18) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whelk raw', 39) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spiny lobster raw', 234) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('clams canned', 227) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('lobster cooked', 134) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('eastern oyster fried', 29) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('clams raw', 195) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('octopus cooked', 139) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('eastern oyster raw', 8) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('oyster fried', 61) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sturgeon smoked', 49) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chinook salmon smoked', 159) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cisco smoked', 50) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('haddock smoked', 33) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whitefish smoked', 147) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('red salmon sockeye filets smoked', 373) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('eggnog', 224) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beer light', 96) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beer budweiser', 12) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('weizenbier erdinger', 220) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beer light budweiser', 9) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beer', 142) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('root beer', 202) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whiskey sour mix', 26) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whiskey sour', 158) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tequila sunrise', 232) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('daiquiri', 112) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pina colada', 245) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whiskey', 58) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rum', 49) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vodka smirnoff', 13) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('coffee liqueur', 96) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gin', 53) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('dessert wine sweet', 165) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chenin blanc white wine', 118) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gamay red wine', 115) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('late harvest white wine', 172) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gewurztraminer white wine', 119) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('burgundy red wine', 172) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('zinfandel red wine', 129) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('muller thurgau white wine', 112) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mouvedre red wine', 129) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('table wine', 123) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wine light', 73) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white wine', 121) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('petite sirah red wine', 125) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('non alcoholic wine', 2) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pinot noir red wine', 121) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pinot gris grigio white wine', 122) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('riesling white wine', 118) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('barbera red wine', 170) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('lemberger red wine', 118) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('merlot red wine', 122) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sangiovese red wine', 126) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sauvignon blanc white wine', 119) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('syrah red wine', 122) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('carignane red wine', 370) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pinot blanc white wine', 119) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('semillon white wine', 121) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('dessert wine dry', 760) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('red wine', 125) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cabernet sauvignon red wine', 166) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('muscat white wine', 123) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cooking wine', 2) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chardonnay white wine', 168) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('claret red wine', 122) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rice sake', 197) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fume blanc white wine', 121) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cabarnet franc red wine', 122) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate frosting', 81) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white sugar', 19) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg substitute', 115) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('agave syrup', 21) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('splenda sweetener', 336) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vanilla extract', 12) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg yolk dried', 27) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('granulated sugar', 16) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('baking chocolate', 145) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bakers yeast', 18) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fondant', 106) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('brown sugar', 16) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white frosting dry', 768) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('maple sugar', 42) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fructose sweetener', 15) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('saccharin sweetener', 360) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg white raw', 17) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('turbinado sugar', 18) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vanilla frosting', 1931) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('aspartame sweetener', 365) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg raw', 80) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pineapple topping', 860) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg white dried', 26) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg yolk raw', 55) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('baking soda', 0) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg dried', 30) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('strawberry topping', 53) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bakers yeast dry', 13) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('almond paste', 1040) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cream of tartar', 8) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('popover dry mix', 631) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg substitute powder', 126) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gelatin powder', 17) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('tapioca pearls', 544) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('baking powder', 2) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg boiled', 93) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('millet flour', 444) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('triticale flour', 439) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('corn flour white', 414) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rice flour brown', 574) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sorghum flour', 437) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cornmeal whole grain', 442) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cornmeal white', 581) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('barley flour', 511) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('safflower seed meal', 97) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sesame flour', 658) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whole grain wheat flour', 408) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('corn flour yellow', 422) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('corn flour whole grain', 422) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cottonseed flour low fat', 94) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sunflower seed flour', 13) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sesame meal', 160) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('acorn flour', 626) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rice flour white', 578) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sesame flour low fat', 94) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('potato flour', 571) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cornmeal yellow', 581) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rye flour', 364) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('arrowroot flour', 457) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chickpea flour', 356) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wheat flour', 455) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cornstarch', 488) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('carob flour', 13) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('buckwheat flour', 402) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pecan pie', 503) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('apple pie', 331) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vanilla wafer pie crust', 935) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate pie crust', 881) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('apple strudel', 195) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate snack cake', 200) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fruit fried pie', 404) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pumpkin pie', 316) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('corn cake', 35) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sponge snack cake', 157) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('danish pastry with nuts', 280) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate cream pie', 301) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('angel food cake', 72) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('lemon meringue pie', 362) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('danish pastry with cinnamon', 349) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cinnamon coffeecake', 238) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheesecake', 257) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fruitcake', 139) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('egg custard', 293) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('mince pie', 477) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('yellow cake with chocolate frosting', 546) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('danish pastry with fruit', 335) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white cake with coconut frosting', 399) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('danish pastry with cheese', 353) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('graham cracker pie crust', 917) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('blueberry pie', 360) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('yellow cake with vanilla frosting', 239) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pie crust', 121) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate cake with chocolate frosting', 537) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese coffeecake', 258) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vanilla cream pie', 350) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pineapple cake', 367) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('peach pie', 262) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fruit coffeecake', 156) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pound cake', 116) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('pound cake bread', 215) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white cake', 264) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('coffeecake with chocolate frosting', 298) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('popcorn cake', 38) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('banana cream pie', 3190) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('baked apple pie mcdonalds', 91) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sponge cake', 187) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('yellow cake', 245) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('shortcake', 98) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cherry pie', 486) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('dutch apple pie', 397) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate cake', 352) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('marshmallow', 64) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sugar apple', 72) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('toffee', 67) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vanilla fudge with nuts', 123) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('peanuts chocolate coated', 21) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('caramel with nuts chocolate coated', 66) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gingerbread', 263) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rolo nestle', 24) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vanilla fudge', 108) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('halavah', 328) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('praline', 189) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fruit juice bar', 67) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('peanut brittle', 138) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('butterscotch', 21) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate coffee beans', 155) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('nougat with almonds', 56) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('carob', 135) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('peanut butter fudge', 62) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sugar coated almonds', 17) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate coated marshmallow', 118) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('raisins chocolate coated', 390) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chewing gum sugarless', 5) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chewing gum', 11) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate syrup', 109) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate fudge syrup', 67) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('m ms milk chocolate mars', 207) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('milk chocolate with almonds', 216) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate fudge', 70) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('milk chocolate with rice cereal', 0) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('m ms peanut chocolate mars', 93) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('dark chocolate', 165) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate semisweet', 806) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('after eight mints nestle', 36) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('milk chocolate', 37) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white chocolate', 162) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate', 208) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('twix mars', 146) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('kit kat nestle', 62) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('snickers mars', 280) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('milky way mars', 264) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('clif bar', 235) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('gum drops', 18) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('skittles wild berry mars', 249) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('skittles original mars', 251) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('skittles tropical mars', 251) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fruit leather', 52) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('taffy', 60) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('eisbonbons mac iver', 23) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('caramels', 39) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('hard candy', 24) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('jellybeans', 4) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('jellies', 56) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wheat germ toasted', 115) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crispy brown rice', 124) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bran flakes asda', 109) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('amaranth cooked', 251) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('triticale', 645) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('barley raw', 42) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bulgur dry', 171) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cottonseed kernels roasted', 754) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rice bran', 373) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chaptti roti indian bread', 491) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('quinoa cooked', 222) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('dar vida swiss original', 116) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('teff cooked', 255) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('couscous dry', 650) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('weetabix weetabix', 2078) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('oat bran cooked', 88) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('buckwheat cooked', 155) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('millet puffed', 74) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('oat bran raw', 23) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('popcorn oil popped', 64) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('kamut cooked', 251) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wheat bran', 125) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese popcorn', 58) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('raisin bran crunch kelloggs', 90) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('couscous cooked', 176) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('multigrain cheerios general mills', 4) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('bulgur cooked', 151) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('popcorn air popped', 31) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('teff raw', 708) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spelt cooked', 246) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('millet raw', 756) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('popcorn unpopped', 106) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whole wheat cooked', 150) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wheat sprouted', 214) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('whole wheat dry', 96) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('caramel popcorn', 122) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wheat puffed', 44) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('roggenmischbrot sonnenblumenkerne aldi', 82) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wheat germ', 112) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('microwave popcorn', 465) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('millet cooked', 207) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('kamut raw', 627) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wheat durum', 651) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('sorghum', 651) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white wheat', 657) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rye', 571) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('spelt raw', 588) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('buckwheat raw', 41) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('honey cereali general mills', 104) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('barley cooked', 193) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('oats', 39) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('amaranth raw', 37) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('semolina', 601) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('quinoa dry', 221) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wheat shredded', 155) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cattail', 5) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('peanut granola bar', 116) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('vanilla bluberry bar kind', 49) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('coconut granola bar', 150) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('almond granola bar', 119) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chocolate chip granola bar', 105) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fruit granola bar', 82) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('granola bar', 99) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('peanut bar', 209) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('milk cereal bar', 103) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('almond rice bar', 128) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fruit nut squares', 55) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rice wheat cereal bar', 90) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('crisped rice bar', 113) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('brown rice raw', 685) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rice pilaf cooked', 352) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beef flavored rice raw', 657) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wild rice cooked', 166) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('wild rice raw', 571) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('congee with pork shrimp and squid plus egg', 178) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white rice pasta cooked', 246) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken flavored rice raw', 601) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('instant white rice raw', 361) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rice crisps', 107) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('parboiled white rice raw', 692) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('instant white rice cooked', 193) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rice pilaf raw', 732) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('rice cracker cake', 111) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('parboiled white rice cooked', 194) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white rice steamed', 199) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('brown rice cake', 35) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('glutinous white rice raw', 685) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white rice pasta raw', 600) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('glutinous white rice cooked', 169) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('brown rice cooked', 218) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('beef flavored rice cooked', 319) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white rice cooked', 205) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('chicken flavored rice cooked', 317) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('white rice raw', 675) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheese imitation', 441) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('cheshire cheese', 110) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('monterey cheese', 421) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('edam cheese', 107) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('fontina cheese', 420) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('monterey cheese low fat', 350) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('colby cheese', 445) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('american cheese', 93) 
+GO 
+insert into FoodNutritions(Name, CaloricValue) Values ('blue cheese', 106) 
+GO 

@@ -41,6 +41,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
     public virtual DbSet<UserMessage> UserMessages { get; set; }
     public virtual DbSet<ConversationParticipant> ConversationParticipants { get; set; }
     public virtual DbSet<FileCourse> FileCourses { get; set; }
+    public virtual DbSet<FoodNutrition> FoodNutritions { get; set; }
+    public virtual DbSet<FoodNutritionUser> FoodNutritionUsers { get; set; }
 
     public GymMarketContext(DbContextOptions<GymMarketContext> options)
         : base(options)
