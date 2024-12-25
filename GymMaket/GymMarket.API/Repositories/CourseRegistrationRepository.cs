@@ -33,10 +33,6 @@ namespace GymMarket.API.Repositories
                 registration.RegistrationId = Guid.NewGuid().ToString(); // Use a unique GUID
             }
 
-            // Set initial properties for the registration
-            registration.CourseId = courseId;
-            registration.StudentId = studentId;
-
             registration.CourseId = dto.CourseId;
             registration.StudentId = dto.StudentId;
             registration.Status = "Pending Payment";
