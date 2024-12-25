@@ -434,6 +434,71 @@ namespace GymMarket.API.Migrations
                     b.ToTable("FileCourses");
                 });
 
+            modelBuilder.Entity("GymMarket.API.Models.FoodNutrition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<long>("CaloricValue")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("Fat")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Protein")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Sugars")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FoodNutritions");
+                });
+
+            modelBuilder.Entity("GymMarket.API.Models.FoodNutritionUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("CaloricValue")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Fat")
+                        .HasColumnType("float");
+
+                    b.Property<string>("FoodName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Protein")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Sugars")
+                        .HasColumnType("float");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FoodNutritionUsers");
+                });
+
             modelBuilder.Entity("GymMarket.API.Models.HealthDatum", b =>
                 {
                     b.Property<string>("HealthDataId")

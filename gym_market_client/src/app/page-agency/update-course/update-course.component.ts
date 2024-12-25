@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
 import { ErrorModalStore } from '../../stores/error-modal.store';
@@ -28,11 +28,15 @@ export class UpdateCourseComponent {
 	dataVideos: any = []; // lưu data của video để hiển thị trên view
 	private videosAdd: any = []; // chứa đối tượng file để tải lên server
 
+    url: string | null = null;
+
+
 	constructor(
 		private activatedRoute: ActivatedRoute,
 		private courseAgencyService: CourseAgencyService,
 		private router: Router,
-		private formBuilder: FormBuilder
+		private formBuilder: FormBuilder,
+        private renderer: Renderer2,
 	) {}
 
 	ngOnInit() {
@@ -185,5 +189,15 @@ export class UpdateCourseComponent {
 				patchState(this.errorModalStore, { errors: result, isShow: true });
 			},
 		});
+	}
+
+    showImage(url: string | null) {
+		this.url = url;
+
+		if (url) {
+			this.renderer.addClass(document.body, 'no-scroll');
+		} else {
+			this.renderer.removeClass(document.body, 'no-scroll');
+		}
 	}
 }

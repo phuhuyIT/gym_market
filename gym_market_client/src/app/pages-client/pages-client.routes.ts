@@ -7,6 +7,8 @@ import { TrainderDetailsComponent } from './trainder-details/trainder-details.co
 import { CourseSearchComponent } from './course-search/course-search.component';
 import { CourseDetailsComponent } from './course-details/course-details.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
+import { CourseRegistrationComponent } from './course-registration/course-registration.component';
+import { FoodNutritionCalculatorComponent } from './food-nutrition-calculator/food-nutrition-calculator.component';
 
 export const routes: Routes = [
 	{
@@ -21,6 +23,8 @@ export const routes: Routes = [
 			{ path: 'trainer-details/:id', component: TrainderDetailsComponent, title: 'Trainer details' },
 			{ path: 'course-search', component: CourseSearchComponent, title: 'Course search' },
 			{ path: 'course-details/:id', component: CourseDetailsComponent, title: 'Course details' },
+			{ path: 'course-registration', component: CourseRegistrationComponent, title: 'Course Registration' },
+			{ path: 'food-nutrition-calculator', component: FoodNutritionCalculatorComponent, title: 'Food Nutrition Calculator' },
 		],
 	},
 ];

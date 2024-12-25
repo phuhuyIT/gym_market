@@ -190,7 +190,7 @@
 									type="file"
 									multiple
 									accept="image/png,image/jpeg,image/jpg"
-                                    #image
+									#image
 								/>
 
 								<button
@@ -205,7 +205,7 @@
 
 						<div class="grid grid-cols-3 md:grid-cols-4 gap-4">
 							@for (image of dataImages; track $index) {
-							<div class="break-inside-avoid mb-2">
+							<div class="break-inside-avoid mb-2" (click)="showImage(image)">
 								<img class="h-auto max-w-full rounded-lg" [src]="image" alt="" />
 							</div>
 							}
@@ -227,7 +227,7 @@
 									type="file"
 									multiple
 									accept="video/*"
-                                    #video
+									#video
 								/>
 
 								<button
@@ -264,3 +264,24 @@
 		</div>
 	</div>
 </div>
+<!-- show image -->
+@if(url) {
+
+<div class="fixed top-0 left-0 w-full h-full z-50">
+	<div class="fixed top-0 right-0 p-5 z-50">
+		<button
+			class="bg-white w-16 h-16 rounded-full flex justify-center items-center"
+			(click)="showImage(null)"
+		>
+			<span class="text-[1rem]"><i class="fa-solid fa-x"></i></span>
+		</button>
+	</div>
+
+	<div
+		class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center"
+	>
+		<img class="h-auto max-w-lg rounded-lg" [src]="url" alt="image description" />
+	</div>
+</div>
+
+}

@@ -15,6 +15,33 @@ export class HeaderComponent {
 	showAccountOption = false;
 	userStore = inject(UserStore);
 
+	navbarItems: any = [
+		{
+			link: '/home',
+			name: 'Home',
+		},
+		{
+			link: '/client/find-trainer',
+			name: 'Trainers',
+		},
+		{
+			link: '/client/food-nutrition-calculator',
+			name: 'Food Nutrition',
+		},
+	];
+
+	aiMenu = [
+		{
+			name: 'Predict body fat',
+			link: '/check-bmi',
+		},
+        {
+			name: 'Predict body fat by Image',
+			link: '/predict-body-fat',
+		},
+	];
+	showAIDropdownMenu: boolean = false;
+
 	constructor(private accountService: AccountService, private router: Router) {}
 
 	onShowAccountOption() {

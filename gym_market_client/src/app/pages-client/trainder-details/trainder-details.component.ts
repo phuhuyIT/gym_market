@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { TrainerService } from '../../page-agency/trainer.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { TrainerInfoDto } from '../../page-agency/models/trainer-inf0.dto';
@@ -13,7 +13,7 @@ import { UserStore } from '../../stores/user.store';
 @Component({
 	selector: 'app-trainder-details',
 	standalone: true,
-	imports: [],
+	imports: [RouterLink],
 	templateUrl: './trainder-details.component.html',
 	styleUrl: './trainder-details.component.scss',
 })
@@ -97,6 +97,9 @@ export class TrainderDetailsComponent {
 			next: (res: any) => {
 				// console.log(res);
 				this.coursesOfTrainer = res;
+
+                console.log(res);
+                
 			},
 		});
 	}
