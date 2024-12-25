@@ -34,36 +34,15 @@
 						</div>
 
 						<div class="">
+							@for (item of categories; track $index) {
 							<div
+								(click)="onSelectCategory(item)"
+                                [ngClass]="{ 'bg-[#dcfce7] text-[#1a2e05] font-medium': category === item }"
 								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
 							>
-								⊙ Yoga
+								⊙ {{ item }}
 							</div>
-							<div
-								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
-							>
-								⊙ Cardio
-							</div>
-							<div
-								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
-							>
-								⊙ Strength training
-							</div>
-							<div
-								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
-							>
-								⊙ Pilates
-							</div>
-							<div
-								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
-							>
-								⊙ Stretching
-							</div>
-							<div
-								class="px-4 py-2 duration-200 rounded-md mb-2 cursor-pointer hover:bg-[#dcfce7] hover:text-[#1a2e05] hover:font-medium"
-							>
-								⊙ Cross fit
-							</div>
+							}
 						</div>
 					</div>
 				</div>
@@ -78,6 +57,8 @@
 					>
 						<i class="fa-solid fa-magnifying-glass"></i>
 						<input
+							[(ngModel)]="searchString"
+							(keydown.enter)="onSubmit()"
 							type="text"
 							class="bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block outline-none px-4"
 							placeholder="Search for courses"
@@ -96,7 +77,7 @@
 								class="md:flex-row md:max-w-xl"
 							>
 								<img
-									class="object-contain min-w-[200px] max-w-[200px] min-h-[185px] max-h-[185px] rounded-t-lg  md:h-auto md:w-48 md:rounded-none md:rounded-s-lg0 mx-auto"
+									class="object-contain min-w-[200px] max-w-[200px] min-h-[185px] max-h-[185px] rounded-t-lg md:h-auto md:w-48 md:rounded-none md:rounded-s-lg0 mx-auto"
 									[src]="
 										item.getFileDtos !== null && item.getFileDtos.length > 0
 											? item.getFileDtos[0].url
@@ -119,23 +100,36 @@
 						}
 					</div>
 
-                    <div>
-                        <nav aria-label="Page navigation example">
-                            <ul class="inline-flex -space-x-px">
-                              <li>
-                                <button (click)="prevPage()" class="select-none flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</button>
-                              </li>
-                              
-                              <li>
-                                <span class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{pageIndex}}</span>
-                              </li>
+					<div>
+						<nav aria-label="Page navigation example">
+							<ul class="inline-flex -space-x-px">
+								<li>
+									<button
+										(click)="prevPage()"
+										class="select-none flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+									>
+										Previous
+									</button>
+								</li>
 
-                              <li>
-                                <button (click)="nexPage()" class="select-none flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</button>
-                              </li>
-                            </ul>
-                          </nav>
-                    </div>
+								<li>
+									<span
+										class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+										>{{ pageIndex }}</span
+									>
+								</li>
+
+								<li>
+									<button
+										(click)="nexPage()"
+										class="select-none flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+									>
+										Next
+									</button>
+								</li>
+							</ul>
+						</nav>
+					</div>
 				</div>
 			</div>
 		</div>
