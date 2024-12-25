@@ -909,1743 +909,1743 @@ Insert into FileCourses (CourseId, ObjectId, Url, TypeFile) Values ('fc995911-7a
 Insert into FileCourses (CourseId, ObjectId, Url, TypeFile) Values ('fa3180d6-5fc0-4430-ad3d-ed644ca4dafe','ff3b5c9b-c6ad-4e8d-924c-5296c828916b.jpg','http://localhost:8000/imagecourses/ff3b5c9b-c6ad-4e8d-924c-5296c828916b.jpg','IMAGE')
 Insert into FileCourses (CourseId, ObjectId, Url, TypeFile) Values ('fc995911-7ae2-4647-9641-7b64c1479f24','ff9056ad-87ae-4922-8546-a2047700222b.jpg','http://localhost:8000/imagecourses/ff9056ad-87ae-4922-8546-a2047700222b.jpg','IMAGE')
 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream cheese', 51) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream cheese', 51, 5, 0.5, 0.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('neufchatel cheese', 215) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('neufchatel cheese', 215, 19.4, 2.7, 7.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('requeijao cremoso light catupiry', 49) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('requeijao cremoso light catupiry', 49, 3.6, 3.4, 0.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ricotta cheese', 30) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ricotta cheese', 30, 2, 0.091, 1.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream cheese low fat', 30) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream cheese low fat', 30, 2.3, 0.9, 1.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream cheese fat free', 19) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream cheese fat free', 19, 0.2, 1, 2.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gruyere cheese', 116) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gruyere cheese', 116, 9.1, 0.1, 8.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheddar cheese', 113) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheddar cheese', 113, 9.3, 0.1, 6.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('parmesan cheese', 71) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('parmesan cheese', 71, 4.5, 0.046, 6.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('romano cheese', 19) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('romano cheese', 19, 1.3, 0.088, 1.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('parmesan cheese grated', 21) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('parmesan cheese grated', 21, 1.4, 0.075, 1.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('port salut cheese', 465) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('port salut cheese', 465, 37.2, 0.8, 31.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('swiss cheese', 98) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('swiss cheese', 98, 7.7, 0, 6.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('goat cheese hard', 128) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('goat cheese hard', 128, 10.1, 0.6, 8.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gouda cheese', 100) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gouda cheese', 100, 7.7, 0.6, 7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pepper jack cheese lucerne', 75) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pepper jack cheese lucerne', 75, 6, 0, 5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('caraway cheese', 106) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('caraway cheese', 106, 8.3, 0, 7.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gjetost cheese', 1058) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gjetost cheese', 1058, 67, 0, 21.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tilsit cheese', 136) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tilsit cheese', 136, 10.4, 0, 9.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('goat cheese', 103) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('goat cheese', 103, 8.4, 0.031, 6.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('brick cheese', 111) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('brick cheese', 111, 8.9, 0.2, 7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('asadero cheese', 402) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('asadero cheese', 402, 31.9, 3.2, 25.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('camembert cheese', 90) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('camembert cheese', 90, 7.3, 0.1, 5.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('provolone cheese reduced fat', 310) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('provolone cheese reduced fat', 310, 19.9, 0.6, 27.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('roquefort cheese', 314) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('roquefort cheese', 314, 26, 0, 18.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('queso blanco cheese', 366) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('queso blanco cheese', 366, 28.7, 2.1, 24) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('queso seco cheese', 315) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('queso seco cheese', 315, 23.6, 0.5, 23.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('goat cheese soft', 75) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('goat cheese soft', 75, 6, 0.3, 5.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mozzarella cheese', 90) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mozzarella cheese', 90, 6.6, 0, 6.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chihuahua cheese', 494) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chihuahua cheese', 494, 39.2, 7.3, 28.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('limburger cheese', 98) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('limburger cheese', 98, 8.2, 0.1, 6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('muenster cheese', 486) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('muenster cheese', 486, 39.7, 1.5, 30.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('queso fresco cheese', 365) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('queso fresco cheese', 365, 29.1, 2.8, 22.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('brie cheese', 100) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('brie cheese', 100, 8.3, 0.1, 6.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pimento cheese', 525) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pimento cheese', 525, 43.7, 0.9, 31) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mexican cheese', 316) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mexican cheese', 316, 21.7, 0.6, 27.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('feta cheese', 80) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('feta cheese', 80, 6.4, 0, 4.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mozzarella cheese fat free', 159) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mozzarella cheese fat free', 159, 0, 1.7, 35.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('provolone cheese', 463) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('provolone cheese', 463, 35.1, 0.7, 33.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('anejo cheese', 492) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('anejo cheese', 492, 39.6, 6.1, 28.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('honey', 64) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('honey', 64, 0, 17.2, 0.080) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('apple butter', 35) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('apple butter', 35, 0.063, 7.1, 0.045) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fruit jam', 56) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fruit jam', 56, 0.095, 9.7, 0.000) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate hazelnut spread', 100) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate hazelnut spread', 100, 5.5, 10, 1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('peanut butter', 88) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('peanut butter', 88, 7.4, 1, 3.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('peanut spread', 101) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('peanut spread', 101, 8.5, 0.5, 3.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken spread', 88) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken spread', 88, 9.8, 0.3, 10.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese spread', 708) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese spread', 708, 68.6, 8.4, 17) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tahini', 86) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tahini', 86, 7.2, 0, 2.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('orange marmalade', 49) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('orange marmalade', 49, 0, 12, 0.014) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('american cheese spread', 46) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('american cheese spread', 46, 3.4, 1.2, 2.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('apricot jam', 48) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('apricot jam', 48, 0.010, 8.7, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chunky peanut butter', 94) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chunky peanut butter', 94, 8, 1.3, 3.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ham and cheese spread', 37) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ham and cheese spread', 37, 2.8, 0, 2.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken and rice casserole homade', 27) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken and rice casserole homade', 27, 1, 0, 2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('picnic loaf', 65) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('picnic loaf', 65, 4.7, 0, 4.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('corn tamale', 309) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('corn tamale', 309, 12, 12.3, 5.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('baked potato with cheese sauce bacon', 451) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('baked potato with cheese sauce bacon', 451, 25.9, 0, 18.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chinese egg roll', 223) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chinese egg roll', 223, 10.6, 0, 7.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('butter croissant', 231) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('butter croissant', 231, 12, 6.4, 4.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('enchilada with cheese beef', 323) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('enchilada with cheese beef', 323, 17.6, 0, 11.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('corned beef hash with potatoes', 387) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('corned beef hash with potatoes', 387, 24.2, 0.8, 20.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg cheese bacon', 436) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit with egg cheese bacon', 436, 25.3, 2.5, 17.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bagel with ham egg cheese', 483) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bagel with ham egg cheese', 483, 18.5, 7, 26.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('quesadilla with chicken', 529) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('quesadilla with chicken', 529, 27.5, 3.4, 27.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('corn rice', 110) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('corn rice', 110, 0.3, 3, 1.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('kung pao chicken', 779) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('kung pao chicken', 779, 42.2, 18.3, 59) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beef empanada', 298) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beef empanada', 298, 16.3, 1.6, 10.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('frijoles with cheese', 225) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('frijoles with cheese', 225, 7.8, 0, 11.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('burrito with beef', 285) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('burrito with beef', 285, 8.1, 4.1, 9.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken sandwich', 350) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crispy chicken sandwich', 350, 17.6, 3.9, 14.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('enchilada with cheese', 374) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('enchilada with cheese', 374, 25.3, 3.6, 15.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pork egg roll', 189) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pork egg roll', 189, 6.1, 4.5, 8.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('corn on the cob with butter', 155) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('corn on the cob with butter', 155, 3.4, 0, 4.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pancakes with butter syrup', 260) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pancakes with butter syrup', 260, 7, 0, 4.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('burrito with beans', 224) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('burrito with beans', 224, 6.7, 0, 7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('scrambled eggs', 100) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('scrambled eggs', 100, 7.6, 0.8, 6.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('baked potato with sour cream', 393) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('baked potato with sour cream', 393, 22.3, 0, 6.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('turkey and gravy', 161) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('turkey and gravy', 161, 6.3, 0, 14.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken egg roll', 158) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken egg roll', 158, 3.6, 4.5, 8.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vegetable egg roll', 153) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vegetable egg roll', 153, 3.6, 5.3, 5.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ham cheese roll', 67) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ham cheese roll', 67, 5.2, 0, 3.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with ham', 386) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit with ham', 386, 18.4, 2.2, 13.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('lemon chicken', 1440) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('lemon chicken', 1440, 74.9, 55.2, 68.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hummus', 435) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hummus', 435, 21.1, 0.7, 12) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('croissant with egg cheese', 368) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('croissant with egg cheese', 368, 24.7, 0, 12.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('enchirito with cheese beef beans', 344) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('enchirito with cheese beef beans', 344, 16.1, 0, 17.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sweet sour pork', 38) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sweet sour pork', 38, 2.2, 1.4, 1.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crab cake', 160) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crab cake', 160, 10.4, 0, 11.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg dinner roll', 107) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg dinner roll', 107, 2.2, 1.5, 3.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('english muffin with egg cheese sausage', 472) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('english muffin with egg cheese sausage', 472, 29.9, 2.5, 22.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('buttermilk pancakes', 86) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('buttermilk pancakes', 86, 3.5, 0, 2.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('omelet', 94) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('omelet', 94, 7.1, 0.2, 6.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('taco with chicken cheese lettuce', 185) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('taco with chicken cheese lettuce', 185, 6.2, 1.3, 13) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spinach souffle', 230) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spinach souffle', 230, 17.6, 2.5, 10.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('english muffin with cheese sausage', 365) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('english muffin with cheese sausage', 365, 22.3, 2.1, 14.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('potato gratin', 328) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('potato gratin', 328, 18.6, 0, 12.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg', 436) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit with egg', 436, 25.3, 2.5, 17.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('french fries deep fried', 222) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('french fries deep fried', 222, 10.5, 0.2, 2.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sweet sour chicken', 46) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sweet sour chicken', 46, 2.3, 2.1, 1.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('burrito with beans beef', 460) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('burrito with beans beef', 460, 18, 5.3, 27.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('nachos with cinnamon sugar', 592) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('nachos with cinnamon sugar', 592, 36, 0, 7.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('arroz con grandules', 209) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('arroz con grandules', 209, 5.7, 0, 4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chili con carne', 271) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chili con carne', 271, 8.8, 4.7, 14.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('arroz con abichuelas', 223) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('arroz con abichuelas', 223, 5.4, 0.2, 6.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with sausage', 412) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit with sausage', 412, 27.1, 1.8, 10.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vegetarian stew', 304) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vegetarian stew', 304, 7.4, 3.1, 42) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken sandwich with cheese', 632) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken sandwich with cheese', 632, 38.8, 0, 29.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg steak', 410) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit with egg steak', 410, 28.4, 0, 17.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('taco salad', 212) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('taco salad', 212, 11.2, 0, 10) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('succotash', 213) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('succotash', 213, 1.5, 0, 9.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('nachos with cheese jalapeno peppers', 608) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('nachos with cheese jalapeno peppers', 608, 34.1, 0, 16.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg ham', 442) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit with egg ham', 442, 27, 4.2, 20.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ladyfingers', 103) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ladyfingers', 103, 2.6, 7.2, 3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mozzarella steak fried', 102) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mozzarella steak fried', 102, 5.9, 0.7, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tamale navajo', 285) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tamale navajo', 285, 11.4, 1.8, 11.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('blueberry pancakes', 84) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('blueberry pancakes', 84, 3.5, 0, 2.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chimichanga with beef cheese', 443) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chimichanga with beef cheese', 443, 23.4, 0, 20.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg cheese sandwich', 340) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg cheese sandwich', 340, 19.4, 0, 15.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg bacon', 458) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit with egg bacon', 458, 31.1, 3.3, 17) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pupusas con queso', 300) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pupusas con queso', 300, 15.5, 1.4, 13.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('apple croissant', 145) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('apple croissant', 145, 5, 0, 4.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('refried red beans', 336) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('refried red beans', 336, 16.1, 0, 11.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tostada with guacamole', 180) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tostada with guacamole', 180, 11.6, 0, 6.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken sandwich', 468) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken sandwich', 468, 20.9, 6.8, 30.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fried rice', 228) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fried rice', 228, 3.2, 0.6, 6.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pupusas del cerdo', 283) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pupusas del cerdo', 283, 12.7, 1.8, 14) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('turkey pot pie', 699) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('turkey pot pie', 699, 34.9, 0, 25.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese croissant', 331) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese croissant', 331, 16.7, 9.1, 7.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chimichanga with beef', 425) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chimichanga with beef', 425, 19.7, 0, 19.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('french toast with butter', 178) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('french toast with butter', 178, 9.4, 0, 5.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ham egg cheese sandwich', 347) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ham egg cheese sandwich', 347, 16.3, 0, 19.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('english muffin with butter', 189) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('english muffin with butter', 189, 5.8, 0, 4.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('savoury noodle one pan dinner tandaco', 172) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('savoury noodle one pan dinner tandaco', 172, 1.2, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ham cheese sandwich', 352) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ham cheese sandwich', 352, 15.5, 0, 20.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sweet gefilte fish', 35) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sweet gefilte fish', 35, 0.7, 0, 3.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('poached egg', 72) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('poached egg', 72, 4.7, 0.2, 6.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tostada with beef cheese', 315) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tostada with beef cheese', 315, 16.3, 0, 19) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tostada with beans cheese', 223) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tostada with beans cheese', 223, 9.9, 0, 9.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pork tamale', 247) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pork tamale', 247, 12.8, 0.7, 10.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('nachos with cheese', 274) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('nachos with cheese', 274, 17.2, 1.7, 3.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pulled pork in barbecue sauce', 418) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pulled pork in barbecue sauce', 418, 11, 37.8, 32.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('baked potato with cheese sauce', 474) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('baked potato with cheese sauce', 474, 28.7, 0, 14.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('baked beans', 310) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('baked beans', 310, 10.3, 0, 11.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('arroz con frijoles', 220) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('arroz con frijoles', 220, 5.6, 1.3, 6.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('taco with beef cheese lettuce', 156) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('taco with beef cheese lettuce', 156, 8.8, 0.6, 6.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('burrito with beans cheese beef', 165) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('burrito with beans cheese beef', 165, 6.6, 0, 7.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg mix', 30) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg mix', 30, 2.2, 0.091, 2.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('falafel', 57) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('falafel', 57, 3, 0, 2.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('taco salad with chili con carne', 193) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('taco salad with chili con carne', 193, 8.8, 0, 11.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wonton wrappers', 93) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wonton wrappers', 93, 0.5, 0, 3.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hushpuppies', 512) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hushpuppies', 512, 20.5, 3.1, 11.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken pot pie', 598) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken pot pie', 598, 34.6, 7.2, 14.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('general tsos chicken', 1578) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('general tsos chicken', 1578, 87.5, 62.1, 69) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('burrito with beans cheese', 379) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('burrito with beans cheese', 379, 11.2, 3.2, 13.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vegetarian fillets', 247) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vegetarian fillets', 247, 15.3, 0.7, 19.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit with egg sausage', 505) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit with egg sausage', 505, 33.6, 1.5, 18) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken chow mein', 513) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken chow mein', 513, 16.9, 10.5, 40.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fruit burrito', 231) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fruit burrito', 231, 9.5, 0, 2.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('arroz con leche', 369) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('arroz con leche', 369, 9.3, 38.6, 8.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('caramel custard flan', 444) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('caramel custard flan', 444, 12.3, 70.8, 13.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gelatin dessert', 167) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gelatin dessert', 167, 0, 36.4, 3.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate milk dessert', 229) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate milk dessert', 229, 1.4, 51.6, 5.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate mousse', 338) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate mousse', 338, 24, 22.2, 6.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('dulce de leche', 60) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('dulce de leche', 60, 1.4, 9.5, 1.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('apple crisp', 454) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('apple crisp', 454, 9.7, 55.5, 4.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spinach spaghetti cooked', 182) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spinach spaghetti cooked', 182, 0.9, 0, 6.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('corn pasta cooked', 176) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('corn pasta cooked', 176, 1, 0, 3.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spaghetti with meat sauce', 255) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spaghetti with meat sauce', 255, 2.9, 7.4, 14.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pasta with meatballs in tomato sauce', 273) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pasta with meatballs in tomato sauce', 273, 13, 7.2, 10.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese tortellini', 332) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese tortellini', 332, 7.8, 1, 14.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pasta with sliced franks in tomato sauce', 227) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pasta with sliced franks in tomato sauce', 227, 6, 8, 11) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('lasagna', 166) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('lasagna', 166, 6.1, 3.8, 9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('macaroni cheese', 310) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('macaroni cheese', 310, 9.4, 3, 12.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vegetable lasagna', 316) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vegetable lasagna', 316, 13.7, 5.8, 15.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spinach egg noodles cooked', 211) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spinach egg noodles cooked', 211, 2.5, 1.1, 8.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese lasagna', 316) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese lasagna', 316, 13, 10.3, 15.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pasta with tomato sauce', 176) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pasta with tomato sauce', 176, 1.8, 10.1, 5.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spinach pasta cooked', 37) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spinach pasta cooked', 37, 0.3, 0, 1.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vegetable chicken soup', 166) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vegetable chicken soup', 166, 4.8, 3.4, 12.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bean ham soup', 198) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bean ham soup', 198, 2.5, 7.8, 10.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream of chicken soup', 227) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream of chicken soup', 227, 14.5, 1.4, 6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tomato soup canned', 139) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tomato soup canned', 139, 3.3, 16.5, 6.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg drop soup', 65) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg drop soup', 65, 1.5, 0.2, 2.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('scotch broth', 197) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('scotch broth', 197, 6.4, 0, 12.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream of onion soup', 268) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream of onion soup', 268, 12.8, 11.1, 6.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken broth dry', 10) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken broth dry', 10, 0.2, 0, 0.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vegetable soup with beef broth', 162) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vegetable soup with beef broth', 162, 3.8, 4, 6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chili with beans canned', 287) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chili with beans canned', 287, 14.1, 3, 14.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beef noodle soup', 168) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beef noodle soup', 168, 6.2, 5.2, 9.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('consomme dry', 17) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('consomme dry', 17, 0.2, 1.1, 2.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken mushroom soup', 126) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken mushroom soup', 126, 6.1, 1, 2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beef vegetable soup', 120) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beef vegetable soup', 120, 2.9, 3.1, 8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('black bean soup', 234) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('black bean soup', 234, 3.4, 6.4, 12.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('split pea soup with ham bacon', 189) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('split pea soup with ham bacon', 189, 3.1, 0, 11.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream of mushroom soup', 199) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream of mushroom soup', 199, 13.4, 1, 3.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('green pea soup', 320) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('green pea soup', 320, 5.7, 16.7, 16.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken broth soup', 78) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken broth soup', 78, 2.6, 0.9, 11.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken mushroom chowder soup', 431) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken mushroom chowder soup', 431, 23.7, 0, 16.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken dumplings soup', 235) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken dumplings soup', 235, 13.4, 1.4, 13.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken vegetable soup', 148) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken vegetable soup', 148, 5.6, 3, 7.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('turkey vegetable soup', 72) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('turkey vegetable soup', 72, 3, 2.6, 3.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wonton soup', 71) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wonton soup', 71, 0.6, 0.8, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beef stock', 31) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beef stock', 31, 0.2, 1.3, 4.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mushroom barley soup', 186) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mushroom barley soup', 186, 5.5, 0, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gazpacho soup', 70) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gazpacho soup', 70, 0.4, 2.2, 10.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beef mushroom soup', 186) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beef mushroom soup', 186, 7.3, 0, 14) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken rice soup', 127) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken rice soup', 127, 3.2, 1.4, 12.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pepperpot soup', 100) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pepperpot soup', 100, 4.5, 0, 6.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vegetable soup', 149) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vegetable soup', 149, 4, 7.9, 4.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chili beef soup', 308) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chili beef soup', 308, 6.7, 13.4, 13.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken soup', 174) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken soup', 174, 6.5, 2.1, 12.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bean with frankfurters soup', 188) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bean with frankfurters soup', 188, 7, 0, 10) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pea soup', 161) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pea soup', 161, 2.8, 8.3, 8.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('turkey soup', 135) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('turkey soup', 135, 4.4, 0, 10.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('stockpot soup', 201) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('stockpot soup', 201, 7.8, 0, 9.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hot sour soup', 91) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hot sour soup', 91, 2.8, 1, 6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese soup', 203) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese soup', 203, 9.7, 9.3, 2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream of potato soup', 186) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream of potato soup', 186, 4.7, 3.6, 3.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bean with bacon soup', 106) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bean with bacon soup', 106, 2.1, 0.6, 5.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fish stock', 40) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fish stock', 40, 1.9, 0, 5.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('split pea soup with ham', 381) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('split pea soup with ham', 381, 8.9, 0, 20.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beef broth soup', 17) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beef broth soup', 17, 0.5, 0, 2.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('lentil soup with ham', 139) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('lentil soup with ham', 139, 2.8, 0, 9.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tomato soup', 98) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tomato soup', 98, 0.7, 12.2, 2.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fish broth', 39) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fish broth', 39, 1.5, 0.2, 4.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chili without beans canned', 283) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chili without beans canned', 283, 17, 0, 18.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('minestrone soup', 167) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('minestrone soup', 167, 5, 3.7, 8.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('clam chowder soup', 154) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('clam chowder soup', 154, 4.4, 6.8, 4.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tomato vegetable soup', 54) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tomato vegetable soup', 54, 0.8, 2.4, 1.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream of rice coup', 127) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream of rice coup', 127, 0.2, 0.022, 2.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream of celery soup', 181) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream of celery soup', 181, 11.2, 3.4, 3.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken gravy', 188) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken gravy', 188, 13.6, 1.9, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tomato rice soup', 240) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tomato rice soup', 240, 5.5, 15.2, 4.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vegetable beef soup', 128) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vegetable beef soup', 128, 2, 0, 18.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tomato beef noodle soup', 281) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tomato beef noodle soup', 281, 8.6, 0, 8.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('oyster stew soup', 118) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('oyster stew soup', 118, 7.7, 0, 4.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ramen noodle soup dry', 371) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ramen noodle soup dry', 371, 13.3, 1.3, 8.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken noodle soup', 145) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken noodle soup', 145, 4.7, 0, 7.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken bouillon dry', 11) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken bouillon dry', 11, 0.6, 0.7, 0.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream of asparagus soup', 174) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream of asparagus soup', 174, 8.2, 1.8, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('turkey noodle soup', 139) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('turkey noodle soup', 139, 4, 1, 7.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream of shrimp soup', 181) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream of shrimp soup', 181, 10.4, 0, 5.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bean with pork soup', 335) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bean with pork soup', 335, 11.5, 7.8, 15.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken broth', 12) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken broth', 12, 0.5, 0, 1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beef broth powder', 8) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beef broth powder', 8, 0.3, 0.6, 0.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('split pea soup', 180) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('split pea soup', 180, 2.3, 12.8, 9.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('escarole soup', 61) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('escarole soup', 61, 4, 0, 3.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken stock', 86) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken stock', 86, 2.9, 3.8, 6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tomato bisque soup', 248) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tomato bisque soup', 248, 5, 0, 4.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('shark fin soup', 99) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('shark fin soup', 99, 4.3, 0, 6.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('onion soup', 113) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('onion soup', 113, 3.5, 6.7, 7.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken gumbo soup', 113) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken gumbo soup', 113, 2.9, 4.9, 5.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crab soup', 95) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crab soup', 95, 0.8, 0, 10.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tripe soup', 148) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tripe soup', 148, 5.2, 0, 17.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('little india little lunch', 164) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('little india little lunch', 164, 10.6, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('original chicken sandwich chick fil a', 125) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('original chicken sandwich chick fil a', 125, 5.1, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sausage mcmuffin mcdonalds', 383) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sausage mcmuffin mcdonalds', 383, 24.2, 2.2, 14.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sausage mcgriddles mcdonalds', 421) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sausage mcgriddles mcdonalds', 421, 24, 15.2, 11.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken drumstick kentucky fried chicken', 70) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crispy chicken drumstick kentucky fried chicken', 70, 3, 0, 10.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken crispy drumsticks kentucky fried chicken', 156) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken crispy drumsticks kentucky fried chicken', 156, 10.1, 0, 11.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit kentucky fried chicken', 185) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit kentucky fried chicken', 185, 9.1, 1.7, 3.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('english muffin mcdonalds', 97) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('english muffin mcdonalds', 97, 2.3, 1.5, 5.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('french fries mcdonalds', 378) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('french fries mcdonalds', 378, 18.1, 0.2, 4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hotdog', 383) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hotdog', 383, 23, 0, 16.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('french fries burger king', 207) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('french fries burger king', 207, 9.2, 0.4, 2.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('original taco with beef cheese lettuce taco bell', 158) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('original taco with beef cheese lettuce taco bell', 158, 8.8, 0.6, 6.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hotdog with chili', 296) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hotdog with chili', 296, 13.4, 0, 13.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken crispy wings kentucky fried chicken', 148) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken crispy wings kentucky fried chicken', 148, 10.1, 0, 9.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg white delight mcdonalds', 250) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg white delight mcdonalds', 250, 16, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('french toast sticks burger king', 73) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('french toast sticks burger king', 73, 3.7, 2.1, 1.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mcchicken mcdonalds', 358) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mcchicken mcdonalds', 358, 17.3, 4.7, 13.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('nachos supreme taco bell', 480) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('nachos supreme taco bell', 480, 26.6, 0, 14.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken wing kentucky fried chicken', 104) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crispy chicken wing kentucky fried chicken', 104, 5.3, 0, 12.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken strips burger king', 105) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken strips burger king', 105, 5.5, 0, 6.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken breast kentucky fried chicken', 214) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crispy chicken breast kentucky fried chicken', 214, 6.7, 0, 38.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sausage biscuit mcdonalds', 440) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sausage biscuit mcdonalds', 440, 29.7, 2.3, 11.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sausage burrito mcdonalds', 339) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sausage burrito mcdonalds', 339, 17.1, 1.4, 13) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('onion rings fried', 27) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('onion rings fried', 27, 1.6, 0.4, 0.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('onion rings burger king', 379) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('onion rings burger king', 379, 23, 4.9, 3.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('turkey patty fried', 79) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('turkey patty fried', 79, 5, 0.053, 3.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hotcakes with syrup mcdonalds', 601) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hotcakes with syrup mcdonalds', 601, 17.8, 45.5, 9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken thigh kentucky fried chicken', 163) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crispy chicken thigh kentucky fried chicken', 163, 9.1, 0, 20.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('corn dog', 195) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('corn dog', 195, 9.4, 5.9, 6.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken box mcdonalds', 70) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken box mcdonalds', 70, 4, 0.5, 0.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('potato wedges kentucky fried chicken', 379) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('potato wedges kentucky fried chicken', 379, 19.8, 0, 5.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('scrambled eggs mcdonalds', 98) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('scrambled eggs mcdonalds', 98, 7.5, 0.1, 7.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg mcmuffin mcdonalds', 287) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg mcmuffin mcdonalds', 287, 12.2, 2.7, 17.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('nachos taco bell', 362) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('nachos taco bell', 362, 21.9, 0, 5.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit large mcdonalds', 310) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit large mcdonalds', 310, 14.4, 2.7, 5.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crispy chicken strips kentucky fried chicken', 129) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crispy chicken strips kentucky fried chicken', 129, 7.2, 0, 9.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hotcakes mcdonalds', 113) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hotcakes mcdonalds', 113, 2.9, 4.4, 3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken crispy breast kentucky fried chicken', 375) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken crispy breast kentucky fried chicken', 375, 23.2, 0, 29.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hotcakes sausage mcdonalds', 776) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hotcakes sausage mcdonalds', 776, 34.9, 45.7, 15.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken mcnuggets mcdonalds', 48) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken mcnuggets mcdonalds', 48, 3.2, 0.025, 2.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chips chipotle', 151) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chips chipotle', 151, 7.1, 2.1, 0.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('biscuit mcdonalds', 261) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('biscuit mcdonalds', 261, 12.2, 2.2, 4.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rice bowl with chicken', 36) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rice bowl with chicken', 36, 0.4, 1.2, 1.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spaghetti with meatballs', 200) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spaghetti with meatballs', 200, 8.2, 5.8, 8.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('meat ravioli canned', 259) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('meat ravioli canned', 259, 8.9, 6.3, 8.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese ravioli canned', 186) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese ravioli canned', 186, 3.5, 9, 6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('premium crispy chicken ranch blt sandwich mcdonalds', 586) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('premium crispy chicken ranch blt sandwich mcdonalds', 586, 22.9, 13.3, 35.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('steak sandwich', 459) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('steak sandwich', 459, 14.1, 0, 30.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheeseburger burger king', 380) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheeseburger burger king', 380, 19.7, 6, 19.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheeseburger mcdonalds', 313) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheeseburger mcdonalds', 313, 14, 7.4, 15.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('double cheeseburger', 643) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('double cheeseburger', 643, 36.9, 9.5, 37) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('double hamburger', 942) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('double hamburger', 942, 58.6, 13.2, 52.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('premium grilled chicken classic sandwich mcdonalds', 366) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('premium grilled chicken classic sandwich mcdonalds', 366, 8.6, 10, 28.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('big n tasty with cheese mcdonalds', 573) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('big n tasty with cheese mcdonalds', 573, 36, 9.5, 27.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('premium grilled chicken club sandwich mcdonalds', 493) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('premium grilled chicken club sandwich mcdonalds', 493, 18, 6.4, 38.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('quarter pounder mcdonalds', 417) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('quarter pounder mcdonalds', 417, 19.8, 8.8, 24.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('premium crispy chicken classic sandwich mcdonalds', 524) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('premium crispy chicken classic sandwich mcdonalds', 524, 20, 12.4, 27.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('veggie burger', 124) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('veggie burger', 124, 4.4, 0.7, 11) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('quarter pounder with cheese mcdonalds', 513) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('quarter pounder with cheese mcdonalds', 513, 28.3, 9.8, 29) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beef sandwich steak raw', 173) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beef sandwich steak raw', 173, 15.1, 0, 9.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheeseburger', 292) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheeseburger', 292, 13.2, 5.9, 15) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('premium grilled chicken ranch blt sandwich mcdonalds', 412) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('premium grilled chicken ranch blt sandwich mcdonalds', 412, 10.9, 10.5, 33.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('double whopper with cheese burger king', 1061) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('double whopper with cheese burger king', 1061, 68.1, 14.4, 57.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('big mac mcdonalds', 563) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('big mac mcdonalds', 563, 32.8, 8.7, 25.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sandwich with cold cuts', 833) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sandwich with cold cuts', 833, 39.3, 12.4, 41.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('filet o fish mcdonalds', 378) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('filet o fish mcdonalds', 378, 19.6, 4.9, 15.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hand breaded chicken tenders carls jr', 57) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hand breaded chicken tenders carls jr', 57, 2.9, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('grilled chicken sandwich wendys', 370) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('grilled chicken sandwich wendys', 370, 8, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sandwich with roast beef', 410) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sandwich with roast beef', 410, 13, 0, 28.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hamburger burger king', 258) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hamburger burger king', 258, 10.4, 5.5, 14.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('big n tasty mcdonalds', 524) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('big n tasty mcdonalds', 524, 31.7, 8.8, 24.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('roast beef sandwich', 364) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('roast beef sandwich', 364, 15.3, 5.7, 22.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('roast beef sandwich with cheese', 473) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('roast beef sandwich with cheese', 473, 18, 0, 32.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hamburger', 255) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hamburger', 255, 9.9, 5.8, 12.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('premium fish sandwich burger king', 572) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('premium fish sandwich burger king', 572, 27.4, 7.8, 22.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whopper burger king', 790) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whopper burger king', 790, 48.4, 13, 35.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sandwich with tuna salad', 584) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sandwich with tuna salad', 584, 28, 0, 29.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('original chicken sandwich burger king', 569) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('original chicken sandwich burger king', 569, 29.2, 6, 24.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('double whopper burger king', 942) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('double whopper burger king', 942, 58.6, 13.2, 52.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('premium crispy chicken club sandwich mcdonalds', 635) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('premium crispy chicken club sandwich mcdonalds', 635, 29.9, 12.7, 39.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hamburger mcdonalds', 251) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hamburger mcdonalds', 251, 9.6, 5.7, 12.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pepperoni pizza dominos', 308) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pepperoni pizza dominos', 308, 12.6, 4.2, 12.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sausage pizza', 325) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sausage pizza', 325, 14.3, 3.9, 13.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pepperoni pizza', 313) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pepperoni pizza', 313, 13.2, 3.6, 13) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pepperoni pizza pizza hut', 269) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pepperoni pizza pizza hut', 269, 10.9, 3.5, 12.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese pizza pizza hut', 260) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese pizza pizza hut', 260, 10.5, 3.2, 11.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese pizza', 285) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese pizza', 285, 10.4, 3.8, 12.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese pizza dominos', 278) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese pizza dominos', 278, 9.7, 4.3, 11.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('meat vegetable pizza', 332) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('meat vegetable pizza', 332, 14.8, 5.1, 15) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sucker raw', 146) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sucker raw', 146, 3.7, 0, 26.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('northern pike raw', 348) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('northern pike raw', 348, 2.7, 0, 76.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('haddock cooked', 135) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('haddock cooked', 135, 0.8, 0, 30) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('burbot cooked', 104) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('burbot cooked', 104, 0.9, 0, 22.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pollock cooked', 356) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pollock cooked', 356, 3.8, 0, 75.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rainbow smelt raw', 27) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rainbow smelt raw', 27, 0.7, 0, 5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whitefish cooked', 265) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whitefish cooked', 265, 11.6, 0, 37.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('walleye pike raw', 148) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('walleye pike raw', 148, 1.9, 0, 30.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('carp cooked', 275) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('carp cooked', 275, 12.2, 0, 38.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wolffish cooked', 293) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wolffish cooked', 293, 7.3, 0, 53.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('snapper cooked', 218) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('snapper cooked', 218, 2.9, 0, 44.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('roe cooked', 58) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('roe cooked', 58, 2.3, 0, 8.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('anchovy raw', 37) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('anchovy raw', 37, 1.4, 0, 5.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('herring raw', 291) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('herring raw', 291, 16.6, 0, 33) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cod raw', 189) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cod raw', 189, 1.5, 0, 41.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tilapia raw', 111) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tilapia raw', 111, 2, 0, 23.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whiting cooked', 84) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whiting cooked', 84, 1.2, 0, 16.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('skipjack tuna cooked', 407) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('skipjack tuna cooked', 407, 4, 0, 86.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('salmon cooked', 733) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('salmon cooked', 733, 44, 0, 78.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chum salmon cooked', 474) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chum salmon cooked', 474, 14.9, 0, 79.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('american shad cooked', 363) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('american shad cooked', 363, 25.4, 0, 31.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('shark cooked', 65) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('shark cooked', 65, 3.9, 0, 5.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('trout cooked', 118) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('trout cooked', 118, 5.3, 0, 16.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('swordfish raw', 196) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('swordfish raw', 196, 9, 0, 26.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rainbow trout cooked', 119) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rainbow trout cooked', 119, 5.2, 0, 16.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fish sandwich with cheese', 374) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fish sandwich with cheese', 374, 19.6, 4.9, 15.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('jellyfish dried', 21) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('jellyfish dried', 21, 0.8, 0, 3.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mullet raw', 139) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mullet raw', 139, 4.5, 0, 23) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('halibut cooked', 353) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('halibut cooked', 353, 5.1, 0, 71.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('lingcod raw', 213) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('lingcod raw', 213, 2.7, 0, 44.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('orange roughy cooked', 30) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('orange roughy cooked', 30, 0.3, 0, 6.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cisco raw', 77) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cisco raw', 77, 1.5, 0, 15) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('florida pompano cooked', 186) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('florida pompano cooked', 186, 10.7, 0, 20.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('snapper raw', 218) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('snapper raw', 218, 2.9, 0, 44.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fish sandwich', 565) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fish sandwich', 565, 27.4, 7.8, 22.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('haddock raw', 143) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('haddock raw', 143, 0.9, 0, 31.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ocean perch raw', 51) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ocean perch raw', 51, 1, 0, 9.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cuttlefish cooked', 45) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cuttlefish cooked', 45, 0.4, 0, 9.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cod cooked', 189) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cod cooked', 189, 1.5, 0, 41.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('seatrout raw', 248) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('seatrout raw', 248, 8.6, 0, 39.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('flounder raw', 114) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('flounder raw', 114, 3.1, 0, 20.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spot cooked', 79) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spot cooked', 79, 3.1, 0, 11.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('walleye pike cooked', 148) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('walleye pike cooked', 148, 1.9, 0, 30.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('perch raw', 55) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('perch raw', 55, 0.6, 0, 11.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pumpkin seed sunfish raw', 43) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pumpkin seed sunfish raw', 43, 0.3, 0, 9.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('salt mackerel', 415) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('salt mackerel', 415, 34.1, 0, 25.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mackerel cooked', 231) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mackerel cooked', 231, 15.7, 0, 21) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tilapia cooked', 111) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tilapia cooked', 111, 2.3, 0, 22.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('drum raw', 236) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('drum raw', 236, 9.8, 0, 34.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('atlantic croaker fried', 192) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('atlantic croaker fried', 192, 11, 0, 15.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pumpkin seed sunfish cooked', 42) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pumpkin seed sunfish cooked', 42, 0.3, 0, 9.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wolffish raw', 294) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wolffish raw', 294, 7.3, 0, 53.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bluefin tuna cooked', 276) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bluefin tuna cooked', 276, 9.4, 0, 44.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('scup cooked', 68) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('scup cooked', 68, 1.8, 0, 12.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('herring cooked', 290) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('herring cooked', 290, 16.6, 0, 32.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bluefish raw', 186) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bluefish raw', 186, 6.4, 0, 30.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sheepshead cooked', 234) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sheepshead cooked', 234, 3, 0, 48.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bass cooked', 91) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bass cooked', 91, 2.9, 0, 15) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pout cooked', 279) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pout cooked', 279, 3.2, 0, 58.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chinook salmon raw', 709) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chinook salmon raw', 709, 41.3, 0, 78.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rockfish raw', 172) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rockfish raw', 172, 2.6, 0, 35.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tilefish raw', 371) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tilefish raw', 371, 8.9, 0, 67.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('scup raw', 174) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('scup raw', 174, 4.5, 0, 31.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sablefish cooked', 755) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sablefish cooked', 755, 59.3, 0, 51.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tuna salad', 383) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tuna salad', 383, 19, 0, 32.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('coho salmon cooked', 255) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('coho salmon cooked', 255, 11.8, 0, 34.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('roe raw', 20) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('roe raw', 20, 0.9, 0, 3.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sea bass raw', 125) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sea bass raw', 125, 2.6, 0, 23.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pink salmon cooked', 349) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pink salmon cooked', 349, 12, 0, 56) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sockeye salmon cooked', 493) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sockeye salmon cooked', 493, 17.3, 0, 82.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whitefish raw', 265) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whitefish raw', 265, 11.6, 0, 37.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('greenland halibut cooked', 760) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('greenland halibut cooked', 760, 56.4, 0, 58.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('northern pike cooked', 350) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('northern pike cooked', 350, 2.7, 0, 76.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('salmon raw', 824) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('salmon raw', 824, 53.1, 0, 80.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('turbot cooked', 388) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('turbot cooked', 388, 12, 0, 65.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('surimi', 28) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('surimi', 28, 0.3, 0, 4.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chinook salmon cooked', 711) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chinook salmon cooked', 711, 41.2, 0, 79.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mullet cooked', 140) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mullet cooked', 140, 4.5, 0, 23.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chum salmon raw', 3) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chum salmon raw', 3, 0.1, 0, 0.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('butterfish raw', 47) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('butterfish raw', 47, 2.6, 0, 5.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sea bass cooked', 125) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sea bass cooked', 125, 2.6, 0, 23.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('greenland halibut raw', 759) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('greenland halibut raw', 759, 56.5, 0, 58.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('halibut raw', 371) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('halibut raw', 371, 5.4, 0, 75.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sturgeon cooked', 184) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sturgeon cooked', 184, 7, 0, 28.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fish fillet fried', 211) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fish fillet fried', 211, 11.2, 0, 13.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rainbow trout raw', 111) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rainbow trout raw', 111, 4.9, 0, 15.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pout raw', 278) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pout raw', 278, 3.2, 0, 58.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rainbow smelt cooked', 35) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rainbow smelt cooked', 35, 0.9, 0, 6.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('monkfish raw', 22) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('monkfish raw', 22, 0.4, 0, 4.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('trout raw', 117) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('trout raw', 117, 5.2, 0, 16.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('shark raw', 37) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('shark raw', 37, 1.3, 0, 5.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('burbot raw', 104) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('burbot raw', 104, 0.9, 0, 22.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('dolphinfish cooked', 173) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('dolphinfish cooked', 173, 1.4, 0, 37.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crayfish cooked', 25) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crayfish cooked', 25, 0.4, 0, 5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('dolphinfish raw', 173) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('dolphinfish raw', 173, 1.4, 0, 37.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('perch cooked', 54) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('perch cooked', 54, 0.5, 0, 11.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cusk raw', 106) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cusk raw', 106, 0.8, 0, 23.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bluefin tuna raw', 41) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bluefin tuna raw', 41, 1.4, 0, 6.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('milkfish cooked', 54) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('milkfish cooked', 54, 2.4, 0, 7.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('carp raw', 277) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('carp raw', 277, 12.2, 0, 38.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sturgeon raw', 30) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sturgeon raw', 30, 1.1, 0, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('orange roughy raw', 22) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('orange roughy raw', 22, 0.2, 0, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('catfish fried', 199) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('catfish fried', 199, 11.6, 0, 15.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cuttlefish raw', 22) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cuttlefish raw', 22, 0.2, 0, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bass raw', 90) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bass raw', 90, 2.9, 0, 14.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('flounder cooked', 109) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('flounder cooked', 109, 3, 0, 19.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('milkfish raw', 42) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('milkfish raw', 42, 1.9, 0, 5.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('eel raw', 375) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('eel raw', 375, 23.8, 0, 37.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('catfish raw', 189) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('catfish raw', 189, 9.4, 0, 24.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fish sticks', 78) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fish sticks', 78, 4.5, 0.5, 3.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('coho salmon raw', 254) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('coho salmon raw', 254, 12.2, 0, 33.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('monkfish cooked', 27) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('monkfish cooked', 27, 0.6, 0, 5.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('yellowtail cooked', 546) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('yellowtail cooked', 546, 19.6, 0, 86.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('yellowfin tuna cooked', 37) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('yellowfin tuna cooked', 37, 0.2, 0, 8.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ling cooked', 168) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ling cooked', 168, 1.2, 0, 36.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('eel cooked', 67) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('eel cooked', 67, 4.2, 0, 6.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sablefish raw', 753) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sablefish raw', 753, 59.1, 0, 51.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('salmon nuggets', 60) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('salmon nuggets', 60, 3.3, 0, 3.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('yellowtail raw', 546) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('yellowtail raw', 546, 19.6, 0, 86.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('butterfish cooked', 47) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('butterfish cooked', 47, 2.6, 0, 5.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('caviar', 42) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('caviar', 42, 2.9, 0, 3.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pollock raw', 355) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pollock raw', 355, 3.8, 0, 75) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('catfish cooked', 206) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('catfish cooked', 206, 10.3, 0, 26.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whiting raw', 83) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whiting raw', 83, 1.2, 0, 16.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pink salmon raw', 404) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pink salmon raw', 404, 14, 0, 65.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('yellowfin tuna raw', 31) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('yellowfin tuna raw', 31, 0.1, 0, 6.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mackerel raw', 230) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mackerel raw', 230, 15.6, 0, 20.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('turbot raw', 388) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('turbot raw', 388, 12, 0, 65.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cusk cooked', 106) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cusk cooked', 106, 0.8, 0, 23.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('atlantic croaker raw', 82) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('atlantic croaker raw', 82, 2.5, 0, 14) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sucker cooked', 148) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sucker cooked', 148, 3.7, 0, 26.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spot raw', 79) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spot raw', 79, 3.1, 0, 11.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('drum cooked', 236) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('drum cooked', 236, 9.7, 0, 34.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crayfish raw', 3) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crayfish raw', 3, 0.048, 0, 0.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tilefish cooked', 441) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tilefish cooked', 441, 14.1, 0, 73.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bluefish cooked', 186) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bluefish cooked', 186, 6.4, 0, 30.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('grouper cooked', 238) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('grouper cooked', 238, 2.6, 0, 50.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sheepshead raw', 257) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sheepshead raw', 257, 5.7, 0, 48.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('herring kippered', 87) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('herring kippered', 87, 4.9, 0, 9.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('grouper raw', 238) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('grouper raw', 238, 2.6, 0, 50.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ocean perch cooked', 48) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ocean perch cooked', 48, 0.9, 0, 9.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('ling raw', 168) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('ling raw', 168, 1.2, 0, 36.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('lingcod cooked', 329) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('lingcod cooked', 329, 4.1, 0, 68.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('florida pompano raw', 184) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('florida pompano raw', 184, 10.6, 0, 20.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rockfish cooked', 162) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rockfish cooked', 162, 2.4, 0, 33.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('seatrout cooked', 247) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('seatrout cooked', 247, 8.6, 0, 39.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sockeye salmon raw', 562) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sockeye salmon raw', 562, 22.2, 0, 84.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('swordfish cooked', 182) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('swordfish cooked', 182, 8.4, 0, 24.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('american shad raw', 362) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('american shad raw', 362, 25.3, 0, 31.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sardine canned in oil', 310) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sardine canned in oil', 310, 17.1, 0, 36.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('anchovy canned in oil', 8) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('anchovy canned in oil', 8, 0.4, 0, 1.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('salmon canned', 520) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('salmon canned', 520, 20.3, 0, 79.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sardines in tomato sauce canned', 165) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sardines in tomato sauce canned', 165, 9.3, 0.4, 18.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sockeye salmon canned', 563) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sockeye salmon canned', 563, 24.9, 0, 79.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tuna canned', 102) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tuna canned', 102, 2.4, 0, 18.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pink salmon canned', 530) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pink salmon canned', 530, 20.4, 0, 80.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cod canned', 328) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cod canned', 328, 2.7, 0, 71) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('eastern oyster canned', 110) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('eastern oyster canned', 110, 4, 0, 11.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chum salmon canned', 520) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chum salmon canned', 520, 20.3, 0, 79.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tuna canned in oil', 331) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tuna canned in oil', 331, 14.4, 0, 47.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wild pink salmon oceans', 320) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wild pink salmon oceans', 320, 16, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('shrimp canned', 128) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('shrimp canned', 128, 1.7, 0, 26.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('alaska king crab raw', 144) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('alaska king crab raw', 144, 1, 0, 31.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('scallops fried', 64) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('scallops fried', 64, 3.2, 0, 2.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('shrimp cooked', 7) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('shrimp cooked', 7, 0.092, 0, 1.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('clams fried', 19) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('clams fried', 19, 1, 0, 1.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('alaska king crab cooked', 130) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('alaska king crab cooked', 130, 2.1, 0, 25.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('scallops cooked', 11) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('scallops cooked', 11, 0.058, 0, 2.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('squid fried', 140) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('squid fried', 140, 6, 0, 14.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('oyster raw', 41) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('oyster raw', 41, 1.2, 0, 4.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('abalone', 89) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('abalone', 89, 0.6, 0, 14.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('queen crab raw', 25) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('queen crab raw', 25, 0.3, 0, 5.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whelk cooked', 78) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whelk cooked', 78, 0.2, 0, 13.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('oyster cooked', 41) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('oyster cooked', 41, 1.2, 0, 4.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('eastern oyster cooked', 8) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('eastern oyster cooked', 8, 0.2, 0, 0.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('blue mussels cooked', 344) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('blue mussels cooked', 344, 9, 0, 47.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('octopus raw', 23) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('octopus raw', 23, 0.3, 0, 4.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spiny lobster cooked', 233) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spiny lobster cooked', 233, 3.2, 0, 43) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('blue mussels raw', 129) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('blue mussels raw', 129, 3.4, 0, 17.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('queen crab cooked', 98) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('queen crab cooked', 98, 1.3, 0, 20.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('dungeness crab cooked', 140) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('dungeness crab cooked', 140, 1.6, 0, 28.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('dungeness crab raw', 140) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('dungeness crab raw', 140, 1.6, 0, 28.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('shrimp fried', 52) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('shrimp fried', 52, 3.2, 0.086, 1.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('shrimp raw', 4) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('shrimp raw', 4, 0.023, 0, 0.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('blue crab cooked', 71) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('blue crab cooked', 71, 0.6, 0, 15.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('shrimp imitation', 29) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('shrimp imitation', 29, 0.4, 0, 3.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('conch baked', 165) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('conch baked', 165, 1.5, 0, 33.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('squid raw', 26) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('squid raw', 26, 0.4, 0, 4.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('scallop raw', 10) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('scallop raw', 10, 0.091, 0, 1.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('lobster raw', 116) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('lobster raw', 116, 1.1, 0, 24.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('scallop imitation', 28) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('scallop imitation', 28, 0.1, 0, 3.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('blue crab raw', 18) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('blue crab raw', 18, 0.2, 0, 3.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whelk raw', 39) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whelk raw', 39, 0.1, 0, 6.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spiny lobster raw', 234) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spiny lobster raw', 234, 3.2, 0, 43.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('clams canned', 227) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('clams canned', 227, 2.5, 0, 38.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('lobster cooked', 134) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('lobster cooked', 134, 1.3, 0, 28.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('eastern oyster fried', 29) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('eastern oyster fried', 29, 1.8, 0, 1.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('clams raw', 195) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('clams raw', 195, 2.2, 0, 33.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('octopus cooked', 139) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('octopus cooked', 139, 1.8, 0, 25.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('eastern oyster raw', 8) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('eastern oyster raw', 8, 0.2, 0, 0.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('oyster fried', 61) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('oyster fried', 61, 3, 0, 2.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sturgeon smoked', 49) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sturgeon smoked', 49, 1.2, 0, 8.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chinook salmon smoked', 159) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chinook salmon smoked', 159, 5.9, 0, 24.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cisco smoked', 50) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cisco smoked', 50, 3.4, 0, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('haddock smoked', 33) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('haddock smoked', 33, 0.3, 0, 7.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whitefish smoked', 147) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whitefish smoked', 147, 1.3, 0, 31.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('red salmon sockeye filets smoked', 373) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('red salmon sockeye filets smoked', 373, 12.3, 0, 65.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('eggnog', 224) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('eggnog', 224, 10.6, 20.4, 11.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beer light', 96) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beer light', 96, 0, 0.3, 0.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beer budweiser', 12) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beer budweiser', 12, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('weizenbier erdinger', 220) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('weizenbier erdinger', 220, 18, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beer light budweiser', 9) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beer light budweiser', 9, 0, 0, 0.066) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beer', 142) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beer', 142, 0, 0, 1.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('root beer', 202) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('root beer', 202, 0, 52.3, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whiskey sour mix', 26) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whiskey sour mix', 26, 0.072, 6.3, 0.051) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whiskey sour', 158) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whiskey sour', 158, 0, 0, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tequila sunrise', 232) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tequila sunrise', 232, 0.2, 0, 0.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('daiquiri', 112) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('daiquiri', 112, 0.036, 3.3, 0.035) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pina colada', 245) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pina colada', 245, 2.7, 31.5, 0.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whiskey', 58) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whiskey', 58, 0, 0.078, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rum', 49) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rum', 49, 0, 0, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vodka smirnoff', 13) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vodka smirnoff', 13, 0.4, 0.082, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('coffee liqueur', 96) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('coffee liqueur', 96, 0.038, 13.7, 0.041) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gin', 53) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gin', 53, 0, 0, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('dessert wine sweet', 165) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('dessert wine sweet', 165, 0, 8, 0.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chenin blanc white wine', 118) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chenin blanc white wine', 118, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gamay red wine', 115) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gamay red wine', 115, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('late harvest white wine', 172) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('late harvest white wine', 172, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gewurztraminer white wine', 119) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gewurztraminer white wine', 119, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('burgundy red wine', 172) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('burgundy red wine', 172, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('zinfandel red wine', 129) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('zinfandel red wine', 129, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('muller thurgau white wine', 112) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('muller thurgau white wine', 112, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mouvedre red wine', 129) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mouvedre red wine', 129, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('table wine', 123) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('table wine', 123, 0, 1.2, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wine light', 73) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wine light', 73, 0, 1.7, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white wine', 121) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white wine', 121, 0, 1.4, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('petite sirah red wine', 125) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('petite sirah red wine', 125, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('non alcoholic wine', 2) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('non alcoholic wine', 2, 0, 0.3, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pinot noir red wine', 121) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pinot noir red wine', 121, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pinot gris grigio white wine', 122) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pinot gris grigio white wine', 122, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('riesling white wine', 118) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('riesling white wine', 118, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('barbera red wine', 170) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('barbera red wine', 170, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('lemberger red wine', 118) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('lemberger red wine', 118, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('merlot red wine', 122) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('merlot red wine', 122, 0, 0.9, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sangiovese red wine', 126) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sangiovese red wine', 126, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sauvignon blanc white wine', 119) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sauvignon blanc white wine', 119, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('syrah red wine', 122) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('syrah red wine', 122, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('carignane red wine', 370) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('carignane red wine', 370, 0, 0, 0.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pinot blanc white wine', 119) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pinot blanc white wine', 119, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('semillon white wine', 121) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('semillon white wine', 121, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('dessert wine dry', 760) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('dessert wine dry', 760, 0, 5.5, 1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('red wine', 125) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('red wine', 125, 0, 0.9, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cabernet sauvignon red wine', 166) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cabernet sauvignon red wine', 166, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('muscat white wine', 123) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('muscat white wine', 123, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cooking wine', 2) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cooking wine', 2, 0, 0.090, 0.028) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chardonnay white wine', 168) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chardonnay white wine', 168, 0, 1.9, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('claret red wine', 122) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('claret red wine', 122, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rice sake', 197) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rice sake', 197, 0, 0, 0.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fume blanc white wine', 121) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fume blanc white wine', 121, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cabarnet franc red wine', 122) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cabarnet franc red wine', 122, 0, 0, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate frosting', 81) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate frosting', 81, 3.6, 11.8, 0.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white sugar', 19) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white sugar', 19, 0, 4.9, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg substitute', 115) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg substitute', 115, 0, 4.8, 24) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('agave syrup', 21) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('agave syrup', 21, 0.081, 4.7, 0.025) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('splenda sweetener', 336) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('splenda sweetener', 336, 0, 80.3, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vanilla extract', 12) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vanilla extract', 12, 0.069, 0.5, 0.000) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg yolk dried', 27) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg yolk dried', 27, 2.3, 0.002, 1.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('granulated sugar', 16) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('granulated sugar', 16, 0, 4.2, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('baking chocolate', 145) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('baking chocolate', 145, 15.2, 0.3, 3.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bakers yeast', 18) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bakers yeast', 18, 0.3, 0, 1.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fondant', 106) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fondant', 106, 0.009, 25.2, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('brown sugar', 16) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('brown sugar', 16, 0, 4.1, 0.024) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white frosting dry', 768) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white frosting dry', 768, 0, 0, 4.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('maple sugar', 42) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('maple sugar', 42, 0.061, 10.2, 0.036) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fructose sweetener', 15) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fructose sweetener', 15, 0, 3.9, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('saccharin sweetener', 360) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('saccharin sweetener', 360, 0, 85.2, 0.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg white raw', 17) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg white raw', 17, 0.063, 0.2, 3.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('turbinado sugar', 18) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('turbinado sugar', 18, 0, 4.6, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vanilla frosting', 1931) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vanilla frosting', 1931, 75, 291.5, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('aspartame sweetener', 365) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('aspartame sweetener', 365, 0, 80.7, 2.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg raw', 80) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg raw', 80, 5.3, 0.2, 7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pineapple topping', 860) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pineapple topping', 860, 0.3, 71.4, 0.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg white dried', 26) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg white dried', 26, 0.087, 0, 5.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg yolk raw', 55) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg yolk raw', 55, 4.5, 0.080, 2.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('baking soda', 0) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('baking soda', 0, 0, 0, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg dried', 30) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg dried', 30, 2.2, 0.050, 2.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('strawberry topping', 53) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('strawberry topping', 53, 0.096, 5.7, 0.014) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bakers yeast dry', 13) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bakers yeast dry', 13, 0.3, 0, 1.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('almond paste', 1040) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('almond paste', 1040, 63, 82.3, 20.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cream of tartar', 8) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cream of tartar', 8, 0, 0, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('popover dry mix', 631) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('popover dry mix', 631, 7.3, 0, 17.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg substitute powder', 126) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg substitute powder', 126, 3.7, 6.2, 15.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gelatin powder', 17) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gelatin powder', 17, 0.086, 0, 4.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('tapioca pearls', 544) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('tapioca pearls', 544, 0.093, 5.1, 0.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('baking powder', 2) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('baking powder', 2, 0, 0, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg boiled', 93) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg boiled', 93, 6.4, 0.7, 7.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('millet flour', 444) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('millet flour', 444, 5.1, 2, 12.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('triticale flour', 439) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('triticale flour', 439, 2.4, 0, 17.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('corn flour white', 414) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('corn flour white', 414, 4.2, 1.8, 9.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rice flour brown', 574) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rice flour brown', 574, 4.4, 1.3, 11.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sorghum flour', 437) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sorghum flour', 437, 4, 2.3, 9.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cornmeal whole grain', 442) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cornmeal whole grain', 442, 4.4, 0.8, 9.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cornmeal white', 581) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cornmeal white', 581, 2.7, 2.5, 11.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('barley flour', 511) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('barley flour', 511, 2.4, 1.2, 15.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('safflower seed meal', 97) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('safflower seed meal', 97, 0.7, 0, 10.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sesame flour', 658) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sesame flour', 658, 46.4, 0, 38.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whole grain wheat flour', 408) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whole grain wheat flour', 408, 3, 0.5, 15.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('corn flour yellow', 422) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('corn flour yellow', 422, 4.5, 0.7, 8.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('corn flour whole grain', 422) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('corn flour whole grain', 422, 4.5, 0.7, 8.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cottonseed flour low fat', 94) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cottonseed flour low fat', 94, 0.4, 0, 14.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sunflower seed flour', 13) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sunflower seed flour', 13, 0.013, 0, 1.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sesame meal', 160) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sesame meal', 160, 13.6, 0, 4.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('acorn flour', 626) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('acorn flour', 626, 37.7, 0, 9.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rice flour white', 578) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rice flour white', 578, 2.2, 0.2, 9.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sesame flour low fat', 94) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sesame flour low fat', 94, 0.5, 0, 14.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('potato flour', 571) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('potato flour', 571, 0.5, 5.6, 11) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cornmeal yellow', 581) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cornmeal yellow', 581, 2.7, 2.5, 11.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rye flour', 364) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rye flour', 364, 1.4, 0.9, 10) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('arrowroot flour', 457) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('arrowroot flour', 457, 0.1, 0, 0.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chickpea flour', 356) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chickpea flour', 356, 6.2, 10, 20.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wheat flour', 455) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wheat flour', 455, 1.2, 0.3, 12.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cornstarch', 488) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cornstarch', 488, 0.030, 0, 0.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('carob flour', 13) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('carob flour', 13, 0.061, 2.9, 0.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('buckwheat flour', 402) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('buckwheat flour', 402, 3.7, 3.1, 15.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pecan pie', 503) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pecan pie', 503, 27.1, 0, 6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('apple pie', 331) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('apple pie', 331, 15.6, 0, 3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vanilla wafer pie crust', 935) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vanilla wafer pie crust', 935, 63.7, 12.9, 6.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate pie crust', 881) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate pie crust', 881, 40.8, 47.9, 11.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('apple strudel', 195) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('apple strudel', 195, 8, 18.3, 2.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate snack cake', 200) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate snack cake', 200, 8, 18.9, 1.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fruit fried pie', 404) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fruit fried pie', 404, 20.6, 27.4, 3.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pumpkin pie', 316) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pumpkin pie', 316, 14.4, 0, 7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('corn cake', 35) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('corn cake', 35, 0.2, 2.1, 0.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sponge snack cake', 157) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sponge snack cake', 157, 4.8, 15.7, 1.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('danish pastry with nuts', 280) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('danish pastry with nuts', 280, 16.4, 16.8, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate cream pie', 301) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate cream pie', 301, 19.2, 0, 2.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('angel food cake', 72) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('angel food cake', 72, 0.2, 0, 1.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('lemon meringue pie', 362) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('lemon meringue pie', 362, 16.4, 0, 4.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('danish pastry with cinnamon', 349) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('danish pastry with cinnamon', 349, 16.7, 0, 4.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cinnamon coffeecake', 238) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cinnamon coffeecake', 238, 13.3, 0, 3.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheesecake', 257) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheesecake', 257, 18, 17.4, 4.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fruitcake', 139) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fruitcake', 139, 3.9, 11.8, 1.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('egg custard', 293) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('egg custard', 293, 12.9, 31, 14.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('mince pie', 477) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('mince pie', 477, 17.8, 46.7, 4.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('yellow cake with chocolate frosting', 546) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('yellow cake with chocolate frosting', 546, 25.6, 56.5, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('danish pastry with fruit', 335) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('danish pastry with fruit', 335, 15.9, 0, 4.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white cake with coconut frosting', 399) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white cake with coconut frosting', 399, 11.5, 64.3, 4.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('danish pastry with cheese', 353) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('danish pastry with cheese', 353, 24.6, 0, 5.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('graham cracker pie crust', 917) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('graham cracker pie crust', 917, 45.4, 33.2, 9.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('blueberry pie', 360) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('blueberry pie', 360, 17.5, 0, 4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('yellow cake with vanilla frosting', 239) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('yellow cake with vanilla frosting', 239, 9.3, 0, 2.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pie crust', 121) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pie crust', 121, 8, 0.045, 1.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate cake with chocolate frosting', 537) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate cake with chocolate frosting', 537, 27.7, 55.1, 4.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese coffeecake', 258) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese coffeecake', 258, 11.6, 0, 5.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vanilla cream pie', 350) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vanilla cream pie', 350, 18.1, 16, 6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pineapple cake', 367) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pineapple cake', 367, 13.9, 0, 4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('peach pie', 262) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('peach pie', 262, 11.7, 19, 2.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fruit coffeecake', 156) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fruit coffeecake', 156, 5.1, 0, 2.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pound cake', 116) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pound cake', 116, 6, 0, 1.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('pound cake bread', 215) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('pound cake bread', 215, 9.6, 10, 3.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white cake', 264) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white cake', 264, 9.2, 26.3, 4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('coffeecake with chocolate frosting', 298) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('coffeecake with chocolate frosting', 298, 9.7, 0, 4.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('popcorn cake', 38) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('popcorn cake', 38, 0.3, 0.001, 1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('banana cream pie', 3190) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('banana cream pie', 3190, 161.3, 143, 52.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('baked apple pie mcdonalds', 91) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('baked apple pie mcdonalds', 91, 4.4, 4.9, 0.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sponge cake', 187) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sponge cake', 187, 2.7, 0, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('yellow cake', 245) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('yellow cake', 245, 9.9, 0, 3.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('shortcake', 98) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('shortcake', 98, 4, 0, 1.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cherry pie', 486) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cherry pie', 486, 22, 0, 5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('dutch apple pie', 397) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('dutch apple pie', 397, 15.8, 30.2, 3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate cake', 352) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate cake', 352, 14.3, 0, 5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('marshmallow', 64) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('marshmallow', 64, 0.033, 11.5, 0.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sugar apple', 72) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sugar apple', 72, 0.2, 0, 1.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('toffee', 67) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('toffee', 67, 3.9, 7.6, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vanilla fudge with nuts', 123) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vanilla fudge with nuts', 123, 3.9, 20.1, 0.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('peanuts chocolate coated', 21) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('peanuts chocolate coated', 21, 1.3, 1.5, 0.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('caramel with nuts chocolate coated', 66) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('caramel with nuts chocolate coated', 66, 2.9, 5.8, 1.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gingerbread', 263) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gingerbread', 263, 12.1, 0, 2.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rolo nestle', 24) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rolo nestle', 24, 1, 0.078, 0.009) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vanilla fudge', 108) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vanilla fudge', 108, 1.5, 22.6, 0.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('halavah', 328) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('halavah', 328, 15.1, 0, 8.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('praline', 189) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('praline', 189, 10.1, 21.8, 1.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fruit juice bar', 67) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fruit juice bar', 67, 0.089, 13.5, 0.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('peanut brittle', 138) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('peanut brittle', 138, 5.4, 14.5, 2.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('butterscotch', 21) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('butterscotch', 21, 0.2, 4.3, 0.079) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate coffee beans', 155) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate coffee beans', 155, 9.4, 14.4, 2.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('nougat with almonds', 56) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('nougat with almonds', 56, 0.2, 11.7, 0.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('carob', 135) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('carob', 135, 7.8, 8.5, 2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('peanut butter fudge', 62) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('peanut butter fudge', 62, 1.1, 11.7, 0.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sugar coated almonds', 17) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sugar coated almonds', 17, 0.6, 2.2, 0.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate coated marshmallow', 118) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate coated marshmallow', 118, 4.7, 12.5, 1.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('raisins chocolate coated', 390) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('raisins chocolate coated', 390, 14.8, 62.2, 4.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chewing gum sugarless', 5) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chewing gum sugarless', 5, 0.013, 0, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chewing gum', 11) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chewing gum', 11, 0.032, 2, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate syrup', 109) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate syrup', 109, 0.4, 19.4, 0.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate fudge syrup', 67) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate fudge syrup', 67, 1.7, 6.6, 0.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('m ms milk chocolate mars', 207) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('m ms milk chocolate mars', 207, 8.9, 26.7, 1.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('milk chocolate with almonds', 216) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('milk chocolate with almonds', 216, 14.1, 18, 3.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate fudge', 70) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate fudge', 70, 1.8, 12.4, 0.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('milk chocolate with rice cereal', 0) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('milk chocolate with rice cereal', 0, 0, 0, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('m ms peanut chocolate mars', 93) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('m ms peanut chocolate mars', 93, 4.7, 9.1, 1.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('dark chocolate', 165) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('dark chocolate', 165, 9.7, 13.8, 1.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate semisweet', 806) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate semisweet', 806, 50.4, 91.6, 7.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('after eight mints nestle', 36) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('after eight mints nestle', 36, 1, 5.6, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('milk chocolate', 37) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('milk chocolate', 37, 2.1, 3.6, 0.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white chocolate', 162) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white chocolate', 162, 9.6, 17.7, 1.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate', 208) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate', 208, 14, 21.1, 1.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('twix mars', 146) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('twix mars', 146, 7.2, 14, 1.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('kit kat nestle', 62) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('kit kat nestle', 62, 3.3, 6.5, 0.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('snickers mars', 280) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('snickers mars', 280, 13.6, 28.8, 4.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('milky way mars', 264) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('milky way mars', 264, 10, 34.6, 2.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('clif bar', 235) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('clif bar', 235, 4, 21.5, 10) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('gum drops', 18) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('gum drops', 18, 0.042, 3.5, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('skittles wild berry mars', 249) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('skittles wild berry mars', 249, 2.6, 47.1, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('skittles original mars', 251) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('skittles original mars', 251, 2.7, 47, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('skittles tropical mars', 251) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('skittles tropical mars', 251, 2.7, 47, 0.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fruit leather', 52) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fruit leather', 52, 0.4, 6.9, 0.029) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('taffy', 60) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('taffy', 60, 0.5, 10.3, 0.087) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('eisbonbons mac iver', 23) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('eisbonbons mac iver', 23, 0, 0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('caramels', 39) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('caramels', 39, 0.8, 6.6, 0.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('hard candy', 24) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('hard candy', 24, 0.067, 3.8, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('jellybeans', 4) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('jellybeans', 4, 0.043, 0.8, 0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('jellies', 56) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('jellies', 56, 0.069, 10.8, 0.005) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wheat germ toasted', 115) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wheat germ toasted', 115, 3.2, 2.3, 8.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crispy brown rice', 124) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crispy brown rice', 124, 1.1, 2.9, 2.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bran flakes asda', 109) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bran flakes asda', 109, 0.6, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('amaranth cooked', 251) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('amaranth cooked', 251, 3.9, 0, 9.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('triticale', 645) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('triticale', 645, 4, 0, 25.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('barley raw', 42) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('barley raw', 42, 0.1, 0.094, 1.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bulgur dry', 171) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bulgur dry', 171, 0.7, 0.2, 6.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cottonseed kernels roasted', 754) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cottonseed kernels roasted', 754, 54.1, 0, 48.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rice bran', 373) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rice bran', 373, 24.6, 1.1, 15.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chaptti roti indian bread', 491) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chaptti roti indian bread', 491, 2.5, 68.4, 7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('quinoa cooked', 222) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('quinoa cooked', 222, 3.6, 1.6, 8.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('dar vida swiss original', 116) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('dar vida swiss original', 116, 3.1, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('teff cooked', 255) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('teff cooked', 255, 1.6, 0, 9.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('couscous dry', 650) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('couscous dry', 650, 1.1, 0, 22.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('weetabix weetabix', 2078) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('weetabix weetabix', 2078, 11.5, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('oat bran cooked', 88) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('oat bran cooked', 88, 1.9, 0, 7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('buckwheat cooked', 155) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('buckwheat cooked', 155, 1, 1.5, 5.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('millet puffed', 74) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('millet puffed', 74, 0.7, 0.1, 2.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('oat bran raw', 23) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('oat bran raw', 23, 0.5, 0.1, 1.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('popcorn oil popped', 64) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('popcorn oil popped', 64, 4.8, 0.027, 0.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('kamut cooked', 251) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('kamut cooked', 251, 1.6, 0, 11.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wheat bran', 125) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wheat bran', 125, 2.5, 0.2, 9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese popcorn', 58) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese popcorn', 58, 3.7, 0, 1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('raisin bran crunch kelloggs', 90) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('raisin bran crunch kelloggs', 90, 0.5, 9, 1.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('couscous cooked', 176) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('couscous cooked', 176, 0.3, 0.2, 6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('multigrain cheerios general mills', 4) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('multigrain cheerios general mills', 4, 0.005, 0.2, 0.038) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('bulgur cooked', 151) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('bulgur cooked', 151, 0.4, 0.2, 5.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('popcorn air popped', 31) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('popcorn air popped', 31, 0.4, 0.086, 1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('teff raw', 708) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('teff raw', 708, 4.6, 3.6, 25.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spelt cooked', 246) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spelt cooked', 246, 1.6, 0, 10.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('millet raw', 756) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('millet raw', 756, 8.4, 0, 22) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('popcorn unpopped', 106) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('popcorn unpopped', 106, 1.2, 0.3, 3.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whole wheat cooked', 150) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whole wheat cooked', 150, 1, 0.2, 4.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wheat sprouted', 214) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wheat sprouted', 214, 1.4, 0, 8.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('whole wheat dry', 96) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('whole wheat dry', 96, 0.6, 0.1, 3.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('caramel popcorn', 122) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('caramel popcorn', 122, 3.6, 15.1, 1.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wheat puffed', 44) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wheat puffed', 44, 0.1, 0, 1.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('roggenmischbrot sonnenblumenkerne aldi', 82) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('roggenmischbrot sonnenblumenkerne aldi', 82, 3.1, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wheat germ', 112) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wheat germ', 112, 3, 0, 7.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('microwave popcorn', 465) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('microwave popcorn', 465, 26.3, 0.3, 7.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('millet cooked', 207) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('millet cooked', 207, 1.7, 0.2, 6.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('kamut raw', 627) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('kamut raw', 627, 4.1, 15.2, 27.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wheat durum', 651) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wheat durum', 651, 4.7, 0, 26.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('sorghum', 651) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('sorghum', 651, 6.3, 0, 21.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white wheat', 657) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white wheat', 657, 3.3, 0.8, 21.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rye', 571) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rye', 571, 2.8, 1.7, 17.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('spelt raw', 588) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('spelt raw', 588, 4.2, 11.9, 25.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('buckwheat raw', 41) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('buckwheat raw', 41, 0.4, 0, 1.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('honey cereali general mills', 104) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('honey cereali general mills', 104, 2, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('barley cooked', 193) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('barley cooked', 193, 0.7, 0.4, 3.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('oats', 39) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('oats', 39, 0.7, 0, 1.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('amaranth raw', 37) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('amaranth raw', 37, 0.7, 0.2, 1.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('semolina', 601) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('semolina', 601, 1.8, 0, 21.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('quinoa dry', 221) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('quinoa dry', 221, 3.6, 0, 8.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wheat shredded', 155) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wheat shredded', 155, 1, 0.4, 5.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cattail', 5) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cattail', 5, 0, 0.074, 0.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('peanut granola bar', 116) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('peanut granola bar', 116, 5.7, 8.2, 2.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('vanilla bluberry bar kind', 49) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('vanilla bluberry bar kind', 49, 1.4, 0.096, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('coconut granola bar', 150) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('coconut granola bar', 150, 9.1, 9.7, 1.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('almond granola bar', 119) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('almond granola bar', 119, 6.1, 0, 1.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chocolate chip granola bar', 105) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chocolate chip granola bar', 105, 3.9, 0, 1.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fruit granola bar', 82) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fruit granola bar', 82, 0.2, 13.3, 1.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('granola bar', 99) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('granola bar', 99, 4.2, 6, 2.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('peanut bar', 209) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('peanut bar', 209, 13.5, 16.9, 6.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('milk cereal bar', 103) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('milk cereal bar', 103, 2.7, 11.5, 1.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('almond rice bar', 128) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('almond rice bar', 128, 5.7, 0, 2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fruit nut squares', 55) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fruit nut squares', 55, 1.3, 6.4, 0.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rice wheat cereal bar', 90) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rice wheat cereal bar', 90, 2, 7, 2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('crisped rice bar', 113) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('crisped rice bar', 113, 3.8, 0, 1.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('brown rice raw', 685) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('brown rice raw', 685, 5.4, 1.6, 14.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rice pilaf cooked', 352) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rice pilaf cooked', 352, 8.8, 0.6, 7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beef flavored rice raw', 657) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beef flavored rice raw', 657, 2.3, 0, 19.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wild rice cooked', 166) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wild rice cooked', 166, 0.6, 1.2, 6.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('wild rice raw', 571) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('wild rice raw', 571, 1.7, 4, 23.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('congee with pork shrimp and squid plus egg', 178) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('congee with pork shrimp and squid plus egg', 178, 0.3, 0.0, 0.0) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white rice pasta cooked', 246) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white rice pasta cooked', 246, 5.7, 0, 5.1) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken flavored rice raw', 601) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken flavored rice raw', 601, 2.2, 4, 17.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('instant white rice raw', 361) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('instant white rice raw', 361, 0.9, 0.026, 7.4) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rice crisps', 107) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rice crisps', 107, 0.4, 2.3, 1.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('parboiled white rice raw', 692) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('parboiled white rice raw', 692, 1.9, 0.6, 13.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('instant white rice cooked', 193) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('instant white rice cooked', 193, 0.8, 0, 3.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rice pilaf raw', 732) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rice pilaf raw', 732, 2.8, 3.1, 21.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('rice cracker cake', 111) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('rice cracker cake', 111, 1.2, 0.2, 2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('parboiled white rice cooked', 194) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('parboiled white rice cooked', 194, 0.6, 0.2, 4.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white rice steamed', 199) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white rice steamed', 199, 0.4, 0, 4.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('brown rice cake', 35) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('brown rice cake', 35, 0.3, 0.047, 0.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('glutinous white rice raw', 685) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('glutinous white rice raw', 685, 1, 0, 12.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white rice pasta raw', 600) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white rice pasta raw', 600, 4, 0, 15.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('glutinous white rice cooked', 169) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('glutinous white rice cooked', 169, 0.3, 0.078, 3.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('brown rice cooked', 218) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('brown rice cooked', 218, 1.6, 0.7, 4.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('beef flavored rice cooked', 319) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('beef flavored rice cooked', 319, 7.9, 0, 7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white rice cooked', 205) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white rice cooked', 205, 0.4, 0.015, 4.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('chicken flavored rice cooked', 317) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('chicken flavored rice cooked', 317, 8, 1.5, 6.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('white rice raw', 675) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('white rice raw', 675, 1.2, 0.2, 13.2) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheese imitation', 441) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheese imitation', 441, 36.2, 1.1, 28.3) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('cheshire cheese', 110) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('cheshire cheese', 110, 8.7, 0, 6.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('monterey cheese', 421) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('monterey cheese', 421, 34.2, 0.6, 27.7) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('edam cheese', 107) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('edam cheese', 107, 8.3, 0, 7.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('fontina cheese', 420) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('fontina cheese', 420, 33.6, 1.7, 27.6) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('monterey cheese low fat', 350) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('monterey cheese low fat', 350, 24.4, 0.6, 31.9) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('colby cheese', 445) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('colby cheese', 445, 36.3, 0.6, 26.8) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('american cheese', 93) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('american cheese', 93, 7.9, 0.6, 4.5) 
 GO 
-insert into FoodNutritions(Name, CaloricValue) Values ('blue cheese', 106) 
+insert into FoodNutritions(Name, CaloricValue, Fat, Sugars, Protein) Values ('blue cheese', 106, 8.6, 0.2, 6.4) 
 GO 

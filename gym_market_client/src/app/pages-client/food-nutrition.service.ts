@@ -23,4 +23,8 @@ export class FoodNutritionService {
 	calCaloricValue(model: any) {
 		return this.http.post(`${environment.baseApi}/FoodNutrition/cal-caloric-value`, model);
 	}
+
+    deleteFoodNutritionUser(model: any) {
+        return this.http.post(`${environment.baseApi}/FoodNutrition/delete-foodnutrition-user`, model);
+    }
 }

@@ -445,9 +445,18 @@ namespace GymMarket.API.Migrations
                     b.Property<long>("CaloricValue")
                         .HasColumnType("bigint");
 
+                    b.Property<double>("Fat")
+                        .HasColumnType("float");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Protein")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Sugars")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -465,9 +474,18 @@ namespace GymMarket.API.Migrations
                     b.Property<double>("CaloricValue")
                         .HasColumnType("float");
 
+                    b.Property<double>("Fat")
+                        .HasColumnType("float");
+
                     b.Property<string>("FoodName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Protein")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Sugars")
+                        .HasColumnType("float");
 
                     b.Property<string>("UserId")
                         .IsRequired()

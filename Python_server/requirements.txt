@@ -1,0 +1,14 @@
+# pip install -r requirements.txt: cai dat
+# pip freeze > requirements.txt: liet ke goi
+
+numpy
+pandas
+scikit-learn
+fastapi 
+tensorflow 
+joblib 
+uvicorn 
+pydantic 
+pillow 
+opencv-python
+python-multipart

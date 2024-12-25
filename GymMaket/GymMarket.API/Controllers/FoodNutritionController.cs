@@ -1,4 +1,5 @@
-﻿using GymMarket.API.DTOs.FoodNutritionUser;
+﻿using GymMarket.API.DTOs.CourseRegistration;
+using GymMarket.API.DTOs.FoodNutritionUser;
 using GymMarket.API.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,17 @@ namespace GymMarket.API.Controllers
                 return BadRequest(r);
             }
             return Ok(r);
+        }
+
+        [HttpPost("delete-foodnutrition-user")]
+        public async Task<IActionResult> DeleteFoodNutritionUser(DeleteFoodNutritionUserDto model)
+        {
+            var r = await foodNutritionRepository.DeleteFoodNutritionUser(model);
+            if(r == true)
+            {
+                return Ok(new { message = "Successfully" });
+            }
+            return BadRequest(r);
         }
     }
 }

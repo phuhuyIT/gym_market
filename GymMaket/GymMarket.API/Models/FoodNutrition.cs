@@ -10,5 +10,8 @@ namespace GymMarket.API.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public long CaloricValue { get; set; }
+        public double Fat { get; set; }
+        public double Sugars { get; set; }
+        public double Protein { get; set; }
     }
 }
