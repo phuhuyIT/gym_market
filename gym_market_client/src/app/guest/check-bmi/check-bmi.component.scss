@@ -54,7 +54,7 @@ input[type='range']:focus::-webkit-slider-thumb {
 	font-family: oswald;
 	text-decoration: none;
 	text-transform: uppercase;
-    border-radius: 5px;
+	border-radius: 5px;
 }
 .check-body-fast-btn span {
 	display: block;
@@ -99,4 +99,8 @@ input[type='range']:focus::-webkit-slider-thumb {
 	transform: skewX(-40deg);
 	-webkit-transform: skewX(-40deg);
 	-moz-transform: skewX(-40deg);
+}
+
+.no-scroll {
+	overflow: hidden;
 }
