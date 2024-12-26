@@ -9,15 +9,28 @@ namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseRatingController: GenericController<CourseRatingCreateDto, CourseRatingUpdateDto, CourseRating, string>
+    public class CourseRatingController: ControllerBase
     {
-        public CourseRatingController(IGenericRepository<CourseRating, string> repository, IMapper mapper) : base(repository, mapper)
+        private readonly CourseRatingRepository courseRatingRepository;
+
+        public CourseRatingController(CourseRatingRepository courseRatingRepository)
         {
+            this.courseRatingRepository = courseRatingRepository;
         }
 
-        protected override string GetEntityId(CourseRating entity)
+
+        [HttpPost("add-course-rating")]
+        public async Task<IActionResult> AddCourseRating(CourseRatingCreateDto courseRatingCreateDTO)
         {
-            return entity.RatingId;
+            var resposen = await courseRatingRepository.AddCourseRating(courseRatingCreateDTO);
+            return StatusCode(resposen.StatusCode, resposen.Message);
+        }
+
+        [HttpGet("get-course-rating/{courseId}")]
+        public async Task<IActionResult> GetCourseRatings(string courseId)
+        {
+            var ratings = await courseRatingRepository.GetCourseRatings(courseId);
+            return Ok(ratings);
         }
     }
 }
