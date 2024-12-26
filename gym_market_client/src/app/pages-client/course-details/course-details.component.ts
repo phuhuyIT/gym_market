@@ -73,7 +73,7 @@ export class CourseDetailsComponent {
 						this.videos = res.getFileDtos
 							.filter((c: any) => c.typeFile === 'VIDEO')
 							.map((c: any) => c.url);
-						// patchState(this.loader, { isShow: false });
+						patchState(this.loader, { isShow: false });
 					},
 					error: err => {
 						this.router.navigateByUrl('/client/home-client');
@@ -90,6 +90,7 @@ export class CourseDetailsComponent {
 				// console.log(res);
 				this.courseOptions = res;
 				// patchState(this.loader, { isShow: true });
+                patchState(this.loader, { isShow: false });
 			},
 		});
 	}

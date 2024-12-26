@@ -15,10 +15,12 @@ import { patchState } from '@ngrx/signals';
 	styleUrl: './course-registration.component.scss',
 })
 export class CourseRegistrationComponent {
-	userStore = inject(UserStore);
 	courses: any = [];
 	searchString: string | null = null;
+	courseSearchs: any = [];
+
 	loader = inject(LoaderModalStore);
+	userStore = inject(UserStore);
 
 	constructor(private couresRegistrationService: CouresRegistrationService) {}
 
@@ -32,8 +34,13 @@ export class CourseRegistrationComponent {
 			console.log(data);
 			patchState(this.loader, { isShow: false });
 			this.courses = data;
+			this.courseSearchs = data;
 		});
 	}
 
-	onSubmit() {}
+	searchCourse() {
+		this.courseSearchs = this.courses.filter((c: any) =>
+			c.title.toLowerCase().includes(this.searchString)
+		);
+	}
 }

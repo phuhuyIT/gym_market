@@ -1,15 +1,13 @@
 <div class="wrapper">
     <div class="col-span-10 p-5 overflow-y-scroll max-h-[1000px]">
         <div class="pb-2 flex items-center justify-start gap-4">
-            <div class="text-[1.5rem] font-medium">Yoga</div>
-
             <div
                 class="inline-flex items-center justify-center border border-gray-300 p-2.5 rounded-lg"
             >
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input
                     [(ngModel)]="searchString"
-                    (keydown.enter)="onSubmit()"
+                    (keydown.enter)="searchCourse()"
                     type="text"
                     class="bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block outline-none px-4"
                     placeholder="Search for courses"
@@ -17,9 +15,9 @@
             </div>
         </div>
 
-        <div class="pt-2">
+        <div class="pt-2 min-h-screen">
             <div class="grid grid-cols-5 gap-5 mb-3 border-t border-b pt-4">
-                @for (item of courses; track $index) {
+                @for (item of courseSearchs; track $index) {
                 <div
                     class="rounded-xl shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:shadow-[0px_0px_5px_3px_#84cc16] duration-150"
                 >
