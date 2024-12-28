@@ -17,15 +17,16 @@ app = FastAPI()
 
 # Add CORS middleware
 origins = [
-    "http://localhost",  # Cho phép các domain cụ thể
-    "http://localhost:3000",  # Ví dụ: React frontend chạy trên cổng 3000
-    "*",  # Hoặc sử dụng '*' để cho phép tất cả (không khuyến khích trong môi trường sản xuất)
+    "http://localhost",  # Thêm các domain được phép truy cập API
+    "http://localhost:4200",
+    "http://example.com",
 ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],  # Cho phép tất cả các phương thức HTTP (GET, POST, PUT, DELETE, ...)
+    allow_origins=origins,  # Cho phép các origin cụ thể
+    allow_credentials=True,  # Cho phép gửi cookie
+    allow_methods=["*"],  # Cho phép tất cả các phương thức HTTP
     allow_headers=["*"],  # Cho phép tất cả các header
 )
 
@@ -112,10 +113,10 @@ async def predict_bodyfat(input_data: InputData):
 
 # Load the MobileNet model for males
 logging.info("Loading MobileNet model for males...")
-mobilenet_model_male = load_model_with_custom_objects("mobilenetv4_model.h5")
+mobilenet_model_male = load_model_with_custom_objects("mobilenetv4_model_male_05Label.h5")
 
 # Define regression class values for males
-class_values_male = np.array([14, 20, 35, 3, 45])
+class_values_male = np.array([12,21 ,29 ,4 ,45])
 
 @app.post("/predict_image_male/")
 async def predict_image_male(file: UploadFile = File(...)):
