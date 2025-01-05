@@ -1,0 +1,19 @@
+services:
+  minio:
+    image: docker.io/bitnami/minio:2022
+    container_name: MinIO-Aloper
+    ports:
+      - '8000:9000'
+      - '8001:9001'
+    volumes:
+      - ./data:/data  # Thư mục local để chứa file
+      # - ./config:/root/.minio  # Lưu trữ cấu hình
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=admin@123
+      - MINIO_DEFAULT_BUCKETS=files
+    networks:
+      - aloper-prod_default
+    
+networks:
+  aloper-prod_default:
