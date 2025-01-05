@@ -20,6 +20,7 @@ export class HeaderComponent {
 			link: '/home',
 			name: 'Home',
 		},
+        
 		{
 			link: '/client/find-trainer',
 			name: 'Trainers',
@@ -28,8 +29,13 @@ export class HeaderComponent {
 			link: '/client/food-nutrition-calculator',
 			name: 'Food Nutrition',
 		},
+        {
+			link: '/client/course-registration',
+			name: 'Cart',
+		},
 	];
 
+   
 	aiMenu = [
 		{
 			name: 'Predict body fat',
