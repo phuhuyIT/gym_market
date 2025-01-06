@@ -23,6 +23,8 @@ public partial class Trainer
 
     public string? ProfilePicture { get; set; }
 
+    public string Desciption { get; set; } = string.Empty;
+
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }

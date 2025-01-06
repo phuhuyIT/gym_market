@@ -28,6 +28,8 @@ namespace GymMarket.API.DTOs.Course
 
         public int? MaxParticipants { get; set; }
 
+        public string? StatusPayment { get; set; } = string.Empty;
+
         public decimal? Rating { get; set; }
 
         public List<GetFileDto> GetFileDtos { get; set; } = [];

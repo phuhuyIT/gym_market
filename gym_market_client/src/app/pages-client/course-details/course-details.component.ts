@@ -8,14 +8,14 @@ import { FormsModule } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
 import { CourseRatingService } from '../course-rating.service';
 import { ErrorModalStore } from '../../stores/error-modal.store';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { CouresRegistrationService } from '../coures-registration.service';
 import { NoticeModalStore } from '../../stores/notice.store';
 
 @Component({
 	selector: 'app-course-details',
 	standalone: true,
-	imports: [FormsModule, DatePipe],
+	imports: [FormsModule, DatePipe, DecimalPipe],
 	templateUrl: './course-details.component.html',
 	styleUrl: './course-details.component.scss',
 })
@@ -39,6 +39,8 @@ export class CourseDetailsComponent {
 
 	// show image
 	url: string | null = null;
+
+	showPayment: boolean = false;
 
 	constructor(
 		private courseService: CourseAgencyService,
@@ -90,7 +92,7 @@ export class CourseDetailsComponent {
 				// console.log(res);
 				this.courseOptions = res;
 				// patchState(this.loader, { isShow: true });
-                patchState(this.loader, { isShow: false });
+				patchState(this.loader, { isShow: false });
 			},
 		});
 	}
@@ -161,13 +163,20 @@ export class CourseDetailsComponent {
 		}
 	}
 
-	addToCard() {
+	onShowPayment(flag: boolean) {
+		this.showPayment = flag;
+	}
+
+	addToCard(courseId: string ) {
+        this.courseId = courseId;
+
 		patchState(this.loader, { isShow: true });
 		this.couresRegistrationService
 			.registerCourse(this.courseId, this.userStore.studentId())
 			.subscribe({
 				next: (res: any) => {
-					console.log(res);
+                    this.router.navigateByUrl('/client/course-registration');
+					console.log(123);
 					patchState(this.loader, { isShow: false });
 					patchState(this.noticeStore, {
 						isShow: true,
@@ -175,11 +184,17 @@ export class CourseDetailsComponent {
 					});
 				},
 				error: err => {
+                    this.router.navigateByUrl('/client/course-registration');
 					console.log(err);
+					// patchState(this.loader, { isShow: false });
+					// patchState(this.errorModal, {
+					// 	isShow: true,
+					// 	errors: ['Register course failed!'],
+					// });
 					patchState(this.loader, { isShow: false });
-					patchState(this.errorModal, {
+					patchState(this.noticeStore, {
 						isShow: true,
-						errors: ['Register course failed!'],
+						message: 'Register course successfully!',
 					});
 				},
 			});

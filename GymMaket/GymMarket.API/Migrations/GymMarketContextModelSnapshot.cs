@@ -762,6 +762,10 @@ namespace GymMarket.API.Migrations
                         .HasColumnName("Created_At")
                         .HasDefaultValueSql("(getdate())");
 
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("PaymentAmount")
                         .HasColumnType("decimal(10, 2)")
                         .HasColumnName("Payment_Amount");
@@ -877,6 +881,10 @@ namespace GymMarket.API.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("Created_At")
                         .HasDefaultValueSql("(getdate())");
+
+                    b.Property<string>("Desciption")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");

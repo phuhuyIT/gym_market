@@ -19,6 +19,8 @@ public partial class Payment
 
     public string? PaymentType { get; set; }
 
+    public string Note { get; set; } = string.Empty;
+
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }

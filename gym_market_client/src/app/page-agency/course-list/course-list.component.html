@@ -42,19 +42,19 @@
 					<table class="w-full text-sm text-left rtl:text-right text-gray-500">
 						<thead class="text-xs text-gray-700 uppercase bg-gray-50">
 							<tr>
-								<th scope="col" class="px-6 py-3"></th>
-								<th scope="col" class="px-6 py-3">Title</th>
-								<th scope="col" class="px-6 py-3">Description</th>
-								<th scope="col" class="px-6 py-3">Type</th>
-								<th scope="col" class="px-6 py-3">Category</th>
-								<th scope="col" class="px-6 py-3">Price</th>
-								<th scope="col" class="px-6 py-3">Additional Price</th>
-								<th scope="col" class="px-6 py-3">Start date</th>
-								<th scope="col" class="px-6 py-3">End date</th>
-								<th scope="col" class="px-6 py-3">Duration</th>
-								<th scope="col" class="px-6 py-3">Max Participants</th>
-								<th scope="col" class="px-6 py-3">Rating</th>
-								<th scope="col" class="px-6 py-3">Action</th>
+								<!-- <th scope="col" class=""></th> -->
+								<th scope="col" class="px-3">Title</th>
+								<th scope="col" class="">Description</th>
+								<th scope="col" class="">Type</th>
+								<th scope="col" class="">Category</th>
+								<th scope="col" class="">Price</th>
+								<th scope="col" class="">Additional Price</th>
+								<th scope="col" class="">Start date</th>
+								<th scope="col" class="">End date</th>
+								<th scope="col" class="">Duration</th>
+								<th scope="col" class="">Max Participants</th>
+								<th scope="col" class="">Rating</th>
+								<th scope="col" class="">Action</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -62,7 +62,7 @@
 							<tr
 								class="odd:bg-white even:bg-gray-900 odd:text-gray-900 even:text-white"
 							>
-								<th>
+								<!-- <td>
 									<div class="flex items-center justify-center">
 										<img
 											class="w-10 rounded-full"
@@ -70,41 +70,48 @@
 											alt=""
 										/>
 									</div>
-								</th>
+								</td> -->
 
-								<th scope="row" class="px-6 py-4 font-medium">
-                                    <div class=" clamp w-[70px]">
+								<td scope="row" class="py-4 px-3 font-medium">
+                                    <div class=" clamp w-[50px]">
                                         {{ item.title }}
                                     </div>
-								</th>
-								<td class="px-6 py-4">
-                                    <div class=" clamp w-[200px]">
+								</td>
+
+								<td class="py-4">
+                                    <div class=" clamp w-[100px]">
                                         {{ item.description }}
                                     </div>
                                 </td>
-								<td class="px-6 py-4">{{ item.type }}</td>
-								<td class="px-6 py-4">{{ item.category }}</td>
-								<td class="px-6 py-4">{{ item.price }}</td>
-								<td class="px-6 py-4">{{ item.additionalPrice }}</td>
-								<td class="px-6 py-4">
+								<td class="py-4">{{ item.type }}</td>
+								<td class="py-4">{{ item.category }}</td>
+								<td class="py-4">{{ item.price }}</td>
+								<td class="py-4">{{ item.additionalPrice }}</td>
+								<td class="py-4">
 									{{ item.startDate | date : 'dd/MM/yyyy' }}
 								</td>
-								<td class="px-6 py-4">{{ item.endDate | date : 'dd/MM/yyyy' }}</td>
-								<td class="px-6 py-4">{{ item.duration }}</td>
-								<td class="px-6 py-4">{{ item.maxParticipants }}</td>
-								<td class="px-6 py-4">{{ item.rating }}</td>
+								<td class="py-4">{{ item.endDate | date : 'dd/MM/yyyy' }}</td>
+								<td class="py-4">{{ item.duration }}</td>
+								<td class="py-4">{{ item.maxParticipants }}</td>
+								<td class="py-4">{{ item.rating }}</td>
 
-								<td class="px-6 py-4">
+								<td class="py-4">
 									<a
 										[routerLink]="'/agency/update-course/' + item.courseId"
-										class="font-medium text-blue-600 hover:underline"
+										class="font-medium text-blue-600 hover:underline px-1"
 										>Edit</a
 									>
-                                    <br>
+                                    
                                     <button
 										(click)="onShowDeleteModel(true, item.courseId)"
-										class="font-medium text-red-600 hover:underline"
+										class="font-medium text-red-600 hover:underline px-1"
 										>Delete</button
+									>
+
+                                    <a
+                                    [routerLink]="'/agency/get-payments/' + item.courseId"
+										class="font-medium text-yellow-600 hover:underline px-1"
+										>Pays</a
 									>
 								</td>
 							</tr>

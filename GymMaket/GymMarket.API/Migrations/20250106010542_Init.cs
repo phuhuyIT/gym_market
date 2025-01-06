@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GymMarket.API.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -98,6 +98,42 @@ namespace GymMarket.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FileCourses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FoodNutritions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CaloricValue = table.Column<long>(type: "bigint", nullable: false),
+                    Fat = table.Column<double>(type: "float", nullable: false),
+                    Sugars = table.Column<double>(type: "float", nullable: false),
+                    Protein = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FoodNutritions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FoodNutritionUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FoodName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Weight = table.Column<double>(type: "float", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CaloricValue = table.Column<double>(type: "float", nullable: false),
+                    Fat = table.Column<double>(type: "float", nullable: false),
+                    Sugars = table.Column<double>(type: "float", nullable: false),
+                    Protein = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FoodNutritionUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -264,6 +300,7 @@ namespace GymMarket.API.Migrations
                     Experience = table.Column<int>(type: "int", nullable: true),
                     Rating = table.Column<decimal>(type: "decimal(3,2)", nullable: true, defaultValue: 0.00m),
                     Profile_Picture = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
+                    Desciption = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Created_At = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())"),
                     Updated_At = table.Column<DateTime>(type: "datetime", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
@@ -500,6 +537,7 @@ namespace GymMarket.API.Migrations
                     Payment_Date = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())"),
                     Payment_Status = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     Payment_Type = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Created_At = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())"),
                     Updated_At = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
@@ -771,6 +809,12 @@ namespace GymMarket.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "FileCourses");
+
+            migrationBuilder.DropTable(
+                name: "FoodNutritions");
+
+            migrationBuilder.DropTable(
+                name: "FoodNutritionUsers");
 
             migrationBuilder.DropTable(
                 name: "Health_Indicators");
