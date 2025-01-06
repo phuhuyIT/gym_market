@@ -6,10 +6,12 @@ using GymMarket.API.DTOs.FileMinIO;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using Minio.DataModel.ILM;
+using System.Dynamic;
 
 namespace GymMarket.API.Repositories
 {
-    public class CourseRegistrationRepository : GenericRepository<CourseRegistration, string>
+    public class CourseRegistrationRepository : GenericRepository<CourseRegistration, string>, ICourseRegistrationRepository
     {
         private readonly GymMarketContext _context;
         private readonly IMapper _mapper;
@@ -23,6 +25,15 @@ namespace GymMarket.API.Repositories
         // Registers a course for a student and initializes status as 'Pending Payment'
         public async Task<CourseRegistration?> RegisterCourseAsync(RegisterCourseDto dto)
         {
+            var courseExists = await _context.CourseRegistrations
+                .Where(cr => cr.StudentId == dto.StudentId && cr.CourseId == dto.CourseId)
+                .FirstOrDefaultAsync();
+
+            if(courseExists != null)
+            {
+                return courseExists;
+            }
+
             var registration = new CourseRegistration();
 
             // Set initial properties for the registration
@@ -42,7 +53,25 @@ namespace GymMarket.API.Repositories
             registration.RegistrationId = Guid.NewGuid().ToString();
 
             // Add the registration to the database
-            await _context.CourseRegistrations.AddAsync(registration);
+            _context.CourseRegistrations.Add(registration);
+
+
+            var course = await _context.Courses.Where(c => c.CourseId == dto.CourseId).FirstOrDefaultAsync();
+
+            var payment = new Payment()
+            {
+                CourseId = dto.CourseId,
+                PaymentAmount = course!.Price + course.AdditionalPrice,
+                CreatedAt = DateTime.Now,
+                PaymentDate = DateTime.Now,
+                PaymentId = Guid.NewGuid().ToString(),
+                PaymentStatus = "Pending",
+                PaymentType = "",
+                StudentId = dto.StudentId,
+                UpdatedAt = DateTime.Now,
+            };
+
+            _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
 
             return registration;
@@ -93,18 +122,39 @@ namespace GymMarket.API.Repositories
             return false;
         }
 
-        public async Task<List<GetCourseDto>> GetCourseRegistrations (string studentId)
+        public async Task<List<GetCourseDto>> GetCourseRegistrations(string studentId)
         {
             //List<CourseRegistration> list = await _context.CourseRegistrations
             //    .AsNoTrackingWithIdentityResolution()
             //    .Where(c => c.StudentId == studentId)
             //    .ToListAsync();
 
-            var list = await (from cr in _context.CourseRegistrations
-                               join c in _context.Courses on cr.CourseId equals c.CourseId
-                               where cr.StudentId == studentId
-                               select c).ToListAsync();
-            var courseDto = _mapper.Map<List<Course>, List<GetCourseDto>>(list);
+            var courseDto = await (from cr in _context.CourseRegistrations
+                                   join c in _context.Courses on cr.CourseId equals c.CourseId
+                                   join p in _context.Payments on c.CourseId equals p.CourseId into paymentGroup
+                                   from p in paymentGroup.DefaultIfEmpty() // Lấy nhóm Payments và cho phép null
+                                   where cr.StudentId == studentId
+                                   group new { c, p } by c.CourseId into grouped
+                                   select new GetCourseDto
+                                   {
+                                       CourseId = grouped.Key,
+                                       TrainerId = grouped.First().c.TrainerId,
+                                       Title = grouped.First().c.Title,
+                                       Description = grouped.First().c.Description,
+                                       Type = grouped.First().c.Type,
+                                       Category = grouped.First().c.Category,
+                                       Price = grouped.First().c.Price,
+                                       AdditionalPrice = grouped.First().c.AdditionalPrice,
+                                       StartDate = grouped.First().c.StartDate,
+                                       EndDate = grouped.First().c.EndDate,
+                                       Duration = grouped.First().c.Duration,
+                                       MaxParticipants = grouped.First().c.MaxParticipants,
+                                       StatusPayment = grouped.FirstOrDefault().p.PaymentStatus, // Lấy Payment đầu tiên nếu có
+                                       Rating = grouped.First().c.Rating
+                                   }).ToListAsync();
+
+
+
 
             foreach (var c in courseDto)
             {
@@ -120,5 +170,6 @@ namespace GymMarket.API.Repositories
             }
             return courseDto;
         }
+
     }
 }

@@ -1,53 +1,85 @@
 <div class="wrapper">
-    <div class="col-span-10 p-5 overflow-y-scroll max-h-[1000px]">
-        <div class="pb-2 flex items-center justify-start gap-4">
-            <div
-                class="inline-flex items-center justify-center border border-gray-300 p-2.5 rounded-lg"
-            >
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input
-                    [(ngModel)]="searchString"
-                    (keydown.enter)="searchCourse()"
-                    type="text"
-                    class="bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block outline-none px-4"
-                    placeholder="Search for courses"
-                />
-            </div>
-        </div>
+	<div class="col-span-10 p-5 overflow-y-scroll max-h-[1000px]">
+		<div class="pb-2 flex items-center justify-start gap-4">
+			<div
+				class="inline-flex items-center justify-center border border-gray-300 p-2.5 rounded-lg"
+			>
+				<i class="fa-solid fa-magnifying-glass"></i>
+				<input
+					[(ngModel)]="searchString"
+					(keydown.enter)="searchCourse()"
+					type="text"
+					class="bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block outline-none px-4"
+					placeholder="Search for courses"
+				/>
+			</div>
+		</div>
 
-        <div class="pt-2 min-h-screen">
-            <div class="grid grid-cols-5 gap-5 mb-3 border-t border-b pt-4">
-                @for (item of courseSearchs; track $index) {
-                <div
-                    class="rounded-xl shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:shadow-[0px_0px_5px_3px_#84cc16] duration-150"
-                >
-                    <a
-                        routerLink="/client/course-details/{{ item.courseId }}"
-                        class="md:flex-row md:max-w-xl"
-                    >
-                        <img
-                            class="object-contain min-w-[200px] max-w-[200px] min-h-[185px] max-h-[185px] rounded-t-lg md:h-auto md:w-48 md:rounded-none md:rounded-s-lg0 mx-auto"
-                            [src]="
-                                item.getFileDtos !== null && item.getFileDtos.length > 0
-                                    ? item.getFileDtos[0].url
-                                    : '/assets/gym_logo.png'
-                            "
-                            alt=""
-                        />
-                        <div class="flex flex-col justify-between p-4 leading-normal">
-                            <h5
-                                class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900"
-                            >
-                                {{ item.title }}
-                            </h5>
-                            <p class="clamp-des mb-3 font-normal text-gray-700">
-                                {{ item.description }}
-                            </p>
-                        </div>
-                    </a>
-                </div>
+		<div class="pt-2 min-h-screen">
+			<div class="grid grid-cols-5 gap-5 mb-3 border-t border-b pt-4">
+				@for (item of courseSearchs; track $index) {
+				<div
+					class="rounded-xl shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:shadow-[0px_0px_5px_3px_#84cc16] duration-150 p-2"
+				>
+                @if(item.statusPayment === "Canceled") {
+                    <span class="font-bold text-red-500">{{item.statusPayment}}</span>
+                } @else {
+                    <span class="font-bold text-green-500">{{item.statusPayment}}</span>
                 }
-            </div>
-        </div>
-    </div>
+                
+					<a
+						routerLink="/client/course-details/{{ item.courseId }}"
+						class="md:flex-row md:max-w-xl"
+					>
+                    
+						<img
+							class="object-contain min-w-[200px] max-w-[200px] min-h-[185px] max-h-[185px] rounded-t-lg md:h-auto md:w-48 md:rounded-none md:rounded-s-lg0 mx-auto"
+							[src]="
+								item.getFileDtos !== null && item.getFileDtos.length > 0
+									? item.getFileDtos[0].url
+									: '/assets/gym_logo.png'
+							"
+							alt=""
+						/>
+						<div class="flex flex-col justify-between p-4 leading-normal">
+							<h5
+								class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900"
+							>
+								{{ item.title }}
+							</h5>
+							<p class="clamp-des mb-3 font-normal text-gray-700">
+								{{ item.description }}
+							</p>
+
+							<!-- <button>
+								<svg
+									class="w-6 h-6 text-gray-800"
+									aria-hidden="true"
+									xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									fill="none"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke="currentColor"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M4 4h6v6H4V4Zm10 10h6v6h-6v-6Zm0-10h6v6h-6V4Zm-4 10h.01v.01H10V14Zm0 4h.01v.01H10V18Zm-3 2h.01v.01H7V20Zm0-4h.01v.01H7V16Zm-3 2h.01v.01H4V18Zm0-4h.01v.01H4V14Z"
+									/>
+									<path
+										stroke="currentColor"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M7 7h.01v.01H7V7Zm10 10h.01v.01H17V17Z"
+									/>
+								</svg>
+							</button> -->
+						</div>
+					</a>
+				</div>
+				}
+			</div>
+		</div>
+	</div>
 </div>

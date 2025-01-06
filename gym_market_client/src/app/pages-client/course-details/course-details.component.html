@@ -219,7 +219,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								[value]="course.startDate | date: 'dd/MM/yyyy'"
+								[value]="course.startDate | date : 'dd/MM/yyyy'"
 							/>
 						</div>
 
@@ -232,7 +232,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="John"
 								disabled
-								[value]="course.endDate | date: 'dd/MM/yyyy'"
+								[value]="course.endDate | date : 'dd/MM/yyyy'"
 							/>
 						</div>
 
@@ -276,8 +276,11 @@
 						</div>
 
 						<div class="">
-							<button (click)="addToCard()" class="w-full code_view actionBtn9 buy-course">
-								<span class="txt">Add to card</span>
+							<button
+								(click)="addToCard(course.courseId)"
+								class="w-full code_view actionBtn9 buy-course"
+							>
+								<span class="txt">Buy</span>
 								<span class="bubble_inner">
 									<span class="bubble"></span>
 									<span class="bubble"></span>
@@ -312,5 +315,41 @@
 		<img class="h-auto max-w-lg rounded-lg" [src]="url" alt="image description" />
 	</div>
 </div>
+} @if (showPayment) {
+<div class="h-screen w-screen fixed top-0 left-0 z-10">
+	<div class="flex items-center justify-center h-screen bg-black/30 ">
+		<div class="mx-auto bg-white rounded-md shadow-md  p-3">
+			<div class="flex justify-end">
+				<button (click)="onShowPayment(false)">
+					<svg
+						class="w-6 h-6 text-gray-800"
+						aria-hidden="true"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						fill="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							fill-rule="evenodd"
+							d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm7.707-3.707a1 1 0 0 0-1.414 1.414L10.586 12l-2.293 2.293a1 1 0 1 0 1.414 1.414L12 13.414l2.293 2.293a1 1 0 0 0 1.414-1.414L13.414 12l2.293-2.293a1 1 0 0 0-1.414-1.414L12 10.586 9.707 8.293Z"
+							clip-rule="evenodd"
+						/>
+					</svg>
+				</button>
+			</div>
+			<img class="mx-auto w-[400px]" src="/assets/payment.png" alt="" />
 
+			<div>
+				<button
+					(click)="onShowPayment(false)"
+					type="button"
+					class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+				>
+					Confirm Payment
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
 }

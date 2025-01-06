@@ -31,7 +31,7 @@ export class HeaderComponent {
 		},
         {
 			link: '/client/course-registration',
-			name: 'Cart',
+			name: 'My Courses',
 		},
 	];
 

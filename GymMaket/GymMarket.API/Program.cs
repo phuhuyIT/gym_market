@@ -1,4 +1,5 @@
 ﻿using GymMarket.API.Data;
+using GymMarket.API.DTOs.Momo;
 using GymMarket.API.Hubs;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories;
@@ -13,12 +14,19 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
+builder.Services.AddScoped<MomoService>();
+
 
 // server
 builder.Services.AddDbContext<GymMarketContext>(options =>
@@ -103,11 +111,14 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ConversationRepository>();
 builder.Services.AddScoped<FoodNutritionRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
 // service
 builder.Services.AddScoped<JWTService>();
 builder.Services.AddScoped<MinIOService>();
+
+
 
 
 // enable cors
