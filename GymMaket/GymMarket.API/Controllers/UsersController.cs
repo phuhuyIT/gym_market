@@ -8,24 +8,24 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserRepository userRepository;
+        private readonly IUserRepository _userRepository;
 
         public UsersController(IUserRepository userRepository)
         {
-            this.userRepository = userRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet("get-user-info/{userId}")]
         public async Task<IActionResult> GetUserInfo(string userId)
         {
-            var res = await userRepository.GetUserInfo(userId);
+            var res = await _userRepository.GetUserInfo(userId);
             return StatusCode(res.StatusCode, res);
         }
 
         [HttpPut("update-user")]
         public async Task<IActionResult> UpdateUser(UpdateUserDto model)
         {
-            var res = await userRepository.UpdateUser(model);
+            var res = await _userRepository.UpdateUser(model);
             return StatusCode(res.StatusCode, res);
         }
     }

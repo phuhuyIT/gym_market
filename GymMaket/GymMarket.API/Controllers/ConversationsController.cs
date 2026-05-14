@@ -8,38 +8,38 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class ConversationsController : ControllerBase
     {
-        private readonly IConversationRepository conversationRepository;
+        private readonly IConversationRepository _conversationRepository;
 
         public ConversationsController(IConversationRepository conversationRepository)
         {
-            this.conversationRepository = conversationRepository;
+            _conversationRepository = conversationRepository;
         }
 
         [HttpPost("create-conversation")]
         public async Task<IActionResult> CreateConversation(CreateConversationDto model)
         {
-            var res = await conversationRepository.CreateConversation(model);
+            var res = await _conversationRepository.CreateConversation(model);
             return StatusCode(res.StatusCode, new { res.Errors, res.Message });
         }
 
         [HttpGet("GetConversationOfUser/{userId}")]
         public async Task<IActionResult> GetConversationOfUser(string userId)
         {
-            var conversations = await conversationRepository.GetConversationOfUser(userId);
+            var conversations = await _conversationRepository.GetConversationOfUser(userId);
             return Ok(conversations);
         }
 
         [HttpGet("get-messages/{conversationId}")]
         public async Task<IActionResult> GetMessages(int conversationId)
         {
-            var messages = await conversationRepository.GetMessages(conversationId);
+            var messages = await _conversationRepository.GetMessages(conversationId);
             return Ok(messages);
         }
 
         [HttpGet("seen-message/{userId}/{conversationId}")]
         public async Task<IActionResult> SeenMessage(string userId, int conversationId)
         {
-            await conversationRepository.SeenMessage(userId, conversationId);
+            await _conversationRepository.SeenMessage(userId, conversationId);
             return Ok();
         }
     }

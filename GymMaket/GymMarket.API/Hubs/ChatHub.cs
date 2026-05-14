@@ -9,11 +9,11 @@ namespace GymMarket.API.Hubs
     [Authorize]
     public class ChatHub : Hub
     {
-        private readonly IConversationRepository conversationRepository;
+        private readonly IConversationRepository _conversationRepository;
 
         public ChatHub(IConversationRepository conversationRepository)
         {
-            this.conversationRepository = conversationRepository;
+            _conversationRepository = conversationRepository;
         }
 
         public async Task JoinRoom(string roomName)
@@ -29,7 +29,7 @@ namespace GymMarket.API.Hubs
         public async Task SendMessageToRoom(string roomName, SendMessageDto message)
         {
             message.SenderId = Context.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            await conversationRepository.SendMessage(message);
+            await _conversationRepository.SendMessage(message);
             await Clients.Group(roomName).SendAsync("ReceiveMessage", message);
         }
     }

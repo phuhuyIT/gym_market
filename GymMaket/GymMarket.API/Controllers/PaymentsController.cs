@@ -9,31 +9,31 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class PaymentsController : ControllerBase
     {
-        private readonly IPaymentRepository paymentRepository;
+        private readonly IPaymentRepository _paymentRepository;
 
         public PaymentsController(IPaymentRepository paymentRepository)
         {
-            this.paymentRepository = paymentRepository;
+            _paymentRepository = paymentRepository;
         }
 
         [HttpGet("get-payments-ofcourse/{courseId}")]
         public async Task<IActionResult> GetPaymentsOfCourse(string courseId)
         {
-            var list = await paymentRepository.GetPaymentsOfCourse(courseId);
+            var list = await _paymentRepository.GetPaymentsOfCourse(courseId);
             return Ok(list);
         }
 
         [HttpPost("ok-payment/{paymentId}")]
         public async Task<IActionResult> OkePayment(string paymentId)
         {
-            var r = await paymentRepository.OkPayment(paymentId);
+            var r = await _paymentRepository.OkPayment(paymentId);
             return Ok(r);
         }
 
         [HttpPost("cancel-payment")]
         public async Task<IActionResult> CancelPayment(CancelPayment paymentId)
         {
-            var r = await paymentRepository.CancelPayment(paymentId);
+            var r = await _paymentRepository.CancelPayment(paymentId);
             return Ok(r);
         }
     }
