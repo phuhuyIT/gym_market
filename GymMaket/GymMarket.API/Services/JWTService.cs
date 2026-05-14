@@ -9,27 +9,27 @@ using System.Text;
 
 namespace GymMarket.API.Services
 {
-    public class JWTService
+    public class JWTService : IJwtService
     {
-        private readonly IConfiguration configuration;
-        private readonly UserManager<AppUser> userManager;
-        private readonly GymMarketContext context;
-        private readonly SymmetricSecurityKey jwtKey;
+        private readonly IConfiguration _configuration;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly GymMarketContext _context;
+        private readonly SymmetricSecurityKey _jwtKey;
 
         public JWTService(IConfiguration configuration, UserManager<AppUser> userManager, GymMarketContext context)
         {
-            this.configuration = configuration;
-            this.userManager = userManager;
-            this.context = context;
+            _configuration = configuration;
+            _userManager = userManager;
+            _context = context;
 
             // lấy key => chuyển sang mảng bytes => tiến hành mã hóa đối xứng
-            jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]!));
+            _jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]!));
         }
 
         public async Task<string> CreateJWT(AppUser user)
         {
-            var trainerId = await context.Trainers.AsNoTracking().Where(t => t.UserId == user.Id).Select(t => t.TrainerId).FirstOrDefaultAsync();
-            var studentId = await context.Students.AsNoTracking().Where(t => t.UserId == user.Id).Select(t => t.StudentId).FirstOrDefaultAsync();
+            var trainerId = await _context.Trainers.AsNoTracking().Where(t => t.UserId == user.Id).Select(t => t.TrainerId).FirstOrDefaultAsync();
+            var studentId = await _context.Students.AsNoTracking().Where(t => t.UserId == user.Id).Select(t => t.StudentId).FirstOrDefaultAsync();
             var userClaims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -41,7 +41,7 @@ namespace GymMarket.API.Services
                 new Claim("avatar", string.IsNullOrEmpty(user.Avatar) == false ? user.Avatar : "https://cdn-icons-png.flaticon.com/512/1999/1999625.png"),
             };
 
-            var userRoles = await userManager.GetRolesAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
 
             foreach (var role in userRoles)
             {
@@ -49,14 +49,14 @@ namespace GymMarket.API.Services
             }
 
             // thông tin đăng nhập
-            var creadentials = new SigningCredentials(jwtKey, SecurityAlgorithms.HmacSha512Signature);
+            var creadentials = new SigningCredentials(_jwtKey, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(userClaims),
-                Expires = DateTime.UtcNow.AddDays(int.Parse(configuration["JWT:ExpiresInDays"]!)),
+                Expires = DateTime.UtcNow.AddDays(int.Parse(_configuration["JWT:ExpiresInDays"]!)),
                 SigningCredentials = creadentials,
-                Issuer = configuration["JWT:Issuer"]
+                Issuer = _configuration["JWT:Issuer"]
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

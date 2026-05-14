@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Payment;
 using GymMarket.API.Models;
@@ -37,24 +37,36 @@ namespace GymMarket.API.Repositories
             return list;
         }
 
-        public async Task<Payment> OkPayment(string paymentId)
+        public async Task<Payment?> OkPayment(string paymentId)
         {
             var payment = await _context.Payments.Where(p => p.PaymentId == paymentId).FirstOrDefaultAsync();
-            payment!.PaymentStatus = "Paid";
-            _context.Payments.Update(payment);
-            await _context.SaveChangesAsync();
+            if (payment != null)
+            {
+                payment.PaymentStatus = "Paid";
+                _context.Payments.Update(payment);
+                await _context.SaveChangesAsync();
+            }
             return payment;
         }
 
-        public async Task<Payment> CancelPayment(CancelPayment model)
+        public async Task<Payment?> CancelPayment(CancelPayment model)
         {
             var payment = await _context.Payments.Where(p => p.PaymentId == model.PaymentId).FirstOrDefaultAsync();
-            payment!.PaymentStatus = "Canceled";
-            payment.Note = model.Note;
+            if (payment != null)
+            {
+                payment.PaymentStatus = "Canceled";
+                payment.Note = model.Note;
 
-            _context.Payments.Update(payment);
-            await _context.SaveChangesAsync();
+                _context.Payments.Update(payment);
+                await _context.SaveChangesAsync();
+            }
             return payment;
+        }
+
+        public async Task CreatePayment(Payment payment)
+        {
+            _context.Payments.Add(payment);
+            await _context.SaveChangesAsync();
         }
     }
 }

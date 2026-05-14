@@ -1,37 +1,47 @@
-﻿using GymMarket.API.DTOs.Momo;
+using GymMarket.API.DTOs.Momo;
+using GymMarket.API.DTOs.Payment;
 using GymMarket.API.Models;
+using GymMarket.API.Data;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Services
 {
     public class MomoService
     {
         private readonly IOptions<MomoOptionModel> _options;
-        public MomoService(IOptions<MomoOptionModel> options)
+        private readonly GymMarketContext _context;
+
+        public MomoService(IOptions<MomoOptionModel> options, GymMarketContext context)
         {
             _options = options;
+            _context = context;
         }
-        public async Task<MomoCreatePaymentResponseModel> CreatePaymentAsync()
+
+        public async Task<MomoCreatePaymentResponseModel> CreatePaymentAsync(CreatePaymentDto dto)
         {
-            //model.PaymentId = DateTime.UtcNow.Ticks.ToString();
+            var course = await _context.Courses.FindAsync(dto.CourseId);
+            if (course == null) return null!;
 
             string paymentId = DateTime.UtcNow.Ticks.ToString();
-            double paymentAmount = 12000;
+            double paymentAmount = (double)((course.Price ?? 0) + (course.AdditionalPrice ?? 0));
+
+            // Store studentId and courseId in extraData as JSON
+            var extraData = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { dto.StudentId, dto.CourseId })));
 
             var rawData =
                 $"partnerCode={_options.Value.PartnerCode}" +
                 $"&accessKey={_options.Value.AccessKey}" +
-                $"&requestId={DateTime.UtcNow.Ticks.ToString()}" +
+                $"&requestId={paymentId}" +
                 $"&amount={paymentAmount}" +
                 $"&orderId={paymentId}" +
                 $"&returnUrl={_options.Value.ReturnUrl}" +
                 $"&notifyUrl={_options.Value.NotifyUrl}" +
-                $"&extraData=";
+                $"&extraData={extraData}";
 
             var signature = ComputeHmacSha256(rawData, _options.Value.SecretKey);
 
@@ -39,7 +49,6 @@ namespace GymMarket.API.Services
             var request = new RestRequest() { Method = Method.Post };
             request.AddHeader("Content-Type", "application/json; charset=UTF-8");
 
-            // Create an object representing the request data
             var requestData = new
             {
                 accessKey = _options.Value.AccessKey,
@@ -50,8 +59,9 @@ namespace GymMarket.API.Services
                 orderId = paymentId,
                 amount = paymentAmount.ToString(),
                 requestId = paymentId,
-                extraData = "",
-                signature = signature
+                extraData = extraData,
+                signature = signature,
+                orderInfo = $"Payment for course: {course.Title}"
             };
 
             request.AddParameter("application/json", JsonConvert.SerializeObject(requestData), ParameterType.RequestBody);
@@ -59,12 +69,7 @@ namespace GymMarket.API.Services
             var response = await client.ExecuteAsync(request);
             var momoResponse = JsonConvert.DeserializeObject<MomoCreatePaymentResponseModel>(response.Content!);
             return momoResponse!;
-
         }
-
-
-
-
 
         public MomoExecuteResponseModel PaymentExecuteAsync(IQueryCollection collection)
         {
@@ -77,7 +82,6 @@ namespace GymMarket.API.Services
                 Amount = amount!,
                 OrderId = orderId!,
                 OrderInfo = orderInfo!
-
             };
         }
 
@@ -97,7 +101,5 @@ namespace GymMarket.API.Services
 
             return hashString;
         }
-
-
     }
 }

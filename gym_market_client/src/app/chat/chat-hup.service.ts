@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { Message } from './models/message.dto';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
 	providedIn: 'root',
@@ -12,8 +13,12 @@ export class ChatHupService {
 
 	// Kết nối đến SignalR Hub
 	startConnection() {
+		// Use the baseApi from environment and replace /api with /hubs/chat or similar
+		// Alternatively, we can add a specific property to environment for hubs
+		const hubUrl = environment.baseApi.replace('/api', '/hubs/chat');
+		
 		this.hubConnection = new signalR.HubConnectionBuilder()
-			.withUrl('https://localhost:7115/hubs/chat')
+			.withUrl(hubUrl)
 			.build();
 
 		this.hubConnection

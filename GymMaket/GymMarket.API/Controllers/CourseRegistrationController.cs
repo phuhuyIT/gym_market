@@ -1,6 +1,6 @@
 ﻿using GymMarket.API.DTOs.CourseRegistration;
 using GymMarket.API.Models;
-using GymMarket.API.Repositories;
+using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +10,9 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class CourseRegistrationController : ControllerBase
     {
-        private readonly CourseRegistrationRepository _courseRegistrationRepository;
+        private readonly ICourseRegistrationRepository _courseRegistrationRepository;
 
-        public CourseRegistrationController(CourseRegistrationRepository courseRegistrationRepository)
+        public CourseRegistrationController(ICourseRegistrationRepository courseRegistrationRepository)
         {
             _courseRegistrationRepository = courseRegistrationRepository;
         }

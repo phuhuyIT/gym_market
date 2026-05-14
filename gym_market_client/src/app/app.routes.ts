@@ -25,5 +25,5 @@ export const routes: Routes = [
 		loadChildren: () => import('./chat/chat.routes').then(r => r.routes),
 	},
     { path: 'access-denied', component: NotFoundComponent, title: 'Access denied' },
-	{ path: '**', redirectTo: '/guest/access-denied' },
+	{ path: '**', redirectTo: '/access-denied' },
 ];

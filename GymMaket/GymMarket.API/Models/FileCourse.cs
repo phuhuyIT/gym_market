@@ -10,6 +10,7 @@ namespace GymMarket.API.Models
         public int Id { get; set; } 
 
         public string CourseId { get; set; } = string.Empty;
+        public virtual Course? Course { get; set; }
         public string ObjectId { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public string TypeFile { get; set; } = string.Empty;

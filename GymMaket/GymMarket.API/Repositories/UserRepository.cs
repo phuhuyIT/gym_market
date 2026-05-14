@@ -1,4 +1,4 @@
-﻿using GymMarket.API.DTOs.Response;
+using GymMarket.API.DTOs.Response;
 using GymMarket.API.DTOs.Response.User;
 using GymMarket.API.DTOs.User;
 using GymMarket.API.Models;
@@ -9,19 +9,19 @@ namespace GymMarket.API.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly UserManager<AppUser> userManager;
+        private readonly UserManager<AppUser> _userManager;
 
         public UserRepository(UserManager<AppUser> userManager)
         {
-            this.userManager = userManager;
+            _userManager = userManager;
         }
 
         public async Task<GetUserInfoResponse> GetUserInfo(string userId)
         {
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return new GetUserInfoResponse { Errors = ["Không tìm thấy người dùng"], StatusCode = 404, Success = false };
+                return new GetUserInfoResponse { Errors = ["USER_NOT_FOUND"], StatusCode = 404, Success = false };
             }
 
             var userInfo = new GetUserInfoDto
@@ -39,11 +39,11 @@ namespace GymMarket.API.Repositories
 
         public async Task<ApiResponse> UpdateUser(UpdateUserDto model)
         {
-            var user = await userManager.FindByIdAsync(model.Id);
+            var user = await _userManager.FindByIdAsync(model.Id);
 
             if (user == null)
             {
-                return new ApiResponse { Errors = ["Không tìm thấy người dùng"], StatusCode = 404, Success = false };
+                return new ApiResponse { Errors = ["USER_NOT_FOUND"], StatusCode = 404, Success = false };
             }
 
             user.FullName = model.FullName;
@@ -52,12 +52,12 @@ namespace GymMarket.API.Repositories
             user.Status = model.Status;
             user.PhoneNumber = model.PhoneNumber;
 
-            var r = await userManager.UpdateAsync(user);
-            if (r.Succeeded == true)
+            var r = await _userManager.UpdateAsync(user);
+            if (r.Succeeded)
             {
-                return new ApiResponse { Errors = [], StatusCode = 200, Success = true };
+                return new ApiResponse { Errors = [], StatusCode = 200, Success = true, Message = "SUCCESS" };
             }
-            return new ApiResponse { Errors = ["Cập nhật thất bại. Vui lòng thử lại."], StatusCode = 400, Success = false };
+            return new ApiResponse { Errors = ["USER_UPDATE_FAILED"], StatusCode = 400, Success = false };
         }
     }
 }

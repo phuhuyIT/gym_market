@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Course;
 using GymMarket.API.DTOs.FileMinIO;
@@ -14,13 +14,13 @@ namespace GymMarket.API.Repositories
     {
         private readonly GymMarketContext _context;
         private readonly IMapper _mapper;
-        private readonly MinIOService minIOService;
+        private readonly MinIOService _minioService;
 
-        public CourseRepository(GymMarketContext context, IMapper mapper, MinIOService minIOService) : base(context, mapper)
+        public CourseRepository(GymMarketContext context, IMapper mapper, MinIOService minioService) : base(context, mapper)
         {
             _context = context;
             _mapper = mapper;
-            this.minIOService = minIOService;
+            _minioService = minioService;
         }
 
         //override getall method
@@ -46,27 +46,13 @@ namespace GymMarket.API.Repositories
 
         async Task<ICollection<GetCourseDto>> ICourseRepository.GetCoursesOfTrainer(string trainerId)
         {
-            var course = await _context.Courses
+            var courses = await _context.Courses
                 .AsNoTrackingWithIdentityResolution()
+                .Include(c => c.FileCourses)
                 .Where(c => c.TrainerId == trainerId)
                 .ToListAsync();
 
-            var courseDto = _mapper.Map<List<Course>, List<GetCourseDto>>(course);
-
-            foreach (var c in courseDto)
-            {
-                var courseFiles = await _context.FileCourses
-                   .AsNoTrackingWithIdentityResolution()
-                   .Where(course => course.CourseId == c.CourseId)
-                   .ToListAsync();
-
-                var courseFileImages = courseFiles.Where(c => c.TypeFile == "IMAGE").ToList();
-
-                var courseFileDtos = _mapper.Map<List<FileCourse>, List<GetFileDto>>(courseFileImages);
-                c.GetFileDtos = courseFileDtos;
-            }
-
-            return courseDto;
+            return _mapper.Map<List<Course>, List<GetCourseDto>>(courses);
         }
 
         public async Task<ApiResponse> UpdateCourse(CourseUpdateDTO courseUpdateDTO)
@@ -94,7 +80,7 @@ namespace GymMarket.API.Repositories
                 await _context.SaveChangesAsync();
             }
 
-            var rAddFile = await minIOService.UploadFiles(new DTOs.FileMinIO.FileAdd
+            var rAddFile = await _minioService.UploadFiles(new DTOs.FileMinIO.FileAdd
             {
                 CourseId = courseUpdateDTO.CourseId,
                 Images = courseUpdateDTO.Images,
@@ -109,15 +95,14 @@ namespace GymMarket.API.Repositories
                 return new ApiResponse
                 {
                     Errors = [],
-                    Message = "Cập nhật thành công",
+                    Message = "SUCCESS",
                     StatusCode = 200,
                     Success = true
                 };
             }
             return new ApiResponse
             {
-                Errors = [],
-                Message = "Cập nhật thất bại. Vui lòng thử lại.",
+                Errors = ["COURSE_UPDATE_FAILED"],
                 StatusCode = 400,
                 Success = false
             };
@@ -127,6 +112,7 @@ namespace GymMarket.API.Repositories
         {
             var course = await _context.Courses
                 .AsNoTrackingWithIdentityResolution()
+                .Include(c => c.FileCourses)
                 .Where(c => c.CourseId == courseId)
                 .FirstOrDefaultAsync();
 
@@ -135,21 +121,14 @@ namespace GymMarket.API.Repositories
                 return null;
             }
 
-            var courseDto = _mapper.Map<Course, GetCourseDto>(course);
-            var courseFiles = await _context.FileCourses
-                .AsNoTrackingWithIdentityResolution()
-                .Where(c => c.CourseId == courseId)
-                .ToListAsync();
-
-            var courseFileDtos = _mapper.Map<List<FileCourse>, List<GetFileDto>>(courseFiles);
-            courseDto.GetFileDtos = courseFileDtos;
-            return courseDto;
+            return _mapper.Map<Course, GetCourseDto>(course);
         }
 
         public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = 15, string? searchString = null, string? category = null)
         {
-            var course = await _context.Courses
+            var courses = await _context.Courses
                 .AsNoTrackingWithIdentityResolution()
+                .Include(c => c.FileCourses)
                 .Where(c =>
                             ((string.IsNullOrEmpty(searchString) != true && c.Title!.ToLower().Contains(searchString.ToLower())) || string.IsNullOrEmpty(searchString) == true)
                          && ((string.IsNullOrEmpty(category) != true && c.Category!.ToLower().Contains(category.ToLower())) || string.IsNullOrEmpty(category) == true)
@@ -158,38 +137,23 @@ namespace GymMarket.API.Repositories
                 .Take(pageSize)
                 .ToListAsync();
 
-            var courseDto = _mapper.Map<List<Course>, List<GetCourseDto>>(course);
-
-            foreach (var c in courseDto)
-            {
-                var courseFiles = await _context.FileCourses
-                   .AsNoTrackingWithIdentityResolution()
-                   .Where(course => course.CourseId == c.CourseId)
-                   .ToListAsync();
-
-                var courseFileImages = courseFiles.Where(c => c.TypeFile == "IMAGE").ToList();
-
-                var courseFileDtos = _mapper.Map<List<FileCourse>, List<GetFileDto>>(courseFileImages);
-                c.GetFileDtos = courseFileDtos;
-            }
-
-            return courseDto;
+            return _mapper.Map<List<Course>, List<GetCourseDto>>(courses);
         }
 
-        public async Task<IEnumerable<Course>> SearchAndFilterCoursesAsync(string? keyword, string? decription, decimal? minPrice, decimal? maxPrice, int? minDuration, int? maxDuration, double? minRating, string? category)
+        public async Task<IEnumerable<Course>> SearchAndFilterCoursesAsync(string? keyword, string? description, decimal? minPrice, decimal? maxPrice, int? minDuration, int? maxDuration, double? minRating, string? category)
         {
             var query = _context.Courses.AsQueryable();
 
             // Tìm kiếm theo tên khóa học hoặc chủ đề
             if (!string.IsNullOrEmpty(keyword))
             {
-                query = query.Where(c => c.Type.Contains(keyword) || c.Category.Contains(keyword));
+                query = query.Where(c => c.Type!.Contains(keyword) || c.Category!.Contains(keyword));
             }
 
             // Tìm kiếm theo tên coach
-            if (!string.IsNullOrEmpty(decription))
+            if (!string.IsNullOrEmpty(description))
             {
-                query = query.Where(c => c.Description.Contains(decription));
+                query = query.Where(c => c.Description!.Contains(description));
             }
 
             // Lọc theo mức giá
@@ -217,7 +181,7 @@ namespace GymMarket.API.Repositories
             // Lọc theo thể loại khóa học
             if (!string.IsNullOrEmpty(category))
             {
-                query = query.Where(c => c.Category.Equals(category));
+                query = query.Where(c => c.Category!.Equals(category));
             }
 
             return await query.ToListAsync();

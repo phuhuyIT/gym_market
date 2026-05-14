@@ -1,4 +1,4 @@
-﻿namespace GymMarket.API.DTOs.CourseRegistration
+﻿namespace GymMarket.API.DTOs.FoodNutritionUser
 {
     public class DeleteFoodNutritionUserDto
     {

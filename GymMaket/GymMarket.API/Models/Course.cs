@@ -43,5 +43,7 @@ public partial class Course
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
+    public virtual ICollection<FileCourse> FileCourses { get; set; } = new List<FileCourse>();
+
     public virtual Trainer? Trainer { get; set; }
 }

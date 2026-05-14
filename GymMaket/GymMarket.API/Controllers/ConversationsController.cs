@@ -1,5 +1,5 @@
 ﻿using GymMarket.API.DTOs.UserMessage;
-using GymMarket.API.Repositories;
+using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
@@ -8,9 +8,9 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class ConversationsController : ControllerBase
     {
-        private readonly ConversationRepository conversationRepository;
+        private readonly IConversationRepository conversationRepository;
 
-        public ConversationsController(ConversationRepository conversationRepository)
+        public ConversationsController(IConversationRepository conversationRepository)
         {
             this.conversationRepository = conversationRepository;
         }

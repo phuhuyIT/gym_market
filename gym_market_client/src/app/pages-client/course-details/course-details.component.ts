@@ -55,51 +55,52 @@ export class CourseDetailsComponent {
 	ngOnInit() {
 		this.courseOptions = [];
 
-		this.getCourse();
-		this.getCourseOPtion();
-		this.getCourseRating();
-	}
-
-	private getCourse() {
-		patchState(this.loader, { isShow: true });
 		this.activatedRoute.params.subscribe({
 			next: (params: any) => {
-				// console.log(params.id); // {id: '2', name: 'hoc'}
 				this.courseId = params.id;
-				this.courseService.getCourse(params.id).subscribe({
-					next: (res: any) => {
-						this.course = res;
-						this.images = res.getFileDtos
-							.filter((c: any) => c.typeFile === 'IMAGE')
-							.map((c: any) => c.url);
-						this.videos = res.getFileDtos
-							.filter((c: any) => c.typeFile === 'VIDEO')
-							.map((c: any) => c.url);
-						patchState(this.loader, { isShow: false });
-					},
-					error: err => {
-						this.router.navigateByUrl('/client/home-client');
-					},
-				});
+				this.loadCourse(this.courseId);
+				this.getCourseRating(this.courseId);
+			},
+		});
+		this.getCourseOPtion();
+	}
+
+	private loadCourse(id: string) {
+		patchState(this.loader, { isShow: true });
+		this.courseService.getCourse(id).subscribe({
+			next: (res: any) => {
+				this.course = res;
+				this.images = res.getFileDtos
+					.filter((c: any) => c.typeFile === 'IMAGE')
+					.map((c: any) => c.url);
+				this.videos = res.getFileDtos
+					.filter((c: any) => c.typeFile === 'VIDEO')
+					.map((c: any) => c.url);
+				patchState(this.loader, { isShow: false });
+			},
+			error: err => {
+				this.router.navigateByUrl('/client/home-client');
 			},
 		});
 	}
 
 	private getCourseOPtion() {
 		patchState(this.loader, { isShow: true });
-		this.courseOptionService.getCourseOptionsOftrainer().subscribe({
+		this.courseOptionService.getCourseOptionsByCourseId(this.courseId).subscribe({
 			next: (res: any) => {
-				// console.log(res);
 				this.courseOptions = res;
-				// patchState(this.loader, { isShow: true });
 				patchState(this.loader, { isShow: false });
+			},
+			error: err => {
+				patchState(this.loader, { isShow: false });
+				console.error('Failed to load course options', err);
 			},
 		});
 	}
 
-	private getCourseRating() {
+	private getCourseRating(id: string) {
 		patchState(this.loader, { isShow: true });
-		this.courseRatingService.getCourseRatings(this.courseId).subscribe({
+		this.courseRatingService.getCourseRatings(id).subscribe({
 			next: (res: any) => {
 				// console.log(res);
 				this.ratings = res;
@@ -175,8 +176,7 @@ export class CourseDetailsComponent {
 			.registerCourse(this.courseId, this.userStore.studentId())
 			.subscribe({
 				next: (res: any) => {
-                    this.router.navigateByUrl('/client/course-registration');
-					console.log(123);
+					this.router.navigateByUrl('/client/course-registration');
 					patchState(this.loader, { isShow: false });
 					patchState(this.noticeStore, {
 						isShow: true,
@@ -184,17 +184,10 @@ export class CourseDetailsComponent {
 					});
 				},
 				error: err => {
-                    this.router.navigateByUrl('/client/course-registration');
-					console.log(err);
-					// patchState(this.loader, { isShow: false });
-					// patchState(this.errorModal, {
-					// 	isShow: true,
-					// 	errors: ['Register course failed!'],
-					// });
 					patchState(this.loader, { isShow: false });
-					patchState(this.noticeStore, {
+					patchState(this.errorModal, {
 						isShow: true,
-						message: 'Register course successfully!',
+						errors: ['Failed to register for this course. Please try again.'],
 					});
 				},
 			});

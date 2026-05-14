@@ -62,16 +62,16 @@ namespace GymMarket.API.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public void Remove(TEntity entity)
+        public virtual async Task RemoveAsync(TEntity entity)
         {
             _dbSet.Remove(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void RemoveRange(IEnumerable<TEntity> entities)
+        public virtual async Task RemoveRangeAsync(IEnumerable<TEntity> entities)
         {
             _dbSet.RemoveRange(entities);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

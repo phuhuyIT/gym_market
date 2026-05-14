@@ -52,6 +52,7 @@ namespace GymMarket.API.MappingProfiles
             CreateMap<CourseRegistrationCreateDto, CourseRegistration>()
             .ReverseMap();
             CreateMap<Course, GetCourseDto>()
+                .ForMember(dest => dest.GetFileDtos, opt => opt.MapFrom(src => src.FileCourses))
                 .ReverseMap();
 
             CreateMap<FileCourse, GetFileDto>()
