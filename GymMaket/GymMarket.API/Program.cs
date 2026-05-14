@@ -46,29 +46,29 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Thiết lập về Password 
-    options.Password.RequireDigit = false; // Không bắt phải có số 
-    options.Password.RequireLowercase = false; // Không bắt phải có chữ thường 
-    options.Password.RequireNonAlphanumeric = false; // Không bắt ký tự đặc biệt 
-    options.Password.RequireUppercase = false; // Không bắt buộc chữ in 
-    options.Password.RequiredLength = 8; // Số ký tự tối thiểu của password 
-    options.Password.RequiredUniqueChars = 1; // Số ký tự riêng biệt 
+    // Password settings
+    options.Password.RequireDigit = false; // Do not require numbers
+    options.Password.RequireLowercase = false; // Do not require lowercase
+    options.Password.RequireNonAlphanumeric = false; // Do not require special characters
+    options.Password.RequireUppercase = false; // Do not require uppercase
+    options.Password.RequiredLength = 8; // Minimum password length
+    options.Password.RequiredUniqueChars = 1; // Number of unique characters
 
-    // Cấu hình Lockout - khóa user 
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khóa 5 phút
-    options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lầ thì khóa 
+    // Lockout settings - lock user
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Lock for 5 minutes
+    options.Lockout.MaxFailedAccessAttempts = 5; // Lock after 5 failed attempts
     options.Lockout.AllowedForNewUsers = true;
 
-    //// Cấu hình về User. 
-    //options.User.AllowedUserNameCharacters = // các ký tự đặt tên user 
+    //// User settings. 
+    //options.User.AllowedUserNameCharacters = // allowed characters for username
     //"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-    options.User.RequireUniqueEmail = true; // Email là duy nhất 
+    options.User.RequireUniqueEmail = true; // Email must be unique
 
-    // Cấu hình đăng nhập. 
-    //options.SignIn.RequireConfirmedEmail = true; // Cấu hình xác thực địa  chỉ email(email phải tồn tại)
-    //options.SignIn.RequireConfirmedPhoneNumber = false; // Xác thực số điện thoại
-    //                                                    // mặc định false
-    //                                                    // nếu true => không cho đăng nhập mà chuyển hướng đến trang  RegisterConfirmation.cshtml
+    // Sign-in settings. 
+    //options.SignIn.RequireConfirmedEmail = true; // Require confirmed email
+    //options.SignIn.RequireConfirmedPhoneNumber = false; // Require confirmed phone number
+    //                                                    // default is false
+    //                                                    // if true => does not allow login and redirects to RegisterConfirmation.cshtml
     //options.SignIn.RequireConfirmedAccount = false;
 });
 
@@ -195,3 +195,5 @@ app.MapHub<ChatHub>("hubs/chat");
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

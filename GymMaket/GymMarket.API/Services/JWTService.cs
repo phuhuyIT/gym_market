@@ -22,7 +22,7 @@ namespace GymMarket.API.Services
             _userManager = userManager;
             _context = context;
 
-            // lấy key => chuyển sang mảng bytes => tiến hành mã hóa đối xứng
+            // Get key => convert to bytes array => perform symmetric encryption
             _jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]!));
         }
 
@@ -48,7 +48,7 @@ namespace GymMarket.API.Services
                 userClaims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            // thông tin đăng nhập
+            // Signing credentials
             var creadentials = new SigningCredentials(_jwtKey, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor()

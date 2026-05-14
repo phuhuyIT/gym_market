@@ -21,14 +21,14 @@ namespace GymMarket.API.Controllers
         [HttpPost("register-course")]
         public async Task<IActionResult> RegisterCourse(RegisterCourseDto dto)
         {
-            // Gọi hàm đăng ký trong repository
+            // Call registration function in repository
             var result = await _courseRegistrationRepository.RegisterCourseAsync(dto);
 
             if (result != null)
             {
-                return Ok(new { Message = "Đăng ký khóa học thành công!", Registration = result });
+                return Ok(new { Message = "COURSE_REGISTRATION_SUCCESS", Registration = result });
             }
-            return BadRequest(new { Message = "Đăng ký khóa học thất bại. Vui lòng kiểm tra lại thông tin." });
+            return BadRequest(new { Message = "COURSE_REGISTRATION_FAILED" });
         }
 
 
@@ -38,9 +38,9 @@ namespace GymMarket.API.Controllers
             var isCancelled = await _courseRegistrationRepository.CancelRegistrationAsync(registrationId);
             if (isCancelled)
             {
-                return Ok(new { Message = "Hủy đăng ký thành công!" });
+                return Ok(new { Message = "REGISTRATION_CANCELLED_SUCCESS" });
             }
-            return BadRequest(new { Message = "Hủy đăng ký thất bại. Vui lòng kiểm tra lại thông tin." });
+            return BadRequest(new { Message = "REGISTRATION_CANCEL_FAILED" });
         }
 
         [HttpPost("initialize-payment/{registrationId}")]
@@ -49,9 +49,9 @@ namespace GymMarket.API.Controllers
             var isInitialized = await _courseRegistrationRepository.InitializePaymentAsync(registrationId, initialPayment);
             if (isInitialized)
             {
-                return Ok(new { Message = "Khởi tạo thanh toán thành công!" });
+                return Ok(new { Message = "PAYMENT_INITIALIZATION_SUCCESS" });
             }
-            return BadRequest(new { Message = "Khởi tạo thanh toán thất bại. Vui lòng thử lại." });
+            return BadRequest(new { Message = "PAYMENT_INITIALIZATION_FAILED" });
         }
 
         [HttpGet("get-course-registrations/{studentId}")]

@@ -144,19 +144,19 @@ namespace GymMarket.API.Repositories
         {
             var query = _context.Courses.AsQueryable();
 
-            // Tìm kiếm theo tên khóa học hoặc chủ đề
+            // Search by course title or topic
             if (!string.IsNullOrEmpty(keyword))
             {
                 query = query.Where(c => c.Type!.Contains(keyword) || c.Category!.Contains(keyword));
             }
 
-            // Tìm kiếm theo tên coach
+            // Search by trainer description
             if (!string.IsNullOrEmpty(description))
             {
                 query = query.Where(c => c.Description!.Contains(description));
             }
 
-            // Lọc theo mức giá
+            // Filter by price range
             if (minPrice.HasValue)
             {
                 query = query.Where(c => c.Price >= minPrice.Value);
@@ -166,7 +166,7 @@ namespace GymMarket.API.Repositories
                 query = query.Where(c => c.Price <= maxPrice.Value);
             }
 
-            // Lọc theo thời lượng khóa học
+            // Filter by course duration
             if (minDuration.HasValue)
             {
                 query = query.Where(c => c.Duration >= minDuration.Value);
@@ -178,7 +178,7 @@ namespace GymMarket.API.Repositories
 
 
 
-            // Lọc theo thể loại khóa học
+            // Filter by course category
             if (!string.IsNullOrEmpty(category))
             {
                 query = query.Where(c => c.Category!.Equals(category));

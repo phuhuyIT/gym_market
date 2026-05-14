@@ -35,7 +35,7 @@ namespace GymMarket.API.Repositories
                 .OrderBy(h => h.CreatedAt)
                 .ToListAsync();
         }
-        // Lấy ra health Datum theo time
+        // Get health datum by time
         public async Task<IEnumerable<IGrouping<DateTime, HealthDatum>>> GetHealthDataAggregatedByTimeAsync(string studentId, DateTime startDate, DateTime endDate)
         {
             var healthData = await _context.Set<HealthDatum>()
@@ -45,7 +45,7 @@ namespace GymMarket.API.Repositories
                 .ToListAsync();
             return healthData;
         }
-        // Lấy ra health Datum theo time
+        // Get health datum summary by time
         public async Task<IEnumerable<object>> GetHealthDataSummaryByTimeAsync(string studentId, DateTime startDate, DateTime endDate)
         {
             return await _context.Set<HealthDatum>()

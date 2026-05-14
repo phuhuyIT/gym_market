@@ -11,31 +11,31 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class FoodNutritionController : ControllerBase
     {
-        private readonly FoodNutritionRepository foodNutritionRepository;
+        private readonly FoodNutritionRepository _foodNutritionRepository;
 
         public FoodNutritionController(FoodNutritionRepository foodNutritionRepository)
         {
-            this.foodNutritionRepository = foodNutritionRepository;
+            _foodNutritionRepository = foodNutritionRepository;
         }
 
         [HttpGet("search-nutrition")]
         public async Task<IActionResult> SearchFoodNutrition([FromQuery] string search)
         {
-            var list = await foodNutritionRepository.SearchFoodNutrition(search);
+            var list = await _foodNutritionRepository.SearchFoodNutrition(search);
             return Ok(list);
         }
 
         [HttpGet("get-nutrition-user/{userId}")]
         public async Task<IActionResult> GetFoodNutritionUser(string userId)
         {
-            var list = await foodNutritionRepository.GetFoodNutritionUser(userId);
+            var list = await _foodNutritionRepository.GetFoodNutritionUser(userId);
             return Ok(list);
         }
 
         [HttpPost("cal-caloric-value")]
         public async Task<IActionResult> CalCaloricValue(AddFoodNutritionUser model)
         {
-            var r = await foodNutritionRepository.CalculateCaloric(model);
+            var r = await _foodNutritionRepository.CalculateCaloric(model);
             if(r == null)
             {
                 return BadRequest(r);
@@ -46,7 +46,7 @@ namespace GymMarket.API.Controllers
         [HttpPost("delete-foodnutrition-user")]
         public async Task<IActionResult> DeleteFoodNutritionUser(DeleteFoodNutritionUserDto model)
         {
-            var r = await foodNutritionRepository.DeleteFoodNutritionUser(model);
+            var r = await _foodNutritionRepository.DeleteFoodNutritionUser(model);
             if(r == true)
             {
                 return Ok(new { message = "Successfully" });
