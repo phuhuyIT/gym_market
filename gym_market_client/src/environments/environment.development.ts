@@ -1,3 +1,3 @@
 export const environment = {
-    baseApi: 'http://localhost:5284/api'
+    baseApi: 'https://didactic-lamp-jw69655j4x7cv7r-5284.app.github.dev/api'
 };

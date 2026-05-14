@@ -3,7 +3,7 @@ import { HeaderComponent } from '../../pages-client/components/header/header.com
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { patchState } from '@ngrx/signals';
-import { ErrorModalStore } from '../../stores/error-modal.store';
+import { ToastService } from '../../shared/services/toast.service';
 import { TrainerSignup } from '../models/trainer-sign-up.model';
 import { StudentSignup } from '../models/student-sign-up.model';
 import { LoaderModalStore } from '../../stores/loader.store';
@@ -21,7 +21,7 @@ import { SignupResponse } from '../../core/models/auth.model';
 export class SignupComponent implements OnInit {
 	signUpForm!: FormGroup;
 	submit = false;
-	errorStore = inject(ErrorModalStore);
+	toastService = inject(ToastService);
 	loaderStore = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
 
@@ -87,10 +87,8 @@ export class SignupComponent implements OnInit {
 					patchState(this.loaderStore, { isShow: false });
 				},
 				error: err => {
-					patchState(this.errorStore, {
-						isShow: true,
-						errors: err.error?.errors || ['Signup failed'],
-					});
+					const errors = err.error?.errors || ['Signup failed'];
+					this.toastService.show(errors instanceof Array ? errors.join(', ') : errors, 'error');
 					patchState(this.loaderStore, { isShow: false });
 				},
 			});
@@ -125,13 +123,11 @@ export class SignupComponent implements OnInit {
 					let result = [];
 					for (const key in err.error?.errors) {
 						if (err.error.errors.hasOwnProperty(key)) {
-							result.push(`${key}: ${err.error.errors[key][0]}\n`);
+							result.push(`${key}: ${err.error.errors[key][0]}`);
 						}
 					}
-					patchState(this.errorStore, {
-						isShow: true,
-						errors: result.length > 0 ? result : ['Trainer signup failed'],
-					});
+					const errorMessage = result.length > 0 ? result.join(', ') : 'Trainer signup failed';
+					this.toastService.show(errorMessage, 'error');
 					patchState(this.loaderStore, { isShow: false });
 				},
 			});
@@ -163,13 +159,11 @@ export class SignupComponent implements OnInit {
 					let result = [];
 					for (const key in err.error?.errors) {
 						if (err.error.errors.hasOwnProperty(key)) {
-							result.push(`${key}: ${err.error.errors[key][0]}\n`);
+							result.push(`${key}: ${err.error.errors[key][0]}`);
 						}
 					}
-					patchState(this.errorStore, {
-						isShow: true,
-						errors: result.length > 0 ? result : ['Student signup failed'],
-					});
+					const errorMessage = result.length > 0 ? result.join(', ') : 'Student signup failed';
+					this.toastService.show(errorMessage, 'error');
 					patchState(this.loaderStore, { isShow: false });
 				},
 			});
