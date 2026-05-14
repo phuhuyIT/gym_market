@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
+import { Message } from '../core/models/conversation.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -8,11 +10,15 @@ import { environment } from '../../environments/environment.development';
 export class MessageService {
 	constructor(private http: HttpClient) {}
 
-	getMessages(conversationId: number) {
-		return this.http.get(`${environment.baseApi}/Conversations/get-messages/${conversationId}`);
+	getMessages(conversationId: number): Observable<Message[]> {
+		return this.http.get<Message[]>(
+			`${environment.baseApi}/Conversations/get-messages/${conversationId}`
+		);
 	}
 
-    seenMessage(userId: string | null, conversationId: number) { 
-        return this.http.get(`${environment.baseApi}/Conversations/seen-message/${userId}/${conversationId}`);
-    }
+	seenMessage(userId: string | null, conversationId: number): Observable<any> {
+		return this.http.get(
+			`${environment.baseApi}/Conversations/seen-message/${userId}/${conversationId}`
+		);
+	}
 }

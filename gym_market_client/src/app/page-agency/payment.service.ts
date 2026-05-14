@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { CancelPaymentDto, Payment } from '../core/models/payment.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -8,15 +10,17 @@ import { HttpClient } from '@angular/common/http';
 export class PaymentService {
 	constructor(private http: HttpClient) {}
 
-	getPayments(courseId: string) {
-		return this.http.get(`${environment.baseApi}/Payments/get-payments-ofcourse/${courseId}`);
+	getPayments(courseId: string): Observable<Payment[]> {
+		return this.http.get<Payment[]>(
+			`${environment.baseApi}/Payments/get-payments-ofcourse/${courseId}`
+		);
 	}
 
-	okPayment(paymentId: string) {
+	okPayment(paymentId: string): Observable<any> {
 		return this.http.post(`${environment.baseApi}/Payments/ok-payment/${paymentId}`, {});
 	}
 
-    cancelPayment(model: any) {
+	cancelPayment(model: CancelPaymentDto): Observable<any> {
 		return this.http.post(`${environment.baseApi}/Payments/cancel-payment`, model);
 	}
 }

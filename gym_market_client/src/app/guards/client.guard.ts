@@ -6,7 +6,7 @@ import { AccountService } from '../guest/account.service';
 export const clientGuard: CanActivateFn = (route, state) => {
 	const accountService = inject(AccountService);
 	const router = inject(Router);
-	const isLoggedIn = accountService.isLogedIn();
+	const isLoggedIn = accountService.isLoggedIn();
 	const role = accountService.getRole();
 
 	if (isLoggedIn === true && role === ROLES.STUDENT) {

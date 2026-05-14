@@ -23,8 +23,8 @@ export class ChatHupService {
 
 		this.hubConnection
 			.start()
-			.then(() => console.log('SignalR connection started...'))
-			.catch(err => console.log('Error while starting connection: ' + err));
+			.then(() => {})
+			.catch(err => console.error('Error while starting connection: ' + err));
 	}
 
 	// Gửi tin nhắn đến Server
@@ -47,9 +47,7 @@ export class ChatHupService {
 		if (this.hubConnection) {
 			this.hubConnection
 				.invoke('JoinRoom', roomName)
-				.then(() => {
-					console.log('join thanh công');
-				})
+				.then(() => {})
 				.catch(err => console.error(err));
 		}
 	}
@@ -59,7 +57,7 @@ export class ChatHupService {
 		if (this.hubConnection) {
 			this.hubConnection
 				.stop()
-				.then(() => console.log('SignalR connection stopped.'))
+				.then(() => {})
 				.catch(err => console.error('Error while stopping connection: ' + err));
 		}
 	}

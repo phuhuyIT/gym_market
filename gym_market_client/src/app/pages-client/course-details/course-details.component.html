@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div class="wrapper" *ngIf="course">
 	<div id="banner" class="bg-red-400 h-[80dvh] w-full flex justify-center items-center mb-10">
 		<div class="w-1/2">
 			<p id="title" class="text-center text-4xl font-bold p-4">{{ course.title }}</p>
@@ -137,7 +137,7 @@
 								<div class="mb-3">
 									<div class="border-t py-3 rounded-lg">
 										<h2 class="text-lg font-bold text-gray-900 title-font mb-2">
-											{{ op.reviewComment }}
+											{{ op.comment }}
 										</h2>
 
 										<p class="leading-relaxed text-base">

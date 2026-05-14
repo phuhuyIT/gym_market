@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
-import { UpdateTrainerProfileDto } from './models/update-trainer.dto';
+import { Trainer, UpdateTrainerProfileDto } from '../core/models/trainer.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -9,15 +10,15 @@ import { UpdateTrainerProfileDto } from './models/update-trainer.dto';
 export class TrainerService {
 	constructor(private http: HttpClient) {}
 
-	getTrainerInfo(trainerId: string) {
-		return this.http.get(`${environment.baseApi}/trainer/${trainerId}`);
+	getTrainerInfo(trainerId: string): Observable<Trainer> {
+		return this.http.get<Trainer>(`${environment.baseApi}/trainer/${trainerId}`);
 	}
 
-    updateTrainerProfile(model: UpdateTrainerProfileDto, trainerId: string) {
-        return this.http.put(`${environment.baseApi}/trainer/${trainerId}`, model);
-    }
+	updateTrainerProfile(model: UpdateTrainerProfileDto, trainerId: string): Observable<any> {
+		return this.http.put(`${environment.baseApi}/trainer/${trainerId}`, model);
+	}
 
-    getTrainers() {
-        return this.http.get(`${environment.baseApi}/trainer`);
-    }
+	getTrainers(): Observable<Trainer[]> {
+		return this.http.get<Trainer[]>(`${environment.baseApi}/trainer`);
+	}
 }

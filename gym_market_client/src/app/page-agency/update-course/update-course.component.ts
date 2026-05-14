@@ -1,4 +1,4 @@
-import { Component, inject, Renderer2 } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
 import { ErrorModalStore } from '../../stores/error-modal.store';
@@ -6,6 +6,8 @@ import { patchState } from '@ngrx/signals';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { NoticeModalStore } from '../../stores/notice.store';
+import { Course } from '../../core/models/course.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-update-course',
@@ -14,30 +16,27 @@ import { NoticeModalStore } from '../../stores/notice.store';
 	templateUrl: './update-course.component.html',
 	styleUrl: './update-course.component.scss',
 })
-export class UpdateCourseComponent {
-	course: any;
+export class UpdateCourseComponent implements OnInit {
+	course!: Course;
 	errorModalStore = inject(ErrorModalStore);
 	form!: FormGroup;
 	loaderStore = inject(LoaderModalStore);
 	errorStore = inject(ErrorModalStore);
 	noticeStore = inject(NoticeModalStore);
+	private destroyRef = inject(DestroyRef);
+	private activatedRoute = inject(ActivatedRoute);
+	private courseAgencyService = inject(CourseAgencyService);
+	private router = inject(Router);
+	private formBuilder = inject(FormBuilder);
+	private renderer = inject(Renderer2);
 
-	dataImages: any = []; // lưu data của images để hiển thị trên view
-	private imagesAdd: any = []; // chứa đối tượng file để tải lên server
+	dataImages: string[] = []; // lưu data của images để hiển thị trên view
+	private imagesAdd: File[] = []; // chứa đối tượng file để tải lên server
 
-	dataVideos: any = []; // lưu data của video để hiển thị trên view
-	private videosAdd: any = []; // chứa đối tượng file để tải lên server
+	dataVideos: string[] = []; // lưu data của video để hiển thị trên view
+	private videosAdd: File[] = []; // chứa đối tượng file để tải lên server
 
     url: string | null = null;
-
-
-	constructor(
-		private activatedRoute: ActivatedRoute,
-		private courseAgencyService: CourseAgencyService,
-		private router: Router,
-		private formBuilder: FormBuilder,
-        private renderer: Renderer2,
-	) {}
 
 	ngOnInit() {
 		this.form = this.formBuilder.group({
@@ -55,28 +54,29 @@ export class UpdateCourseComponent {
 			maxParticipants: [0, [Validators.required]],
 		});
 
-		this.activatedRoute.params.subscribe({
-			next: (params: any) => {
-				// console.log(params.id);
-				this.getCourse(params.id);
+		this.activatedRoute.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: (params) => {
+				if (params['id']) {
+					this.getCourse(params['id']);
+				}
 			},
 		});
 	}
 
 	private initCourse() {
-		this.form = this.formBuilder.group({
-			courseId: [this.course.courseId],
-			trainerId: [this.course.trainerId],
-			title: [this.course.title, [Validators.required]],
-			description: [this.course.description, [Validators.required]],
-			type: [this.course.type, [Validators.required]],
-			category: [this.course.category, [Validators.required]],
-			price: [this.course.price, [Validators.required]],
-			additionalPrice: [this.course.additionalPrice, [Validators.required]],
-			startDate: [this.formatDate(new Date(this.course.startDate)), [Validators.required]],
-			endDate: [this.formatDate(new Date(this.course.endDate)), [Validators.required]],
-			duration: [this.course.duration, [Validators.required]],
-			maxParticipants: [this.course.maxParticipants, [Validators.required]],
+		this.form.patchValue({
+			courseId: this.course.courseId,
+			trainerId: this.course.trainerId,
+			title: this.course.title,
+			description: this.course.description,
+			type: this.course.type,
+			category: this.course.category,
+			price: this.course.price,
+			additionalPrice: this.course.additionalPrice,
+			startDate: this.formatDate(new Date(this.course.startDate)),
+			endDate: this.formatDate(new Date(this.course.endDate)),
+			duration: this.course.duration,
+			maxParticipants: this.course.maxParticipants,
 		});
 	}
 
@@ -88,19 +88,18 @@ export class UpdateCourseComponent {
 	}
 
 	private getCourse(id: string) {
-		this.courseAgencyService.getCourse(id).subscribe({
-			next: (res: any) => {
-				// console.log(res);
-				const images = res.getFileDtos.filter((c: any) => c.typeFile === 'IMAGE').map((c: any) => c.url);
-				const videos = res.getFileDtos.filter((c: any) => c.typeFile === 'VIDEO').map((c: any) => c.url);
+		this.courseAgencyService.getCourse(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: (res: Course) => {
+				const images = res.getFileDtos.filter((c) => c.typeFile === 'IMAGE').map((c) => c.url);
+				const videos = res.getFileDtos.filter((c) => c.typeFile === 'VIDEO').map((c) => c.url);
 				this.dataImages = images;
 				this.dataVideos = videos;
 				this.course = res;
 				this.initCourse();
 			},
-			error: err => {
+			error: () => {
 				patchState(this.errorModalStore, {
-					errors: ['Không tìm thấy course'],
+					errors: ['Course not found'],
 					isShow: true,
 				});
 				this.router.navigateByUrl('/agency/courses');
@@ -108,38 +107,44 @@ export class UpdateCourseComponent {
 		});
 	}
 
-	onSlectImage(event: any) {
-		if (event.target.files.length > 0) {
-			for (let file of event.target.files) {
+	onSlectImage(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files.length > 0) {
+			for (let i = 0; i < input.files.length; i++) {
+				const file = input.files[i];
 				this.imagesAdd.push(file);
 
 				const reader = new FileReader();
 				reader.readAsDataURL(file);
-				reader.onload = event => {
-					const data = event.target?.result;
-					this.dataImages.push(data);
+				reader.onload = e => {
+					const data = e.target?.result;
+					if (typeof data === 'string') {
+						this.dataImages.push(data);
+					}
 				};
 			}
 		}
 	}
 
-	onClearImages(input: any) {
+	onClearImages(input: HTMLInputElement) {
 		this.dataImages = [];
 		this.imagesAdd = [];
 
 		input.value = '';
 	}
 
-	onClearVideo(input: any) {
+	onClearVideo(input: HTMLInputElement) {
 		this.dataVideos = [];
 		this.videosAdd = [];
 
 		input.value = '';
 	}
 
-	onSlectVideo(event: any) {
-		if (event.target.files.length > 0) {
-			for (let file of event.target.files) {
+	onSlectVideo(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files.length > 0) {
+			for (let i = 0; i < input.files.length; i++) {
+				const file = input.files[i];
 				this.videosAdd.push(file);
 
 				const videoUrl = URL.createObjectURL(file);
@@ -173,10 +178,10 @@ export class UpdateCourseComponent {
 
 		patchState(this.loaderStore, { isShow: true });
 
-		this.courseAgencyService.updateCourse(form).subscribe({
-			next: (res: any) => {
+		this.courseAgencyService.updateCourse(form as any).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: () => {
 				patchState(this.loaderStore, { isShow: false });
-				patchState(this.noticeStore, { isShow: true, message: 'Cập nhật thành công' });
+				patchState(this.noticeStore, { isShow: true, message: 'Update successful' });
 			},
 			error: err => {
 				patchState(this.loaderStore, { isShow: false });

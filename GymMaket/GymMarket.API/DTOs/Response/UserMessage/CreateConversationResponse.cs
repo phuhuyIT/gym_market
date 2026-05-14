@@ -4,6 +4,6 @@ namespace GymMarket.API.DTOs.Response.UserMessage
 {
     public class CreateConversationResponse : ApiResponse
     {
-        public ConversitionDto? ConversitionDto { get; set; }
+        public ConversationDto? ConversationDto { get; set; }
     }
 }

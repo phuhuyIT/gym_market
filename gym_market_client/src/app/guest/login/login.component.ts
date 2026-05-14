@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import {
 	FormBuilder,
 	FormGroup,
@@ -11,6 +11,8 @@ import { ErrorModalStore } from '../../stores/error-modal.store';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { ROLES } from '../../utilities/roles.const';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LoginResponse } from '../../core/models/auth.model';
 
 @Component({
 	selector: 'app-login',
@@ -19,11 +21,12 @@ import { ROLES } from '../../utilities/roles.const';
 	templateUrl: './login.component.html',
 	styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 	signUpForm!: FormGroup;
 	submit = false;
 	errorModalStore = inject(ErrorModalStore);
 	loader = inject(LoaderModalStore);
+	private destroyRef = inject(DestroyRef);
 
 	constructor(
 		private formBuilder: FormBuilder,
@@ -32,9 +35,7 @@ export class LoginComponent {
 	) {}
 
 	ngOnInit() {
-		if (this.accountService.isLogedIn() === true) {
-			console.log(this.accountService.isLogedIn());
-
+		if (this.accountService.isLoggedIn()) {
 			this.router.navigateByUrl('/home');
 		}
 
@@ -44,39 +45,43 @@ export class LoginComponent {
 		});
 	}
 
-	// đánh dấu các trường không hợp lệ và hiển thị lỗi tương ứng
 	validateAllFormFields(control: string) {
 		this.signUpForm.controls[control].markAsDirty({ onlySelf: true });
 	}
 
 	onSignIn() {
 		this.submit = true;
-		if (this.signUpForm.valid == false) {
+		if (this.signUpForm.valid === false) {
 			return;
 		}
 
 		patchState(this.loader, { isShow: true });
-		this.accountService.login(this.signUpForm.value).subscribe({
-			next: (res: any) => {
-				// console.log(res);
-				patchState(this.loader, { isShow: false });
-				this.accountService.saveToken(res.token);
-				this.accountService.checkLogin();
-                const role = this.accountService.getRole();
+		this.accountService
+			.login(this.signUpForm.value)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (res: LoginResponse) => {
+					patchState(this.loader, { isShow: false });
+					this.accountService.saveToken(res.token);
+					this.accountService.checkLogin();
+					const role = this.accountService.getRole();
 
-                if(role === ROLES.TRAINER) {
-                    this.router.navigateByUrl('/agency');
-                    return;
-                } else if(role === ROLES.STUDENT) {
-                    this.router.navigateByUrl('/client');
-                    return;
-                }
-                this.router.navigateByUrl('/access-denied');
-			},
-			error: err => {
-				patchState(this.loader, { isShow: false });
-				patchState(this.errorModalStore, { errors: err.error.errors, isShow: true });
-			},
-		});
+					if (role === ROLES.TRAINER) {
+						this.router.navigateByUrl('/agency');
+						return;
+					} else if (role === ROLES.STUDENT) {
+						this.router.navigateByUrl('/client');
+						return;
+					}
+					this.router.navigateByUrl('/access-denied');
+				},
+				error: err => {
+					patchState(this.loader, { isShow: false });
+					patchState(this.errorModalStore, {
+						errors: err.error?.errors || ['Login failed'],
+						isShow: true,
+					});
+				},
+			});
 	}
 }

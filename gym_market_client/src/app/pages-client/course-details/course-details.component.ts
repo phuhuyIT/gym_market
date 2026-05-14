@@ -1,4 +1,4 @@
-import { Component, inject, Renderer2 } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, Renderer2 } from '@angular/core';
 import { CourseAgencyService } from '../../page-agency/course-agency.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseOptionService } from '../../page-agency/course-option.service';
@@ -8,34 +8,42 @@ import { FormsModule } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
 import { CourseRatingService } from '../course-rating.service';
 import { ErrorModalStore } from '../../stores/error-modal.store';
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { CouresRegistrationService } from '../coures-registration.service';
+import { DatePipe, DecimalPipe, NgIf } from '@angular/common';
+import { CourseRegistrationService } from '../course-registration.service';
 import { NoticeModalStore } from '../../stores/notice.store';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+	Course,
+	CourseOption,
+	CourseRating,
+	CourseRatingCreateDto,
+} from '../../core/models/course.model';
 
 @Component({
 	selector: 'app-course-details',
 	standalone: true,
-	imports: [FormsModule, DatePipe, DecimalPipe],
+	imports: [FormsModule, DatePipe, DecimalPipe, NgIf],
 	templateUrl: './course-details.component.html',
 	styleUrl: './course-details.component.scss',
 })
-export class CourseDetailsComponent {
-	courseOptions: any;
-	course: any;
+export class CourseDetailsComponent implements OnInit {
+	courseOptions: CourseOption[] = [];
+	course: Course | null = null;
 	loader = inject(LoaderModalStore);
 	courseId: string = '';
 	userStore = inject(UserStore);
 	errorModal = inject(ErrorModalStore);
 	noticeStore = inject(NoticeModalStore);
+	private destroyRef = inject(DestroyRef);
 
 	// rating
 	rate: number = 0;
 	comment: string = '';
-	ratings: any = [];
+	ratings: CourseRating[] = [];
 	showAll: boolean = false;
 
-	images: any = [];
-	videos: any = [];
+	images: string[] = [];
+	videos: string[] = [];
 
 	// show image
 	url: string | null = null;
@@ -49,105 +57,109 @@ export class CourseDetailsComponent {
 		private router: Router,
 		private courseRatingService: CourseRatingService,
 		private renderer: Renderer2,
-		private couresRegistrationService: CouresRegistrationService
+		private courseRegistrationService: CourseRegistrationService
 	) {}
 
 	ngOnInit() {
-		this.courseOptions = [];
-
-		this.activatedRoute.params.subscribe({
-			next: (params: any) => {
-				this.courseId = params.id;
+		this.activatedRoute.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: params => {
+				this.courseId = params['id'];
 				this.loadCourse(this.courseId);
 				this.getCourseRating(this.courseId);
+				this.getCourseOptions();
 			},
 		});
-		this.getCourseOPtion();
 	}
 
 	private loadCourse(id: string) {
 		patchState(this.loader, { isShow: true });
-		this.courseService.getCourse(id).subscribe({
-			next: (res: any) => {
-				this.course = res;
-				this.images = res.getFileDtos
-					.filter((c: any) => c.typeFile === 'IMAGE')
-					.map((c: any) => c.url);
-				this.videos = res.getFileDtos
-					.filter((c: any) => c.typeFile === 'VIDEO')
-					.map((c: any) => c.url);
-				patchState(this.loader, { isShow: false });
-			},
-			error: err => {
-				this.router.navigateByUrl('/client/home-client');
-			},
-		});
+		this.courseService
+			.getCourse(id)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.course = res;
+					this.images = res.getFileDtos
+						.filter(c => c.typeFile === 'IMAGE')
+						.map(c => c.url);
+					this.videos = res.getFileDtos
+						.filter(c => c.typeFile === 'VIDEO')
+						.map(c => c.url);
+					patchState(this.loader, { isShow: false });
+				},
+				error: () => {
+					this.router.navigateByUrl('/client/home-client');
+				},
+			});
 	}
 
-	private getCourseOPtion() {
+	private getCourseOptions() {
 		patchState(this.loader, { isShow: true });
-		this.courseOptionService.getCourseOptionsByCourseId(this.courseId).subscribe({
-			next: (res: any) => {
-				this.courseOptions = res;
-				patchState(this.loader, { isShow: false });
-			},
-			error: err => {
-				patchState(this.loader, { isShow: false });
-				console.error('Failed to load course options', err);
-			},
-		});
+		this.courseOptionService
+			.getCourseOptionsByCourseId(this.courseId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.courseOptions = res;
+					patchState(this.loader, { isShow: false });
+				},
+				error: err => {
+					patchState(this.loader, { isShow: false });
+					console.error('Failed to load course options', err);
+				},
+			});
 	}
 
 	private getCourseRating(id: string) {
 		patchState(this.loader, { isShow: true });
-		this.courseRatingService.getCourseRatings(id).subscribe({
-			next: (res: any) => {
-				// console.log(res);
-				this.ratings = res;
-				patchState(this.loader, { isShow: false });
-			},
-		});
+		this.courseRatingService
+			.getCourseRatings(id)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.ratings = res;
+					patchState(this.loader, { isShow: false });
+				},
+			});
 	}
 
 	preventInvalidInput(event: KeyboardEvent): void {
-		// Nếu ký tự là 'e', '+', '-', hoặc '.'
 		if (['e', 'E', '+', '-'].includes(event.key)) {
 			event.preventDefault();
 		}
 	}
 
 	addRating() {
-		const t = {
-			ratingId: crypto.randomUUID(),
-			courseId: this.courseId,
-			studentId: this.userStore.studentId(),
-			ratingValue: this.rate,
-			reviewComment: this.comment,
-		};
-
-		this.ratings.push(t);
-		// console.log(t);
-
 		if (this.rate > 5 || this.rate < 0) {
 			patchState(this.errorModal, {
 				errors: ['RatingValue must be between 0 and 5.'],
 				isShow: true,
 			});
-
 			return;
 		}
 
+		const ratingDto: CourseRatingCreateDto = {
+			courseId: this.courseId,
+			studentId: this.userStore.studentId() ?? '',
+			ratingValue: this.rate,
+			comment: this.comment,
+		};
+
 		patchState(this.loader, { isShow: true });
-		this.courseRatingService.addRating(t).subscribe({
-			next: (res: any) => {
-				// console.log(res);
-				patchState(this.loader, { isShow: false });
-			},
-			error: err => {
-				console.log(err);
-				patchState(this.loader, { isShow: false });
-			},
-		});
+		this.courseRatingService
+			.addRating(ratingDto)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.getCourseRating(this.courseId);
+					this.rate = 0;
+					this.comment = '';
+					patchState(this.loader, { isShow: false });
+				},
+				error: () => {
+					patchState(this.loader, { isShow: false });
+				},
+			});
 	}
 
 	toggleShowAll() {
@@ -168,14 +180,15 @@ export class CourseDetailsComponent {
 		this.showPayment = flag;
 	}
 
-	addToCard(courseId: string ) {
-        this.courseId = courseId;
+	addToCard(courseId: string) {
+		this.courseId = courseId;
 
 		patchState(this.loader, { isShow: true });
-		this.couresRegistrationService
-			.registerCourse(this.courseId, this.userStore.studentId())
+		this.courseRegistrationService
+			.registerCourse(this.courseId, this.userStore.studentId() ?? '')
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: (res: any) => {
+				next: () => {
 					this.router.navigateByUrl('/client/course-registration');
 					patchState(this.loader, { isShow: false });
 					patchState(this.noticeStore, {
@@ -183,7 +196,7 @@ export class CourseDetailsComponent {
 						message: 'Register course successfully!',
 					});
 				},
-				error: err => {
+				error: () => {
 					patchState(this.loader, { isShow: false });
 					patchState(this.errorModal, {
 						isShow: true,

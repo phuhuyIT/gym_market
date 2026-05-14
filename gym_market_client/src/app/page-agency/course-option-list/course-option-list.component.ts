@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { ErrorModalStore } from '../../stores/error-modal.store';
@@ -12,7 +12,8 @@ import {
 	Validators,
 } from '@angular/forms';
 import { CourseOptionService } from '../course-option.service';
-import { AddCourseOption } from '../models/add-course-option.model';
+import { CourseOption } from '../../core/models/course.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-course-option-list',
@@ -21,14 +22,15 @@ import { AddCourseOption } from '../models/add-course-option.model';
 	templateUrl: './course-option-list.component.html',
 	styleUrl: './course-option-list.component.scss',
 })
-export class CourseOptionListComponent {
-	courseOptions: any = [];
-	courseOptionTemps: any;
+export class CourseOptionListComponent implements OnInit {
+	courseOptions: CourseOption[] = [];
+	courseOptionTemps: CourseOption[] = [];
 
 	// store
 	loaderStore = inject(LoaderModalStore);
 	noticeStore = inject(NoticeModalStore);
 	errorModalStore = inject(ErrorModalStore);
+	private destroyRef = inject(DestroyRef);
 
 	// add
 	isShowAddCourseOptionModal: boolean = false;
@@ -67,9 +69,8 @@ export class CourseOptionListComponent {
 
 		patchState(this.loaderStore, { isShow: true });
 
-		this.courseOptionService.getAllCourseOptions().subscribe({
-			next: (res: any) => {
-				// console.log(res);
+		this.courseOptionService.getAllCourseOptions().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: (res: CourseOption[]) => {
 				this.courseOptions = res;
 				this.courseOptionTemps = this.courseOptions;
 				patchState(this.loaderStore, { isShow: false });
@@ -88,13 +89,14 @@ export class CourseOptionListComponent {
 
 		this.courseOptionService
 			.removeCourseOptionOftrainer(this.courseOptionIdToDelete)
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: (res: any) => {
+				next: (_res) => {
 					patchState(this.loaderStore, { isShow: false });
-					patchState(this.noticeStore, { isShow: true, message: 'Xóa thành công' });
+					patchState(this.noticeStore, { isShow: true, message: 'Deleted successfully' });
 
 					const index = this.courseOptions.findIndex(
-						(x: any) => x.optionId === this.courseOptionIdToDelete
+						(x) => x.optionId === this.courseOptionIdToDelete
 					);
 					if (index !== -1) {
 						this.courseOptions.splice(index, 1);
@@ -113,7 +115,7 @@ export class CourseOptionListComponent {
 			this.courseOptionTemps = this.courseOptions;
 			return;
 		}
-		this.courseOptionTemps = this.courseOptions.filter((c: any) =>
+		this.courseOptionTemps = this.courseOptions.filter((c) =>
 			c.optionName.toLowerCase().includes(this.searchString.toLowerCase())
 		);
 	}
@@ -139,11 +141,11 @@ export class CourseOptionListComponent {
 		}
 
 		this.addCourseOptionForm.controls['optionId'].setValue(optionId);
-		const model: AddCourseOption = { ...this.addCourseOptionForm.value };
+		const model: CourseOption = { ...this.addCourseOptionForm.value };
 
 		patchState(this.loaderStore, { isShow: true });
-		this.courseOptionService.addCourseOptionOftrainer(model).subscribe({
-			next: (res: any) => {
+		this.courseOptionService.addCourseOptionOftrainer(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: (_res) => {
 				patchState(this.loaderStore, { isShow: false });
 				this.courseOptions.push(model);
 				this.courseOptionTemps = this.courseOptions;
@@ -152,9 +154,9 @@ export class CourseOptionListComponent {
 			},
 			error: err => {
 				patchState(this.loaderStore, { isShow: false });
-				let result = [];
+				let result: string[] = [];
 				for (const key in err.error.errors) {
-					if (err.error.errors.hasOwnProperty(key)) {
+					if (Object.prototype.hasOwnProperty.call(err.error.errors, key)) {
 						result.push(`${key}: ${err.error.errors[key][0]}\n`);
 					}
 				}
@@ -162,10 +164,10 @@ export class CourseOptionListComponent {
 		});
 	}
 
-	onShowUpdateModal(flag: boolean, option: any) {
+	onShowUpdateModal(flag: boolean, option: CourseOption | null) {
 		this.isShowUpdateCourseOptionModal = flag;
 
-		if (flag === false) {
+		if (flag === false || option === null) {
 			this.resetUpdateForm();
 		} else {
 			this.updateCourseOptionForm.controls['optionId'].setValue(option.optionId);
@@ -188,16 +190,16 @@ export class CourseOptionListComponent {
 			return;
 		}
 
-		const model: AddCourseOption = { ...this.updateCourseOptionForm.value };
+		const model: CourseOption = { ...this.updateCourseOptionForm.value };
 		patchState(this.loaderStore, { isShow: true });
 
-		this.courseOptionService.updateCourseOptionOftrainer(model).subscribe({
-			next: (res: any) => {
+		this.courseOptionService.updateCourseOptionOftrainer(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: (_res) => {
 				patchState(this.loaderStore, { isShow: false });
 				this.isShowUpdateCourseOptionModal = false;
 
 				const option = this.courseOptionTemps.find(
-					(x: any) =>
+					(x) =>
 						x.optionId === this.updateCourseOptionForm.controls['optionId'].value
 				);
 				if (option) {
@@ -209,9 +211,9 @@ export class CourseOptionListComponent {
 			},
 			error: err => {
 				patchState(this.loaderStore, { isShow: false });
-				let result = [];
+				let result: string[] = [];
 				for (const key in err.error.errors) {
-					if (err.error.errors.hasOwnProperty(key)) {
+					if (Object.prototype.hasOwnProperty.call(err.error.errors, key)) {
 						result.push(`${key}: ${err.error.errors[key][0]}\n`);
 					}
 				}

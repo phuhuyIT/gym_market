@@ -1,17 +1,17 @@
-import { Component, inject } from '@angular/core';
-import { UserInfoDto } from '../../user/models/user-info.dto';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { UserStore } from '../../stores/user.store';
-import { TrainerInfoDto } from '../models/trainer-inf0.dto';
+import { Trainer, UpdateTrainerProfileDto } from '../../core/models/trainer.model';
 import { TrainerService } from '../trainer.service';
 import { Router } from '@angular/router';
 import { UserService } from '../../user/user.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UpdateTrainerProfileDto } from '../models/update-trainer.dto';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
 import { ErrorModalStore } from '../../stores/error-modal.store';
 import { UpdateUserDto } from '../../user/models/update-user.dto';
 import { NoticeModalStore } from '../../stores/notice.store';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { UserInfoResponse } from '../../core/models/auth.model';
 
 @Component({
 	selector: 'app-update-profile',
@@ -20,13 +20,14 @@ import { NoticeModalStore } from '../../stores/notice.store';
 	templateUrl: './update-profile.component.html',
 	styleUrl: './update-profile.component.scss',
 })
-export class UpdateProfileComponent {
+export class UpdateProfileComponent implements OnInit {
 	userStore = inject(UserStore);
 	updateForm!: FormGroup;
 
 	loader = inject(LoaderModalStore);
 	errorModal = inject(ErrorModalStore);
 	noticeModal = inject(NoticeModalStore);
+	destroyRef = inject(DestroyRef);
 
 	constructor(
 		private trainerService: TrainerService,
@@ -52,34 +53,47 @@ export class UpdateProfileComponent {
 	}
 
 	private getUserInfo() {
-		if (this.userStore.id() !== null) {
-			this.userService.getUserInfo(this.userStore.id()).subscribe({
-				next: (res: any) => {
-					// this.userInfo = { ...res.userInfo };
-					this.updateForm.controls['fullName'].setValue(res.userInfo.fullName);
-					this.updateForm.controls['address'].setValue(res.userInfo.address);
-					this.updateForm.controls['email'].setValue(res.userInfo.email);
-					this.updateForm.controls['phoneNumber'].setValue(res.userInfo.phoneNumber);
-				},
-				error: error => {
-					this.router.navigateByUrl('/login');
-				},
-			});
+		const userId = this.userStore.id();
+		if (userId !== null) {
+			this.userService
+				.getUserInfo(userId)
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: (res: UserInfoResponse) => {
+						this.updateForm.patchValue({
+							fullName: res.userInfo.fullName,
+							address: res.userInfo.address,
+							email: res.userInfo.email,
+							phoneNumber: res.userInfo.phoneNumber,
+						});
+					},
+					error: () => {
+						this.router.navigateByUrl('/login');
+					},
+				});
 		}
 	}
 
 	private getTrainerInfo() {
-		this.trainerService.getTrainerInfo(this.userStore.trainerId()).subscribe({
-			next: (res: any) => {
-				this.updateForm.controls['profilePicture'].setValue(res.profilePicture);
-				this.updateForm.controls['bio'].setValue(res.bio);
-				this.updateForm.controls['experience'].setValue(res.experience);
-				this.updateForm.controls['certification'].setValue(res.certification);
-			},
-			error: error => {
-				this.router.navigateByUrl('/login');
-			},
-		});
+		const trainerId = this.userStore.trainerId();
+		if (trainerId) {
+			this.trainerService
+				.getTrainerInfo(trainerId)
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: (res: Trainer) => {
+						this.updateForm.patchValue({
+							profilePicture: res.profilePicture,
+							bio: res.bio,
+							experience: res.experience,
+							certification: res.certification,
+						});
+					},
+					error: () => {
+						this.router.navigateByUrl('/login');
+					},
+				});
+		}
 	}
 
 	onUpdate() {
@@ -87,9 +101,8 @@ export class UpdateProfileComponent {
 			return;
 		}
 
-		// console.log(this.updateForm.value);
 		const trainerUpdate: UpdateTrainerProfileDto = {
-			trainerId: this.userStore.trainerId(),
+			trainerId: this.userStore.trainerId() ?? '',
 			bio: this.updateForm.controls['bio'].value,
 			certification: this.updateForm.controls['certification'].value,
 			email: this.updateForm.controls['email'].value,
@@ -98,21 +111,23 @@ export class UpdateProfileComponent {
 			profilePicture: this.updateForm.controls['profilePicture'].value,
 			rating: 0,
 			updatedAt: new Date(),
-            userId: this.userStore.id()
+			userId: this.userStore.id() ?? '',
 		};
 
 		patchState(this.loader, { isShow: true });
 		this.trainerService
-			.updateTrainerProfile(trainerUpdate, this.userStore.trainerId())
+			.updateTrainerProfile(trainerUpdate, this.userStore.trainerId() ?? '')
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: (res: any) => {
-					console.log(res);
+				next: () => {
 					patchState(this.loader, { isShow: false });
 					this.onUpdateUser();
 				},
-				error: (err: any) => {
-					console.log(err);
-					patchState(this.errorModal, { isShow: true, errors: err.error.errors });
+				error: err => {
+					patchState(this.errorModal, {
+						isShow: true,
+						errors: err.error?.errors || ['Update failed'],
+					});
 					patchState(this.loader, { isShow: false });
 				},
 			});
@@ -129,17 +144,21 @@ export class UpdateProfileComponent {
 		};
 
 		patchState(this.loader, { isShow: true });
-		this.userService.updateUser(user).subscribe({
-			next: (res: any) => {
-				console.log(res);
-				patchState(this.loader, { isShow: false });
-				patchState(this.noticeModal, { isShow: true, message: 'Update successfully' });
-			},
-			error: err => {
-				console.log(err);
-				patchState(this.errorModal, { isShow: true, errors: err.error.errors });
-				patchState(this.loader, { isShow: false });
-			},
-		});
+		this.userService
+			.updateUser(user)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					patchState(this.loader, { isShow: false });
+					patchState(this.noticeModal, { isShow: true, message: 'Update successfully' });
+				},
+				error: err => {
+					patchState(this.errorModal, {
+						isShow: true,
+						errors: err.error?.errors || ['User update failed'],
+					});
+					patchState(this.loader, { isShow: false });
+				},
+			});
 	}
 }
