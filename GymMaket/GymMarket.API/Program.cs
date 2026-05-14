@@ -99,24 +99,40 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWT:Key").Value!))
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 
 // repositories
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICourseOptionRepository, CourseOptionRepository>();
-builder.Services.AddScoped<CourseRatingRepository>();
-builder.Services.AddScoped<CourseRegistrationRepository>();
+builder.Services.AddScoped<ICourseRatingRepository, CourseRatingRepository>();
+builder.Services.AddScoped<ICourseRegistrationRepository, CourseRegistrationRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
-builder.Services.AddScoped<ConversationRepository>();
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<FoodNutritionRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
 // service
-builder.Services.AddScoped<JWTService>();
+builder.Services.AddScoped<IJwtService, JWTService>();
+builder.Services.AddScoped<IPasswordSignInService, PasswordSignInService>();
 builder.Services.AddScoped<MinIOService>();
+builder.Services.AddScoped<AccountService>();
 
 
 
@@ -141,6 +157,22 @@ builder.Services.AddSingleton<IMinioClient>(sp =>
 
 var app = builder.Build();
 
+await IdentityRoleSeeder.SeedAsync(app.Services);
+
+app.UseExceptionHandler(appError =>
+{
+    appError.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(new
+        {
+            statusCode = 500,
+            message = "An unexpected error occurred. Please try again later."
+        });
+    });
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -152,7 +184,7 @@ if (app.Environment.IsDevelopment())
 //app.UseCors(option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200"));
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+Plan.md
+skills-lock.json
+
+SKILL.md
+.agents/
+MinIO/data/.minio.sys/tmp

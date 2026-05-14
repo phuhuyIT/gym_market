@@ -1,19 +1,17 @@
-﻿
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.FileMinIO;
 using GymMarket.API.DTOs.Response;
 using GymMarket.API.Models;
 using Minio;
 using Minio.DataModel.Args;
-using System.Security.AccessControl;
 
 namespace GymMarket.API.Services
 {
     public class MinIOService
     {
-        private readonly IMinioClient minioClient;
-        private readonly IConfiguration configuration;
-        private readonly GymMarketContext context;
+        private readonly IMinioClient _minioClient;
+        private readonly IConfiguration _configuration;
+        private readonly GymMarketContext _context;
 
         public static readonly string IMAGE_COURSES = "imagecourses";
         public static readonly string VIDEO_COURSES = "videocourses";
@@ -24,9 +22,9 @@ namespace GymMarket.API.Services
             IConfiguration configuration, 
             GymMarketContext context)
         {
-            this.minioClient = minioClient;
-            this.configuration = configuration;
-            this.context = context;
+            _minioClient = minioClient;
+            _configuration = configuration;
+            _context = context;
         }
 
         public async Task<ApiResponse> UploadFiles(FileAdd fileAdd)
@@ -40,20 +38,19 @@ namespace GymMarket.API.Services
                     return new ApiResponse
                     {
                         StatusCode = 400,
-                        Errors = ["Vui lòng chọn ít nhất 1 file"]
+                        Errors = ["PLEASE_SELECT_AT_LEAST_ONE_FILE"]
                     };
                 }
 
                 BucketExistsArgs bucketExistsArgs = new BucketExistsArgs();
                 bucketExistsArgs.WithBucket(IMAGE_COURSES);
 
-                // Kiểm tra nếu bucket chưa có, tạo mới
-                bool isExist = await minioClient.BucketExistsAsync(bucketExistsArgs);
+                bool isExist = await _minioClient.BucketExistsAsync(bucketExistsArgs);
                 if (!isExist)
                 {
                     MakeBucketArgs makeBucketArgs = new MakeBucketArgs();
                     makeBucketArgs.WithBucket(IMAGE_COURSES);
-                    await minioClient.MakeBucketAsync(makeBucketArgs);
+                    await _minioClient.MakeBucketAsync(makeBucketArgs);
 
                     string publicPolicy = $@"
                                     {{
@@ -72,15 +69,13 @@ namespace GymMarket.API.Services
                                         ]
                                     }}";
 
-                    // Áp dụng Access Policy
-                    await minioClient.SetPolicyAsync(new SetPolicyArgs()
+                    await _minioClient.SetPolicyAsync(new SetPolicyArgs()
                         .WithBucket(IMAGE_COURSES)
                         .WithPolicy(publicPolicy));
                 }
 
                 string objectName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
 
-                // Tải file lên MinIO
                 using (var stream = file.OpenReadStream())
                 {
                     PutObjectArgs putObjectArgs = new PutObjectArgs();
@@ -90,13 +85,13 @@ namespace GymMarket.API.Services
                         .WithObjectSize(file.Length)
                         .WithObject(objectName)
                         .WithContentType(file.ContentType);
-                    await minioClient.PutObjectAsync(putObjectArgs);
+                    await _minioClient.PutObjectAsync(putObjectArgs);
 
                     var fileResult = new FileCourse
                     {
                         TypeFile = IMAGE_TYPE,
                         ObjectId = objectName,
-                        Url = $"{configuration.GetSection("MinIO")["Protocol"]}://{configuration.GetSection("MinIO")["Endpoint"]}/{IMAGE_COURSES}/{objectName}",
+                        Url = $"{_configuration.GetSection("MinIO")["Protocol"]}://{_configuration.GetSection("MinIO")["Endpoint"]}/{IMAGE_COURSES}/{objectName}",
                         CourseId = fileAdd.CourseId,
                     };
                     fileAdds.Add(fileResult);
@@ -110,20 +105,19 @@ namespace GymMarket.API.Services
                     return new ApiResponse
                     {
                         StatusCode = 400,
-                        Errors = ["Vui lòng chọn ít nhất 1 file"]
+                        Errors = ["PLEASE_SELECT_AT_LEAST_ONE_FILE"]
                     };
                 }
 
                 BucketExistsArgs bucketExistsArgs = new BucketExistsArgs();
                 bucketExistsArgs.WithBucket(VIDEO_COURSES);
 
-                // Kiểm tra nếu bucket chưa có, tạo mới
-                bool isExist = await minioClient.BucketExistsAsync(bucketExistsArgs);
+                bool isExist = await _minioClient.BucketExistsAsync(bucketExistsArgs);
                 if (!isExist)
                 {
                     MakeBucketArgs makeBucketArgs = new MakeBucketArgs();
                     makeBucketArgs.WithBucket(VIDEO_COURSES);
-                    await minioClient.MakeBucketAsync(makeBucketArgs);
+                    await _minioClient.MakeBucketAsync(makeBucketArgs);
 
                     string publicPolicy = $@"
                                     {{
@@ -142,15 +136,13 @@ namespace GymMarket.API.Services
                                         ]
                                     }}";
 
-                    // Áp dụng Access Policy
-                    await minioClient.SetPolicyAsync(new SetPolicyArgs()
+                    await _minioClient.SetPolicyAsync(new SetPolicyArgs()
                         .WithBucket(VIDEO_COURSES)
                         .WithPolicy(publicPolicy));
                 }
 
                 string objectName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
 
-                // Tải file lên MinIO
                 using (var stream = file.OpenReadStream())
                 {
                     PutObjectArgs putObjectArgs = new PutObjectArgs();
@@ -160,34 +152,34 @@ namespace GymMarket.API.Services
                         .WithObjectSize(file.Length)
                         .WithObject(objectName)
                         .WithContentType(file.ContentType);
-                    await minioClient.PutObjectAsync(putObjectArgs);
+                    await _minioClient.PutObjectAsync(putObjectArgs);
 
                     var fileResult = new FileCourse
                     {
                         TypeFile = VIDEO_TYPE,
                         ObjectId = objectName,
-                        Url = $"{configuration.GetSection("MinIO")["Protocol"]}://{configuration.GetSection("MinIO")["Endpoint"]}/{VIDEO_COURSES}/{objectName}",
+                        Url = $"{_configuration.GetSection("MinIO")["Protocol"]}://{_configuration.GetSection("MinIO")["Endpoint"]}/{VIDEO_COURSES}/{objectName}",
                         CourseId = fileAdd.CourseId,
                     };
                     fileAdds.Add(fileResult);
                 }
             }
 
-            context.FileCourses.AddRange(fileAdds);
-            var r = await context.SaveChangesAsync();
+            _context.FileCourses.AddRange(fileAdds);
+            var r = await _context.SaveChangesAsync();
             if(r > 0)
             {
                 return new ApiResponse
                 {
                     StatusCode = 200,
-                    Message = "",
+                    Message = "SUCCESS",
                 };
             }
 
             return new ApiResponse
             {
                 StatusCode = 400,
-                Errors = ["Vui lòng thử lại."],
+                Errors = ["UPLOAD_FAILED"],
             };
         }
 
@@ -195,32 +187,30 @@ namespace GymMarket.API.Services
         {
             if (string.IsNullOrEmpty(deleteFile.ObjectName))
             {
-                return new ApiResponse { Errors = ["Vui lòng chọn tên file"], StatusCode = 400 };
+                return new ApiResponse { Errors = ["FILE_NAME_REQUIRED"], StatusCode = 400 };
             }
 
             try
             {
-                // Kiểm tra bucket có tồn tại hay không
                 BucketExistsArgs bucketExistsArgs = new BucketExistsArgs();
                 bucketExistsArgs.WithBucket(deleteFile.BucketName);
 
-                bool isExist = await minioClient.BucketExistsAsync(bucketExistsArgs);
+                bool isExist = await _minioClient.BucketExistsAsync(bucketExistsArgs);
                 if (!isExist)
                 {
-                    return new ApiResponse { Errors = ["Không tìm thấy bucket"], StatusCode = 400 };
+                    return new ApiResponse { Errors = ["BUCKET_NOT_FOUND"], StatusCode = 400 };
                 }
 
-                // Xóa object từ bucket
                 RemoveObjectArgs removeObjectArgs = new RemoveObjectArgs()
                 .WithBucket(deleteFile.BucketName)
-                    .WithObject(deleteFile.BucketName);
+                    .WithObject(deleteFile.ObjectName); // Fixed: was using BucketName as ObjectName
 
-                await minioClient.RemoveObjectAsync(removeObjectArgs);
-                return new ApiResponse { Errors = ["Xóa file thành công"], StatusCode = 200 };
+                await _minioClient.RemoveObjectAsync(removeObjectArgs);
+                return new ApiResponse { Message = "FILE_DELETED_SUCCESSFULLY", StatusCode = 200 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return new ApiResponse { Errors = ["Xóa file không thành công. Vui lòng thử lại"], StatusCode = 400 };
+                return new ApiResponse { Errors = ["DELETE_FAILED"], StatusCode = 400 };
             }
         }
     }

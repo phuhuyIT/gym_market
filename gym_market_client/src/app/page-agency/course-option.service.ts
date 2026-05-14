@@ -9,9 +9,13 @@ import { AddCourseOption } from './models/add-course-option.model';
 export class CourseOptionService {
 	constructor(private http: HttpClient) {}
 
-	getCourseOptionsOftrainer() {
+	getAllCourseOptions() {
 		return this.http.get(`${environment.baseApi}/courseoption`);
 	}
+
+    getCourseOptionsByCourseId(courseId: string) {
+        return this.http.get(`${environment.baseApi}/courseoption/course/${courseId}`);
+    }
 
 	addCourseOptionOftrainer(model: AddCourseOption) {
 		return this.http.post(`${environment.baseApi}/courseoption`, model);

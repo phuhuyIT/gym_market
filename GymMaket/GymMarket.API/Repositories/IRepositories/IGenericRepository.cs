@@ -13,7 +13,7 @@ namespace GymMarket.API.Repositories.IRepositories
         Task AddAsync<TCreateDto>(TCreateDto entity) where TCreateDto:class;
         Task AddRangeAsync<TCreateDto>(IEnumerable<TCreateDto> entities) where TCreateDto:class;
         Task Update<TUpdateDto>(TUpdateDto entity)where TUpdateDto:class;
-        void Remove(TEntity entity);
-        void RemoveRange(IEnumerable<TEntity> entities);
+        Task RemoveAsync(TEntity entity);
+        Task RemoveRangeAsync(IEnumerable<TEntity> entities);
     }
 }

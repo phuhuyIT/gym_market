@@ -1,14 +1,17 @@
 ﻿using GymMarket.API.DTOs.UserMessage;
-using GymMarket.API.Repositories;
+using GymMarket.API.Repositories.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace GymMarket.API.Hubs
 {
+    [Authorize]
     public class ChatHub : Hub
     {
-        private readonly ConversationRepository conversationRepository;
+        private readonly IConversationRepository conversationRepository;
 
-        public ChatHub(ConversationRepository conversationRepository)
+        public ChatHub(IConversationRepository conversationRepository)
         {
             this.conversationRepository = conversationRepository;
         }
@@ -25,6 +28,7 @@ namespace GymMarket.API.Hubs
 
         public async Task SendMessageToRoom(string roomName, SendMessageDto message)
         {
+            message.SenderId = Context.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             await conversationRepository.SendMessage(message);
             await Clients.Group(roomName).SendAsync("ReceiveMessage", message);
         }

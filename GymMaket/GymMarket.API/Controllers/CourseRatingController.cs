@@ -11,9 +11,9 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class CourseRatingController: ControllerBase
     {
-        private readonly CourseRatingRepository courseRatingRepository;
+        private readonly ICourseRatingRepository courseRatingRepository;
 
-        public CourseRatingController(CourseRatingRepository courseRatingRepository)
+        public CourseRatingController(ICourseRatingRepository courseRatingRepository)
         {
             this.courseRatingRepository = courseRatingRepository;
         }
@@ -22,14 +22,14 @@ namespace GymMarket.API.Controllers
         [HttpPost("add-course-rating")]
         public async Task<IActionResult> AddCourseRating(CourseRatingCreateDto courseRatingCreateDTO)
         {
-            var resposen = await courseRatingRepository.AddCourseRating(courseRatingCreateDTO);
+            var resposen = await courseRatingRepository.AddRating(courseRatingCreateDTO);
             return StatusCode(resposen.StatusCode, resposen.Message);
         }
 
         [HttpGet("get-course-rating/{courseId}")]
         public async Task<IActionResult> GetCourseRatings(string courseId)
         {
-            var ratings = await courseRatingRepository.GetCourseRatings(courseId);
+            var ratings = await courseRatingRepository.GetRatingsByCourseId(courseId);
             return Ok(ratings);
         }
     }

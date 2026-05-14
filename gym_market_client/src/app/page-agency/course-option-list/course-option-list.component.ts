@@ -67,7 +67,7 @@ export class CourseOptionListComponent {
 
 		patchState(this.loaderStore, { isShow: true });
 
-		this.courseOptionService.getCourseOptionsOftrainer().subscribe({
+		this.courseOptionService.getAllCourseOptions().subscribe({
 			next: (res: any) => {
 				// console.log(res);
 				this.courseOptions = res;

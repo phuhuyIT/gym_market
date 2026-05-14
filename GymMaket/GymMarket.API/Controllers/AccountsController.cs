@@ -1,5 +1,5 @@
 ﻿using GymMarket.API.DTOs.Account;
-using GymMarket.API.Repositories.IRepositories;
+using GymMarket.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
@@ -8,24 +8,24 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly IAccountRepository accountRepository;
+        private readonly AccountService _accountService;
 
-        public AccountsController(IAccountRepository accountRepository)
+        public AccountsController(AccountService accountService)
         {
-            this.accountRepository = accountRepository;
+            _accountService = accountService;
         }
 
         [HttpPost("sign-up")]
         public async Task<IActionResult> SignUp(SignUpDto model)
         {
-            var response = await accountRepository.SignUp(model);
+            var response = await _accountService.SignUp(model);
             return StatusCode(response.StatusCode, new { response.Message, response.Errors, response.Success, response.UserId });
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto model)
         {
-            var response = await accountRepository.Login(model);
+            var response = await _accountService.Login(model);
             return StatusCode(response.StatusCode, new { response.Message, response.Errors, response.Success, response.Token });
         }
     }

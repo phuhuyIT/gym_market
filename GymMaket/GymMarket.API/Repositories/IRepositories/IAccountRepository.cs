@@ -1,11 +1,12 @@
-﻿using GymMarket.API.DTOs.Account;
-using GymMarket.API.DTOs.Response.Account;
+﻿using GymMarket.API.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace GymMarket.API.Repositories.IRepositories
 {
     public interface IAccountRepository
     {
-        Task<SignupResponse> SignUp(SignUpDto model);
-        Task<LoginResponse> Login(LoginDto model);
+        Task<AppUser?> FindByEmail(string email);
+        Task<IdentityResult> CreateUser(AppUser user, string password);
+        Task<IdentityResult> AddToRole(AppUser user, string role);
     }
 }

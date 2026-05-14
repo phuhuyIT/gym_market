@@ -100,6 +100,14 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasConstraintName("FK_Courses_Trainer");
         });
 
+        modelBuilder.Entity<FileCourse>(entity =>
+        {
+            entity.HasOne(d => d.Course)
+                .WithMany(p => p.FileCourses)
+                .HasForeignKey(d => d.CourseId)
+                .HasConstraintName("FK_FileCourses_Course");
+        });
+
         modelBuilder.Entity<CourseOption>(entity =>
         {
             entity.HasKey(e => e.OptionId).HasName("PK__Course_O__3260905ED3772281");

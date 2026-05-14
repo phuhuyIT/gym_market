@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Course;
 using GymMarket.API.DTOs.CourseRegistration;
@@ -6,8 +6,6 @@ using GymMarket.API.DTOs.FileMinIO;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
-using Minio.DataModel.ILM;
-using System.Dynamic;
 
 namespace GymMarket.API.Repositories
 {
@@ -34,23 +32,16 @@ namespace GymMarket.API.Repositories
                 return courseExists;
             }
 
-            var registration = new CourseRegistration();
-
-            // Set initial properties for the registration
-
-            // Set default RegistrationId if it's not already set
-            if (string.IsNullOrWhiteSpace(registration.RegistrationId))
+            var registration = new CourseRegistration
             {
-                registration.RegistrationId = Guid.NewGuid().ToString(); // Use a unique GUID
-            }
-
-            registration.CourseId = dto.CourseId;
-            registration.StudentId = dto.StudentId;
-            registration.Status = "Pending Payment";
-            registration.PaymentStatus = "Not Started";
-            registration.CreatedAt = DateTime.UtcNow;
-            registration.UpdatedAt = DateTime.UtcNow;
-            registration.RegistrationId = Guid.NewGuid().ToString();
+                RegistrationId = Guid.NewGuid().ToString(),
+                CourseId = dto.CourseId,
+                StudentId = dto.StudentId,
+                Status = "Pending Payment",
+                PaymentStatus = "Not Started",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
 
             // Add the registration to the database
             _context.CourseRegistrations.Add(registration);
@@ -124,51 +115,21 @@ namespace GymMarket.API.Repositories
 
         public async Task<List<GetCourseDto>> GetCourseRegistrations(string studentId)
         {
-            //List<CourseRegistration> list = await _context.CourseRegistrations
-            //    .AsNoTrackingWithIdentityResolution()
-            //    .Where(c => c.StudentId == studentId)
-            //    .ToListAsync();
+            var coursesWithFiles = await (from cr in _context.CourseRegistrations
+                                          join c in _context.Courses.Include(c => c.FileCourses) on cr.CourseId equals c.CourseId
+                                          join p in _context.Payments on c.CourseId equals p.CourseId into paymentGroup
+                                          from p in paymentGroup.DefaultIfEmpty()
+                                          where cr.StudentId == studentId
+                                          select new { Course = c, PaymentStatus = p != null ? p.PaymentStatus : null })
+                                          .ToListAsync();
 
-            var courseDto = await (from cr in _context.CourseRegistrations
-                                   join c in _context.Courses on cr.CourseId equals c.CourseId
-                                   join p in _context.Payments on c.CourseId equals p.CourseId into paymentGroup
-                                   from p in paymentGroup.DefaultIfEmpty() // Lấy nhóm Payments và cho phép null
-                                   where cr.StudentId == studentId
-                                   group new { c, p } by c.CourseId into grouped
-                                   select new GetCourseDto
-                                   {
-                                       CourseId = grouped.Key,
-                                       TrainerId = grouped.First().c.TrainerId,
-                                       Title = grouped.First().c.Title,
-                                       Description = grouped.First().c.Description,
-                                       Type = grouped.First().c.Type,
-                                       Category = grouped.First().c.Category,
-                                       Price = grouped.First().c.Price,
-                                       AdditionalPrice = grouped.First().c.AdditionalPrice,
-                                       StartDate = grouped.First().c.StartDate,
-                                       EndDate = grouped.First().c.EndDate,
-                                       Duration = grouped.First().c.Duration,
-                                       MaxParticipants = grouped.First().c.MaxParticipants,
-                                       StatusPayment = grouped.FirstOrDefault().p.PaymentStatus, // Lấy Payment đầu tiên nếu có
-                                       Rating = grouped.First().c.Rating
-                                   }).ToListAsync();
+            var courseDtos = coursesWithFiles.Select(x => {
+                var dto = _mapper.Map<Course, GetCourseDto>(x.Course);
+                dto.StatusPayment = x.PaymentStatus;
+                return dto;
+            }).ToList();
 
-
-
-
-            foreach (var c in courseDto)
-            {
-                var courseFiles = await _context.FileCourses
-                   .AsNoTrackingWithIdentityResolution()
-                   .Where(course => course.CourseId == c.CourseId)
-                   .ToListAsync();
-
-                var courseFileImages = courseFiles.Where(c => c.TypeFile == "IMAGE").ToList();
-
-                var courseFileDtos = _mapper.Map<List<FileCourse>, List<GetFileDto>>(courseFileImages);
-                c.GetFileDtos = courseFileDtos;
-            }
-            return courseDto;
+            return courseDtos;
         }
 
     }

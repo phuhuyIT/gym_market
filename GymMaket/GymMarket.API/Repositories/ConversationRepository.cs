@@ -1,63 +1,64 @@
-﻿using GymMarket.API.Data;
+using GymMarket.API.Data;
 using GymMarket.API.DTOs.Response;
 using GymMarket.API.DTOs.UserMessage;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Repositories
 {
-    public class ConversationRepository
+    public class ConversationRepository : IConversationRepository
     {
-        private readonly GymMarketContext context;
+        private readonly GymMarketContext _context;
 
         public ConversationRepository(GymMarketContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         public async Task<ApiResponse> CreateConversation(CreateConversationDto model)
         {
-            var sender = await context.Users.AsNoTrackingWithIdentityResolution()
+            var sender = await _context.Users.AsNoTrackingWithIdentityResolution()
                 .Where(u => u.Id == model.SenderId)
                 .FirstOrDefaultAsync();
 
             if (sender == null)
             {
-                return new ApiResponse { Errors = ["Người gửi không tồn tại"], StatusCode = 400, Success = false };
+                return new ApiResponse { Errors = ["SENDER_NOT_FOUND"], StatusCode = 400, Success = false };
             }
 
-            var reviever = await context.Users.AsNoTrackingWithIdentityResolution()
+            var receiver = await _context.Users.AsNoTrackingWithIdentityResolution()
                 .Where(u => u.Id == model.RecieveId)
                 .FirstOrDefaultAsync();
 
-            if (reviever == null)
+            if (receiver == null)
             {
-                return new ApiResponse { Errors = ["Người nhận không tồn tại"], StatusCode = 400, Success = false };
+                return new ApiResponse { Errors = ["RECEIVER_NOT_FOUND"], StatusCode = 400, Success = false };
             }
 
 
-            var conversitionExists = await context.Conversations
+            var conversationExists = await _context.Conversations
                 .AsNoTrackingWithIdentityResolution()
-                .Where(c => (c.SenderId == model.SenderId || c.SenderId == model.RecieveId) && (c.SenderId == model.RecieveId || c.RecieveId == model.RecieveId))
+                .Where(c => (c.SenderId == model.SenderId || c.SenderId == model.RecieveId) && (c.RecieveId == model.RecieveId || c.RecieveId == model.SenderId))
                 .FirstOrDefaultAsync();
 
-            if(conversitionExists != null)
+            if(conversationExists != null)
             {
-                return new ApiResponse { Errors = [], StatusCode = 200, Success = false };
+                return new ApiResponse { StatusCode = 200, Success = true };
             }
 
-            var conversition = new Conversation
+            var conversation = new Conversation
             {
-                Name = sender.FullName + " - " + reviever.FullName,
-                RecieveId = reviever.Id,
+                Name = sender.FullName + " - " + receiver.FullName,
+                RecieveId = receiver.Id,
                 SenderId = sender.Id,
             };
-            context.Conversations.Add(conversition);
-            await context.SaveChangesAsync();
+            _context.Conversations.Add(conversation);
+            await _context.SaveChangesAsync();
 
             var conversationParticipant1 = new ConversationParticipant
             {
-                ConversationId = conversition.Id,
+                ConversationId = conversation.Id,
                 HasNewMessage = true,
                 LastMessage = "",
                 UserId = sender.Id,
@@ -65,36 +66,36 @@ namespace GymMarket.API.Repositories
 
             var conversationParticipant2 = new ConversationParticipant
             {
-                ConversationId = conversition.Id,
+                ConversationId = conversation.Id,
                 HasNewMessage = true,
                 LastMessage = "",
-                UserId = reviever.Id,
+                UserId = receiver.Id,
             };
-            context.ConversationParticipants.Add(conversationParticipant1);
-            context.ConversationParticipants.Add(conversationParticipant2);
-            var r = await context.SaveChangesAsync();
+            _context.ConversationParticipants.Add(conversationParticipant1);
+            _context.ConversationParticipants.Add(conversationParticipant2);
+            var r = await _context.SaveChangesAsync();
             if (r > 0)
             {
-                return new ApiResponse { Errors = [], StatusCode = 200, Success = false };
+                return new ApiResponse { StatusCode = 200, Success = true, Message = "SUCCESS" };
             }
-            return new ApiResponse { Errors = ["Tạo đoạn chat thất bại. Vui lòng thử lại"], StatusCode = 400, Success = false };
+            return new ApiResponse { Errors = ["CONVERSATION_CREATION_FAILED"], StatusCode = 400, Success = false };
         }
 
         public async Task<List<ConversitionDto>> GetConversationOfUser(string userId)
         {
-            var list = await (from conversationUser in context.ConversationParticipants
-                              join conversition in context.Conversations on conversationUser.ConversationId equals conversition.Id
-                              join recieve in context.Users on conversition.RecieveId equals recieve.Id
-                              join sender in context.Users on conversition.SenderId equals sender.Id
+            var list = await (from conversationUser in _context.ConversationParticipants
+                              join conversation in _context.Conversations on conversationUser.ConversationId equals conversation.Id
+                              join receive in _context.Users on conversation.RecieveId equals receive.Id
+                              join sender in _context.Users on conversation.SenderId equals sender.Id
                               where conversationUser.UserId == userId
                               select new ConversitionDto
                               {
                                   ConversationId = conversationUser.ConversationId,
-                                  ConversationName = conversition.Name,
+                                  ConversationName = conversation.Name,
                                   HasNewMessage = conversationUser.HasNewMessage,
                                   LastMessage = conversationUser.LastMessage,
-                                  Avatar = recieve.Avatar != null && recieve.Id == userId && sender.Avatar != null ? sender.Avatar 
-                                  : sender.Avatar != null && sender.Id == userId && recieve.Avatar != null ? recieve.Avatar
+                                  Avatar = receive.Avatar != null && receive.Id == userId && sender.Avatar != null ? sender.Avatar 
+                                  : sender.Avatar != null && sender.Id == userId && receive.Avatar != null ? receive.Avatar
                                   : "https://cdn-icons-png.flaticon.com/512/1999/1999625.png"
                               }).ToListAsync();
             return list;
@@ -102,7 +103,7 @@ namespace GymMarket.API.Repositories
 
         public async Task SeenMessage(string userId, int conversationId)
         {
-            var conversationParticipant = await context.ConversationParticipants
+            var conversationParticipant = await _context.ConversationParticipants
                 .AsNoTrackingWithIdentityResolution()
                 .Where(x => x.UserId == userId && x.ConversationId == conversationId)
                 .FirstOrDefaultAsync();
@@ -110,8 +111,8 @@ namespace GymMarket.API.Repositories
             if (conversationParticipant != null)
             {
                 conversationParticipant.HasNewMessage = false;
-                context.ConversationParticipants.Update(conversationParticipant);
-                await context.SaveChangesAsync();
+                _context.ConversationParticipants.Update(conversationParticipant);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -124,30 +125,30 @@ namespace GymMarket.API.Repositories
                 SenderId = model.SenderId,
             };
 
-            context.UserMessages.Add(message);
+            _context.UserMessages.Add(message);
 
-            var conversationLastMessage = await context.ConversationParticipants
+            var conversationParticipants = await _context.ConversationParticipants
                .AsNoTrackingWithIdentityResolution()
                .Where(c => c.ConversationId == model.ConversationId)
                .ToListAsync();
 
-            conversationLastMessage.ForEach((t) =>
+            foreach (var participant in conversationParticipants)
             {
-                t.LastMessage = model.Content;
+                participant.LastMessage = model.Content;
 
-                if(t.UserId != model.SenderId)
+                if(participant.UserId != model.SenderId)
                 {
-                    t.HasNewMessage = true;
+                    participant.HasNewMessage = true;
                 }
-            });
-            context.ConversationParticipants.UpdateRange(conversationLastMessage);
+            }
+            _context.ConversationParticipants.UpdateRange(conversationParticipants);
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<UserMessageDto>> GetMessages(int conversationId)
         {
-            var messages = await context.UserMessages
+            var messages = await _context.UserMessages
                 .AsNoTrackingWithIdentityResolution()
                 .Include(m => m.AppUser)
                 .Where(m => m.ConversationId == conversationId)

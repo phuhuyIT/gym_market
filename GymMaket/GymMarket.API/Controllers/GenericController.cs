@@ -43,9 +43,8 @@ namespace GymMarket.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var entity = _mapper.Map<TCreateDto, TEntity>(createDto);
-            await _repository.AddAsync(entity);
-            return CreatedAtAction(nameof(GetById), new { id = GetEntityId(entity) }, entity);
+            await _repository.AddAsync(createDto);
+            return Ok(new { message = "Created successfully" });
         }
 
         // PUT: api/[controller]/{id}
@@ -68,7 +67,7 @@ namespace GymMarket.API.Controllers
             if (entity == null)
                 return NotFound();
 
-            _repository.Remove(entity);
+            await _repository.RemoveAsync(entity);
             return NoContent();
         }
 
