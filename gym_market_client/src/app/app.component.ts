@@ -3,12 +3,13 @@ import { RouterOutlet } from '@angular/router';
 import { ErrorModalComponent } from './components/error-modal/error-modal.component';
 import { LoaderComponent } from "./components/loader/loader.component";
 import { NoticeComponent } from "./components/notice/notice.component";
+import { GmToastComponent } from './shared/components/gm-toast/gm-toast.component';
 import { AccountService } from './guest/account.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ErrorModalComponent, LoaderComponent, NoticeComponent],
+  imports: [RouterOutlet, ErrorModalComponent, LoaderComponent, NoticeComponent, GmToastComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

@@ -7,10 +7,9 @@ import { patchState } from '@ngrx/signals';
 import { FormsModule } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
 import { CourseRatingService } from '../course-rating.service';
-import { ErrorModalStore } from '../../stores/error-modal.store';
+import { ToastService } from '../../shared/services/toast.service';
 import { DatePipe, DecimalPipe, NgIf } from '@angular/common';
 import { CourseRegistrationService } from '../course-registration.service';
-import { NoticeModalStore } from '../../stores/notice.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
 	Course,
@@ -32,8 +31,7 @@ export class CourseDetailsComponent implements OnInit {
 	loader = inject(LoaderModalStore);
 	courseId: string = '';
 	userStore = inject(UserStore);
-	errorModal = inject(ErrorModalStore);
-	noticeStore = inject(NoticeModalStore);
+	toastService = inject(ToastService);
 	private destroyRef = inject(DestroyRef);
 
 	// rating
@@ -131,10 +129,7 @@ export class CourseDetailsComponent implements OnInit {
 
 	addRating() {
 		if (this.rate > 5 || this.rate < 0) {
-			patchState(this.errorModal, {
-				errors: ['RatingValue must be between 0 and 5.'],
-				isShow: true,
-			});
+			this.toastService.show('RatingValue must be between 0 and 5.', 'error');
 			return;
 		}
 
@@ -191,17 +186,11 @@ export class CourseDetailsComponent implements OnInit {
 				next: () => {
 					this.router.navigateByUrl('/client/course-registration');
 					patchState(this.loader, { isShow: false });
-					patchState(this.noticeStore, {
-						isShow: true,
-						message: 'Register course successfully!',
-					});
+					this.toastService.show('Register course successfully!');
 				},
 				error: () => {
 					patchState(this.loader, { isShow: false });
-					patchState(this.errorModal, {
-						isShow: true,
-						errors: ['Failed to register for this course. Please try again.'],
-					});
+					this.toastService.show('Failed to register for this course. Please try again.', 'error');
 				},
 			});
 	}

@@ -181,8 +181,11 @@ if (app.Environment.IsDevelopment())
 }
 
 // enable cors
-//app.UseCors(option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200"));
+app.UseCors(x => x
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+    .SetIsOriginAllowed(origin => true));
 
 // app.UseHttpsRedirection();
 

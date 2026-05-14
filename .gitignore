@@ -367,3 +367,4 @@ skills-lock.json
 SKILL.md
 .agents/
 MinIO/data/.minio.sys/tmp
+RUN_GUIDE.md

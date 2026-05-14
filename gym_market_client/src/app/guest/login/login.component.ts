@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { AccountService } from '../account.service';
 import { Router } from '@angular/router';
-import { ErrorModalStore } from '../../stores/error-modal.store';
+import { ToastService } from '../../shared/services/toast.service';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { ROLES } from '../../utilities/roles.const';
@@ -24,7 +24,7 @@ import { LoginResponse } from '../../core/models/auth.model';
 export class LoginComponent implements OnInit {
 	signUpForm!: FormGroup;
 	submit = false;
-	errorModalStore = inject(ErrorModalStore);
+	toastService = inject(ToastService);
 	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
 
@@ -77,10 +77,8 @@ export class LoginComponent implements OnInit {
 				},
 				error: err => {
 					patchState(this.loader, { isShow: false });
-					patchState(this.errorModalStore, {
-						errors: err.error?.errors || ['Login failed'],
-						isShow: true,
-					});
+					const errors = err.error?.errors || ['Login failed'];
+					this.toastService.show(errors.join(', '), 'error');
 				},
 			});
 	}
