@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { UserStore } from '../../stores/user.store';
@@ -7,102 +7,107 @@ import { patchState } from '@ngrx/signals';
 import { ErrorModalStore } from '../../stores/error-modal.store';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { FoodNutritionService } from '../../pages-client/food-nutrition.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+	CaloricValueDto,
+	FoodNutrition,
+	FoodNutritionUser,
+} from '../../core/models/food-nutrition.model';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
 	selector: 'app-food-nutrition-calculator',
 	standalone: true,
-	imports: [ReactiveFormsModule],
+	imports: [ReactiveFormsModule, NgIf, NgFor],
 	templateUrl: './food-nutrition-calculator.component.html',
 	styleUrl: './food-nutrition-calculator.component.scss',
 })
-export class FoodNutritionCalculatorComponent {
+export class FoodNutritionCalculatorComponent implements OnInit {
 	showAddFood: boolean = false;
 	searchInput: FormControl = new FormControl('');
 	weight: FormControl = new FormControl(0);
-	foods: any = [];
-	selectedFood: any;
-	isManualSelection = false; // Flag để kiểm soát việc tìm kiếm khi chọn item
+	foods: FoodNutrition[] = [];
+	selectedFood: FoodNutrition | null = null;
+	isManualSelection = false;
 
 	userStore = inject(UserStore);
 	notice = inject(NoticeModalStore);
 	errorModal = inject(ErrorModalStore);
 	loader = inject(LoaderModalStore);
+	private destroyRef = inject(DestroyRef);
 
-	foodNutritionUsers: any = [];
+	foodNutritionUsers: FoodNutritionUser[] = [];
 
 	totalCaloricValue: number = 0;
 	totalFat: number = 0;
 	totalSugar: number = 0;
 	totalProtein: number = 0;
 
-	// delete
 	showDelete: boolean = false;
-	foodSelectedToDelete: any;
+	foodSelectedToDelete: FoodNutritionUser | null = null;
 
 	constructor(private foodNutritionService: FoodNutritionService) {}
 
 	ngOnInit() {
 		this.getFoodNutritionUser();
 
-        
 		this.searchInput.valueChanges
-			.pipe(
-				debounceTime(500),
-				distinctUntilChanged() // Đặt thời gian debounce là 500ms
-			)
+			.pipe(debounceTime(500), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
 			.subscribe(value => {
-                patchState(this.loader, {isShow: true})
+				patchState(this.loader, { isShow: true });
 				if (this.isManualSelection) {
-					this.isManualSelection = false; // Bỏ qua nếu là thay đổi từ chọn item
-					this.foods = [];patchState(this.loader, {isShow: false})
+					this.isManualSelection = false;
+					this.foods = [];
+					patchState(this.loader, { isShow: false });
 					return;
 				}
 				this.foodNutritionService.search(value).subscribe({
-					next: (res: any) => {
-						// console.log(res);
+					next: res => {
 						this.foods = res;
-                        patchState(this.loader, {isShow: false})
+						patchState(this.loader, { isShow: false });
 					},
-					error: err => {
-						console.log(err);
-                        patchState(this.loader, {isShow: false})
+					error: () => {
+						patchState(this.loader, { isShow: false });
 					},
 				});
 			});
 	}
 
 	private getFoodNutritionUser() {
-		if (this.userStore.id()) {
-			this.foodNutritionService.getFoodNutritionUser(this.userStore.id()).subscribe({
-				next: (res: any) => {
-					this.foodNutritionUsers = res;
-					// console.log(res);
-					this.calStatistics();
-				},
-				error: err => {
-					console.log(err);
-				},
-			});
+		const userId = this.userStore.id();
+		if (userId) {
+			this.foodNutritionService
+				.getFoodNutritionUser(userId)
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: res => {
+						this.foodNutritionUsers = res;
+						this.calStatistics();
+					},
+				});
 		}
 	}
 
 	calStatistics() {
 		this.totalCaloricValue = this.foodNutritionUsers.reduce(
-			(sum: any, food: any) => sum + food.caloricValue,
+			(sum, food) => sum + (food.caloricValue ?? 0),
 			0
 		);
-		this.totalFat = this.foodNutritionUsers.reduce((sum: any, food: any) => sum + food.fat, 0);
+		this.totalFat = this.foodNutritionUsers.reduce(
+			(sum, food) => sum + (food.fat ?? 0),
+			0
+		);
 		this.totalSugar = this.foodNutritionUsers.reduce(
-			(sum: any, food: any) => sum + food.sugars,
+			(sum, food) => sum + (food.sugars ?? 0),
 			0
 		);
 		this.totalProtein = this.foodNutritionUsers.reduce(
-			(sum: any, food: any) => sum + food.protein,
+			(sum, food) => sum + (food.protein ?? 0),
 			0
 		);
 	}
 
-	onSelectFood(food: any) {
+	onSelectFood(food: FoodNutrition) {
 		this.isManualSelection = true;
 		this.selectedFood = food;
 		this.searchInput.setValue(food.name);
@@ -111,39 +116,40 @@ export class FoodNutritionCalculatorComponent {
 
 	onShowAddFoodNutrition(flag: boolean) {
 		this.showAddFood = flag;
-        this.resetSearchInput();
+		this.resetSearchInput();
 	}
 
 	onCal() {
-		if (!this.selectedFood) {
-		}
+		if (!this.selectedFood) return;
 
-		const model = {
+		const model: CaloricValueDto = {
 			userId: this.userStore.id(),
 			foodNutritionId: this.selectedFood.id,
-			foodName: this.selectedFood.name,
 			weight: this.weight.value,
+			foodName: this.selectedFood.name,
 		};
+
 		patchState(this.loader, { isShow: true });
-		this.foodNutritionService.calCaloricValue(model).subscribe({
-			next: (res: any) => {
-				console.log(res);
-				this.showAddFood = false;
-				patchState(this.loader, { isShow: false });
-				this.foodNutritionUsers.push(res);
-				patchState(this.notice, { isShow: true, message: 'Successfully' });
-                this.calStatistics();
-			},
-			error: (err: any) => {
-				console.log(err);
-				patchState(this.errorModal, {
-					isShow: true,
-					errors: ['Có lỗi xảy ra. Vui lòng thử lại.'],
-				});
-				patchState(this.loader, { isShow: false });
-				this.showAddFood = false;
-			},
-		});
+		this.foodNutritionService
+			.calCaloricValue(model)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.showAddFood = false;
+					patchState(this.loader, { isShow: false });
+					this.foodNutritionUsers.push(res);
+					patchState(this.notice, { isShow: true, message: 'Added successfully' });
+					this.calStatistics();
+				},
+				error: () => {
+					patchState(this.errorModal, {
+						isShow: true,
+						errors: ['An error occurred. Please try again.'],
+					});
+					patchState(this.loader, { isShow: false });
+					this.showAddFood = false;
+				},
+			});
 	}
 
 	resetSearchInput() {
@@ -152,38 +158,30 @@ export class FoodNutritionCalculatorComponent {
 		this.weight.setValue(0);
 	}
 
-	onShowDelete(flag: boolean, food: any) {
+	onShowDelete(flag: boolean, food: FoodNutritionUser | null) {
 		this.showDelete = flag;
-
-		if (flag === true) {
-			this.foodSelectedToDelete = food;
-		} else {
-			this.foodSelectedToDelete = null;
-		}
+		this.foodSelectedToDelete = food;
 	}
 
 	onDelete() {
+		if (!this.foodSelectedToDelete) return;
+
 		this.foodNutritionService
 			.deleteFoodNutritionUser({
-				UserId: this.userStore.id(),
+				userId: this.userStore.id() ?? '',
 				foodNutritionUserId: this.foodSelectedToDelete.id,
 			})
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: (res: any) => {
-					patchState(this.notice, { isShow: true, message: 'Successfully' });
+				next: () => {
+					patchState(this.notice, { isShow: true, message: 'Deleted successfully' });
 					this.showDelete = false;
 
-					const index = this.foodNutritionUsers.findIndex(
-						(x: any) => x.id === this.foodSelectedToDelete.id
+					this.foodNutritionUsers = this.foodNutritionUsers.filter(
+						x => x.id !== this.foodSelectedToDelete?.id
 					);
-					if (index !== -1) {
-						this.foodNutritionUsers.splice(index, 1);
-					}
 					this.calStatistics();
 					this.foodSelectedToDelete = null;
-				},
-				error: err => {
-					console.log(err);
 				},
 			});
 	}

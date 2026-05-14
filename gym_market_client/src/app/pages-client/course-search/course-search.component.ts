@@ -1,10 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../../page-agency/course-agency.service';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Course } from '../../core/models/course.model';
 
 @Component({
 	selector: 'app-course-search',
@@ -13,9 +15,10 @@ import { CommonModule } from '@angular/common';
 	templateUrl: './course-search.component.html',
 	styleUrl: './course-search.component.scss',
 })
-export class CourseSearchComponent {
-	courses: any;
+export class CourseSearchComponent implements OnInit {
+	courses: Course[] = [];
 	loader = inject(LoaderModalStore);
+	private destroyRef = inject(DestroyRef);
 	pageIndex: number = 1;
 	pageSize: number = 10;
 	searchString: string | null = null;
@@ -38,13 +41,15 @@ export class CourseSearchComponent {
 	) {}
 
 	ngOnInit() {
-		this.activatedRoute.queryParams.subscribe((res: any) => {
-			this.pageIndex = res.pageIndex || 1;
-			this.pageSize = res.pageSize || 10;
-			this.searchString = res.searchString || '';
-			this.category = res.category || 'All';
-			this.getCourses();
-		});
+		this.activatedRoute.queryParams
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(params => {
+				this.pageIndex = Number(params['pageIndex']) || 1;
+				this.pageSize = Number(params['pageSize']) || 10;
+				this.searchString = params['searchString'] || '';
+				this.category = params['category'] || 'All';
+				this.getCourses();
+			});
 	}
 
 	private getCourses() {
@@ -52,10 +57,13 @@ export class CourseSearchComponent {
 		patchState(this.loader, { isShow: true });
 		this.courseService
 			.getCourses(this.pageIndex, this.pageSize, this.searchString, category)
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: (res: any) => {
-					// console.log(res);
+				next: res => {
 					this.courses = res;
+					patchState(this.loader, { isShow: false });
+				},
+				error: () => {
 					patchState(this.loader, { isShow: false });
 				},
 			});

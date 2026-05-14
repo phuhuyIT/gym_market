@@ -12,7 +12,7 @@ import { RouterLink } from '@angular/router';
 export class HomeComponent {
 	// @ViewChildren('dots') dots!: QueryList<ElementRef>;
 	@ViewChild('slides') slides!: ElementRef;
-	slideTimer: any;
+	slideTimer: ReturnType<typeof setInterval> | null = null;
 	slideIndex: number = 1;
 	slideWidth: number = 0;
 	slideLenth = 4;
@@ -42,12 +42,16 @@ export class HomeComponent {
 	onClickSlide(index: number) {
 		this.slides.nativeElement.scrollLeft = index * this.slideWidth;
 		this.slideIndex = index + 1;
-		clearInterval(this.slideTimer);
+		if (this.slideTimer) {
+			clearInterval(this.slideTimer);
+		}
 
 		this.slideShow();
 	}
 
 	ngOnDestroy() {
-		clearInterval(this.slideTimer);
+		if (this.slideTimer) {
+			clearInterval(this.slideTimer);
+		}
 	}
 }

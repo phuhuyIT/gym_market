@@ -1,11 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { CouresRegistrationService } from '../coures-registration.service';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { CourseRegistrationService } from '../course-registration.service';
 import { UserStore } from '../../stores/user.store';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Course } from '../../core/models/course.model';
 
 @Component({
 	selector: 'app-course-registration',
@@ -15,14 +17,15 @@ import { patchState } from '@ngrx/signals';
 	styleUrl: './course-registration.component.scss',
 })
 export class CourseRegistrationComponent {
-	courses: any = [];
+	courses: Course[] = [];
 	searchString: string | null = null;
-	courseSearchs: any = [];
+	courseSearchs: Course[] = [];
 
 	loader = inject(LoaderModalStore);
 	userStore = inject(UserStore);
+	destroyRef = inject(DestroyRef);
 
-	constructor(private couresRegistrationService: CouresRegistrationService) {}
+	constructor(private courseRegistrationService: CourseRegistrationService) {}
 
 	ngOnInit() {
 		this.getCouresRegistrations();
@@ -30,17 +33,23 @@ export class CourseRegistrationComponent {
 
 	private getCouresRegistrations() {
 		patchState(this.loader, { isShow: true });
-		this.couresRegistrationService.getCourses(this.userStore.studentId()).subscribe(data => {
-			console.log(data);
-			patchState(this.loader, { isShow: false });
-			this.courses = data;
-			this.courseSearchs = data;
-		});
+		this.courseRegistrationService
+			.getCourses(this.userStore.studentId())
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(data => {
+				patchState(this.loader, { isShow: false });
+				this.courses = data as unknown as Course[];
+				this.courseSearchs = data as unknown as Course[];
+			});
 	}
 
 	searchCourse() {
-		this.courseSearchs = this.courses.filter((c: any) =>
-			c.title.toLowerCase().includes(this.searchString)
+		if (this.searchString === null || this.searchString.trim() === '') {
+			this.courseSearchs = this.courses;
+			return;
+		}
+		this.courseSearchs = this.courses.filter((c: Course) =>
+			c.title.toLowerCase().includes(this.searchString!.toLowerCase())
 		);
 	}
 }

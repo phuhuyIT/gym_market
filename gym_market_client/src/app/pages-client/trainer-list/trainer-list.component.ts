@@ -1,39 +1,47 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { TrainerService } from '../../page-agency/trainer.service';
 import { RouterLink } from '@angular/router';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Trainer } from '../../core/models/trainer.model';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
 	selector: 'app-trainer-list',
 	standalone: true,
-	imports: [RouterLink],
+	imports: [RouterLink, NgIf, NgFor],
 	templateUrl: './trainer-list.component.html',
 	styleUrl: './trainer-list.component.scss',
 })
-export class TrainerListComponent {
-	trainers: any;
+export class TrainerListComponent implements OnInit {
+	trainers: Trainer[] = [];
 	loader = inject(LoaderModalStore);
+	private destroyRef = inject(DestroyRef);
 
 	constructor(private trainerService: TrainerService) {}
 
 	ngOnInit() {
-		this.trainers = [];
-
 		this.getAllTrainers();
 	}
 
 	private getAllTrainers() {
 		patchState(this.loader, { isShow: true });
-		this.trainerService.getTrainers().subscribe({
-			next: (res: any) => {
-				patchState(this.loader, { isShow: false });
-				this.trainers = res;
-			},
-		});
+		this.trainerService
+			.getTrainers()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					patchState(this.loader, { isShow: false });
+					this.trainers = res;
+				},
+				error: () => {
+					patchState(this.loader, { isShow: false });
+				},
+			});
 	}
 
 	onSubmit() {
-		console.log(123);
+		// Cleanup: removed debug log
 	}
 }

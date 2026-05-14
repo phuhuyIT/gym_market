@@ -1,10 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { PaymentService } from '../payment.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { patchState } from '@ngrx/signals';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CancelPaymentDto, Payment } from '../../core/models/payment.model';
 
 @Component({
 	selector: 'app-list-payments',
@@ -13,40 +15,41 @@ import { FormsModule } from '@angular/forms';
 	templateUrl: './list-payments.component.html',
 	styleUrl: './list-payments.component.scss',
 })
-export class ListPaymentsComponent {
-	payments: any = [];
+export class ListPaymentsComponent implements OnInit {
+	payments: Payment[] = [];
 	notice = inject(NoticeModalStore);
+	private destroyRef = inject(DestroyRef);
+	private paymentService = inject(PaymentService);
+	private activatedRoute = inject(ActivatedRoute);
 
 	showCancel: boolean = false;
 	paymentNote: string = '';
 	paymentId: string | null = null;
-
-	constructor(private paymentService: PaymentService, private activatedRoute: ActivatedRoute) {}
 
 	ngOnInit() {
 		this.getPayments();
 	}
 
 	private getPayments() {
-		this.activatedRoute.params.subscribe({
-			next: (params: any) => {
-				console.log(params.courseId); // {id: '2', name: 'hoc'}
-
-				this.paymentService.getPayments(params.courseId).subscribe({
-					next: (res: any) => {
-						console.log(res);
-						this.payments = res;
-					},
-				});
+		this.activatedRoute.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: (params) => {
+				const courseId = params['courseId'];
+				if (courseId) {
+					this.paymentService.getPayments(courseId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+						next: (res: Payment[]) => {
+							this.payments = res;
+						},
+					});
+				}
 			},
 		});
 	}
 
 	okPayment(paymentId: string) {
-		this.paymentService.okPayment(paymentId).subscribe({
-			next: (res: any) => {
+		this.paymentService.okPayment(paymentId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: () => {
 				patchState(this.notice, { message: 'Successfully', isShow: true });
-				const pay = this.payments.find((c: any) => c.paymentId === paymentId);
+				const pay = this.payments.find((c) => c.paymentId === paymentId);
 
 				if (pay) {
 					pay.paymentStatus = 'Paid';
@@ -61,19 +64,26 @@ export class ListPaymentsComponent {
 	}
 
 	cancelPayment() {
-		const model = { paymentId: this.paymentId, note: this.paymentNote };
-		this.paymentService.cancelPayment(model).subscribe({
-			next: (res: any) => {
+		if (!this.paymentId) return;
+
+		const model: CancelPaymentDto = { 
+			paymentId: this.paymentId, 
+			note: this.paymentNote 
+		};
+		
+		this.paymentService.cancelPayment(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: () => {
 				patchState(this.notice, { message: 'Successfully', isShow: true });
-				const pay = this.payments.find((c: any) => c.paymentId === this.paymentId);
+				const pay = this.payments.find((c) => c.paymentId === this.paymentId);
 
 				if (pay) {
 					pay.paymentStatus = 'Canceled';
-					pay.paymentNote = this.paymentNote;
+					pay.note = this.paymentNote;
 				}
 
 				this.paymentNote = '';
 				this.paymentId = null;
+				this.showCancel = false;
 			},
 		});
 	}

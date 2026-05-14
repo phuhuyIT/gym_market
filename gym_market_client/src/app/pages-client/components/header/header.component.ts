@@ -4,6 +4,11 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserStore } from '../../../stores/user.store';
 import { AccountService } from '../../../guest/account.service';
 
+interface NavItem {
+	link: string;
+	name: string;
+}
+
 @Component({
 	selector: 'app-header',
 	standalone: true,
@@ -15,12 +20,12 @@ export class HeaderComponent {
 	showAccountOption = false;
 	userStore = inject(UserStore);
 
-	navbarItems: any = [
+	navbarItems: NavItem[] = [
 		{
 			link: '/home',
 			name: 'Home',
 		},
-        
+
 		{
 			link: '/client/find-trainer',
 			name: 'Trainers',
@@ -29,19 +34,18 @@ export class HeaderComponent {
 			link: '/client/food-nutrition-calculator',
 			name: 'Food Nutrition',
 		},
-        {
+		{
 			link: '/client/course-registration',
 			name: 'My Courses',
 		},
 	];
 
-   
-	aiMenu = [
+	aiMenu: NavItem[] = [
 		{
 			name: 'Predict body fat',
 			link: '/check-bmi',
 		},
-        {
+		{
 			name: 'Predict body fat by Image',
 			link: '/predict-body-fat',
 		},

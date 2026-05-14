@@ -1,6 +1,6 @@
 ﻿namespace GymMarket.API.DTOs.UserMessage
 {
-    public class ConversitionDto
+    public class ConversationDto
     {
         public int ConversationId { get; set; }
         public string ConversationName { get; set; } = string.Empty;

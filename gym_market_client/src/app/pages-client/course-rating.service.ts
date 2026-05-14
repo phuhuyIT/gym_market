@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
+import { CourseRating, CourseRatingCreateDto } from '../core/models/course.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -8,11 +10,13 @@ import { environment } from '../../environments/environment.development';
 export class CourseRatingService {
 	constructor(private http: HttpClient) {}
 
-	addRating(model: any) {
+	addRating(model: CourseRatingCreateDto): Observable<any> {
 		return this.http.post(`${environment.baseApi}/CourseRating/add-course-rating`, model);
 	}
 
-	getCourseRatings(courseId: string) {
-		return this.http.get(`${environment.baseApi}/CourseRating/get-course-rating/${courseId}`);
+	getCourseRatings(courseId: string): Observable<CourseRating[]> {
+		return this.http.get<CourseRating[]>(
+			`${environment.baseApi}/CourseRating/get-course-rating/${courseId}`
+		);
 	}
 }

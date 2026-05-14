@@ -1,22 +1,25 @@
-import { Component, inject } from '@angular/core';
-import { UserInfoDto } from '../../user/models/user-info.dto';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../user/user.service';
 import { UserStore } from '../../stores/user.store';
-import { StudentInfoDto } from '../models/student-info.dto';
 import { StudentService } from '../student.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Student } from '../../core/models/student.model';
+import { UserInfo, UserInfoResponse } from '../../core/models/auth.model';
+import { NgIf } from '@angular/common';
 
 @Component({
 	selector: 'app-your-profile',
 	standalone: true,
-	imports: [RouterLink],
+	imports: [RouterLink, NgIf],
 	templateUrl: './your-profile.component.html',
 	styleUrl: './your-profile.component.scss',
 })
-export class YourProfileComponent {
-	userInfo!: UserInfoDto;
+export class YourProfileComponent implements OnInit {
 	userStore = inject(UserStore);
-	studentInfo!: StudentInfoDto;
+	private destroyRef = inject(DestroyRef);
+	studentInfo: Student | null = null;
+	userInfo: UserInfo | null = null;
 
 	constructor(
 		private studentService: StudentService,
@@ -25,61 +28,49 @@ export class YourProfileComponent {
 	) {}
 
 	ngOnInit() {
-		this.userInfo = {
-			address: 'https://cdn-icons-png.flaticon.com/512/236/236832.png',
-			avatar: '',
-			email: '',
-			fullName: '',
-			id: '',
-			phoneNumber: '',
-			status: '',
-		};
-
-		this.studentInfo = {
-			createdAt: new Date(),
-			email: '',
-			name: '',
-			password: '',
-			profilePicture: '',
-			studentId: '',
-			updatedAt: new Date(),
-			userId: '',
-			healthStatus: '',
-		};
-
 		this.getUserInfo();
-		this.getTrainerInfo();
+		this.getStudentInfo();
 	}
 
 	private getUserInfo() {
-		if (this.userStore.id() !== null) {
-			this.userService.getUserInfo(this.userStore.id()).subscribe({
-				next: (res: any) => {
-					this.userInfo = { ...res.userInfo };
-					if (this.userInfo.avatar === null) {
-						this.userInfo.avatar =
-							'https://cdn-icons-png.flaticon.com/512/236/236832.png';
-					}
-				},
-				error: error => {
-					this.router.navigateByUrl('/login');
-				},
-			});
+		const userId = this.userStore.id();
+		if (userId !== null) {
+			this.userService
+				.getUserInfo(userId)
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: (res: UserInfoResponse) => {
+						this.userInfo = res.userInfo;
+						if (this.userInfo && !this.userInfo.avatar) {
+							this.userInfo.avatar =
+								'https://cdn-icons-png.flaticon.com/512/236/236832.png';
+						}
+					},
+					error: () => {
+						this.router.navigateByUrl('/login');
+					},
+				});
 		}
 	}
 
-	private getTrainerInfo() {
-		this.studentService.getStudentInfo(this.userStore.studentId()).subscribe({
-			next: (res: any) => {
-				this.studentInfo = { ...res };
-				if (this.studentInfo.profilePicture === null) {
-					this.studentInfo.profilePicture =
-						'https://cdn-icons-png.flaticon.com/512/236/236832.png';
-				}
-			},
-			error: error => {
-				this.router.navigateByUrl('/login');
-			},
-		});
+	private getStudentInfo() {
+		const studentId = this.userStore.studentId();
+		if (studentId) {
+			this.studentService
+				.getStudentInfo(studentId)
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: res => {
+						this.studentInfo = res;
+						if (this.studentInfo && !this.studentInfo.profilePicture) {
+							this.studentInfo.profilePicture =
+								'https://cdn-icons-png.flaticon.com/512/236/236832.png';
+						}
+					},
+					error: () => {
+						this.router.navigateByUrl('/login');
+					},
+				});
+		}
 	}
 }

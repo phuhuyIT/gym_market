@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
-import { UpdateStudentProfileDto } from './models/update-student-profile.dto';
+import { Student, UpdateStudentProfileDto } from '../core/models/student.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -9,11 +10,11 @@ import { UpdateStudentProfileDto } from './models/update-student-profile.dto';
 export class StudentService {
 	constructor(private http: HttpClient) {}
 
-	getStudentInfo(studentId: string) {
-		return this.http.get(`${environment.baseApi}/student/${studentId}`);
+	getStudentInfo(studentId: string): Observable<Student> {
+		return this.http.get<Student>(`${environment.baseApi}/student/${studentId}`);
 	}
 
-	updateStudentProfile(model: UpdateStudentProfileDto, studentId: string) {
+	updateStudentProfile(model: UpdateStudentProfileDto, studentId: string): Observable<any> {
 		return this.http.put(`${environment.baseApi}/student/${studentId}`, model);
 	}
 }

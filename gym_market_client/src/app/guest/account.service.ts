@@ -5,38 +5,52 @@ import { patchState } from '@ngrx/signals';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Login } from './models/login.model';
 import { SignUp } from './models/signup.model';
 import { StudentSignup } from './models/student-sign-up.model';
 import { TrainerSignup } from './models/trainer-sign-up.model';
+import {
+	LoginResponse,
+	SignupResponse,
+	UserTokenPayload,
+} from '../core/models/auth.model';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class AccountService {
-	private token: string | null = null;
-	constructor(private http: HttpClient) {}
+	private _token$ = new BehaviorSubject<string | null>(localStorage.getItem('gym-token'));
+	readonly token$ = this._token$.asObservable();
+
+	get token(): string | null {
+		return this._token$.value;
+	}
+
+	constructor(private http: HttpClient) {
+		this.checkLogin();
+	}
 	userStore = inject(UserStore);
 
-	login(model: Login) {
-		return this.http.post(`${environment.baseApi}/accounts/login`, model);
+	login(model: Login): Observable<LoginResponse> {
+		return this.http.post<LoginResponse>(`${environment.baseApi}/accounts/login`, model);
 	}
 
-	signUp(model: SignUp) {
-		return this.http.post(`${environment.baseApi}/accounts/sign-up`, model);
+	signUp(model: SignUp): Observable<SignupResponse> {
+		return this.http.post<SignupResponse>(`${environment.baseApi}/accounts/sign-up`, model);
 	}
 
-	studentSignup(model: StudentSignup) {
+	studentSignup(model: StudentSignup): Observable<any> {
 		return this.http.post(`${environment.baseApi}/student`, model);
 	}
 
-	trainerSignup(model: TrainerSignup) {
+	trainerSignup(model: TrainerSignup): Observable<any> {
 		return this.http.post(`${environment.baseApi}/trainer`, model);
 	}
 
-	saveToken(token: string) {
-		this.token = token;
+	saveToken(token: string): void {
 		localStorage.setItem('gym-token', token);
+		this._token$.next(token);
 		this.checkLogin();
 	}
 
@@ -49,7 +63,7 @@ export class AccountService {
 		return role === roleIn;
 	}
 
-	getRole() {
+	getRole(): string | null {
 		if (this.token === null) {
 			return null;
 		}
@@ -59,33 +73,34 @@ export class AccountService {
 		return roleIn;
 	}
 
-	isLogedIn() {
+	isLoggedIn(): boolean {
 		return this.token !== null;
 	}
 
-	checkLogin() {
-		const token = localStorage.getItem('gym-token');
+	checkLogin(): void {
+		const token = this.token;
 		if (token === null) {
 			patchState(this.userStore, { fullName: 'Account', id: null, phoneNumber: '' });
-			this.token = null;
 		} else {
-			const decoded: any = jwtDecode(token);
-			this.token = token;
-			patchState(this.userStore, {
-				fullName: decoded.unique_name,
-				id: decoded.nameid,
-				phoneNumber: decoded.homePhone,
-                trainerId: decoded.trainerId,
-                studentId: decoded.studentId,
-                avatar: decoded.avatar,
-			});
+			try {
+				const decoded: any = jwtDecode(token);
+				patchState(this.userStore, {
+					fullName: decoded.unique_name,
+					id: decoded.nameid,
+					phoneNumber: decoded.homePhone,
+					trainerId: decoded.trainerId,
+					studentId: decoded.studentId,
+					avatar: decoded.avatar,
+				});
+			} catch (e) {
+				this.logout();
+			}
 		}
 	}
 
-
-    logout() {
+	logout(): void {
 		localStorage.removeItem('gym-token');
-        this.token = null;
+		this._token$.next(null);
 		patchState(this.userStore, { fullName: 'Welcome', id: null, phoneNumber: '' });
 	}
 }

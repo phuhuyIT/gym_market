@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { HeaderComponent } from '../../pages-client/components/header/header.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,6 +8,8 @@ import { TrainerSignup } from '../models/trainer-sign-up.model';
 import { StudentSignup } from '../models/student-sign-up.model';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { AccountService } from '../account.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SignupResponse } from '../../core/models/auth.model';
 
 @Component({
 	selector: 'app-signup',
@@ -16,11 +18,12 @@ import { AccountService } from '../account.service';
 	templateUrl: './signup.component.html',
 	styleUrl: './signup.component.scss',
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit {
 	signUpForm!: FormGroup;
 	submit = false;
 	errorStore = inject(ErrorModalStore);
 	loaderStore = inject(LoaderModalStore);
+	private destroyRef = inject(DestroyRef);
 
 	constructor(
 		private formBuilder: FormBuilder,
@@ -29,7 +32,7 @@ export class SignupComponent {
 	) {}
 
 	ngOnInit() {
-		if (this.accountService.isLogedIn() !== false) {
+		if (this.accountService.isLoggedIn()) {
 			this.router.navigateByUrl('/home');
 		}
 
@@ -42,7 +45,6 @@ export class SignupComponent {
 		});
 	}
 
-	// đánh dấu các trường không hợp lệ và hiển thị lỗi tương ứng
 	addDirty(control: string) {
 		this.signUpForm.controls[control].markAsDirty({ onlySelf: true });
 	}
@@ -55,7 +57,7 @@ export class SignupComponent {
 
 	onSignUp() {
 		this.submit = true;
-		if (this.signUpForm.valid == false) {
+		if (this.signUpForm.valid === false) {
 			return;
 		}
 
@@ -72,24 +74,29 @@ export class SignupComponent {
 		}
 
 		patchState(this.loaderStore, { isShow: true });
-		this.accountService.signUp(this.signUpForm.value).subscribe({
-			next: (res: any) => {
-				console.log(res); // res.userId
-				if (this.signUpForm.controls['role'].value === 'Trainer') {
-					this.trainerSignup(res);
-				} else if (this.signUpForm.controls['role'].value === 'Student') {
-					this.studentSignup(res);
-				}
-				patchState(this.loaderStore, { isShow: false });
-			},
-			error: err => {
-				patchState(this.errorStore, { isShow: true, errors: err.error.errors });
-				patchState(this.loaderStore, { isShow: false });
-			},
-		});
+		this.accountService
+			.signUp(this.signUpForm.value)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (res: SignupResponse) => {
+					if (this.signUpForm.controls['role'].value === 'Trainer') {
+						this.trainerSignup(res);
+					} else if (this.signUpForm.controls['role'].value === 'Student') {
+						this.studentSignup(res);
+					}
+					patchState(this.loaderStore, { isShow: false });
+				},
+				error: err => {
+					patchState(this.errorStore, {
+						isShow: true,
+						errors: err.error?.errors || ['Signup failed'],
+					});
+					patchState(this.loaderStore, { isShow: false });
+				},
+			});
 	}
 
-	private trainerSignup(res: any) {
+	private trainerSignup(res: SignupResponse) {
 		const model: TrainerSignup = {
 			bio: '',
 			certification: '',
@@ -105,26 +112,32 @@ export class SignupComponent {
 			userId: res.userId,
 		};
 
-		this.accountService.trainerSignup(model).subscribe({
-			next: (res: any) => {
-				patchState(this.loaderStore, { isShow: false });
-				this.router.navigateByUrl('/login');
-			},
-			error: err => {
-				patchState(this.loaderStore, { isShow: false });
-				let result = [];
-				for (const key in err.error.errors) {
-					if (err.error.errors.hasOwnProperty(key)) {
-						result.push(`${key}: ${err.error.errors[key][0]}\n`);
+		this.accountService
+			.trainerSignup(model)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					patchState(this.loaderStore, { isShow: false });
+					this.router.navigateByUrl('/login');
+				},
+				error: err => {
+					patchState(this.loaderStore, { isShow: false });
+					let result = [];
+					for (const key in err.error?.errors) {
+						if (err.error.errors.hasOwnProperty(key)) {
+							result.push(`${key}: ${err.error.errors[key][0]}\n`);
+						}
 					}
-				}
-				patchState(this.errorStore, { isShow: true, errors: result });
-				patchState(this.loaderStore, { isShow: false });
-			},
-		});
+					patchState(this.errorStore, {
+						isShow: true,
+						errors: result.length > 0 ? result : ['Trainer signup failed'],
+					});
+					patchState(this.loaderStore, { isShow: false });
+				},
+			});
 	}
 
-	private studentSignup(res: any) {
+	private studentSignup(res: SignupResponse) {
 		const model: StudentSignup = {
 			createdAt: new Date(),
 			email: this.signUpForm.controls['email'].value,
@@ -137,22 +150,28 @@ export class SignupComponent {
 			userId: res.userId,
 		};
 
-		this.accountService.studentSignup(model).subscribe({
-			next: (res: any) => {
-				patchState(this.loaderStore, { isShow: false });
-				this.router.navigateByUrl('/login');
-			},
-			error: err => {
-				patchState(this.loaderStore, { isShow: false });
-				let result = [];
-				for (const key in err.error.errors) {
-					if (err.error.errors.hasOwnProperty(key)) {
-						result.push(`${key}: ${err.error.errors[key][0]}\n`);
+		this.accountService
+			.studentSignup(model)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					patchState(this.loaderStore, { isShow: false });
+					this.router.navigateByUrl('/login');
+				},
+				error: err => {
+					patchState(this.loaderStore, { isShow: false });
+					let result = [];
+					for (const key in err.error?.errors) {
+						if (err.error.errors.hasOwnProperty(key)) {
+							result.push(`${key}: ${err.error.errors[key][0]}\n`);
+						}
 					}
-				}
-				patchState(this.errorStore, { isShow: true, errors: result });
-				patchState(this.loaderStore, { isShow: false });
-			},
-		});
+					patchState(this.errorStore, {
+						isShow: true,
+						errors: result.length > 0 ? result : ['Student signup failed'],
+					});
+					patchState(this.loaderStore, { isShow: false });
+				},
+			});
 	}
 }

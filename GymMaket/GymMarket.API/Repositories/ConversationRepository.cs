@@ -81,14 +81,14 @@ namespace GymMarket.API.Repositories
             return new ApiResponse { Errors = ["CONVERSATION_CREATION_FAILED"], StatusCode = 400, Success = false };
         }
 
-        public async Task<List<ConversitionDto>> GetConversationOfUser(string userId)
+        public async Task<List<ConversationDto>> GetConversationOfUser(string userId)
         {
             var list = await (from conversationUser in _context.ConversationParticipants
                               join conversation in _context.Conversations on conversationUser.ConversationId equals conversation.Id
                               join receive in _context.Users on conversation.RecieveId equals receive.Id
                               join sender in _context.Users on conversation.SenderId equals sender.Id
                               where conversationUser.UserId == userId
-                              select new ConversitionDto
+                              select new ConversationDto
                               {
                                   ConversationId = conversationUser.ConversationId,
                                   ConversationName = conversation.Name,

@@ -6,11 +6,8 @@ import { AccountService } from '../guest/account.service';
 export const guestGuard: CanActivateFn = (route, state) => {
 	const accountService = inject(AccountService);
 	const router = inject(Router);
-	const isLoggedIn = accountService.isLogedIn();
+	const isLoggedIn = accountService.isLoggedIn();
 	const role = accountService.getRole();
-
-    console.log(isLoggedIn);
-    
 
 	if (isLoggedIn == true) {
 		if (role === ROLES.TRAINER) {

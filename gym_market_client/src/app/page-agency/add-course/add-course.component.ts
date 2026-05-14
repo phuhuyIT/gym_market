@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CourseAgencyService } from '../course-agency.service';
 import { jwtDecode } from 'jwt-decode';
@@ -7,6 +7,8 @@ import { Router, RouterLink } from '@angular/router';
 import { ErrorModalStore } from '../../stores/error-modal.store';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { UserTokenPayload } from '../../core/models/auth.model';
 
 @Component({
 	selector: 'app-add-course',
@@ -15,10 +17,11 @@ import { LoaderModalStore } from '../../stores/loader.store';
 	templateUrl: './add-course.component.html',
 	styleUrl: './add-course.component.scss',
 })
-export class AddCourseComponent {
+export class AddCourseComponent implements OnInit {
 	form!: FormGroup;
 	errorModalStore = inject(ErrorModalStore);
 	loaderStore = inject(LoaderModalStore);
+	private destroyRef = inject(DestroyRef);
 
 	constructor(
 		private formBuilder: FormBuilder,
@@ -45,7 +48,7 @@ export class AddCourseComponent {
 
 	private formatDate(date: Date): string {
 		const year = date.getFullYear();
-		const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Tháng bắt đầu từ 0
+		const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month starts from 0
 		const day = date.getDate().toString().padStart(2, '0');
 		return `${year}-${month}-${day}`;
 	}
@@ -55,20 +58,19 @@ export class AddCourseComponent {
 		if (token === null) {
 			return;
 		}
-		const decoded: any = jwtDecode(token);
+		const decoded = jwtDecode<UserTokenPayload & { trainerId: string }>(token);
 		const trainerId = decoded.trainerId;
 		const courseId = crypto.randomUUID();
 
 		const model = { ...this.form.value, trainerId, courseId };
-		this.courseAgencyService.addCourse(model).subscribe({
-			next: (res: any) => {
-				// console.log(res);
+		this.courseAgencyService.addCourse(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: (_res) => {
 				this.router.navigateByUrl('/agency/courses');
 			},
 			error: err => {
-				let result = [];
+				let result: string[] = [];
 				for (const key in err.error.errors) {
-					if (err.error.errors.hasOwnProperty(key)) {
+					if (Object.prototype.hasOwnProperty.call(err.error.errors, key)) {
 						result.push(`${key}: ${err.error.errors[key][0]}\n`);
 					}
 				}

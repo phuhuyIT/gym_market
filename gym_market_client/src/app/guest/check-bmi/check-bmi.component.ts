@@ -1,9 +1,11 @@
-import { Component, inject, Renderer2 } from '@angular/core';
+import { Component, inject, Renderer2, DestroyRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BodyFatService } from '../body-fat.service';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { patchState } from '@ngrx/signals';
 import { ErrorModalStore } from '../../stores/error-modal.store';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BodyFatMeasurements, BodyFatPredictionResponse } from '../../core/models/body-fat.model';
 
 @Component({
 	selector: 'app-check-bmi',
@@ -29,6 +31,7 @@ export class CheckBmiComponent {
 
 	notice = inject(NoticeModalStore);
 	error = inject(ErrorModalStore);
+	private destroyRef = inject(DestroyRef);
 
 	showBodyFat: boolean = false;
 	bodyFat: number = 0;
@@ -66,7 +69,7 @@ export class CheckBmiComponent {
 			return;
 		}
 
-		const model = {
+		const model: BodyFatMeasurements = {
 			Age: this.age,
 			Weight: this.weight / 0.453592,
 			Height: this.height / 2.54,
@@ -78,15 +81,13 @@ export class CheckBmiComponent {
 			Biceps: this.biceps_extended_Circumference,
 		};
 
-		this.bodyFatService.predictBodyFat(model).subscribe({
-			next: (res: any) => {
-				console.log(res);
-				this.bodyFat = res['Predicted Body Fat Percentage'].toFixed(2);
+		this.bodyFatService.predictBodyFat(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: (res: BodyFatPredictionResponse) => {
+				this.bodyFat = Number(res['Predicted Body Fat Percentage']?.toFixed(2) ?? 0);
 				this.showBodyFat = true;
 				this.renderer.addClass(document.body, 'overflow-hidden');
 			},
-			error: err => {
-				console.log(err);
+			error: _err => {
 			},
 		});
 	}
