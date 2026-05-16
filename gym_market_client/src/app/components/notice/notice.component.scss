@@ -1,0 +1,15 @@
+@use 'mixins' as mix;
+
+.notice-modal-icon {
+    @include mix.icon-badge(48px);
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+    margin: 0 auto 1.5rem;
+}
+
+.notice-message {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}

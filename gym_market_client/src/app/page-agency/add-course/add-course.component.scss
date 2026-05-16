@@ -1,0 +1,139 @@
+.course-form {
+  padding: 60px 0;
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+.container--narrow {
+  max-width: 800px;
+}
+
+.course-form__header {
+  margin-bottom: 48px;
+  
+  .back-link {
+    color: var(--accent);
+    font-size: 14px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    font-weight: 500;
+    &:hover { text-decoration: underline; }
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: 48px;
+    color: var(--text-1);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: var(--text-2);
+    font-size: 16px;
+  }
+}
+
+.course-form__content {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  background: var(--surface);
+  padding: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &__title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: span 2;
+    @media (max-width: 640px) { grid-column: span 1; }
+  }
+}
+
+.custom-select {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-2);
+    letter-spacing: 0.05em;
+  }
+
+  select {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-1);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    outline: none;
+    font-family: var(--font-body);
+    font-size: 14px;
+    transition: border-color var(--transition);
+
+    &:focus { border-color: var(--accent); }
+    
+    option { background: var(--surface); }
+  }
+}
+
+.upload-zone {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  transition: all var(--transition);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--accent);
+    background: rgba(212, 255, 0, 0.02);
+  }
+
+  &__icon { font-size: 32px; }
+  &__text { font-size: 15px; color: var(--text-1); span { color: var(--accent); font-weight: 600; } }
+  &__subtext { font-size: 12px; color: var(--text-3); }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gm-button { width: 100%; }
+  }
+}

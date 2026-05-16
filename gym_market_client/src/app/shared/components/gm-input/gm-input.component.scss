@@ -1,42 +1,46 @@
-.gm-input {
-  position: relative;
-  padding-top: 20px;
-  border-bottom: 1px solid var(--border);
-  transition: border-color var(--transition);
-  margin-bottom: 24px;
+@use 'mixins' as mix;
 
-  &.focused { border-color: var(--accent); }
+.gm-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
 
-  &__label {
-    position: absolute;
-    top: 20px;
-    left: 0;
-    font-size: 14px;
-    color: var(--text-2);
-    transition: all var(--transition);
-    pointer-events: none;
+.gm-input-label {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
 
-    &.active {
-      top: 0;
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
+.gm-input-field {
+  background: var(--bg-surface);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  width: 100%;
+
+  &::placeholder {
+    color: var(--text-muted);
   }
 
-  &__field {
-    width: 100%;
-    background: transparent;
-    border: none;
+  &:focus {
     outline: none;
-    color: var(--text-1);
-    font-family: var(--font-body);
-    font-size: 15px;
-    padding: 6px 0 10px;
-
-    &::placeholder {
-      color: transparent;
-    }
+    border-color: var(--accent-500);
+    box-shadow: 0 0 0 3px rgba(59, 91, 246, 0.15);
   }
+}
+
+.gm-input-error {
+  font-size: 0.75rem;
+  color: var(--error);
+  margin-top: 0.25rem;
 }

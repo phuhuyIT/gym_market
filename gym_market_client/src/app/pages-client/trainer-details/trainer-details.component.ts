@@ -10,13 +10,14 @@ import { UserStore } from '../../stores/user.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Trainer } from '../../core/models/trainer.model';
 import { Course } from '../../core/models/course.model';
-import { NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { UserInfo } from '../../core/models/auth.model';
+import { GmCardComponent, GmButtonComponent } from '../../shared';
 
 @Component({
 	selector: 'app-trainer-details',
 	standalone: true,
-	imports: [RouterLink, NgIf, NgFor],
+	imports: [RouterLink, CommonModule, GmCardComponent, GmButtonComponent],
 	templateUrl: './trainer-details.component.html',
 	styleUrl: './trainer-details.component.scss',
 })
@@ -43,8 +44,10 @@ export class TrainerDetailsComponent implements OnInit {
 		this.activatedRoute.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: params => {
 				this.trainerId = params['id'];
-				this.getTrainerInfo(this.trainerId);
-				this.getCoursesOfTrainer();
+				if (this.trainerId) {
+					this.getTrainerInfo(this.trainerId);
+					this.getCoursesOfTrainer();
+				}
 			},
 		});
 	}
@@ -58,8 +61,7 @@ export class TrainerDetailsComponent implements OnInit {
 				next: res => {
 					this.trainerInfo = res;
 					if (!this.trainerInfo.profilePicture) {
-						this.trainerInfo.profilePicture =
-							'https://cdn-icons-png.flaticon.com/512/236/236832.png';
+						this.trainerInfo.profilePicture = 'https://cdn-icons-png.flaticon.com/512/236/236832.png';
 					}
 					this.getUserInfo(res.userId);
 					patchState(this.loader, { isShow: false });
@@ -95,9 +97,15 @@ export class TrainerDetailsComponent implements OnInit {
 	onSendMessage() {
 		if (!this.trainerInfo) return;
 
+		const studentId = this.userStore.studentId();
+		if (!studentId) {
+			this.router.navigateByUrl('/login');
+			return;
+		}
+
 		const model = {
 			trainerId: this.trainerId,
-			studentId: this.userStore.studentId() ?? '',
+			studentId: studentId,
 		};
 
 		patchState(this.loader, { isShow: true });

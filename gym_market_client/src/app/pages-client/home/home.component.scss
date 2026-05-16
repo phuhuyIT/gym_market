@@ -1,134 +1,32 @@
-.view-coaches-btn {
-	overflow: hidden;
-	position: relative;
-	display: block;
-	width: 168px;
-	height: 40px;
-	margin: auto;
-	border: 1px solid #4c4c4d;
-	text-align: center;
-	box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	line-height: 40px;
-	color: #4c4c4d;
-	font-size: 14px;
-	font-family: oswald;
-	text-decoration: none;
-	text-transform: uppercase;
-	border-radius: 5px;
-	margin-top: 30px;
+@use 'mixins' as mix;
+
+.home {
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+  
+  // Ambient glow orbs
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    z-index: 0;
+  }
+
+  &::before {
+    @include mix.glow-orb(var(--accent-glow), 500px);
+    top: -100px;
+    left: -100px;
+  }
+
+  &::after {
+    @include mix.glow-orb(rgba(59, 91, 246, 0.20), 400px);
+    bottom: -80px;
+    right: -80px;
+  }
 }
 
-.view-coaches-btn span {
-	display: block;
-}
-
-.view-coaches-btn .hover:after {
-	position: absolute;
-	top: 0;
-	left: 50%;
-	opacity: 0;
-	display: block;
-	content: '';
-	width: 0%;
-	height: 40px;
-	background-color: var(--coach-color);
-	border: 1px solid transparent;
-	transform: skewX(-40deg);
-	-webkit-transform: skewX(-40deg);
-	-moz-transform: skewX(-40deg);
-	transform-origin: center center;
-	-webkit-transform-origin: center center;
-	-ms-transform-origin: center center;
-	-moz-transform-origin: center center;
-	transition: all 0.35s, opacity 0.4s;
-	-webkit-transition: all 0.35s, opacity 0.4s;
-	-moz-transition: all 0.35s, opacity 0.4s;
-}
-
-.view-coaches-btn .hover .txt {
-	position: relative;
-	transition: color 0.35s;
-	-webkit-transition: color 0.35s;
-	-moz-transition: color 0.35s;
-}
-
-.view-coaches-btn:hover .hover .txt {
-    z-index: 1;
-	color: var(--coach-text-color);
-}
-
-.view-coaches-btn .hover:hover:after {
-	opacity: 1;
-	left: 3%;
-	width: 95%;
-	transform: skewX(-40deg);
-	-webkit-transform: skewX(-40deg);
-	-moz-transform: skewX(-40deg);
-}
-
-.bmi-check-btn {
-	overflow: hidden;
-	position: relative;
-	display: block;
-	width: 450px;
-	height: 80px;
-	margin: auto;
-	border: 2px solid #4ade80;
-	text-align: center;
-	box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	line-height: 80px;
-	color: #4ade80;
-	font-size: 20px;
-	font-family: oswald;
-	text-decoration: none;
-	text-transform: uppercase;
-    border-radius: 5px;
-}
-.bmi-check-btn span {
-	display: block;
-}
-.bmi-check-btn .hover:after {
-	position: absolute;
-	top: 0;
-	left: 50%;
-	opacity: 0;
-	display: block;
-	content: '';
-	width: 0%;
-	height: 80px;
-	background-color: #4ade80;
-	border: 1px solid transparent;
-	transform: skewX(-40deg);
-	-webkit-transform: skewX(-40deg);
-	-moz-transform: skewX(-40deg);
-	transform-origin: center center;
-	-webkit-transform-origin: center center;
-	-ms-transform-origin: center center;
-	-moz-transform-origin: center center;
-	transition: all 0.35s, opacity 0.4s;
-	-webkit-transition: all 0.35s, opacity 0.4s;
-	-moz-transition: all 0.35s, opacity 0.4s;
-}
-.bmi-check-btn .hover .txt {
-	z-index: 1;
-	position: relative;
-	color: #4ade80;
-	transition: color 0.35s;
-	-webkit-transition: color 0.35s;
-	-moz-transition: color 0.35s;
-}
-.bmi-check-btn:hover .hover .txt {
-	color: #fff;
-}
-.bmi-check-btn .hover:hover:after {
-	opacity: 1;
-	left: 3%;
-	width: 95%;
-	transform: skewX(-40deg);
-	-webkit-transform: skewX(-40deg);
-	-moz-transform: skewX(-40deg);
-}

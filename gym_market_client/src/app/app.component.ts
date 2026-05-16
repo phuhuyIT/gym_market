@@ -5,6 +5,7 @@ import { LoaderComponent } from "./components/loader/loader.component";
 import { NoticeComponent } from "./components/notice/notice.component";
 import { GmToastComponent } from './shared/components/gm-toast/gm-toast.component';
 import { AccountService } from './guest/account.service';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ import { AccountService } from './guest/account.service';
 })
 export class AppComponent {
   title = 'Fitness_Client';
-  accountService = inject(AccountService)
+  accountService = inject(AccountService);
+  themeService = inject(ThemeService);
   
   ngOnInit() {
     this.accountService.checkLogin();

@@ -1,70 +1,114 @@
+@use 'mixins' as mix;
 
-.main{
-	width: 350px;
-	height: 500px;
-	// overflow: hidden;
-	border-radius: 10px;
-	box-shadow: 0px 0px 10px 2px #000;
+.login {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-base);
+
+  &__brand {
+    flex: 0 0 40%;
+    background: var(--bg-base);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px;
+    border-right: 1px solid var(--glass-border);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      @include mix.glow-orb(var(--accent-glow), 400px);
+      top: -100px;
+      left: -100px;
+    }
+
+    @media (max-width: 968px) {
+      display: none;
+    }
+  }
+
+  &__wordmark {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: clamp(60px, 8vw, 120px);
+    line-height: 0.9;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    position: relative;
+    z-index: 2;
+  }
+
+  &__tagline {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin-top: 24px;
+    letter-spacing: 0.02em;
+    position: relative;
+    z-index: 2;
+  }
+
+  &__form-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: radial-gradient(circle at 70% 30%, rgba(59, 91, 246, 0.05) 0%, transparent 70%);
+  }
+
+  &__form-content {
+    @include mix.glass-card;
+    width: 100%;
+    max-width: 440px;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  &__title {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  &__subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    margin-top: -1rem;
+    line-height: 1.5;
+  }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__footer {
+    text-align: center;
+    margin-top: 1rem;
     
+    a {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      transition: color 0.2s ease;
+
+      .accent {
+        color: var(--accent-500);
+        font-weight: 600;
+      }
+
+      &:hover {
+        color: var(--text-primary);
+      }
+    }
+  }
 }
 
-.signup{
-    @apply pb-10;
-}
-
-label{
-	font-size: 2.3em;
-	justify-content: center;
-	display: flex;
-	margin: 50px;
-	font-weight: bold;
-	cursor: pointer;
-	transition: .5s ease-in-out;
-}
-
-small {
-	display: block;
-	width: 60%;
-	height: 10px;
-	margin: 20px auto;
-}
-
-input{
-    @apply px-2 py-4;
-	width: 60%;
-	height: 10px;
-	background: #e0dede;
-	justify-content: center;
-	display: flex;
-	margin: 20px auto;
-	border: none;
-	outline: none;
-	border-radius: 5px;
-}
-
-.btn-signup{
-	width: 60%;
-	height: 40px;
-	margin: 10px auto;
-	justify-content: center;
-	display: block;
-	color: #fff;
-	background: #dc2626;
-	font-size: 1em;
-	font-weight: bold;
-	margin-top: 30px;
-	outline: none;
-	border: none;
-	border-radius: 5px;
-	transition: .2s ease-in;
-	cursor: pointer;
-}
-
-.btn-signup:hover{
-	background: #b91c1c;
-}
-
-.hero_area {
-    @apply overflow-hidden;
-    background: url('/assets/images/us-bg.jpg');
+gm-button {
+    width: 100%;
 }

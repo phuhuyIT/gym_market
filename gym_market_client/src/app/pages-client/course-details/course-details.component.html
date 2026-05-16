@@ -1,355 +1,139 @@
-<div class="wrapper" *ngIf="course">
-	<div id="banner" class="bg-red-400 h-[80dvh] w-full flex justify-center items-center mb-10">
-		<div class="w-1/2">
-			<p id="title" class="text-center text-4xl font-bold p-4">{{ course.title }}</p>
-			<p id="des" class="text-center text-xl p-5">
-				{{ course.description }}
-			</p>
-		</div>
-	</div>
+<div class="course-details" *ngIf="course">
+  <!-- Hero Section -->
+  <header class="course-hero">
+    <div class="container">
+      <div class="course-hero__content">
+        <div class="course-hero__meta">
+          <span class="category-badge">{{course.category}}</span>
+          <span class="rating-badge">★ {{course.rating || '4.5'}}</span>
+        </div>
+        <h1 class="course-hero__title">{{course.title}}</h1>
+        <div class="trainer-brief">
+          <div class="trainer-brief__avatar">👤</div>
+          <div class="trainer-brief__info">
+            <span class="trainer-brief__name">Trainer Name</span>
+            <span class="trainer-brief__role">Professional {{course.category}} Coach</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-	<div class="container mx-auto">
-		<!-- ảnh và video -->
-		<div class="grid grid-cols-2 gap-4 mb-3">
-			<!-- anh -->
-			<div>
-				<div class="mb-3">
-					<label
-						class="block mb-2 text-3xl font-medium text-gray-900"
-						for="multiple_files"
-						>Images</label
-					>
-				</div>
+  <main class="course-main container">
+    <div class="course-grid">
+      <!-- Left Column: Content -->
+      <div class="course-content">
+        <!-- Media Gallery -->
+        <section class="course-section">
+          <h2 class="section-title">GALLERY</h2>
+          <div class="media-gallery">
+            <div class="media-gallery__filmstrip">
+              <div class="media-gallery__item" *ngFor="let img of images" (click)="showImage(img)">
+                <img [src]="img" alt="Course image">
+              </div>
+            </div>
+            <div class="media-gallery__videos" *ngIf="videos.length > 0">
+              <div class="video-wrapper" *ngFor="let vid of videos">
+                <video controls>
+                  <source [src]="vid" type="video/mp4">
+                </video>
+              </div>
+            </div>
+          </div>
+        </section>
 
-				<div class="grid grid-cols-3 md:grid-cols-2 gap-4">
-					@for (image of images; track $index) {
-					<div class="break-inside-avoid mb-2" (click)="showImage(image)">
-						<img class="h-auto max-w-full rounded-lg" [src]="image" alt="" />
-					</div>
-					}
-				</div>
-			</div>
+        <!-- Description -->
+        <section class="course-section">
+          <h2 class="section-title">ABOUT THIS COURSE</h2>
+          <div class="course-description">
+            <p>{{course.description}}</p>
+          </div>
+        </section>
 
-			<!-- video -->
-			<div>
-				<div class="mb-3">
-					<label
-						class="block mb-2 text-3xl font-medium text-gray-900"
-						for="multiple_files"
-						>Videos</label
-					>
-				</div>
+        <!-- Course Options -->
+        <section class="course-section" *ngIf="courseOptions.length > 0">
+          <h2 class="section-title">ENROLLMENT OPTIONS</h2>
+          <div class="options-list">
+            <gm-card class="option-card" *ngFor="let op of courseOptions">
+              <div class="option-card__header">
+                <h3>{{op.optionName}}</h3>
+                <span class="option-card__price">+ ${{op.price}}</span>
+              </div>
+              <p class="option-card__text">{{op.description}}</p>
+            </gm-card>
+          </div>
+        </section>
 
-				<div class="grid grid-cols-1 gap-4">
-					@for (video of videos; track $index) {
-					<div class="break-inside-avoid mb-2">
-						<video class="w-full" controls>
-							<source [src]="video" type="video/mp4" />
-							Your browser does not support the video tag.
-						</video>
-					</div>
-					}
-				</div>
-			</div>
-		</div>
+        <!-- Reviews -->
+        <section class="course-section">
+          <div class="section-header">
+            <h2 class="section-title">REVIEWS</h2>
+            <div class="rating-summary">
+              <span class="rating-summary__value">{{course.rating || '4.5'}}</span>
+              <div class="rating-summary__stars">★★★★★</div>
+            </div>
+          </div>
 
-		<!-- details -->
-		<div class="shadow-[0_3px_10px_rgb(0,0,0,0.2)] p-5 rounded-md overflow-hidden">
-			<div class="grid grid-cols-6">
-				<div class="col-span-4 p-3">
-					<!-- course option -->
-					<div class="border border-gray-200 p-2 rounded-md mb-4">
-						<div class="text-xl font-bold">Course options</div>
+          <!-- Add Review -->
+          <gm-card class="add-review">
+            <h3>Add your review</h3>
+            <div class="add-review__form">
+              <gm-input label="Rating (0-5)" type="number" [(value)]="rate" />
+              <gm-input label="Your thoughts..." [(value)]="comment" />
+              <gm-button variant="secondary" (clicked)="addRating()">POST REVIEW</gm-button>
+            </div>
+          </gm-card>
 
-						<div>
-							@for (op of courseOptions; track $index) {
-							<div>
-								<div class="mb-3">
-									<div class="border-t py-3 rounded-lg">
-										<h2 class="text-lg font-bold text-gray-900 title-font mb-2">
-											{{ op.optionName }}
-										</h2>
+          <!-- Reviews List -->
+          <div class="reviews-list">
+            <div class="review-item" *ngFor="let r of (showAll ? ratings : ratings.slice(0, 3))">
+              <div class="review-item__header">
+                <span class="review-item__rating">★ {{r.ratingValue}}</span>
+                <span class="review-item__date">{{r.ratingDate | date}}</span>
+              </div>
+              <p class="review-item__text">{{r.comment}}</p>
+            </div>
+            <gm-button variant="ghost" *ngIf="ratings.length > 3" (clicked)="toggleShowAll()">
+              {{ showAll ? 'SHOW LESS' : 'SHOW ALL ' + ratings.length + ' REVIEWS' }}
+            </gm-button>
+          </div>
+        </section>
+      </div>
 
-										<p class="leading-relaxed text-base">
-											{{ op.description }}
-										</p>
+      <!-- Right Column: Sidebar -->
+      <aside class="course-sidebar">
+        <gm-card class="enroll-card">
+          <div class="enroll-card__price">
+            <span class="currency">$</span>
+            <span class="amount">{{course.price | number:'1.0-0'}}</span>
+          </div>
+          
+          <div class="enroll-card__stats">
+            <div class="stat-item">
+              <span class="stat-item__label">DURATION</span>
+              <span class="stat-item__value">{{course.duration}} Days</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-item__label">START DATE</span>
+              <span class="stat-item__value">{{course.startDate | date}}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-item__label">PARTICIPANTS</span>
+              <span class="stat-item__value">Up to {{course.maxParticipants}}</span>
+            </div>
+          </div>
 
-										<p class="leading-relaxed text-base">
-											<span class="font-bold">Price</span>: {{ op.price }}
-										</p>
-									</div>
-								</div>
-							</div>
-							}
-						</div>
-					</div>
-
-					<!-- add rating -->
-					<div>
-						<div class="text-xl font-bold">Add your review</div>
-
-						<div>
-							<div>
-								<label
-									for="first_name"
-									class="block mb-2 text-lg font-medium text-gray-900"
-									>Your rate</label
-								>
-								<input
-									type="number"
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-									placeholder="John"
-									(keydown)="preventInvalidInput($event)"
-									[(ngModel)]="rate"
-								/>
-							</div>
-
-							<div>
-								<label
-									for="message"
-									class="block mb-2 text-lg font-medium text-gray-900"
-									>Comment</label
-								>
-								<textarea
-									[(ngModel)]="comment"
-									rows="4"
-									class="block p-2.5 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-									placeholder="Write your thoughts here..."
-								></textarea>
-							</div>
-
-							<div class="mt-3">
-								<button class="add-review" (click)="addRating()">
-									<span class="hover"></span>
-									<span>Add Preview</span>
-								</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- list ratings -->
-					<div class="border border-gray-200 p-2 rounded-md mb-4 mt-2">
-						<div class="text-xl font-bold">Ratings</div>
-
-						<div>
-							@for (op of (showAll ? ratings : ratings.slice(0, 3)); track $index) {
-							<div>
-								<div class="mb-3">
-									<div class="border-t py-3 rounded-lg">
-										<h2 class="text-lg font-bold text-gray-900 title-font mb-2">
-											{{ op.comment }}
-										</h2>
-
-										<p class="leading-relaxed text-base">
-											Rate: {{ op.ratingValue }}
-										</p>
-									</div>
-								</div>
-							</div>
-							}
-						</div>
-
-						<button class="add-review" (click)="toggleShowAll()">
-							<span class="hover"></span>
-							<span>{{ showAll ? 'Show Less' : 'Show More' }}</span>
-						</button>
-					</div>
-				</div>
-
-				<div class="col-span-2 border-s p-3">
-					<div class="text-3xl font-semibold">Course details</div>
-
-					<div class="grid grid-cols-1 grid-rows-1 gap-4">
-						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900">Type</label>
-							<input
-								type="text"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								placeholder="John"
-								disabled
-								[value]="course.type"
-							/>
-						</div>
-
-						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900"
-								>Category</label
-							>
-							<input
-								type="text"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								placeholder="John"
-								disabled
-								[value]="course.category"
-							/>
-						</div>
-
-						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900"
-								>Price</label
-							>
-							<input
-								type="text"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								placeholder="John"
-								disabled
-								[value]="course.price"
-							/>
-						</div>
-
-						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900"
-								>Additional Price</label
-							>
-							<input
-								type="text"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								placeholder="John"
-								disabled
-								[value]="course.additionalPrice"
-							/>
-						</div>
-
-						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900"
-								>Start Date</label
-							>
-							<input
-								type="text"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								placeholder="John"
-								disabled
-								[value]="course.startDate | date : 'dd/MM/yyyy'"
-							/>
-						</div>
-
-						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900"
-								>End Date</label
-							>
-							<input
-								type="text"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								placeholder="John"
-								disabled
-								[value]="course.endDate | date : 'dd/MM/yyyy'"
-							/>
-						</div>
-
-						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900"
-								>Duration</label
-							>
-							<input
-								type="text"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								placeholder="John"
-								disabled
-								[value]="course.duration"
-							/>
-						</div>
-
-						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900"
-								>Max Participants</label
-							>
-							<input
-								type="text"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								placeholder="John"
-								disabled
-								[value]="course.maxParticipants"
-							/>
-						</div>
-
-						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900"
-								>Rating</label
-							>
-							<input
-								type="text"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								placeholder="John"
-								disabled
-								[value]="course.rating !== null ? course.rating : 0"
-							/>
-						</div>
-
-						<div class="">
-							<button
-								(click)="addToCard(course.courseId)"
-								class="w-full code_view actionBtn9 buy-course"
-							>
-								<span class="txt">Buy</span>
-								<span class="bubble_inner">
-									<span class="bubble"></span>
-									<span class="bubble"></span>
-									<span class="bubble"></span>
-									<span class="bubble"></span>
-								</span>
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+          <gm-button variant="primary" (clicked)="addToCard(course.courseId)">ENROLL NOW</gm-button>
+          
+          <p class="enroll-card__guarantee">✓ 30-Day Results Guarantee</p>
+        </gm-card>
+      </aside>
+    </div>
+  </main>
 </div>
 
-<!-- show image -->
-@if(url) {
-
-<div class="fixed top-0 left-0 w-full h-full z-50">
-	<div class="fixed top-0 right-0 p-5 z-50">
-		<button
-			class="bg-white w-16 h-16 rounded-full flex justify-center items-center"
-			(click)="showImage(null)"
-		>
-			<span class="text-[1rem]"><i class="fa-solid fa-x"></i></span>
-		</button>
-	</div>
-
-	<div
-		class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center"
-	>
-		<img class="h-auto max-w-lg rounded-lg" [src]="url" alt="image description" />
-	</div>
+<!-- Fullscreen Image Modal -->
+<div class="image-modal" *ngIf="url" (click)="showImage(null)">
+  <div class="image-modal__close">✕</div>
+  <img [src]="url" alt="Fullscreen preview" (click)="$event.stopPropagation()">
 </div>
-} @if (showPayment) {
-<div class="h-screen w-screen fixed top-0 left-0 z-10">
-	<div class="flex items-center justify-center h-screen bg-black/30 ">
-		<div class="mx-auto bg-white rounded-md shadow-md  p-3">
-			<div class="flex justify-end">
-				<button (click)="onShowPayment(false)">
-					<svg
-						class="w-6 h-6 text-gray-800"
-						aria-hidden="true"
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						fill="currentColor"
-						viewBox="0 0 24 24"
-					>
-						<path
-							fill-rule="evenodd"
-							d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm7.707-3.707a1 1 0 0 0-1.414 1.414L10.586 12l-2.293 2.293a1 1 0 1 0 1.414 1.414L12 13.414l2.293 2.293a1 1 0 0 0 1.414-1.414L13.414 12l2.293-2.293a1 1 0 0 0-1.414-1.414L12 10.586 9.707 8.293Z"
-							clip-rule="evenodd"
-						/>
-					</svg>
-				</button>
-			</div>
-			<img class="mx-auto w-[400px]" src="/assets/payment.png" alt="" />
-
-			<div>
-				<button
-					(click)="onShowPayment(false)"
-					type="button"
-					class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-				>
-					Confirm Payment
-				</button>
-			</div>
-		</div>
-	</div>
-</div>
-}

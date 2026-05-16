@@ -11,11 +11,12 @@ import { patchState } from '@ngrx/signals';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpdateStudentProfileDto } from '../../core/models/student.model';
 import { UpdateUserDto } from '../../user/models/update-user.dto';
+import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
 
 @Component({
 	selector: 'app-update-profile',
 	standalone: true,
-	imports: [ReactiveFormsModule],
+	imports: [ReactiveFormsModule, GmButtonComponent],
 	templateUrl: './update-profile.component.html',
 	styleUrl: './update-profile.component.scss',
 })

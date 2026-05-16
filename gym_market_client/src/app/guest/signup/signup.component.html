@@ -1,57 +1,73 @@
-<div class="hero_area min-h-screen">
-	<div class="flex justify-center items-center px-4 py-10">
-		<div class="main">
-			<div class="signup">
-				<form [formGroup]="signUpForm">
-					<label class="text-red-700">Sign up</label>
+<div class="signup">
+  <div class="signup__brand">
+    <h1 class="signup__wordmark">GYM<br>MARKET</h1>
+    <p class="signup__tagline">Join our community of athletes and trainers.</p>
+  </div>
+  <div class="signup__form-panel">
+    <div class="signup__form-content">
+      <h2 class="signup__title">Create Account</h2>
+      
+      <!-- Role Selection -->
+      <div class="signup__role-selection" *ngIf="!model.role">
+        <p class="signup__subtitle">Select your role to get started</p>
+        <div class="signup__role-cards">
+          <div class="signup__role-card" (click)="selectRole('Student')">
+            <div class="signup__role-icon">🏃</div>
+            <h3>I WANT TO TRAIN</h3>
+            <p>Achieve your fitness goals with expert guidance.</p>
+          </div>
+          <div class="signup__role-card" (click)="selectRole('Trainer')">
+            <div class="signup__role-icon">💪</div>
+            <h3>I AM A TRAINER</h3>
+            <p>Share your expertise and grow your business.</p>
+          </div>
+        </div>
+      </div>
 
-					@if(submit === true && signUpForm.hasError('required','fullName')) {
-					<small class="text-center block text-red-500">Vui lòng nhập tên</small>
-					}
-					<input
-						formControlName="fullName"
-						type="text"
-						placeholder="Full name"
-						required=""
-					/>
+      <!-- Signup Form -->
+      <div class="signup__form-fields" *ngIf="model.role">
+        <div class="signup__back" (click)="model.role = ''">
+          <span class="icon">←</span> Back to role selection ({{model.role}})
+        </div>
+        
+        <div class="signup__section">
+          <h3 class="signup__section-title">Basic Information</h3>
+          <div class="signup__grid">
+            <gm-input label="Full Name" [(value)]="model.fullName" />
+            <gm-input label="Email" type="email" [(value)]="model.email" />
+            <gm-input label="Password" type="password" [(value)]="model.password" />
+            <gm-input label="Confirm Password" type="password" [(value)]="model.confirmPassword" />
+          </div>
+        </div>
 
-					@if(submit === true && signUpForm.hasError('required','email')) {
-					<small class="text-center block text-red-500">Vui lòng nhập email</small>
-					} @if(submit === true && signUpForm.hasError('email','email')) {
-					<small class="text-center block text-red-500">Email sai định dạng</small>
-					}
-					<input formControlName="email" type="email" placeholder="Email" required="" />
+        <!-- Trainer Specific Fields -->
+        <div class="signup__section" *ngIf="model.role === 'Trainer'">
+          <h3 class="signup__section-title">Professional Details</h3>
+          <div class="signup__grid">
+            <gm-input label="Specialization" [(value)]="model.specialization" />
+            <gm-input label="Experience (Years)" type="number" [(value)]="model.experience" />
+            <div class="full-width">
+              <gm-input label="Bio" [(value)]="model.bio" />
+            </div>
+          </div>
+        </div>
 
-					@if(submit === true && signUpForm.hasError('required','password')) {
-					<small class="text-center block text-red-500">Vui lòng nhập mật khẩu</small>
-					}
-					<input
-						formControlName="password"
-						type="password"
-						placeholder="Password"
-						required=""
-					/>
+        <!-- Student Specific Fields -->
+        <div class="signup__section" *ngIf="model.role === 'Student'">
+          <h3 class="signup__section-title">Personal Details</h3>
+          <div class="signup__grid">
+            <div class="full-width">
+              <gm-input label="Health Status / Goals" [(value)]="model.healthStatus" />
+            </div>
+          </div>
+        </div>
 
-					@if(submit === true && signUpForm.hasError('required','confirmPassword')) {
-					<small class="text-center block text-red-500">Nhập lại mật khẩu</small>
-					} @if(submit === true && signUpForm.controls['confirmPassword'].dirty) {
-					<small class="text-center block text-red-500"
-						>Nhập lại mật khẩu không chính xác</small
-					>
-					}
-					<input
-						formControlName="confirmPassword"
-						type="password"
-						placeholder="Confirm Password"
-						required=""
-					/>
-					<select formControlName="role">
-						<option value="Trainer" selected>Trainer</option>
-						<option value="Student">Student</option>
-					</select>
-					<button (click)="onSignUp()" class="btn-signup">Sign up</button>
-				</form>
-			</div>
-		</div>
-	</div>
+        <gm-button variant="primary" [loading]="loading" (clicked)="onSignUp()">Complete Sign Up</gm-button>
+      </div>
+
+      <div class="signup__footer">
+        <a routerLink="/login">Already have an account? <span class="accent">Sign in</span></a>
+      </div>
+    </div>
+  </div>
 </div>

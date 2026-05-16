@@ -9,11 +9,12 @@ import { ChatHupService } from '../chat-hup.service';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Conversation, Message } from '../../core/models/conversation.model';
+import { GmInputComponent, GmButtonComponent, GmCardComponent } from '../../shared';
 
 @Component({
 	selector: 'app-chat-list',
 	standalone: true,
-	imports: [CommonModule, FormsModule],
+	imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent],
 	templateUrl: './chat-list.component.html',
 	styleUrl: './chat-list.component.scss',
 })
@@ -66,9 +67,10 @@ export class ChatListComponent implements OnInit, OnDestroy {
 
 	private getConversations() {
 		patchState(this.loader, { isShow: true });
-		if (this.userStore.id() !== null) {
+		const userId = this.userStore.id();
+		if (userId !== null) {
 			this.conversationService
-				.getConversations(this.userStore.id())
+				.getConversations(userId)
 				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 					next: res => {
@@ -92,9 +94,10 @@ export class ChatListComponent implements OnInit, OnDestroy {
 				},
 			});
 
-		if (this.userStore.id() !== null) {
+		const userId = this.userStore.id();
+		if (userId !== null) {
 			this.messageService
-				.seenMessage(this.userStore.id(), item.conversationId)
+				.seenMessage(userId, item.conversationId)
 				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 					next: () => {},
@@ -112,17 +115,19 @@ export class ChatListComponent implements OnInit, OnDestroy {
 
 	sendMessage(): void {
 		if (this.message) {
-			this.chatHupService.sendMessage(this.roomName, {
-				avatar: this.userStore.avatar() ?? '',
-				content: this.message,
-				conversationId: this.conversationId,
-				senderId: this.userStore.id(),
-			});
-			this.message = ''; // Clear message input
+			const userId = this.userStore.id();
+			if (userId) {
+				this.chatHupService.sendMessage(this.roomName, {
+					avatar: this.userStore.avatar() ?? '',
+					content: this.message,
+					conversationId: this.conversationId,
+					senderId: userId,
+				});
+				this.message = '';
+			}
 		}
 	}
 
-	// Hủy kết nối khi component bị phá hủy
 	ngOnDestroy(): void {
 		this.chatHupService.stopConnection();
 	}

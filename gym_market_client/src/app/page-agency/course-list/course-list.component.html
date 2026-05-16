@@ -1,188 +1,91 @@
-<div class="wrapper">
-	<div class="mx-auto">
-		<div class="grid grid-cols-12 p-4">
-			<div class="col-span-2">
-				<div class="p-3">
-					<!-- SEARCH BUTTON -->
+<div class="trainer-dashboard">
+  <!-- Top Stats Row -->
+  <section class="stats-grid">
+    <gm-card class="stat-card">
+      <span class="stat-card__label">ACTIVE COURSES</span>
+      <span class="stat-card__value">{{courses.length}}</span>
+      <span class="stat-card__trend positive">↑ Live</span>
+    </gm-card>
+    <gm-card class="stat-card">
+      <span class="stat-card__label">TOTAL STUDENTS</span>
+      <span class="stat-card__value">124</span>
+      <span class="stat-card__trend positive">+12 this month</span>
+    </gm-card>
+    <gm-card class="stat-card">
+      <span class="stat-card__label">REVENUE (MTD)</span>
+      <span class="stat-card__value">$4,280</span>
+      <span class="stat-card__trend positive">↑ 8% vs last month</span>
+    </gm-card>
+  </section>
 
-					<div class="mb-3">
-						<div class="flex items-center justify-start gap-2">
-							<input
-								[(ngModel)]="searchString"
-								type="text"
-								id="first_name"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-								placeholder="Tên"
-								required
-							/>
+  <!-- Table Controls -->
+  <div class="table-controls">
+    <div class="table-controls__search">
+      <gm-input label="Search your courses..." [(value)]="searchString" (valueChange)="search()" />
+    </div>
+    <gm-button variant="primary" routerLink="/agency/add-course">+ ADD NEW COURSE</gm-button>
+  </div>
 
-							<button
-								routerLink="/agency/add-course"
-								type="button"
-								class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-nowrap"
-							>
-								Thêm
-							</button>
-						</div>
-					</div>
-
-					<!-- SEARCH BUTTON -->
-					<button
-						(click)="search()"
-						type="button"
-						class="w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-					>
-						Tìm kiếm
-					</button>
-				</div>
-			</div>
-
-			<div class="col-span-10">
-				<div class=" overflow-x-auto shadow-md sm:rounded-lg min-h-screen">
-					<table class="w-full text-sm text-left rtl:text-right text-gray-500">
-						<thead class="text-xs text-gray-700 uppercase bg-gray-50">
-							<tr>
-								<!-- <th scope="col" class=""></th> -->
-								<th scope="col" class="px-3">Title</th>
-								<th scope="col" class="">Description</th>
-								<th scope="col" class="">Type</th>
-								<th scope="col" class="">Category</th>
-								<th scope="col" class="">Price</th>
-								<th scope="col" class="">Additional Price</th>
-								<th scope="col" class="">Start date</th>
-								<th scope="col" class="">End date</th>
-								<th scope="col" class="">Duration</th>
-								<th scope="col" class="">Max Participants</th>
-								<th scope="col" class="">Rating</th>
-								<th scope="col" class="">Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							@for (item of coursestemp; track $index) {
-							<tr
-								class="odd:bg-white even:bg-gray-900 odd:text-gray-900 even:text-white"
-							>
-								<!-- <td>
-									<div class="flex items-center justify-center">
-										<img
-											class="w-10 rounded-full"
-											src="https://yt3.googleusercontent.com/ytc/AGIKgqNh8xK1GI0_yiSfDSOAZfFcezJwI21S-UFRvMxQvA=s900-c-k-c0x00ffffff-no-rj"
-											alt=""
-										/>
-									</div>
-								</td> -->
-
-								<td scope="row" class="py-4 px-3 font-medium">
-                                    <div class=" clamp w-[50px]">
-                                        {{ item.title }}
-                                    </div>
-								</td>
-
-								<td class="py-4">
-                                    <div class=" clamp w-[100px]">
-                                        {{ item.description }}
-                                    </div>
-                                </td>
-								<td class="py-4">{{ item.type }}</td>
-								<td class="py-4">{{ item.category }}</td>
-								<td class="py-4">{{ item.price }}</td>
-								<td class="py-4">{{ item.additionalPrice }}</td>
-								<td class="py-4">
-									{{ item.startDate | date : 'dd/MM/yyyy' }}
-								</td>
-								<td class="py-4">{{ item.endDate | date : 'dd/MM/yyyy' }}</td>
-								<td class="py-4">{{ item.duration }}</td>
-								<td class="py-4">{{ item.maxParticipants }}</td>
-								<td class="py-4">{{ item.rating }}</td>
-
-								<td class="py-4">
-									<a
-										[routerLink]="'/agency/update-course/' + item.courseId"
-										class="font-medium text-blue-600 hover:underline px-1"
-										>Edit</a
-									>
-                                    
-                                    <button
-										(click)="onShowDeleteModel(true, item.courseId)"
-										class="font-medium text-red-600 hover:underline px-1"
-										>Delete</button
-									>
-
-                                    <a
-                                    [routerLink]="'/agency/get-payments/' + item.courseId"
-										class="font-medium text-yellow-600 hover:underline px-1"
-										>Pays</a
-									>
-								</td>
-							</tr>
-							}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
+  <!-- Course Table -->
+  <section class="table-container">
+    <table class="gm-table">
+      <thead>
+        <tr>
+          <th>COURSE TITLE</th>
+          <th>CATEGORY</th>
+          <th>PRICE</th>
+          <th>STUDENTS</th>
+          <th>STATUS</th>
+          <th class="text-right">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of coursestemp">
+          <td>
+            <div class="course-cell">
+              <div class="course-cell__img">
+                <img [src]="item.getFileDtos && item.getFileDtos.length > 0 ? item.getFileDtos[0].url : '/assets/fitness_logo.jpg'" alt="">
+              </div>
+              <div class="course-cell__info">
+                <span class="course-cell__name">{{item.title}}</span>
+                <span class="course-cell__id">ID: {{item.courseId.substring(0,8)}}</span>
+              </div>
+            </div>
+          </td>
+          <td><span class="category-pill">{{item.category}}</span></td>
+          <td><span class="price-text">${{item.price}}</span></td>
+          <td><span class="count-text">{{item.maxParticipants}} max</span></td>
+          <td><span class="status-pill active">Active</span></td>
+          <td class="text-right">
+            <div class="action-buttons">
+              <button class="action-btn" [routerLink]="'/agency/update-course/' + item.courseId" title="Edit">✏️</button>
+              <button class="action-btn" [routerLink]="'/agency/get-payments/' + item.courseId" title="Payments">💰</button>
+              <button class="action-btn delete" (click)="onShowDeleteModel(true, item.courseId)" title="Delete">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="empty-state" *ngIf="coursestemp.length === 0">
+      <p>No courses found matching your search.</p>
+    </div>
+  </section>
 </div>
 
-@if(isShowDeleteModal === true) {
-<div class="fixed z-10 inset-0 overflow-y-auto" id="my-modal">
-	<div
-		class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
-	>
-		<div class="fixed inset-0 transition-opacity" aria-hidden="true">
-			<div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-		</div>
-		<span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true"
-			>&#8203;</span
-		>
-		<div
-			class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="modal-headline"
-		>
-			<div>
-				<div
-					class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100"
-				>
-					<svg
-						class="h-6 w-6 text-red-600"
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-						aria-hidden="true"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					</svg>
-				</div>
-				<div class="mt-3 text-center sm:mt-5">
-					<h3 class="text-lg leading-6 font-medium text-red-500" id="modal-headline">
-						Bạn có muốn xóa khóa học này không?
-					</h3>
-				</div>
-			</div>
-			<div class="mt-5 sm:mt-6 flex justify-center items-center gap-4">
-				<button
-					(click)="onRemove()"
-					class="rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm"
-				>
-					Có
-				</button>
+<!-- Floating Add Button for Mobile -->
+<button class="floating-add" routerLink="/agency/add-course">
+  <span>+</span>
+</button>
 
-				<button
-					(click)="onShowDeleteModel(false, '')"
-					class="rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:text-sm"
-				>
-					Trở lại
-				</button>
-			</div>
-		</div>
-	</div>
+<!-- Delete Modal -->
+<div class="gm-modal-overlay" *ngIf="isShowDeleteModal">
+  <gm-card class="gm-modal">
+    <h3 class="gm-modal__title">Delete Course?</h3>
+    <p class="gm-modal__text">This action cannot be undone. All course data and enrollments will be permanently removed.</p>
+    <div class="gm-modal__actions">
+      <gm-button variant="ghost" (clicked)="onShowDeleteModel(false, '')">CANCEL</gm-button>
+      <gm-button variant="primary" (clicked)="onRemove()">CONFIRM DELETE</gm-button>
+    </div>
+  </gm-card>
 </div>
-}

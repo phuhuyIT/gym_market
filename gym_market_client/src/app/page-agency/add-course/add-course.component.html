@@ -1,186 +1,82 @@
-<div class="wrapper">
-	<div class="container mx-auto">
-		<div class="pt-5">
-			<form [formGroup]="form">
-				<div class="grid gap-6 mb-6 md:grid-cols-2">
-					<!-- title -->
-					<div class="col-span-2">
-						<label for="title" class="block mb-2 text-sm font-medium text-gray-900"
-							>Title</label
-						>
-						<input
-							formControlName="title"
-							type="text"
-							id="title"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							placeholder="Title"
-							required
-						/>
-					</div>
+<div class="course-form">
+  <div class="container container--narrow">
+    <header class="course-form__header">
+      <div class="back-link" routerLink="/agency/course-list">← Back to Dashboard</div>
+      <h1 class="course-form__title">Add New Course</h1>
+      <p class="course-form__subtitle">Define your course details, pricing, and schedule.</p>
+    </header>
 
-					<!-- description -->
-					<div class="col-span-2">
-						<label
-							for="description"
-							class="block mb-2 text-sm font-medium text-gray-900"
-							>Mô tả</label
-						>
-						<textarea
-							formControlName="description"
-							id="description"
-							rows="10"
-							class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-							placeholder="Write your thoughts here..."
-						></textarea>
-					</div>
+    <div class="course-form__content">
+      <!-- General Information -->
+      <section class="form-section">
+        <h3 class="form-section__title">GENERAL INFORMATION</h3>
+        <div class="form-grid">
+          <div class="full-width">
+            <gm-input label="COURSE TITLE" [(value)]="model.title" />
+          </div>
+          <div class="full-width">
+            <gm-input label="DESCRIPTION" [(value)]="model.description" />
+          </div>
+          <div class="custom-select">
+            <label>TYPE</label>
+            <select [(ngModel)]="model.type">
+              <option value="Yoga">Yoga</option>
+              <option value="Cardio">Cardio</option>
+              <option value="Strength">Strength training</option>
+              <option value="Pilates">Pilates</option>
+              <option value="Stretching">Stretching</option>
+              <option value="Cross fit">Cross fit</option>
+            </select>
+          </div>
+          <div class="custom-select">
+            <label>CATEGORY</label>
+            <select [(ngModel)]="model.category">
+              <option value="Yoga">Yoga</option>
+              <option value="Cardio">Cardio</option>
+              <option value="Strength">Strength training</option>
+              <option value="Pilates">Pilates</option>
+              <option value="Stretching">Stretching</option>
+              <option value="Cross fit">Cross fit</option>
+            </select>
+          </div>
+        </div>
+      </section>
 
-					<!-- type -->
-					<div>
-						<label for="type" class="block mb-2 text-sm font-medium text-gray-900"
-							>Type</label
-						>
-						<select
-							formControlName="type"
-							id="type"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-						>
-							<option value="Yoga" selected>Yoga</option>
-							<option value="Cardio">Cardio</option>
-							<option value="Strength">Strength training</option>
-							<option value="Pilates">Pilates</option>
-							<option value="Stretching">Stretching</option>
-							<option value="Cross fit">Cross fit</option>
-						</select>
-					</div>
+      <!-- Pricing & Capacity -->
+      <section class="form-section">
+        <h3 class="form-section__title">PRICING & CAPACITY</h3>
+        <div class="form-grid">
+          <gm-input label="BASE PRICE ($)" type="number" [(value)]="model.price" />
+          <gm-input label="ADDITIONAL PRICE ($)" type="number" [(value)]="model.additionalPrice" />
+          <gm-input label="MAX PARTICIPANTS" type="number" [(value)]="model.maxParticipants" />
+          <gm-input label="DURATION (DAYS)" type="number" [(value)]="model.duration" />
+        </div>
+      </section>
 
-					<!-- category -->
-					<div>
-						<label for="category" class="block mb-2 text-sm font-medium text-gray-900"
-							>Category</label
-						>
-						<select
-							formControlName="category"
-							id="category"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-						>
-							<option value="Yoga" selected>Yoga</option>
-							<option value="Cardio">Cardio</option>
-							<option value="Strength">Strength training</option>
-							<option value="Pilates">Pilates</option>
-							<option value="Stretching">Stretching</option>
-							<option value="Cross fit">Cross fit</option>
-						</select>
-					</div>
+      <!-- Schedule -->
+      <section class="form-section">
+        <h3 class="form-section__title">SCHEDULE</h3>
+        <div class="form-grid">
+          <gm-input label="START DATE" type="date" [(value)]="model.startDate" />
+          <gm-input label="END DATE" type="date" [(value)]="model.endDate" />
+        </div>
+      </section>
 
-					<!-- price -->
-					<div>
-						<label for="price" class="block mb-2 text-sm font-medium text-gray-900"
-							>Price</label
-						>
-						<input
-							formControlName="price"
-							type="number"
-							id="price"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							placeholder=""
-							required
-						/>
-					</div>
+      <!-- Media Upload (Placeholder UI) -->
+      <section class="form-section">
+        <h3 class="form-section__title">COURSE MEDIA</h3>
+        <div class="upload-zone">
+          <div class="upload-zone__icon">📤</div>
+          <p class="upload-zone__text">Drag and drop images or videos, or <span>browse</span></p>
+          <p class="upload-zone__subtext">Recommended: 16:9 aspect ratio, max 5MB per file.</p>
+        </div>
+      </section>
 
-					<!-- addtional price -->
-					<div>
-						<label
-							for="addtional-price"
-							class="block mb-2 text-sm font-medium text-gray-900"
-							>Price bổ sung</label
-						>
-						<input
-							formControlName="additionalPrice"
-							type="number"
-							id="addtional-price"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							placeholder=""
-							required
-						/>
-					</div>
-				</div>
-
-				<div class="col-span-2">
-					<div class="grid grid-cols-4 gap-6">
-						<!-- Ngày bắt đầu -->
-						<div class="mb-6">
-							<label class="block mb-2 text-sm font-medium text-gray-900"
-								>Ngày bắt đầu</label
-							>
-							<input placeholder="dd-mm-yyyy" 
-								formControlName="startDate"
-								type="date"
-								id="start-date"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								placeholder="john.doe@company.com"
-								required
-							/>
-                            
-						</div>
-
-						<!-- ngày kết thúc -->
-						<div class="mb-6">
-							<label
-								for="end-date"
-								class="block mb-2 text-sm font-medium text-gray-900"
-								>Ngày kết thúc</label
-							>
-							<input
-								formControlName="endDate"
-								type="date"
-								id="end-date"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								required
-							/>
-						</div>
-
-						<!-- duration -->
-						<div class="mb-6">
-							<label
-								for="duration"
-								class="block mb-2 text-sm font-medium text-gray-900"
-								>Duration</label
-							>
-							<input
-								formControlName="duration"
-								type="number"
-								id="duration"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								required
-							/>
-						</div>
-
-						<!-- maxParticipants -->
-						<div class="mb-6">
-							<label
-								for="duration"
-								class="block mb-2 text-sm font-medium text-gray-900"
-								>Số người tham gia tối đa</label
-							>
-							<input
-								formControlName="maxParticipants"
-								type="number"
-								id="duration"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								required
-							/>
-						</div>
-					</div>
-				</div>
-
-				<button 
-                    (click)="submit()"
-					type="submit"
-					class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-				>
-					Thêm
-				</button>
-			</form>
-		</div>
-	</div>
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <gm-button variant="ghost" routerLink="/agency/course-list">CANCEL</gm-button>
+        <gm-button variant="primary" [loading]="loading" (clicked)="submit()">SAVE COURSE</gm-button>
+      </div>
+    </div>
+  </div>
 </div>

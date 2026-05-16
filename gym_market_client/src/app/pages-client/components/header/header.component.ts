@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserStore } from '../../../stores/user.store';
 import { AccountService } from '../../../guest/account.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 interface NavItem {
 	link: string;
@@ -19,6 +20,7 @@ interface NavItem {
 export class HeaderComponent {
 	showAccountOption = false;
 	userStore = inject(UserStore);
+	themeService = inject(ThemeService);
 
 	navbarItems: NavItem[] = [
 		{

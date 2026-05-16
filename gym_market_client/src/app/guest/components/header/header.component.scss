@@ -1,24 +1,12 @@
-.header_section {
-	// background-color: forestgreen;
-	// box-shadow: 0px 4px 3px 0px rgba(55, 65, 81, 0.64);
-	background-color: white;
-}
+@use 'mixins' as mix;
 
-.nav-item {
-	@apply uppercase;
-
-	.nav-link:hover {
-		border-bottom: 3px solid #b91c1c;
+.navbar {
+	.navbar__logo {
+		img {
+			border-radius: var(--radius-sm);
+			border: 1px solid var(--glass-border);
+		}
 	}
-}
-
-.active {
-	@apply text-[#b91c1c];
-	border-bottom: 3px solid #b91c1c;
-}
-
-.nav-link {
-	@apply p-2 duration-100;
 }
 
 .account {
@@ -26,82 +14,121 @@
 }
 
 .account_option {
-	@apply bg-white py-2 rounded-md normal-case overflow-hidden;
+	@include mix.glass-card;
 	position: absolute;
-	box-shadow: 0px 1px 9px 3px rgba(75, 85, 99, 0.75);
-	-webkit-box-shadow: 0px 1px 9px 3px rgba(75, 85, 99, 0.75);
-	-moz-box-shadow: 0px 1px 9px 3px rgba(75, 85, 99, 0.75);
-	transition: all 0.3s ease-in-out;
+	top: 100%;
+	right: 0;
+	min-width: 180px;
+	z-index: 100;
+	padding: 0.5rem;
+	margin-top: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	
+	transform-origin: top right;
+	transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-	padding: 0;
+	&.b {
+		opacity: 0;
+		transform: scale(0.95) translateY(-10px);
+		pointer-events: none;
+	}
+
+	&.a {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
 }
 
 .account_option_item {
-	@apply inline-block text-nowrap w-full px-2 py-2 hover:bg-[#ef4444] hover:text-white duration-100 text-left;
-}
-
-.account_option.a {
-	opacity: 1;
-}
-
-.account_option.b {
-	height: 0px;
-	opacity: 0;
-}
-
-.actionBtn1 {
-	overflow: hidden;
-	position: relative;
-	display: block;
-	width: 166px;
-	height: 38px;
-	margin: auto;
-	line-height: 40px;
-	border: 1px solid #4c4c4d;
-	color: #4c4c4d;
-	text-align: center;
-	text-decoration: none;
-	text-transform: uppercase;
-	font-size: 14px;
-	font-family: oswald;
-	border-radius: 5px;
-}
-
-.actionBtn1 span {
-	position: relative;
-	transition: color 0.25s ease-out;
-	-webkit-transition: color 0.5s ease-out;
-	-moz-transition: color 0.5s ease-out;
-}
-
-.actionBtn1:hover span {
-	color: #fff;
-}
-
-.actionBtn1 .hover {
-	position: absolute;
-	top: 0;
-	left: 0;
-	display: block;
+	font-family: 'DM Sans', sans-serif;
+	font-weight: 500;
+	font-size: 0.875rem;
+	color: var(--text-secondary);
+	padding: 0.625rem 1rem;
+	border-radius: var(--radius-md);
+	transition: all 0.2s ease;
+	text-align: left;
 	width: 100%;
-	height: 100%;
-	background: #4c4c4d;
-	border: 1px solid transparent;
-	transform: scale(1, 0);
-	-webkit-transform: scale(1, 0);
-	-moz-transform: scale(1, 0);
-	-ms-transform: scale(1, 0);
-	transform-origin: center top;
-	-webkit-transform-origin: center top;
-	-moz-transform-origin: center top;
-	-ms-transform-origin: center top;
-	transition: all 0.2s ease-out;
-	-webkit-transition: all 0.2s ease-out;
-	-moz-transition: all 0.2s ease-out;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+
+	&:hover {
+		background: var(--accent-50);
+		color: var(--accent-500);
+	}
 }
-.actionBtn1:hover .hover {
-	transform: scale(1, 1);
-	-webkit-transform: scale(1, 1);
-	-moz-transform: scale(1, 1);
-	-ms-transform: scale(1, 1);
+
+.ai-dropdown-btn {
+	@include mix.btn-ghost;
+	padding: 0.5rem 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	
+	svg {
+		width: 1.25rem;
+		height: 1.25rem;
+		color: currentColor;
+	}
+}
+
+.ai-dropdown-menu {
+	@include mix.glass-card;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	min-width: 160px;
+	z-index: 100;
+	padding: 0.5rem;
+	margin-top: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	
+	transform-origin: top left;
+	transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+	&.hidden {
+		opacity: 0;
+		transform: scale(0.95) translateY(-10px);
+		pointer-events: none;
+	}
+
+	&.block {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+.account-trigger {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 1rem;
+	border-radius: var(--radius-pill);
+	background: var(--bg-surface);
+	border: 1px solid var(--glass-border);
+	color: var(--text-primary);
+	font-weight: 600;
+	font-size: 0.875rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background: var(--bg-surface-hover);
+		border-color: var(--accent-200);
+	}
+
+	i {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+	}
+}
+
+.login-trigger {
+	@include mix.btn-accent;
+	padding: 0.5rem 1.25rem;
 }

@@ -1,74 +1,48 @@
 import { Component, inject, Renderer2, DestroyRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BodyFatService } from '../body-fat.service';
-import { NoticeModalStore } from '../../stores/notice.store';
 import { patchState } from '@ngrx/signals';
-import { ErrorModalStore } from '../../stores/error-modal.store';
+import { LoaderModalStore } from '../../stores/loader.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BodyFatMeasurements, BodyFatPredictionResponse } from '../../core/models/body-fat.model';
+import { CommonModule } from '@angular/common';
+import { GmInputComponent, GmButtonComponent, GmCardComponent } from '../../shared';
+import { RouterLink } from '@angular/router';
 
 @Component({
 	selector: 'app-check-bmi',
 	standalone: true,
-	imports: [FormsModule],
+	imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent, RouterLink],
 	templateUrl: './check-bmi.component.html',
 	styleUrl: './check-bmi.component.scss',
 })
 export class CheckBmiComponent {
+	bmi = 0;
+	age = 25;
+	weight = 70;
+	height = 175;
+	neckCircumference = 36;
+	chestCircumference = 95;
+	abdomen_2_Circumference = 85;
+	thighCircumference = 55;
+	kneeCircumference = 38;
+	biceps_extended_Circumference = 32;
 
-	bmi: number = 0;
+	showBodyFat = false;
+	bodyFat = 0;
+	loading = false;
 
-	// body fast
-	age: number = 10;
-	weight: number = 0;
-	height: number = 1;
-	neckCircumference: number = 0;
-	chestCircumference: number = 0; // (cm)
-	abdomen_2_Circumference: number = 0; //(cm)
-	thighCircumference: number = 0; //(cm)
-	kneeCircumference: number = 0; //(cm)
-	biceps_extended_Circumference: number = 0; //(cm)
-
-	notice = inject(NoticeModalStore);
-	error = inject(ErrorModalStore);
+	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
-
-	showBodyFat: boolean = false;
-	bodyFat: number = 0;
-
-	constructor(private bodyFatService: BodyFatService, private renderer: Renderer2) {}
+	private bodyFatService = inject(BodyFatService);
+	private renderer = inject(Renderer2);
 
 	calculateBMI() {
-		this.bmi = (this.weight * 703) / (this.height * this.height);
+		const hMeter = this.height / 100;
+		this.bmi = this.weight / (hMeter * hMeter);
 	}
 
 	calBodyFat() {
-		if (this.weight < 20) {
-			patchState(this.error, {
-				isShow: true,
-				errors: ['Weight must be greater than or equal 20kg'],
-			});
-			return;
-		}
-
-		if (this.weight > 200) {
-			patchState(this.error, { isShow: true, errors: ['Weight must be less than 200kg'] });
-			return;
-		}
-
-		if (this.height < 100) {
-			patchState(this.error, {
-				isShow: true,
-				errors: ['Height must be greater than or equal 100cm'],
-			});
-			return;
-		}
-
-		if (this.height > 250) {
-			patchState(this.error, { isShow: true, errors: ['Height must be less than 250cm'] });
-			return;
-		}
-
 		const model: BodyFatMeasurements = {
 			Age: this.age,
 			Weight: this.weight / 0.453592,
@@ -81,19 +55,27 @@ export class CheckBmiComponent {
 			Biceps: this.biceps_extended_Circumference,
 		};
 
+		this.loading = true;
+		patchState(this.loader, { isShow: true });
+		
 		this.bodyFatService.predictBodyFat(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: (res: BodyFatPredictionResponse) => {
 				this.bodyFat = Number(res['Predicted Body Fat Percentage']?.toFixed(2) ?? 0);
 				this.showBodyFat = true;
-				this.renderer.addClass(document.body, 'overflow-hidden');
+				this.loading = false;
+				patchState(this.loader, { isShow: false });
+				this.calculateBMI();
+				this.renderer.addClass(document.body, 'no-scroll');
 			},
-			error: _err => {
+			error: () => {
+				this.loading = false;
+				patchState(this.loader, { isShow: false });
 			},
 		});
 	}
 
 	onCloseResult() {
-		this.renderer.removeClass(document.body, 'overflow-hidden');
+		this.renderer.removeClass(document.body, 'no-scroll');
 		this.showBodyFat = false;
 	}
 }

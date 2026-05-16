@@ -1,35 +1,34 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import {
-	FormBuilder,
-	FormGroup,
-	ReactiveFormsModule,
-	Validators,
-} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { AccountService } from '../account.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../shared/services/toast.service';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { ROLES } from '../../utilities/roles.const';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoginResponse } from '../../core/models/auth.model';
+import { CommonModule } from '@angular/common';
+import { GmInputComponent, GmButtonComponent } from '../../shared';
 
 @Component({
 	selector: 'app-login',
 	standalone: true,
-	imports: [ReactiveFormsModule],
+	imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
 	templateUrl: './login.component.html',
 	styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnInit {
-	signUpForm!: FormGroup;
-	submit = false;
+	model = {
+		email: '',
+		password: '',
+	};
+	loading = false;
 	toastService = inject(ToastService);
 	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
 
 	constructor(
-		private formBuilder: FormBuilder,
 		private router: Router,
 		private accountService: AccountService
 	) {}
@@ -38,29 +37,23 @@ export class LoginComponent implements OnInit {
 		if (this.accountService.isLoggedIn()) {
 			this.router.navigateByUrl('/home');
 		}
-
-		this.signUpForm = this.formBuilder.group({
-			email: ['', [Validators.email, Validators.required]],
-			password: ['', [Validators.required]],
-		});
 	}
 
-	validateAllFormFields(control: string) {
-		this.signUpForm.controls[control].markAsDirty({ onlySelf: true });
-	}
-
-	onSignIn() {
-		this.submit = true;
-		if (this.signUpForm.valid === false) {
+	onLogin() {
+		if (!this.model.email || !this.model.password) {
+			this.toastService.show('Please fill in all fields', 'error');
 			return;
 		}
 
+		this.loading = true;
 		patchState(this.loader, { isShow: true });
+		
 		this.accountService
-			.login(this.signUpForm.value)
+			.login(this.model)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (res: LoginResponse) => {
+					this.loading = false;
 					patchState(this.loader, { isShow: false });
 					this.accountService.saveToken(res.token);
 					this.accountService.checkLogin();
@@ -76,6 +69,7 @@ export class LoginComponent implements OnInit {
 					this.router.navigateByUrl('/access-denied');
 				},
 				error: err => {
+					this.loading = false;
 					patchState(this.loader, { isShow: false });
 					const errors = err.error?.errors || ['Login failed'];
 					this.toastService.show(errors.join(', '), 'error');

@@ -1,85 +1,75 @@
-<header class="header_section shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
-	<div class="container mx-auto ">
-		<nav class="flex items-center justify-between flex-wrap p-6 gap-3">
-			<a class="block navbar-brand text-xl font-bold" routerLink="/home">
-				<div class="flex items-center justify-start gap-3">
-					<img class="w-14" src="/assets/fitness_logo.jpg" alt="" />
-					<span class="uppercase">Fitness for life</span>
+<header class="navbar">
+	<div class="container w-full flex items-center justify-between">
+		<a class="navbar__logo flex items-center gap-3" routerLink="/home">
+			<img class="w-12 h-12" src="/assets/fitness_logo.jpg" alt="Logo" />
+			<span class="hidden md:inline">FITNESS FOR LIFE (AGENCY)</span>
+		</a>
+
+		<nav class="flex items-center gap-2">
+			<a routerLink="/home" routerLinkActive="active" class="navbar__link">Home</a>
+			<a routerLink="/agency/courses" routerLinkActive="active" class="navbar__link">Courses</a>
+			<a routerLink="/agency/course-option-list" routerLinkActive="active" class="navbar__link">Options</a>
+		</nav>
+
+		<div class="flex items-center gap-4">
+			<button class="btn-icon" (click)="themeService.toggle()" aria-label="Toggle theme">
+				@if (themeService.theme() === 'light') {
+				<svg
+					class="w-6 h-6"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+					></path>
+				</svg>
+				} @else {
+				<svg
+					class="w-6 h-6"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+					></path>
+				</svg>
+				}
+			</button>
+
+			<div class="account">
+				<div
+					class="account-trigger"
+					(mouseover)="onShowAccountOption()"
+					(mouseleave)="onHiddenAccountOption()"
+				>
+					<span>{{ userStore.fullName() }}</span>
+					<i class="fa-solid fa-caret-down"></i>
 				</div>
-			</a>
 
-			<div class="block lg:flex lg:items-center lg:w-auto">
-				<div class="flex flex-col lg:flex-row lg:ml-auto items-center justify-between">
-					<ul class="lg:flex lg:space-x-10">
-                        <li class="nav-item">
-							<a
-								routerLink="/home"
-								routerLinkActive="active"
-								class="nav-link block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900"
-								>Home</a
-							>
-						</li>
-						<li class="nav-item">
-							<a
-								routerLink="/agency/courses"
-								routerLinkActive="active"
-								class="nav-link block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900"
-								>Quản lý <span class="font-bold">courses</span> <span class="sr-only">(current)</span></a
-							>
-						</li>
-						<li class="nav-item">
-							<a
-								routerLink="/agency/course-option-list"
-								routerLinkActive="active"
-								class="nav-link block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900"
-								>Quản lý <span class="font-bold">course option</span></a
-							>
-						</li>
-						<!-- <li class="nav-item">
-							<a
-								routerLink="/trainers/search"
-								class="nav-link block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900"
-								>Trainers</a
-							>
-						</li> -->
-
-						<li class="nav-item">
-							<div class="account">
-								<div
-									class="p-2 block mt-4 lg:inline-block lg:mt-0 text-gray-500 hover:text-gray-900 cursor-pointer"
-									(mouseover)="onShowAccountOption()"
-									(mouseleave)="onHiddenAccountOption()"
-								>
-									{{ userStore.fullName() }}
-									<span><i class="fa-solid fa-caret-down"></i></span>
-								</div>
-
-								<div
-									class="account_option duration-300"
-									[ngClass]="{
-										a: showAccountOption == true,
-										b: showAccountOption == false
-									}"
-									(mouseover)="onShowAccountOption()"
-									(mouseleave)="onHiddenAccountOption()"
-								>
-									<a routerLink="/agency/your-profile" class="account_option_item"
-										>Profile</a
-									>
-
-                                    <a routerLink="/chat/chat-list" class="account_option_item"
-										>Chats</a
-									>
-
-									<button (click)="logout()" class="account_option_item">
-										Logout
-									</button>
-								</div>
-							</div>
-						</li>
-					</ul>
+				<div
+					class="account_option"
+					[ngClass]="{
+						a: showAccountOption == true,
+						b: showAccountOption == false
+					}"
+					(mouseover)="onShowAccountOption()"
+					(mouseleave)="onHiddenAccountOption()"
+				>
+					<a routerLink="/agency/your-profile" class="account_option_item">Profile</a>
+					<a routerLink="/chat/chat-list" class="account_option_item">Chats</a>
+					<button (click)="logout()" class="account_option_item">Logout</button>
 				</div>
 			</div>
-		</nav>
+		</div>
 	</div>
 </header>

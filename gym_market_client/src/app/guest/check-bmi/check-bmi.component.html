@@ -1,321 +1,84 @@
-<div class="hero_area">
-	<div class="bg-[#F4F6F8] p-6">
-		<div class="banner-header text-center max-w-[1000px] mx-auto">
-			<div class="flex justify-center items-center gap-2">
-				<div class="p-2 text-[3rem] font-bold">Body fast Checker using AI</div>
+<div class="ai-tools">
+  <div class="container">
+    <header class="ai-tools__header">
+      <h1 class="ai-tools__title">AI HEALTH TOOLS</h1>
+      <p class="ai-tools__subtitle">Advanced analysis powered by neural networks.</p>
+    </header>
 
-				<div>
-					<svg
-						class="w-12 h-12 text-[#65a30d]"
-						aria-hidden="true"
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						fill="currentColor"
-						viewBox="0 0 24 24"
-					>
-						<path
-							d="M11 21V2.352A3.451 3.451 0 0 0 9.5 2a3.5 3.5 0 0 0-3.261 2.238A3.5 3.5 0 0 0 4.04 8.015a3.518 3.518 0 0 0-.766 1.128c-.042.1-.064.209-.1.313a3.34 3.34 0 0 0-.106.344 3.463 3.463 0 0 0 .02 1.468A4.017 4.017 0 0 0 2.3 12.5l-.015.036a3.861 3.861 0 0 0-.216.779A3.968 3.968 0 0 0 2 14c.003.24.027.48.072.716a4 4 0 0 0 .235.832c.006.014.015.027.021.041a3.85 3.85 0 0 0 .417.727c.105.146.219.285.342.415.072.076.148.146.225.216.1.091.205.179.315.26.11.081.2.14.308.2.02.013.039.028.059.04v.053a3.506 3.506 0 0 0 3.03 3.469 3.426 3.426 0 0 0 4.154.577A.972.972 0 0 1 11 21Zm10.934-7.68a3.956 3.956 0 0 0-.215-.779l-.017-.038a4.016 4.016 0 0 0-.79-1.235 3.417 3.417 0 0 0 .017-1.468 3.387 3.387 0 0 0-.1-.333c-.034-.108-.057-.22-.1-.324a3.517 3.517 0 0 0-.766-1.128 3.5 3.5 0 0 0-2.202-3.777A3.5 3.5 0 0 0 14.5 2a3.451 3.451 0 0 0-1.5.352V21a.972.972 0 0 1-.184.546 3.426 3.426 0 0 0 4.154-.577A3.506 3.506 0 0 0 20 17.5v-.049c.02-.012.039-.027.059-.04.106-.064.208-.13.308-.2s.214-.169.315-.26c.077-.07.153-.14.225-.216a4.007 4.007 0 0 0 .459-.588c.115-.176.215-.361.3-.554.006-.014.015-.027.021-.041.087-.213.156-.434.205-.659.013-.057.024-.115.035-.173.046-.237.07-.478.073-.72a3.948 3.948 0 0 0-.066-.68Z"
-						/>
-					</svg>
-				</div>
-			</div>
-		</div>
+    <!-- Tab Bar -->
+    <div class="ai-tabs">
+      <a class="ai-tab active" routerLink="/check-bmi">MEASUREMENTS</a>
+      <a class="ai-tab" routerLink="/predict-body-fat">PHOTO UPLOAD</a>
+    </div>
 
-		<div class="banner-body container mx-auto flex justify-center flex-wrap gap-4 p-5">
-			<div class="max-w-[800px] text-[1.5rem]">
-				<div class="text-[#65a30d] font-medium text-center">
-					"Discover your health the easy way!"
-				</div>
-				<div class="p-2 text-center">
-					With advanced AI technology, our body fat measurement function helps you easily
-					and quickly determine your body's health status through a few basic parameters
-					such as height, weight, age, and gender. There is no need for complicated or
-					expensive equipment, with just a few simple steps, you will get accurate results
-					and useful tips to improve your health. Discover your body and start your smart
-					health journey today!
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="ai-content">
+      <div class="ai-grid">
+        <!-- Form Section -->
+        <div class="ai-form-side">
+          <gm-card>
+            <h3 class="card-title">BODY INDICATORS</h3>
+            <div class="indicators-grid">
+              <gm-input label="AGE (YEARS)" type="number" [(value)]="age" />
+              <gm-input label="WEIGHT (KG)" type="number" [(value)]="weight" />
+              <gm-input label="HEIGHT (CM)" type="number" [(value)]="height" />
+              <gm-input label="NECK (CM)" type="number" [(value)]="neckCircumference" />
+              <gm-input label="CHEST (CM)" type="number" [(value)]="chestCircumference" />
+              <gm-input label="ABDOMEN (CM)" type="number" [(value)]="abdomen_2_Circumference" />
+              <gm-input label="THIGH (CM)" type="number" [(value)]="thighCircumference" />
+              <gm-input label="KNEE (CM)" type="number" [(value)]="kneeCircumference" />
+              <gm-input label="BICEPS (CM)" type="number" [(value)]="biceps_extended_Circumference" />
+            </div>
+            <div class="form-footer">
+              <gm-button variant="primary" (clicked)="calBodyFat()" [loading]="loading">ANALYZE NOW</gm-button>
+            </div>
+          </gm-card>
+        </div>
 
-	<div class="bg-[#fff] p-6">
-		<div class="text-[2rem] flex items-center justify-center gap-2 py-5">
-			<div><span class="text-[#1e3a8a] font-bold">Predict Your Body Fast</span> by Metrics</div>
-		</div>
+        <!-- Result Section -->
+        <div class="ai-result-side">
+          <gm-card class="result-card">
+            <h3 class="card-title text-center">YOUR ANALYSIS</h3>
+            
+            <div class="gauge-container">
+              <svg class="gauge" viewBox="0 0 100 100">
+                <circle class="gauge__bg" cx="50" cy="50" r="45"></circle>
+                <circle class="gauge__fill" cx="50" cy="50" r="45" 
+                  [style.stroke-dashoffset]="283 - (283 * (bodyFat || 0) / 100)"
+                  [class.warning]="bodyFat > 25"
+                  [class.danger]="bodyFat > 35"
+                ></circle>
+                <text class="gauge__value" x="50" y="55">{{bodyFat || 0}}%</text>
+                <text class="gauge__label" x="50" y="70">BODY FAT</text>
+              </svg>
+            </div>
 
-		<div class="container mx-auto">
-			<div class="grid grid-cols-12 gap-10">
-				<div
-					class="p-5 rounded-lg bg-[#f0fdf4] col-span-8 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]"
-				>
-					<div class="font-medium text-[2rem] py-7">Your indicators</div>
+            <div class="bmi-display">
+              <span class="bmi-label">BMI SCORE</span>
+              <span class="bmi-value">{{bmi | number:'1.1-1'}}</span>
+            </div>
 
-					<div class="grid grid-cols-2 gap-5">
-						<!-- age -->
-						<div>
-							<div
-								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
-							>
-								<label for="default-range" class="block mb-2">Age (years)</label>
-								<input
-									[(ngModel)]="age"
-									type="text"
-									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-								/>
-							</div>
-							<input
-								type="range"
-								max="200"
-								[(ngModel)]="age"
-								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
-							/>
-						</div>
-
-						<!-- weight -->
-						<div>
-							<div
-								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
-							>
-								<label for="default-range" class="block mb-2">Weight (kg)</label>
-
-								<input
-									[(ngModel)]="weight"
-									type="text"
-									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-								/>
-							</div>
-							<input
-								type="range"
-								max="200"
-								[(ngModel)]="weight"
-								max="200"
-								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
-							/>
-						</div>
-
-						<!-- height -->
-						<div>
-							<div
-								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
-							>
-								<label for="default-range" class="block mb-2">Height (cm)</label>
-								<input
-									[(ngModel)]="height"
-									type="text"
-									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-								/>
-							</div>
-							<input
-								type="range"
-								max="200"
-								[(ngModel)]="height"
-								max="250"
-								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
-							/>
-						</div>
-
-						<!-- Neck circumference -->
-						<div>
-							<div
-								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
-							>
-								<label for="default-range" class="block mb-2"
-									>Neck circumference (cm)</label
-								>
-								<input
-									[(ngModel)]="neckCircumference"
-									type="text"
-									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-								/>
-							</div>
-							<input
-								type="range"
-								max="200"
-								[(ngModel)]="neckCircumference"
-								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
-							/>
-						</div>
-
-						<!-- Chest circumference (cm) -->
-						<div>
-							<div
-								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
-							>
-								<label for="default-range" class="block mb-2"
-									>Chest circumference (cm)</label
-								>
-								<input
-									[(ngModel)]="chestCircumference"
-									type="text"
-									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-								/>
-							</div>
-							<input
-								type="range"
-								max="200"
-								[(ngModel)]="chestCircumference"
-								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
-							/>
-						</div>
-
-						<!-- Abdomen 2 circumference (cm) -->
-						<div>
-							<div
-								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
-							>
-								<label for="default-range" class="block mb-2"
-									>Abdomen circumference (cm)</label
-								>
-								<input
-									[(ngModel)]="abdomen_2_Circumference"
-									type="text"
-									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-								/>
-							</div>
-							<input
-								type="range"
-								max="200"
-								[(ngModel)]="abdomen_2_Circumference"
-								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
-							/>
-						</div>
-
-						<!-- Thigh circumference (cm) -->
-						<div>
-							<div
-								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
-							>
-								<label for="default-range" class="block mb-2"
-									>Thigh circumference (cm)</label
-								>
-								<input
-									[(ngModel)]="thighCircumference"
-									type="text"
-									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-								/>
-							</div>
-							<input
-								type="range"
-								max="200"
-								[(ngModel)]="thighCircumference"
-								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
-							/>
-						</div>
-
-						<!-- Knee circumference (cm) -->
-						<div>
-							<div
-								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
-							>
-								<label for="default-range" class="block mb-2"
-									>Knee circumference (cm)</label
-								>
-								<input
-									[(ngModel)]="kneeCircumference"
-									type="text"
-									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-								/>
-							</div>
-							<input
-								type="range"
-								max="200"
-								[(ngModel)]="kneeCircumference"
-								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
-							/>
-						</div>
-
-						<!-- Biceps (extended) circumference (cm) -->
-						<div>
-							<div
-								class="flex justify-between items-center text-[1.1rem] font-medium text-gray-900"
-							>
-								<label for="default-range" class="block mb-2"
-									>Biceps (extended) circumference (cm)</label
-								>
-								<input
-									[(ngModel)]="biceps_extended_Circumference"
-									type="text"
-									class="w-20 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-								/>
-							</div>
-							<input
-								type="range"
-								max="200"
-								[(ngModel)]="biceps_extended_Circumference"
-								class="w-full h-2 bg-[#65a30d] rounded-lg appearance-none cursor-pointer"
-							/>
-						</div>
-					</div>
-
-					<div>
-						<button (click)="calBodyFat()" class="check-body-fast-btn">
-							<span class="hover">
-								<span class="txt">Check</span>
-							</span>
-						</button>
-					</div>
-				</div>
-
-				<div
-					class="p-5 rounded-lg bg-[#f0fdf4] col-span-4 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]"
-				>
-					<div class="font-medium text-[2rem] py-7 text-center">BMI Calculator</div>
-
-					<div class="text-center text-3xl">
-						{{ bmi.toFixed(2) }}
-					</div>
-
-					<button class="check-body-fast-btn" (click)="calculateBMI()">
-						<span class="hover">
-							<span class="txt">Calculate</span>
-						</span>
-					</button>
-
-					<div class="mt-5">
-						<h2 class="mb-2 text-lg font-semibold text-gray-900 text-center">
-							How to evaluate:
-						</h2>
-						<ul class="max-w-md space-y-1 text-gray-900 list-disc list-inside">
-							<li>BMI &#60;16: Skinny level III</li>
-							<li>16 ≤ BMI &#60;17: Skinny level II</li>
-							<li>17 ≤ BMI &#60;18.5: Skinny level I</li>
-							<li>18.5 ≤ BMI &#60;25: Normal</li>
-							<li>25 ≤ BMI &#60;30: Overweight</li>
-							<li>30 ≤ BMI 35: Obesity grade 1</li>
-							<li>35 ≤ BMI &#60;40: Obesity grade II</li>
-							<li>BMI >40: Obesity grade III</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+            <div class="evaluation" *ngIf="bmi > 0">
+              <h4 class="evaluation__title">How to evaluate:</h4>
+              <ul class="evaluation__list">
+                <li [class.active]="bmi < 18.5">Underweight (< 18.5)</li>
+                <li [class.active]="bmi >= 18.5 && bmi < 25">Normal (18.5 - 25)</li>
+                <li [class.active]="bmi >= 25 && bmi < 30">Overweight (25 - 30)</li>
+                <li [class.active]="bmi >= 30">Obese (> 30)</li>
+              </ul>
+            </div>
+          </gm-card>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-@if(showBodyFat) {
-<div class="fixed top-0 flex items-center justify-center h-full w-full z-10">
-	<div
-		class="w-1/3 p-4 text-gray-500 bg-white rounded-lg shadow dark:bg-gray-800 dark:text-gray-400"
-		role="alert"
-	>
-		<div class="">
-			<div class="ms-3 text-center font-normal">
-				<span class="text-xl mb-1 font-semibold text-white"
-					>Your body fat prediction results</span
-				>
-				<div class="mb-2 text-white text-[1.5rem] text-center">{{ bodyFat }} %</div>
-				<div class="">
-					<button
-						(click)="onCloseResult()"
-						class="mx-auto text-xl px-2 py-1.5 font-medium text-center text-white bg-blue-600 rounded-lg"
-					>
-						Close
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
+<!-- Modal Overlay for detailed results -->
+<div class="result-overlay" *ngIf="showBodyFat" (click)="onCloseResult()">
+  <gm-card class="result-modal" (click)="$event.stopPropagation()">
+    <div class="result-modal__icon">⚡</div>
+    <h2>Analysis Complete</h2>
+    <p>Your predicted body fat is <strong>{{bodyFat}}%</strong>. Based on your metrics, you are in the <strong>{{bmi < 25 ? 'Healthy' : 'Caution'}}</strong> range.</p>
+    <gm-button variant="primary" (clicked)="onCloseResult()">GOT IT</gm-button>
+  </gm-card>
 </div>
-
-}
