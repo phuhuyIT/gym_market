@@ -8,11 +8,12 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
+import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
 
 @Component({
 	selector: 'app-course-registration',
 	standalone: true,
-	imports: [RouterLink, FormsModule, CommonModule],
+	imports: [RouterLink, FormsModule, CommonModule, GmButtonComponent],
 	templateUrl: './course-registration.component.html',
 	styleUrl: './course-registration.component.scss',
 })

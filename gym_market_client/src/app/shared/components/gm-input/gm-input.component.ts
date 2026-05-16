@@ -7,16 +7,14 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="gm-input" [class.focused]="focused">
-      <label class="gm-input__label" [class.active]="focused || value">{{ label }}</label>
+    <div class="gm-input-group">
+      <label class="gm-input-label">{{ label }}</label>
       <input
-        class="gm-input__field"
+        class="gm-input-field"
         [type]="type"
         [(ngModel)]="value"
         (ngModelChange)="valueChange.emit($event)"
-        (focus)="focused = true"
-        (blur)="focused = false"
-        [placeholder]="focused ? '' : ''">
+        [placeholder]="placeholder">
     </div>
   `,
   styleUrl: './gm-input.component.scss'
@@ -24,7 +22,7 @@ import { CommonModule } from '@angular/common';
 export class GmInputComponent {
   @Input() label = '';
   @Input() type = 'text';
-  @Input() value = '';
-  @Output() valueChange = new EventEmitter<string>();
-  focused = false;
+  @Input() placeholder = '';
+  @Input() value: string | number = '';
+  @Output() valueChange = new EventEmitter<any>();
 }

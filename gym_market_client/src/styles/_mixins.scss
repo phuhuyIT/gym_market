@@ -1,0 +1,195 @@
+@use 'tokens' as *;
+
+// ── Glass Card ────────────────────────────────────────────────
+@mixin glass-card($blur: var(--glass-blur)) {
+  background: var(--bg-surface);
+  backdrop-filter: blur($blur) saturate(180%);
+  -webkit-backdrop-filter: blur($blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+  &:hover {
+    box-shadow: var(--glass-shadow-lg);
+    transform: translateY(-2px);
+  }
+}
+
+// ── Glass Card (elevated / hero panel) ───────────────────────
+@mixin glass-card-elevated {
+  @include glass-card(28px);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glass-shadow-lg);
+}
+
+// ── Accent Glow Button ────────────────────────────────────────
+@mixin btn-accent {
+  background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 0.75rem 1.75rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 20px var(--accent-glow);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    border-radius: inherit;
+  }
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 32px var(--accent-glow);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.99);
+  }
+}
+
+// ── Ghost / Outline Button ────────────────────────────────────
+@mixin btn-ghost {
+  background: var(--bg-surface);
+  backdrop-filter: blur(12px);
+  color: var(--accent-500);
+  border: 1px solid var(--accent-200);
+  border-radius: var(--radius-pill);
+  padding: 0.75rem 1.75rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--accent-50);
+    border-color: var(--accent-500);
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+}
+
+// ── Icon Badge ────────────────────────────────────────────────
+@mixin icon-badge($size: 44px) {
+  width: $size;
+  height: $size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--accent-100);
+  color: var(--accent-500);
+  transition: background 0.2s ease;
+
+  [data-theme="dark"] & {
+    background: var(--accent-50);
+    color: var(--accent-400);
+  }
+}
+
+// ── Glow Orb (decorative background element) ──────────────────
+@mixin glow-orb($color: var(--accent-glow), $size: 400px) {
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  background: radial-gradient(circle, $color 0%, transparent 70%);
+  pointer-events: none;
+  position: absolute;
+  filter: blur(40px);
+}
+
+// ── Data Table ────────────────────────────────────────────────
+@mixin data-table {
+  @include glass-card;
+  overflow: hidden;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--glass-border);
+    text-align: left;
+  }
+
+  tbody tr {
+    transition: background 0.15s ease;
+
+    &:hover { background: var(--bg-overlay); }
+
+    td {
+      padding: 0.875rem 1.25rem;
+      font-size: 0.9375rem;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    &:last-child td { border-bottom: none; }
+  }
+}
+
+// ── Modal Styles ──────────────────────────────────────────────
+@mixin modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 12, 26, 0.60);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@mixin modal-content {
+  @include glass-card-elevated;
+  width: min(560px, 92vw);
+  padding: 2rem;
+  position: relative;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  .modal__title {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 1.375rem;
+    margin-bottom: 1rem;
+  }
+
+  .modal__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    @include icon-badge(32px);
+    cursor: pointer;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-overlay);
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px) scale(0.97); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

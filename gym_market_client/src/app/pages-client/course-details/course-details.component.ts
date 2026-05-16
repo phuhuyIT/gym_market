@@ -8,9 +8,10 @@ import { FormsModule } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
 import { CourseRatingService } from '../course-rating.service';
 import { ToastService } from '../../shared/services/toast.service';
-import { DatePipe, DecimalPipe, NgIf } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { CourseRegistrationService } from '../course-registration.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { GmCardComponent, GmButtonComponent, GmInputComponent } from '../../shared';
 import {
 	Course,
 	CourseOption,
@@ -21,7 +22,7 @@ import {
 @Component({
 	selector: 'app-course-details',
 	standalone: true,
-	imports: [FormsModule, DatePipe, DecimalPipe, NgIf],
+	imports: [CommonModule, FormsModule, DatePipe, DecimalPipe, GmCardComponent, GmButtonComponent, GmInputComponent],
 	templateUrl: './course-details.component.html',
 	styleUrl: './course-details.component.scss',
 })
@@ -78,15 +79,15 @@ export class CourseDetailsComponent implements OnInit {
 				next: res => {
 					this.course = res;
 					this.images = res.getFileDtos
-						.filter(c => c.typeFile === 'IMAGE')
-						.map(c => c.url);
+						? res.getFileDtos.filter(c => c.typeFile === 'IMAGE').map(c => c.url)
+						: [];
 					this.videos = res.getFileDtos
-						.filter(c => c.typeFile === 'VIDEO')
-						.map(c => c.url);
+						? res.getFileDtos.filter(c => c.typeFile === 'VIDEO').map(c => c.url)
+						: [];
 					patchState(this.loader, { isShow: false });
 				},
 				error: () => {
-					this.router.navigateByUrl('/client/home-client');
+					this.router.navigateByUrl('/client/course-search');
 				},
 			});
 	}
@@ -103,20 +104,17 @@ export class CourseDetailsComponent implements OnInit {
 				},
 				error: err => {
 					patchState(this.loader, { isShow: false });
-					console.error('Failed to load course options', err);
 				},
 			});
 	}
 
 	private getCourseRating(id: string) {
-		patchState(this.loader, { isShow: true });
 		this.courseRatingService
 			.getCourseRatings(id)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: res => {
 					this.ratings = res;
-					patchState(this.loader, { isShow: false });
 				},
 			});
 	}
@@ -136,7 +134,7 @@ export class CourseDetailsComponent implements OnInit {
 		const ratingDto: CourseRatingCreateDto = {
 			courseId: this.courseId,
 			studentId: this.userStore.studentId() ?? '',
-			ratingValue: this.rate,
+			ratingValue: Number(this.rate),
 			comment: this.comment,
 		};
 
@@ -150,6 +148,7 @@ export class CourseDetailsComponent implements OnInit {
 					this.rate = 0;
 					this.comment = '';
 					patchState(this.loader, { isShow: false });
+					this.toastService.show('Rating added successfully');
 				},
 				error: () => {
 					patchState(this.loader, { isShow: false });
@@ -163,7 +162,6 @@ export class CourseDetailsComponent implements OnInit {
 
 	showImage(url: string | null) {
 		this.url = url;
-
 		if (url) {
 			this.renderer.addClass(document.body, 'no-scroll');
 		} else {
@@ -177,7 +175,6 @@ export class CourseDetailsComponent implements OnInit {
 
 	addToCard(courseId: string) {
 		this.courseId = courseId;
-
 		patchState(this.loader, { isShow: true });
 		this.courseRegistrationService
 			.registerCourse(this.courseId, this.userStore.studentId() ?? '')
@@ -186,11 +183,11 @@ export class CourseDetailsComponent implements OnInit {
 				next: () => {
 					this.router.navigateByUrl('/client/course-registration');
 					patchState(this.loader, { isShow: false });
-					this.toastService.show('Register course successfully!');
+					this.toastService.show('Enrolled successfully!');
 				},
 				error: () => {
 					patchState(this.loader, { isShow: false });
-					this.toastService.show('Failed to register for this course. Please try again.', 'error');
+					this.toastService.show('Enrollment failed. Please try again.', 'error');
 				},
 			});
 	}

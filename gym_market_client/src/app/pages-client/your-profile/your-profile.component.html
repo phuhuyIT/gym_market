@@ -1,96 +1,85 @@
-<div class="wrapper" *ngIf="userInfo && studentInfo">
-	<div class="max-w-[1000px] mx-auto">
-		<div class="grid grid-cols-12 shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-md">
-			<div class="col-span-4">
-				<div class="p-4">
-					<div class="mb-4">
-						<img [src]="studentInfo.profilePicture" alt="Image is not valid" />
-					</div>
+<div class="student-profile" *ngIf="userInfo && studentInfo">
+  <div class="container">
+    <!-- Profile Header -->
+    <header class="profile-header">
+      <div class="profile-header__content">
+        <div class="profile-header__avatar">
+          <img [src]="studentInfo.profilePicture || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="User avatar">
+        </div>
+        <div class="profile-header__info">
+          <h1 class="profile-header__name">{{userInfo.fullName}}</h1>
+          <p class="profile-header__meta">Student since {{studentInfo.createdAt | date}} • {{userInfo.address || 'Location not set'}}</p>
+        </div>
+        <div class="profile-header__actions">
+          <gm-button variant="secondary" routerLink="/client/update-profile">EDIT PROFILE</gm-button>
+        </div>
+      </div>
+    </header>
 
-					<div class="text-center text-3xl">
-						<button
-							routerLink="/client/update-profile"
-							type="button"
-							class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-						>
-							Chỉnh sửa hồ sơ
-						</button>
-					</div>
-				</div>
-			</div>
+    <!-- Navigation Tabs -->
+    <nav class="profile-nav">
+      <div class="profile-nav__tab" [class.active]="activeTab === 'OVERVIEW'" (click)="activeTab = 'OVERVIEW'">OVERVIEW</div>
+      <div class="profile-nav__tab" [class.active]="activeTab === 'COURSES'" (click)="activeTab = 'COURSES'">MY COURSES</div>
+      <div class="profile-nav__tab" [class.active]="activeTab === 'HEALTH'" (click)="activeTab = 'HEALTH'">HEALTH HISTORY</div>
+    </nav>
 
-			<div class="col-span-8">
-				<div class="p-4">
-					<!-- full name -->
-					<div class="mb-3">
-						<label class="block mb-1 text-sm font-medium text-gray-900">Tên</label>
-						<input
-							type="text"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							[value]="userInfo.fullName"
-							disabled
-						/>
-					</div>
+    <!-- Main Content -->
+    <main class="profile-content">
+      <!-- Overview Tab -->
+      <section class="tab-pane" *ngIf="activeTab === 'OVERVIEW'">
+        <div class="info-grid">
+          <gm-card class="info-card">
+            <h3 class="info-card__title">Contact Information</h3>
+            <div class="info-item">
+              <span class="label">EMAIL</span>
+              <span class="value">{{userInfo.email}}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">PHONE</span>
+              <span class="value">{{userInfo.phoneNumber || 'Not provided'}}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">ADDRESS</span>
+              <span class="value">{{userInfo.address || 'Not provided'}}</span>
+            </div>
+          </gm-card>
 
-					<!-- địa chỉ -->
-					<div class="mb-3">
-						<label class="block mb-1 text-sm font-medium text-gray-900">Địa chỉ</label>
-						<input
-							type="text"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							[value]="userInfo.address"
-							disabled
-						/>
-					</div>
+          <gm-card class="info-card">
+            <h3 class="info-card__title">Health Status</h3>
+            <p class="health-text">{{studentInfo.healthStatus || 'No health information provided.'}}</p>
+            <div class="health-stats">
+              <div class="health-stat">
+                <span class="label">BMI</span>
+                <span class="value">22.4</span>
+              </div>
+              <div class="health-stat">
+                <span class="label">BODY FAT</span>
+                <span class="value">18%</span>
+              </div>
+            </div>
+          </gm-card>
+        </div>
+      </section>
 
-					<div class="grid grid-cols-2 gap-2">
-						<!-- email -->
-						<div class="mb-3">
-							<label class="block mb-1 text-sm font-medium text-gray-900"
-								>Email</label
-							>
-							<input
-								type="text"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								[value]="userInfo.email"
-								disabled
-							/>
-						</div>
+      <!-- Courses Tab (Placeholder) -->
+      <section class="tab-pane" *ngIf="activeTab === 'COURSES'">
+        <div class="empty-tab">
+          <div class="empty-tab__icon">📚</div>
+          <h3>No enrolled courses</h3>
+          <p>Start your fitness journey by browsing available courses.</p>
+          <gm-button variant="primary" routerLink="/client/course-search">BROWSE COURSES</gm-button>
+        </div>
+      </section>
 
-						<!-- phone number -->
-						<div class="mb-3">
-							<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
-								>Điện thoại</label
-							>
-							<input
-								type="text"
-								id="title"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-								[value]="userInfo.phoneNumber"
-								disabled
-							/>
-						</div>
-					</div>
-
-			
-
-					
-					<!-- Experience -->
-					<div class="mb-3">
-						<label for="title" class="block mb-1 text-sm font-medium text-gray-900"
-							>Health Status</label
-						>
-
-                        <input
-							type="text"
-							id="title"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							[value]="studentInfo.healthStatus"
-							disabled
-						/>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+      <!-- Health History Tab (Placeholder) -->
+      <section class="tab-pane" *ngIf="activeTab === 'HEALTH'">
+        <div class="empty-tab">
+          <div class="empty-tab__icon">📈</div>
+          <h3>No history found</h3>
+          <p>Your AI health analysis results will appear here.</p>
+          <gm-button variant="primary" routerLink="/check-bmi">USE AI TOOLS</gm-button>
+        </div>
+      </section>
+    </main>
+  </div>
 </div>

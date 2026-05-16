@@ -1,54 +1,52 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, CommonModule } from '@angular/common';
 import { Component, inject, OnInit, DestroyRef } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { CourseAgencyService } from '../course-agency.service';
 import { jwtDecode } from 'jwt-decode';
 import { Router, RouterLink } from '@angular/router';
-import { ErrorModalStore } from '../../stores/error-modal.store';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserTokenPayload } from '../../core/models/auth.model';
+import { GmInputComponent, GmButtonComponent } from '../../shared';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
 	selector: 'app-add-course',
 	standalone: true,
-	imports: [ReactiveFormsModule],
+	imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
 	templateUrl: './add-course.component.html',
 	styleUrl: './add-course.component.scss',
 })
 export class AddCourseComponent implements OnInit {
-	form!: FormGroup;
-	errorModalStore = inject(ErrorModalStore);
+	model = {
+		title: '',
+		description: '',
+		type: 'Yoga',
+		category: 'Yoga',
+		price: 0,
+		additionalPrice: 0,
+		startDate: this.formatDate(new Date()),
+		endDate: this.formatDate(new Date()),
+		duration: 0,
+		maxParticipants: 0,
+	};
+	
+	loading = false;
 	loaderStore = inject(LoaderModalStore);
+	toastService = inject(ToastService);
 	private destroyRef = inject(DestroyRef);
 
 	constructor(
-		private formBuilder: FormBuilder,
 		private courseAgencyService: CourseAgencyService,
 		private router: Router
 	) {}
 
-	ngOnInit() {
-		this.form = this.formBuilder.group({
-			courseId: [''],
-			trainerId: [''],
-			title: ['', [Validators.required]],
-			description: ['', [Validators.required]],
-			type: ['Yoga', [Validators.required]],
-			category: ['Yoga', [Validators.required]],
-			price: [0, [Validators.required]],
-			additionalPrice: [0, [Validators.required]],
-			startDate: [this.formatDate(new Date()), [Validators.required]],
-			endDate: [this.formatDate(new Date()), [Validators.required]],
-			duration: [0, [Validators.required]],
-			maxParticipants: [0, [Validators.required]],
-		});
-	}
+	ngOnInit() {}
 
 	private formatDate(date: Date): string {
 		const year = date.getFullYear();
-		const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month starts from 0
+		const month = (date.getMonth() + 1).toString().padStart(2, '0');
 		const day = date.getDate().toString().padStart(2, '0');
 		return `${year}-${month}-${day}`;
 	}
@@ -56,28 +54,39 @@ export class AddCourseComponent implements OnInit {
 	submit() {
 		const token = localStorage.getItem('gym-token');
 		if (token === null) {
+			this.toastService.show('Unauthorized. Please login.', 'error');
 			return;
 		}
+
+		if (!this.model.title || !this.model.description) {
+			this.toastService.show('Please fill in title and description', 'error');
+			return;
+		}
+
 		const decoded = jwtDecode<UserTokenPayload & { trainerId: string }>(token);
 		const trainerId = decoded.trainerId;
 		const courseId = crypto.randomUUID();
 
-		const model = { ...this.form.value, trainerId, courseId };
-		this.courseAgencyService.addCourse(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-			next: (_res) => {
-				this.router.navigateByUrl('/agency/courses');
-			},
-			error: err => {
-				let result: string[] = [];
-				for (const key in err.error.errors) {
-					if (Object.prototype.hasOwnProperty.call(err.error.errors, key)) {
-						result.push(`${key}: ${err.error.errors[key][0]}\n`);
-					}
-				}
-				patchState(this.errorModalStore, { errors: result, isShow: true });
-				patchState(this.loaderStore, { isShow: false });
-			},
-		});
+		this.loading = true;
+		patchState(this.loaderStore, { isShow: true });
+
+		const submitModel = { ...this.model, trainerId, courseId };
+		this.courseAgencyService
+			.addCourse(submitModel)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.loading = false;
+					patchState(this.loaderStore, { isShow: false });
+					this.toastService.show('Course created successfully');
+					this.router.navigateByUrl('/agency/course-list');
+				},
+				error: err => {
+					this.loading = false;
+					patchState(this.loaderStore, { isShow: false });
+					this.toastService.show('Failed to create course', 'error');
+				},
+			});
 	}
 }
 //

@@ -1,12 +1,10 @@
-.gm-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  transition: border-color var(--transition), transform var(--transition);
+@use 'mixins' as mix;
 
-  &:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-  }
+.gm-card {
+  @include mix.glass-card;
+  padding: 1.5rem;
+}
+
+:host-context(.gm-card--elevated) .gm-card {
+  @include mix.glass-card-elevated;
 }

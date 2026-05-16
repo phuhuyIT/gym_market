@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { UserStore } from '../../../stores/user.store';
 import { AccountService } from '../../../guest/account.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -14,6 +15,7 @@ import { CommonModule } from '@angular/common';
 export class HeaderComponent {
 	showAccountOption = false;
 	userStore = inject(UserStore);
+	themeService = inject(ThemeService);
 
 	constructor(private accountService: AccountService, private router: Router) {}
 

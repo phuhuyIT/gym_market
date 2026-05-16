@@ -1,7 +1,6 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { HeaderComponent } from '../../pages-client/components/header/header.component';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { patchState } from '@ngrx/signals';
 import { ToastService } from '../../shared/services/toast.service';
 import { TrainerSignup } from '../models/trainer-sign-up.model';
@@ -10,23 +9,37 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { AccountService } from '../account.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SignupResponse } from '../../core/models/auth.model';
+import { CommonModule } from '@angular/common';
+import { GmInputComponent, GmButtonComponent } from '../../shared';
 
 @Component({
 	selector: 'app-signup',
 	standalone: true,
-	imports: [HeaderComponent, ReactiveFormsModule],
+	imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
 	templateUrl: './signup.component.html',
 	styleUrl: './signup.component.scss',
 })
 export class SignupComponent implements OnInit {
-	signUpForm!: FormGroup;
-	submit = false;
+	model = {
+		fullName: '',
+		email: '',
+		password: '',
+		confirmPassword: '',
+		role: '',
+		// Trainer extra fields
+		bio: '',
+		specialization: '',
+		experience: 0,
+		// Student extra fields
+		healthStatus: '',
+	};
+	
+	loading = false;
 	toastService = inject(ToastService);
 	loaderStore = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
 
 	constructor(
-		private formBuilder: FormBuilder,
 		private router: Router,
 		private accountService: AccountService
 	) {}
@@ -35,74 +48,63 @@ export class SignupComponent implements OnInit {
 		if (this.accountService.isLoggedIn()) {
 			this.router.navigateByUrl('/home');
 		}
-
-		this.signUpForm = this.formBuilder.group({
-			fullName: ['', [Validators.required]],
-			email: ['', [Validators.required, Validators.email]],
-			password: ['', [Validators.required]],
-			confirmPassword: ['', [Validators.required]],
-			role: ['Trainer'],
-		});
 	}
 
-	addDirty(control: string) {
-		this.signUpForm.controls[control].markAsDirty({ onlySelf: true });
-	}
-
-	removeDirty(control: string) {
-		this.signUpForm.controls[control].markAsPristine({
-			onlySelf: true,
-		});
+	selectRole(role: string) {
+		this.model.role = role;
 	}
 
 	onSignUp() {
-		this.submit = true;
-		if (this.signUpForm.valid === false) {
+		if (!this.model.fullName || !this.model.email || !this.model.password) {
+			this.toastService.show('Please fill in all basic fields', 'error');
 			return;
 		}
 
-		if (
-			this.signUpForm.controls['password'].value !==
-			this.signUpForm.controls['confirmPassword'].value
-		) {
-			this.addDirty('confirmPassword');
+		if (this.model.password !== this.model.confirmPassword) {
+			this.toastService.show('Passwords do not match', 'error');
 			return;
-		} else {
-			this.signUpForm.controls['confirmPassword'].markAsPristine({
-				onlySelf: true,
-			});
 		}
 
+		this.loading = true;
 		patchState(this.loaderStore, { isShow: true });
+
+		const signupData = {
+			fullName: this.model.fullName,
+			email: this.model.email,
+			password: this.model.password,
+			confirmPassword: this.model.confirmPassword,
+			role: this.model.role
+		};
+
 		this.accountService
-			.signUp(this.signUpForm.value)
+			.signUp(signupData)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (res: SignupResponse) => {
-					if (this.signUpForm.controls['role'].value === 'Trainer') {
+					if (this.model.role === 'Trainer') {
 						this.trainerSignup(res);
-					} else if (this.signUpForm.controls['role'].value === 'Student') {
+					} else if (this.model.role === 'Student') {
 						this.studentSignup(res);
 					}
-					patchState(this.loaderStore, { isShow: false });
 				},
 				error: err => {
+					this.loading = false;
+					patchState(this.loaderStore, { isShow: false });
 					const errors = err.error?.errors || ['Signup failed'];
 					this.toastService.show(errors instanceof Array ? errors.join(', ') : errors, 'error');
-					patchState(this.loaderStore, { isShow: false });
 				},
 			});
 	}
 
 	private trainerSignup(res: SignupResponse) {
-		const model: TrainerSignup = {
-			bio: '',
-			certification: '',
+		const trainerModel: TrainerSignup = {
+			bio: this.model.bio,
+			certification: this.model.specialization,
 			createdAt: new Date(),
-			email: this.signUpForm.controls['email'].value,
-			experience: 0,
-			name: this.signUpForm.controls['fullName'].value,
-			password: this.signUpForm.controls['password'].value,
+			email: this.model.email,
+			experience: Number(this.model.experience),
+			name: this.model.fullName,
+			password: this.model.password,
 			profilePicture: 'https://cdn-icons-png.flaticon.com/512/236/236832.png',
 			rating: 0,
 			updatedAt: new Date(),
@@ -111,60 +113,48 @@ export class SignupComponent implements OnInit {
 		};
 
 		this.accountService
-			.trainerSignup(model)
+			.trainerSignup(trainerModel)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: () => {
+					this.loading = false;
 					patchState(this.loaderStore, { isShow: false });
 					this.router.navigateByUrl('/login');
 				},
 				error: err => {
+					this.loading = false;
 					patchState(this.loaderStore, { isShow: false });
-					let result = [];
-					for (const key in err.error?.errors) {
-						if (err.error.errors.hasOwnProperty(key)) {
-							result.push(`${key}: ${err.error.errors[key][0]}`);
-						}
-					}
-					const errorMessage = result.length > 0 ? result.join(', ') : 'Trainer signup failed';
-					this.toastService.show(errorMessage, 'error');
-					patchState(this.loaderStore, { isShow: false });
+					this.toastService.show('Trainer signup details failed', 'error');
 				},
 			});
 	}
 
 	private studentSignup(res: SignupResponse) {
-		const model: StudentSignup = {
+		const studentModel: StudentSignup = {
 			createdAt: new Date(),
-			email: this.signUpForm.controls['email'].value,
-			name: this.signUpForm.controls['fullName'].value,
-			password: this.signUpForm.controls['password'].value,
+			email: this.model.email,
+			name: this.model.fullName,
+			password: this.model.password,
 			profilePicture: 'https://cdn-icons-png.flaticon.com/512/236/236832.png',
 			updatedAt: new Date(),
-			healthStatus: '',
+			healthStatus: this.model.healthStatus,
 			studentId: crypto.randomUUID(),
 			userId: res.userId,
 		};
 
 		this.accountService
-			.studentSignup(model)
+			.studentSignup(studentModel)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: () => {
+					this.loading = false;
 					patchState(this.loaderStore, { isShow: false });
 					this.router.navigateByUrl('/login');
 				},
 				error: err => {
+					this.loading = false;
 					patchState(this.loaderStore, { isShow: false });
-					let result = [];
-					for (const key in err.error?.errors) {
-						if (err.error.errors.hasOwnProperty(key)) {
-							result.push(`${key}: ${err.error.errors[key][0]}`);
-						}
-					}
-					const errorMessage = result.length > 0 ? result.join(', ') : 'Student signup failed';
-					this.toastService.show(errorMessage, 'error');
-					patchState(this.loaderStore, { isShow: false });
+					this.toastService.show('Student signup details failed', 'error');
 				},
 			});
 	}

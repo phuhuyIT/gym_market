@@ -1,20 +1,20 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
-import { ErrorModalStore } from '../../stores/error-modal.store';
-import { NoticeModalStore } from '../../stores/notice.store';
 import { FormsModule } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
+import { GmCardComponent, GmButtonComponent, GmInputComponent } from '../../shared';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
 	selector: 'app-course-list',
 	standalone: true,
-	imports: [RouterLink, DatePipe, FormsModule, NgIf, NgFor],
+	imports: [RouterLink, DatePipe, FormsModule, CommonModule, GmCardComponent, GmButtonComponent, GmInputComponent],
 	templateUrl: './course-list.component.html',
 	styleUrl: './course-list.component.scss',
 })
@@ -25,17 +25,19 @@ export class CourseListComponent implements OnInit {
 	private destroyRef = inject(DestroyRef);
 	isShowDeleteModal: boolean = false;
 	courseIdToDelete: string = '';
-	errorModalStore = inject(ErrorModalStore);
-	noticeStore = inject(NoticeModalStore);
 	userStore = inject(UserStore);
+	toastService = inject(ToastService);
 
 	searchString: string = '';
 
 	constructor(private courseAgencyService: CourseAgencyService) {}
 
 	ngOnInit() {
-		patchState(this.loaderStore, { isShow: true });
+		this.loadCourses();
+	}
 
+	loadCourses() {
+		patchState(this.loaderStore, { isShow: true });
 		this.courseAgencyService
 			.getCoursesOftrainer(this.userStore.trainerId() ?? '')
 			.pipe(takeUntilDestroyed(this.destroyRef))
@@ -66,21 +68,14 @@ export class CourseListComponent implements OnInit {
 			.subscribe({
 				next: () => {
 					patchState(this.loaderStore, { isShow: false });
-					patchState(this.noticeStore, {
-						isShow: true,
-						message: 'Course removed successfully',
-					});
-
+					this.toastService.show('Course removed successfully');
 					this.courses = this.courses.filter(x => x.courseId !== this.courseIdToDelete);
 					this.coursestemp = [...this.courses];
 					this.courseIdToDelete = '';
 				},
 				error: err => {
 					patchState(this.loaderStore, { isShow: false });
-					patchState(this.errorModalStore, {
-						errors: err.error?.errors || ['Failed to remove course'],
-						isShow: true,
-					});
+					this.toastService.show('Failed to remove course', 'error');
 				},
 			});
 	}

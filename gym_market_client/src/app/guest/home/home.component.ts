@@ -1,29 +1,30 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { HeaderComponent } from '../components/header/header.component';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { FooterComponent } from '../components/footer/footer.component';
+import { GmButtonComponent } from '../../shared';
 
 @Component({
 	selector: 'app-home',
 	standalone: true,
-	imports: [CommonModule, RouterLink],
+	imports: [CommonModule, RouterLink, GmButtonComponent],
 	templateUrl: './home.component.html',
 	styleUrl: './home.component.scss',
 })
-export class HomeComponent {
-	// @ViewChildren('dots') dots!: QueryList<ElementRef>;
-	@ViewChild('slides') slides!: ElementRef;
+export class HomeComponent implements OnInit {
 	year = 0;
+
+	categories = [
+		{ name: 'Yoga', icon: '🧘' },
+		{ name: 'Cardio', icon: '🏃' },
+		{ name: 'Strength', icon: '💪' },
+		{ name: 'HIIT', icon: '⚡' },
+		{ name: 'Pilates', icon: '🤸' },
+		{ name: 'Boxing', icon: '🥊' },
+		{ name: 'Dance', icon: '💃' },
+		{ name: 'Crossfit', icon: '🏋️' }
+	];
 
 	ngOnInit() {
 		this.year = new Date().getFullYear();
 	}
-
-	ngAfterViewInit() {
-	}
-
-	
-
-	
 }

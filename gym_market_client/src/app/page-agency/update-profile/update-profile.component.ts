@@ -12,11 +12,12 @@ import { UpdateUserDto } from '../../user/models/update-user.dto';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserInfoResponse } from '../../core/models/auth.model';
+import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
 
 @Component({
 	selector: 'app-update-profile',
 	standalone: true,
-	imports: [ReactiveFormsModule],
+	imports: [ReactiveFormsModule, GmButtonComponent],
 	templateUrl: './update-profile.component.html',
 	styleUrl: './update-profile.component.scss',
 })

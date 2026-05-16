@@ -1,0 +1,31 @@
+@use 'mixins' as mix;
+
+.error-modal-icon {
+    @include mix.icon-badge(48px);
+    background: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    margin: 0 auto 1.5rem;
+}
+
+.error-list {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.error-item {
+    font-size: 0.875rem;
+    color: var(--error);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &::before {
+        content: '';
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+}

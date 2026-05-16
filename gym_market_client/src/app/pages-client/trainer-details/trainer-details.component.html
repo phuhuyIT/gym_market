@@ -1,150 +1,111 @@
-<div class="wrapper bg-[#e2e8f0] p-5" *ngIf="trainerInfo && userInfo">
-	<div class="grid grid-cols-12 gap-5 mb-5">
-		<div class="col-span-4">
-			<div class="rounded-md overflow-hidden shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
-				<div id="ss" class="h-40"></div>
+<div class="trainer-profile" *ngIf="trainerInfo && userInfo">
+  <!-- Profile Header -->
+  <header class="profile-header">
+    <div class="profile-header__banner"></div>
+    <div class="container">
+      <div class="profile-header__content">
+        <div class="profile-header__avatar">
+          <img [src]="trainerInfo.profilePicture" alt="Trainer profile picture">
+        </div>
+        <div class="profile-header__info">
+          <div class="profile-header__top">
+            <h1 class="profile-header__name">{{trainerInfo.name}}</h1>
+            <div class="specialization-pills">
+              <span class="pill">{{trainerInfo.certification || 'Elite Coach'}}</span>
+            </div>
+          </div>
+          <p class="profile-header__bio">{{trainerInfo.bio}}</p>
+          
+          <!-- Quick Stats -->
+          <div class="quick-stats">
+            <div class="quick-stat">
+              <span class="quick-stat__value">{{trainerInfo.rating || '4.8'}} ★</span>
+              <span class="quick-stat__label">RATING</span>
+            </div>
+            <div class="quick-stat">
+              <span class="quick-stat__value">{{trainerInfo.experience}}</span>
+              <span class="quick-stat__label">YEARS EXP.</span>
+            </div>
+            <div class="quick-stat">
+              <span class="quick-stat__value">{{coursesOfTrainer.length}}</span>
+              <span class="quick-stat__label">COURSES</span>
+            </div>
+          </div>
+        </div>
+        <div class="profile-header__actions">
+          <gm-button variant="primary" (clicked)="onSendMessage()">SEND MESSAGE</gm-button>
+          <gm-button variant="secondary">FOLLOW</gm-button>
+        </div>
+      </div>
+    </div>
+  </header>
 
-				<div class="bg-white p-4 pt-16 relative">
-					<div id="avatar" class="">
-						<img class="w-36 h-36 mx-auto" [src]="trainerInfo.profilePicture" alt="" />
-					</div>
+  <!-- Main Content -->
+  <main class="profile-main container">
+    <div class="profile-grid">
+      <!-- Left Column: Details -->
+      <div class="profile-details">
+        <section class="profile-section">
+          <h2 class="section-title">PROFESSIONAL DETAILS</h2>
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="detail-label">EMAIL</span>
+              <span class="detail-value">{{userInfo.email}}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">LOCATION</span>
+              <span class="detail-value">{{userInfo.address || 'Global'}}</span>
+            </div>
+            <div class="detail-item full-width">
+              <span class="detail-label">CERTIFICATIONS & BIO</span>
+              <p class="detail-text">{{trainerInfo.certification}}</p>
+              <p class="detail-text" style="margin-top: 12px;">{{trainerInfo.bio}}</p>
+            </div>
+          </div>
+        </section>
 
-					<!-- name -->
-					<div>
-						<h4 class="text-3xl text-center">{{ trainerInfo.name }}</h4>
-					</div>
+        <!-- Trainer's Courses -->
+        <section class="profile-section">
+          <h2 class="section-title">FEATURED COURSES</h2>
+          <div class="courses-grid">
+            <gm-card class="course-mini-card" *ngFor="let course of coursesOfTrainer" [routerLink]="['/client/course-details', course.courseId]">
+              <div class="course-mini-card__img">
+                <img [src]="course.getFileDtos && course.getFileDtos.length > 0 ? course.getFileDtos[0].url : '/assets/gym_logo.png'" alt="">
+              </div>
+              <div class="course-mini-card__content">
+                <h3>{{course.title}}</h3>
+                <div class="course-mini-card__footer">
+                  <span class="price">${{course.price}}</span>
+                  <span class="category">{{course.category}}</span>
+                </div>
+              </div>
+            </gm-card>
+            
+            <div class="empty-courses" *ngIf="coursesOfTrainer.length === 0">
+              <p>This trainer hasn't posted any courses yet.</p>
+            </div>
+          </div>
+        </section>
+      </div>
 
-					<!-- bio -->
-					<div>
-						<h4 class="text-xl text-center">
-							{{ trainerInfo.bio }}
-						</h4>
-					</div>
-
-					<div class="flex justify-around items-center">
-						<div class="text-lg font-bold">Rating: {{ trainerInfo.rating }}</div>
-						<div class="text-lg font-bold">
-							Experience: {{ trainerInfo.experience }}
-						</div>
-					</div>
-
-					<div class="mt-2">
-						<button
-							(click)="onSendMessage()"
-							type="button"
-							class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-						>
-							Send message
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="col-span-8">
-			<div class="bg-white p-4 rounded-md overflow-hidden shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
-				<div class="text-xl font-medium border-b mb-3">Information</div>
-
-				<div class="grid grid-cols-2 grid-rows-2 gap-4">
-					<div>
-						<label for="first_name" class="block mb-2 text-sm font-medium text-gray-900"
-							>Name</label
-						>
-						<input
-							type="text"
-							disabled
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							value="{{ trainerInfo.name }}"
-						/>
-					</div>
-
-					<div>
-						<label for="first_name" class="block mb-2 text-sm font-medium text-gray-900"
-							>Email</label
-						>
-						<input
-							type="text"
-							disabled
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							required
-							value="{{ userInfo.email }}"
-						/>
-					</div>
-
-					<div>
-						<label for="first_name" class="block mb-2 text-sm font-medium text-gray-900"
-							>Address</label
-						>
-						<input
-							type="text"
-							disabled
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							value="{{ userInfo.address }}"
-						/>
-					</div>
-
-					<div>
-						<label for="first_name" class="block mb-2 text-sm font-medium text-gray-900"
-							>Phone</label
-						>
-						<input
-							type="text"
-							disabled
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							value="732.357.8796"
-						/>
-					</div>
-
-					<div class="col-span-2">
-						<label for="first_name" class="block mb-1 text-sm font-medium text-gray-900"
-							>Certification</label
-						>
-						<textarea
-							disabled
-							class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							>{{ trainerInfo.certification }}</textarea
-						>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="bg-white p-4 rounded-md overflow-hidden">
-		<div class="font-medium text-3xl border-b text-center p-3 mb-3">Courses</div>
-
-		<div class="grid grid-cols-4 gap-4">
-			@for (item of coursesOfTrainer.slice(0, 4); track $index) {
-
-			<div
-				class="rounded-xl shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:shadow-[0px_0px_5px_3px_#84cc16] duration-150"
-			>
-				<a
-					routerLink="/client/course-details/{{ item.courseId }}"
-					class="md:flex-row md:max-w-xl"
-				>
-					<img
-						class="object-contain min-w-[200px] max-w-[200px] min-h-[185px] max-h-[185px] rounded-t-lg md:h-auto md:w-48 md:rounded-none md:rounded-s-lg0 mx-auto"
-						[src]="
-							item.getFileDtos !== null && item.getFileDtos.length > 0
-								? item.getFileDtos[0].url
-								: '/assets/gym_logo.png'
-						"
-						alt=""
-					/>
-					<div class="flex flex-col justify-between p-4 leading-normal">
-						<h5
-							class="clamp-title mb-2 text-2xl font-bold tracking-tight text-gray-900"
-						>
-							{{ item.title }}
-						</h5>
-						<p class="clamp-des mb-3 font-normal text-gray-700">
-							{{ item.description }}
-						</p>
-					</div>
-				</a>
-			</div>
-			}
-		</div>
-	</div>
+      <!-- Right Column: Sidebar / Stats -->
+      <aside class="profile-sidebar">
+        <gm-card class="activity-card">
+          <h3 class="sidebar-title">ACTIVITY</h3>
+          <div class="activity-stat">
+            <span class="label">Response Time</span>
+            <span class="value">< 2 hours</span>
+          </div>
+          <div class="activity-stat">
+            <span class="label">Member Since</span>
+            <span class="value">{{trainerInfo.createdAt | date:'MMM yyyy'}}</span>
+          </div>
+          <div class="activity-stat">
+            <span class="label">Total Students</span>
+            <span class="value">450+</span>
+          </div>
+        </gm-card>
+      </aside>
+    </div>
+  </main>
 </div>

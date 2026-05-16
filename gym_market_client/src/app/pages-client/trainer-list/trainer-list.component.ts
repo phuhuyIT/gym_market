@@ -6,16 +6,19 @@ import { patchState } from '@ngrx/signals';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Trainer } from '../../core/models/trainer.model';
 import { NgFor, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
 
 @Component({
 	selector: 'app-trainer-list',
 	standalone: true,
-	imports: [RouterLink, NgIf, NgFor],
+	imports: [RouterLink, NgIf, NgFor, FormsModule, GmButtonComponent],
 	templateUrl: './trainer-list.component.html',
 	styleUrl: './trainer-list.component.scss',
 })
 export class TrainerListComponent implements OnInit {
 	trainers: Trainer[] = [];
+	searchString: string = '';
 	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
 

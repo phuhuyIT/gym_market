@@ -7,11 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
+import { GmCardComponent, GmInputComponent, GmButtonComponent } from '../../shared';
 
 @Component({
 	selector: 'app-course-search',
 	standalone: true,
-	imports: [RouterLink, FormsModule, CommonModule],
+	imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, GmInputComponent, GmButtonComponent],
 	templateUrl: './course-search.component.html',
 	styleUrl: './course-search.component.scss',
 })
@@ -21,8 +22,8 @@ export class CourseSearchComponent implements OnInit {
 	private destroyRef = inject(DestroyRef);
 	pageIndex: number = 1;
 	pageSize: number = 10;
-	searchString: string | null = null;
-	category: string | null = '';
+	searchString: string = '';
+	category: string = 'All';
 
 	categories = [
 		'All',
@@ -75,15 +76,15 @@ export class CourseSearchComponent implements OnInit {
 	}
 
 	prevPage() {
-		this.pageIndex--;
-		if (this.pageIndex < 1) {
-			this.pageIndex = 1;
+		if (this.pageIndex > 1) {
+			this.pageIndex--;
+			this.onSubmit();
 		}
-		this.onSubmit();
 	}
 
 	onSelectCategory(category: string) {
 		this.category = category;
+		this.pageIndex = 1; // Reset to first page on category change
 		this.onSubmit();
 	}
 

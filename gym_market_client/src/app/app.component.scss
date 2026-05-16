@@ -1,0 +1,40 @@
+@use 'mixins' as mix;
+
+.gm-layout {
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+  z-index: 1;
+
+  // Ambient glow orbs
+  &::before,
+  &::after {
+    content: '';
+    position: fixed;
+    pointer-events: none;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    z-index: -1;
+  }
+
+  // Top-left orb
+  &::before {
+    @include mix.glow-orb(var(--accent-glow), 500px);
+    top: -100px;
+    left: -100px;
+  }
+
+  // Bottom-right orb
+  &::after {
+    @include mix.glow-orb(rgba(59, 91, 246, 0.20), 400px);
+    bottom: -80px;
+    right: -80px;
+  }
+}
+
+// Ensure content is above orbs
+.gm-layout > * {
+  position: relative;
+  z-index: 2;
+}

@@ -1,38 +1,23 @@
-<div class="hero_area min-h-screen">
-	<div class="flex justify-center items-center px-4 py-10 section">
-		<div class="main">
-			<div class="signup">
-				<form [formGroup]="signUpForm">
-					<label class="text-red-700">Welcome</label>
+<div class="login">
+  <div class="login__brand">
+    <h1 class="login__wordmark">GYM<br>MARKET</h1>
+    <p class="login__tagline">Connect. Train. Grow.</p>
+  </div>
+  <div class="login__form-panel">
+    <div class="login__form-content">
+      <h2 class="login__title">Welcome back</h2>
+      <p class="login__subtitle">Enter your credentials to access your account</p>
+      
+      <div class="login__fields">
+        <gm-input label="Email" type="email" [(value)]="model.email" />
+        <gm-input label="Password" type="password" [(value)]="model.password" />
+      </div>
 
-					@if(submit === true && signUpForm.controls['email'].hasError('email') ) {
-					<small class="text-red-500 text-center">Email is invalid</small>
-					}
-
-					<input formControlName="email" type="email" placeholder="Email" required="" />
-					<input
-						formControlName="password"
-						type="password"
-						placeholder="Password"
-						required=""
-					/>
-					<button (click)="onSignIn()" class="btn-signup">login</button>
-				</form>
-			</div>
-
-			<!-- <div>
-				<ul class="text-3xl flex items-center justify-center gap-10">
-					<li>
-						<span><i class="fa-brands fa-facebook text-[#0866FF]"></i></span>
-					</li>
-					<li>
-						<span><i class="fa-brands fa-google text-[#EC1C24]"></i></span>
-					</li>
-					<li>
-						<span><i class="fa-brands fa-x-twitter text-[#FFF]"></i></span>
-					</li>
-				</ul>
-			</div> -->
-		</div>
-	</div>
+      <gm-button variant="primary" [loading]="loading" (clicked)="onLogin()">Sign In</gm-button>
+      
+      <div class="login__footer">
+        <a routerLink="/sign-up">No account? <span class="accent">Sign up</span></a>
+      </div>
+    </div>
+  </div>
 </div>

@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserStore } from '../../../stores/user.store';
 import { AccountService } from '../../account.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
 	selector: 'app-header',
@@ -15,6 +16,7 @@ export class HeaderComponent {
 	showAccountOption = false;
 	showAIDropdownMenu: boolean = false;
 	user = inject(UserStore);
+	themeService = inject(ThemeService);
 
 	aiMenu = [
 		{
