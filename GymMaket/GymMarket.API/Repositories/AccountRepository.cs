@@ -35,5 +35,20 @@ namespace GymMarket.API.Repositories
             }
             return await _userManager.AddToRoleAsync(user, role);
         }
+
+        public async Task<AppUser?> FindByLoginAsync(string provider, string providerKey)
+        {
+            return await _userManager.FindByLoginAsync(provider, providerKey);
+        }
+
+        public async Task<IdentityResult> AddLoginAsync(AppUser user, UserLoginInfo login)
+        {
+            return await _userManager.AddLoginAsync(user, login);
+        }
+
+        public async Task<IdentityResult> CreateUserWithoutPasswordAsync(AppUser user)
+        {
+            return await _userManager.CreateAsync(user);
+        }
     }
 }

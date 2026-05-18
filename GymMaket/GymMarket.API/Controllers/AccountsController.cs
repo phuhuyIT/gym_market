@@ -28,5 +28,12 @@ namespace GymMarket.API.Controllers
             var response = await _accountService.Login(model);
             return StatusCode(response.StatusCode, new { response.Message, response.Errors, response.Success, response.Token });
         }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin(GoogleLoginDto model)
+        {
+            var response = await _accountService.GoogleLogin(model);
+            return StatusCode(response.StatusCode, new { response.Message, response.Errors, response.Success, response.Token });
+        }
     }
 }

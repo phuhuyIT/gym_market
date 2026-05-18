@@ -193,7 +193,8 @@ public class AccountServiceTests
         return new AccountService(
             repository,
             jwtService ?? new RecordingJwtService(),
-            signInService ?? new RecordingPasswordSignInService());
+            signInService ?? new RecordingPasswordSignInService(),
+            new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build());
     }
 
     private sealed class RecordingAccountRepository : IAccountRepository
@@ -219,6 +220,21 @@ public class AccountServiceTests
         {
             AssignedRole = role;
             return Task.FromResult(AddToRoleResult);
+        }
+
+        public Task<AppUser?> FindByLoginAsync(string provider, string providerKey)
+        {
+            return Task.FromResult<AppUser?>(null);
+        }
+
+        public Task<IdentityResult> AddLoginAsync(AppUser user, UserLoginInfo login)
+        {
+            return Task.FromResult(IdentityResult.Success);
+        }
+
+        public Task<IdentityResult> CreateUserWithoutPasswordAsync(AppUser user)
+        {
+            return Task.FromResult(IdentityResult.Success);
         }
     }
 
