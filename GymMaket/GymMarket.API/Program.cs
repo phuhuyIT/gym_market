@@ -127,6 +127,8 @@ builder.Services.AddScoped<ICourseRegistrationRepository, CourseRegistrationRepo
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<ILectureRepository, LectureRepository>();
+builder.Services.AddScoped<ILectureMaterialRepository, LectureMaterialRepository>();
 builder.Services.AddScoped<FoodNutritionRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
