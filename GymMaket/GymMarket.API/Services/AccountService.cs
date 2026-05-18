@@ -1,7 +1,9 @@
+using Google.Apis.Auth;
 using GymMarket.API.DTOs.Account;
 using GymMarket.API.DTOs.Response.Account;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace GymMarket.API.Services
 {
@@ -10,15 +12,18 @@ namespace GymMarket.API.Services
         private readonly IAccountRepository _accountRepository;
         private readonly IJwtService _jwtService;
         private readonly IPasswordSignInService _passwordSignInService;
+        private readonly IConfiguration _configuration;
 
         public AccountService(
             IAccountRepository accountRepository,
             IJwtService jwtService,
-            IPasswordSignInService passwordSignInService)
+            IPasswordSignInService passwordSignInService,
+            IConfiguration configuration)
         {
             _accountRepository = accountRepository;
             _jwtService = jwtService;
             _passwordSignInService = passwordSignInService;
+            _configuration = configuration;
         }
 
         public async Task<SignupResponse> SignUp(SignUpDto model)
@@ -77,6 +82,64 @@ namespace GymMarket.API.Services
 
             var token = await _jwtService.CreateJWT(user);
             return new LoginResponse { StatusCode = 200, Token = token, Success = true };
+        }
+
+        public async Task<LoginResponse> GoogleLogin(GoogleLoginDto model)
+        {
+            try
+            {
+                var settings = new GoogleJsonWebSignature.ValidationSettings()
+                {
+                    Audience = new List<string> { _configuration["Google:ClientId"]! }
+                };
+
+                var payload = await GoogleJsonWebSignature.ValidateAsync(model.IdToken, settings);
+
+                if (payload == null)
+                {
+                    return new LoginResponse { StatusCode = 400, Success = false, Errors = ["INVALID_GOOGLE_TOKEN"] };
+                }
+
+                var user = await _accountRepository.FindByLoginAsync("Google", payload.Subject);
+
+                if (user == null)
+                {
+                    user = await _accountRepository.FindByEmail(payload.Email);
+
+                    if (user == null)
+                    {
+                        user = new AppUser
+                        {
+                            FullName = payload.Name,
+                            Email = payload.Email,
+                            UserName = payload.Email,
+                            Avatar = payload.Picture
+                        };
+
+                        var result = await _accountRepository.CreateUserWithoutPasswordAsync(user);
+                        if (!result.Succeeded)
+                        {
+                            return new LoginResponse { StatusCode = 400, Success = false, Errors = result.Errors.Select(e => e.Description).ToList() };
+                        }
+
+                        // Assign default role (e.g. Student)
+                        await _accountRepository.AddToRole(user, "Student");
+                    }
+
+                    var addLoginResult = await _accountRepository.AddLoginAsync(user, new UserLoginInfo("Google", payload.Subject, "Google"));
+                    if (!addLoginResult.Succeeded)
+                    {
+                        return new LoginResponse { StatusCode = 400, Success = false, Errors = ["FAILED_TO_LINK_GOOGLE_ACCOUNT"] };
+                    }
+                }
+
+                var token = await _jwtService.CreateJWT(user);
+                return new LoginResponse { StatusCode = 200, Token = token, Success = true, Message = "SUCCESS" };
+            }
+            catch (Exception ex)
+            {
+                return new LoginResponse { StatusCode = 400, Success = false, Errors = [ex.Message] };
+            }
         }
     }
 }
