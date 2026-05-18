@@ -368,3 +368,4 @@ SKILL.md
 .agents/
 MinIO/data/.minio.sys/tmp
 RUN_GUIDE.md
+GymMarket_Documentation.tex
