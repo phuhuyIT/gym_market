@@ -8,54 +8,24 @@
 nav {
   pointer-events: all;
   width: 100%; max-width: 1140px;
-  padding: 10px 12px 10px 24px;
+  padding: 8px 12px 8px 24px;
   border-radius: 100px;
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
 
-  // Glass tier 2 applied manually (nav is too custom for utility class)
   position: relative; isolation: isolate; overflow: hidden;
   background: var(--nav-fill);
-  border: 1.5px solid var(--nav-border);
+  border: 1px solid var(--nav-border);
   box-shadow: var(--nav-float);
-  backdrop-filter: blur(80px) saturate(3.5) brightness(1.12);
-  -webkit-backdrop-filter: blur(80px) saturate(3.5) brightness(1.12);
+  backdrop-filter: blur(32px) saturate(1.8);
+  -webkit-backdrop-filter: blur(32px) saturate(1.8);
   transition: background 0.35s, border-color 0.45s, box-shadow 0.4s;
-
-  // Full dome specular on the pill
-  &::before {
-    content: ''; position: absolute; inset: -1.5px; border-radius: inherit;
-    pointer-events: none; z-index: 10;
-    background:
-      radial-gradient(ellipse 80% 70% at 50% -10%,
-        rgba(255,255,255,0.95) 0%,
-        rgba(255,255,255,0.40) 22%,
-        rgba(255,255,255,0)    50%),
-      linear-gradient(90deg,  var(--prism-l) 0%, rgba(255,255,255,0) 15%),
-      linear-gradient(270deg, var(--prism-r) 0%, rgba(255,255,255,0) 15%);
-  }
-  // Bottom bounce
-  &::after {
-    content: ''; position: absolute; inset: -1.5px; border-radius: inherit;
-    pointer-events: none; z-index: 10;
-    background: radial-gradient(ellipse 60% 40% at 50% 115%, var(--bounce) 0%, transparent 65%);
-  }
-
-  [data-theme="dark"] &::before {
-    background:
-      radial-gradient(ellipse 80% 70% at 50% -10%,
-        rgba(255,255,255,0.55) 0%,
-        rgba(255,255,255,0.18) 22%,
-        rgba(255,255,255,0)    50%),
-      linear-gradient(90deg,  var(--prism-l) 0%, rgba(255,255,255,0) 15%),
-      linear-gradient(270deg, var(--prism-r) 0%, rgba(255,255,255,0) 15%);
-  }
 }
 
 .nav-logo {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 1.3rem;
-  letter-spacing: -0.04em;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
   color: var(--text);
   text-decoration: none;
   span { color: var(--blue); }
@@ -80,27 +50,19 @@ nav {
 
 // Nav CTA — solid bubble button
 .nav-cta {
-  position: relative; isolation: isolate; overflow: hidden;
-  padding: 10px 22px; border-radius: 100px;
-  background: linear-gradient(155deg, var(--blue) 0%, var(--blue2) 100%);
-  color: #fff; font-weight: 700; font-size: 0.85rem;
-  box-shadow:
-    0 4px 14px var(--blue-glow),
-    0 1.5px 0 rgba(255,255,255,0.40) inset,
-    0 -1.5px 0 rgba(0,0,30,0.20) inset;
-  transition: transform 0.2s, box-shadow 0.25s;
+  padding: 8px 20px; border-radius: 100px;
+  background: var(--blue);
+  color: #fff; font-weight: 600; font-size: 0.9375rem;
+  box-shadow: 0 4px 12px var(--blue-glow);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
   z-index: 3;
   border: none; cursor: pointer;
   text-decoration: none;
 
-  &::before {
-    content: ''; position: absolute; inset: 0; border-radius: inherit;
-    pointer-events: none; z-index: 1;
-    background: radial-gradient(ellipse 90% 55% at 50% -10%, rgba(255,255,255,0.55) 0%, transparent 55%);
-  }
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px var(--blue-glow), 0 2px 0 rgba(255,255,255,0.45) inset, 0 -2px 0 rgba(0,0,30,0.25) inset;
+    background: var(--blue2);
+    box-shadow: 0 6px 16px var(--blue-glow);
   }
 }
 
@@ -110,23 +72,41 @@ nav {
   position: absolute; top: calc(100% + 12px); right: 0;
   min-width: 220px;
   padding: 8px;
+  background: var(--glass-fill2);
+  border: 1px solid var(--glass-border);
   border-radius: 20px;
+  box-shadow: var(--float-md);
+  backdrop-filter: blur(32px) saturate(1.8);
+  -webkit-backdrop-filter: blur(32px) saturate(1.8);
   display: flex; flex-direction: column; gap: 2px;
   z-index: 100;
-  animation: fadeUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top right;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95) translateY(-10px);
+  pointer-events: none;
 
-  &.hidden { display: none; }
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
+  }
+
+  &.hidden { display: none; } // fallback for explicit hidden
 }
 
 .dropdown-item {
   color: var(--text-soft); text-decoration: none;
-  font-size: 0.85rem; font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9375rem; font-weight: 500;
   padding: 10px 16px; border-radius: 12px;
-  transition: color 0.2s, background 0.2s;
+  transition: all 0.2s ease;
   cursor: pointer; border: none; background: transparent;
   text-align: left;
   width: 100%;
+  display: flex; align-items: center; gap: 10px;
 
-  &:hover { color: var(--blue); background: rgba(29,79,216,0.06); }
-  [data-theme="dark"] &:hover { background: rgba(79,142,255,0.10); }
+  &:hover { color: var(--blue); background: rgba(0, 122, 255, 0.08); }
 }

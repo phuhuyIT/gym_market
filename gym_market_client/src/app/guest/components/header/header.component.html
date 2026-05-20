@@ -8,7 +8,7 @@
       <!-- AI Features Dropdown -->
       <li class="relative" (mouseover)="showAIDropdownMenu = true" (mouseleave)="showAIDropdownMenu = false">
         <button class="dropdown-trigger">AI Features</button>
-        <div class="dropdown-menu gl" [ngClass]="{'hidden': !showAIDropdownMenu}">
+        <div class="dropdown-menu gl" [ngClass]="{'visible': showAIDropdownMenu}">
           @for (item of aiMenu; track $index) {
             <a [routerLink]="item.link" class="dropdown-item">{{ item.name }}</a>
           }
@@ -20,7 +20,7 @@
       @if(user.id()) {
         <li class="relative" (mouseover)="showAccountOption = true" (mouseleave)="showAccountOption = false">
           <button class="nav-cta">{{ user.fullName() }}</button>
-          <div class="dropdown-menu gl" [ngClass]="{'hidden': !showAccountOption}">
+          <div class="dropdown-menu gl" [ngClass]="{'visible': showAccountOption}">
             <a routerLink="/client/your-profile" class="dropdown-item">Profile Info</a>
             <a routerLink="/client/course-registration" class="dropdown-item">My courses</a>
             <a routerLink="/chat/chat-list" class="dropdown-item">Chats</a>
@@ -30,7 +30,7 @@
       } @else {
         <li class="relative" (mouseover)="showAccountOption = true" (mouseleave)="showAccountOption = false">
           <button class="nav-cta">Account</button>
-          <div class="dropdown-menu gl" [ngClass]="{'hidden': !showAccountOption}">
+          <div class="dropdown-menu gl" [ngClass]="{'visible': showAccountOption}">
             <a routerLink="/login" class="dropdown-item">Sign in</a>
             <a routerLink="/sign-up" class="dropdown-item">Sign up</a>
           </div>
