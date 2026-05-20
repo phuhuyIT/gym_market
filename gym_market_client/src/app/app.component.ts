@@ -7,10 +7,12 @@ import { GmToastComponent } from './shared/components/gm-toast/gm-toast.componen
 import { AccountService } from './guest/account.service';
 import { ThemeService } from './core/services/theme.service';
 
+import { AmbientComponent } from './shared/components/ambient/ambient.component';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ErrorModalComponent, LoaderComponent, NoticeComponent, GmToastComponent],
+  imports: [RouterOutlet, ErrorModalComponent, LoaderComponent, NoticeComponent, GmToastComponent, AmbientComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -20,6 +22,7 @@ export class AppComponent {
   themeService = inject(ThemeService);
   
   ngOnInit() {
+    this.themeService.init();
     this.accountService.checkLogin();
   }
 }

@@ -9,10 +9,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
 import { GmCardComponent, GmInputComponent, GmButtonComponent } from '../../shared';
 
+import { RevealDirective } from '../../shared/directives/reveal.directive';
+
 @Component({
 	selector: 'app-course-search',
 	standalone: true,
-	imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, GmInputComponent, GmButtonComponent],
+	imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, GmInputComponent, GmButtonComponent, RevealDirective],
 	templateUrl: './course-search.component.html',
 	styleUrl: './course-search.component.scss',
 })

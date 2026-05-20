@@ -1,10 +1,13 @@
-@use 'mixins' as mix;
+@use 'styles/glass';
+
+:host { display: block; }
 
 .gm-card {
-  @include mix.glass-card;
+  @extend .gl-card;
   padding: 1.5rem;
+  border-radius: var(--radius);
 }
 
 :host-context(.gm-card--elevated) .gm-card {
-  @include mix.glass-card-elevated;
+  @extend .gl-2;
 }

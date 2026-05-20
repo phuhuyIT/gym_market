@@ -1,113 +1,133 @@
 <div class="home">
   <!-- Section 1: Hero -->
   <section class="hero">
-    <div class="hero__content">
-      <h1 class="hero__title">ELEVATE<br>YOUR<br>LIMITS</h1>
-      <p class="hero__subtitle">Connect with elite trainers. Access world-class courses. Transform your life from anywhere in the world.</p>
-      <div class="hero__actions">
-        <gm-button variant="primary" routerLink="/client/course-search">Start Training</gm-button>
-        <gm-button variant="secondary" routerLink="/sign-up">Become a Trainer</gm-button>
+    <div class="hero-content">
+      <div class="hero-badge gl">
+        <span class="hero-badge-dot"></span>
+        ELEVATE YOUR LIMITS
+      </div>
+      <h1 class="hero-title">Transform your <em>Fitness</em> Journey with Elite Experts.</h1>
+      <p class="hero-sub">Connect with world-class trainers and access premium courses. Your evolution starts here, anywhere in the world.</p>
+      
+      <div class="hero-actions">
+        <a routerLink="/client/course-search" class="btn-primary">Start Training</a>
+        <a routerLink="/sign-up" class="btn-ghost">Join as Trainer</a>
       </div>
     </div>
-    <div class="hero__scroll">
-      <span class="hero__scroll-text">SCROLL TO EXPLORE</span>
-      <div class="hero__scroll-line"></div>
-    </div>
-  </section>
 
-  <!-- Section 2: Stats Bar -->
-  <section class="stats">
-    <div class="stats__item">
-      <span class="stats__number">1,200+</span>
-      <span class="stats__label">ELITE TRAINERS</span>
+    <!-- Floating Stats -->
+    <div class="hero-stats">
+      <div class="stat-card gl" appReveal [style.transitionDelay]="'0.2s'">
+        <div class="stat-val">1,200+</div>
+        <div class="stat-lbl">Elite Trainers</div>
+      </div>
+      <div class="stat-card gl" appReveal [style.transitionDelay]="'0.3s'">
+        <div class="stat-val">8.4k</div>
+        <div class="stat-lbl">Active Students</div>
+      </div>
     </div>
-    <div class="stats__divider"></div>
-    <div class="stats__item">
-      <span class="stats__number">8,400+</span>
-      <span class="stats__label">ACTIVE STUDENTS</span>
-    </div>
-    <div class="stats__divider"></div>
-    <div class="stats__item">
-      <span class="stats__number">420+</span>
-      <span class="stats__label">PREMIUM COURSES</span>
-    </div>
-  </section>
 
-  <!-- Section 3: How it Works -->
-  <section class="how">
-    <div class="container">
-      <h2 class="section-title">HOW IT WORKS</h2>
-      <div class="how__grid">
-        <div class="how__step">
-          <span class="how__number">01</span>
-          <h3 class="how__step-title">FIND YOUR MATCH</h3>
-          <p class="how__step-text">Browse through hundreds of certified trainers specializing in everything from Yoga to Crossfit.</p>
-        </div>
-        <div class="how__step">
-          <span class="how__number">02</span>
-          <h3 class="how__step-title">ENROLL & CONNECT</h3>
-          <p class="how__step-text">Sign up for a course and start communicating directly with your trainer via our built-in chat.</p>
-        </div>
-        <div class="how__step">
-          <span class="how__number">03</span>
-          <h3 class="how__step-title">SEE RESULTS</h3>
-          <p class="how__step-text">Follow personalized nutrition plans and workout schedules designed to help you reach your goals.</p>
-        </div>
+    <!-- Floating Leaderboard / Info -->
+    <div class="hero-lb gl-2" appReveal [style.transitionDelay]="'0.4s'">
+      <div class="stat-lbl" style="margin-bottom: 12px;">Top Specialty</div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 1.2rem;">🧘</span>
+        <span style="font-weight: 700; font-family: 'Syne';">Yoga & Wellness</span>
       </div>
     </div>
   </section>
 
-  <!-- Section 4: Category Strip -->
-  <section class="categories">
-    <div class="categories__strip">
-      <div class="categories__track">
-        <div class="categories__pill" *ngFor="let cat of categories" [routerLink]="['/client/course-search']" [queryParams]="{category: cat.name}">
-          <span class="categories__pill-icon">{{cat.icon}}</span>
-          <span class="categories__pill-name">{{cat.name}}</span>
-        </div>
-        <!-- Repeat for infinite scroll effect look -->
-        <div class="categories__pill" *ngFor="let cat of categories" [routerLink]="['/client/course-search']" [queryParams]="{category: cat.name}">
-          <span class="categories__pill-icon">{{cat.icon}}</span>
-          <span class="categories__pill-name">{{cat.name}}</span>
-        </div>
+  <!-- Section 2: How It Works -->
+  <section id="how-it-works">
+    <div class="section-head" appReveal>
+      <span class="section-tag">Process</span>
+      <h2 class="section-title">How GymMarket Works</h2>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card gl-card accent-blue" appReveal [style.transitionDelay]="'0.1s'">
+        <div class="step-number">01</div>
+        <div class="step-icon blue">🔍</div>
+        <h3 class="step-title">Find Your Match</h3>
+        <p class="step-text">Browse through hundreds of certified trainers specializing in everything from Yoga to Crossfit.</p>
+      </div>
+
+      <div class="step-card gl-card accent-cyan" appReveal [style.transitionDelay]="'0.2s'">
+        <div class="step-number">02</div>
+        <div class="step-icon cyan">📅</div>
+        <h3 class="step-title">Enroll & Connect</h3>
+        <p class="step-text">Sign up for a course and start communicating directly with your trainer via our built-in chat.</p>
+      </div>
+
+      <div class="step-card gl-card accent-indigo" appReveal [style.transitionDelay]="'0.3s'">
+        <div class="step-number">03</div>
+        <div class="step-icon indigo">📈</div>
+        <h3 class="step-title">See Results</h3>
+        <p class="step-text">Follow personalized nutrition plans and workout schedules designed to help you reach your goals.</p>
       </div>
     </div>
   </section>
 
-  <!-- AI Tools CTA -->
-  <section class="ai-cta">
-    <div class="container">
-      <div class="ai-cta__content">
-        <h2 class="ai-cta__title">DRIVEN BY AI</h2>
-        <p class="ai-cta__text">Use our advanced computer vision models to predict your body fat percentage from a single photo.</p>
-        <gm-button variant="secondary" routerLink="/predict-body-fat">TRY AI ANALYSIS</gm-button>
+  <!-- Section 3: Categories -->
+  <section>
+    <div class="section-head" appReveal>
+      <span class="section-tag">Categories</span>
+      <h2 class="section-title">Explore by Specialty</h2>
+    </div>
+
+    <div class="cat-grid">
+      <div class="cat-card gl sport" appReveal [style.transitionDelay]="'0.1s'" routerLink="/client/course-search" [queryParams]="{category: 'Strength'}">
+        <span style="font-size: 2rem; display: block; margin-bottom: 16px;">💪</span>
+        <h4 style="font-family: 'Syne'; font-weight: 700;">Strength</h4>
+        <div class="cat-stripe"></div>
+      </div>
+      <div class="cat-card gl wellness" appReveal [style.transitionDelay]="'0.2s'" routerLink="/client/course-search" [queryParams]="{category: 'Yoga'}">
+        <span style="font-size: 2rem; display: block; margin-bottom: 16px;">🧘</span>
+        <h4 style="font-family: 'Syne'; font-weight: 700;">Yoga</h4>
+        <div class="cat-stripe"></div>
+      </div>
+      <div class="cat-card gl combat" appReveal [style.transitionDelay]="'0.3s'" routerLink="/client/course-search" [queryParams]="{category: 'Boxing'}">
+        <span style="font-size: 2rem; display: block; margin-bottom: 16px;">🥊</span>
+        <h4 style="font-family: 'Syne'; font-weight: 700;">Boxing</h4>
+        <div class="cat-stripe"></div>
+      </div>
+      <div class="cat-card gl sport" appReveal [style.transitionDelay]="'0.4s'" routerLink="/client/course-search" [queryParams]="{category: 'Cardio'}">
+        <span style="font-size: 2rem; display: block; margin-bottom: 16px;">🏃</span>
+        <h4 style="font-family: 'Syne'; font-weight: 700;">Cardio</h4>
+        <div class="cat-stripe"></div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer__grid">
-        <div class="footer__brand">
-          <h2 class="footer__logo">GYM MARKET</h2>
-          <p>The world's leading marketplace for fitness expertise.</p>
+  <!-- Section 4: Live Banner / AI -->
+  <section>
+    <div class="live-banner gl-card" appReveal>
+      <div class="banner-tint"></div>
+      <div style="position: relative; z-index: 5;">
+        <div class="live-badge">
+          <span class="live-dot"></span>
+          AI Powered Features
         </div>
-        <div class="footer__links">
-          <h4>EXPLORE</h4>
-          <a routerLink="/client/course-search">All Courses</a>
-          <a routerLink="/check-bmi">BMI Calculator</a>
-          <a routerLink="/predict-body-fat">AI Body Fat</a>
-        </div>
-        <div class="footer__links">
-          <h4>ACCOUNT</h4>
-          <a routerLink="/login">Sign In</a>
-          <a routerLink="/sign-up">Register</a>
-        </div>
+        <h2 class="section-title" style="text-align: left; margin-bottom: 24px;">Driven by Intelligence.</h2>
+        <p class="step-text" style="margin-bottom: 32px; max-width: 480px;">Use our advanced computer vision models to predict your body fat percentage from a single photo. Get instant insights into your health markers.</p>
+        <a routerLink="/predict-body-fat" class="btn-primary">Try AI Analysis</a>
       </div>
-      <div class="footer__bottom">
-        <p>&copy; {{year}} Gym Market. All rights reserved.</p>
+      <div class="gl-2" style="border-radius: 20px; padding: 32px; position: relative; z-index: 5;">
+        <div class="stat-lbl" style="margin-bottom: 16px;">Instant Marker Scan</div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+            <span>Body Fat Est.</span>
+            <span style="color: var(--blue); font-weight: 700;">14.2%</span>
+          </div>
+          <div style="height: 4px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden;">
+            <div style="width: 65%; height: 100%; background: var(--blue);"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+            <span>Muscle Mass</span>
+            <span style="color: var(--cyan); font-weight: 700;">High</span>
+          </div>
+        </div>
       </div>
     </div>
-  </footer>
+  </section>
 </div>

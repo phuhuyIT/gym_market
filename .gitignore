@@ -369,3 +369,4 @@ SKILL.md
 MinIO/data/.minio.sys/tmp
 RUN_GUIDE.md
 GymMarket_Documentation.tex
+test_google_login.py

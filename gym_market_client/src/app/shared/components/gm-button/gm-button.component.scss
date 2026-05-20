@@ -1,47 +1,35 @@
-@use 'mixins' as mix;
+@use 'styles/buttons';
+
+:host { display: inline-block; }
 
 .gm-btn {
+  // Inherit shared button anatomy
+  
   &--primary {
-    @include mix.btn-accent;
+    @extend .btn-primary;
   }
 
-  &--secondary {
-    @include mix.btn-ghost;
-  }
-
-  &--ghost {
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 600;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: var(--accent-500);
-    }
+  &--secondary, &--ghost {
+    @extend .btn-ghost;
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    pointer-events: none;
-  }
-
-  &__spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-top-color: currentColor;
-    border-radius: 50%;
-    animation: gm-spin 0.6s linear infinite;
-    display: inline-block;
-    margin-right: 8px;
+    transform: none !important;
+    box-shadow: none !important;
   }
 }
 
-@keyframes gm-spin {
+.gm-btn__spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
   to { transform: rotate(360deg); }
 }
