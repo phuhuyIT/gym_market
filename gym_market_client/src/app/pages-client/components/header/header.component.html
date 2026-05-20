@@ -37,10 +37,7 @@
 
 				<div
 					class="ai-dropdown-menu"
-					[ngClass]="{
-						block: showAIDropdownMenu === true,
-						hidden: showAIDropdownMenu === false
-					}"
+					[ngClass]="{ 'visible': showAIDropdownMenu }"
 					(mouseover)="showAIDropdownMenu = true"
 					(mouseleave)="showAIDropdownMenu = false"
 				>
@@ -100,10 +97,7 @@
 
 				<div
 					class="account_option"
-					[ngClass]="{
-						a: showAccountOption == true,
-						b: showAccountOption == false
-					}"
+					[ngClass]="{ 'visible': showAccountOption }"
 					(mouseover)="onShowAccountOption()"
 					(mouseleave)="onHiddenAccountOption()"
 				>
