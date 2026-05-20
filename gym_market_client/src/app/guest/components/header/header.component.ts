@@ -5,10 +5,12 @@ import { UserStore } from '../../../stores/user.store';
 import { AccountService } from '../../account.service';
 import { ThemeService } from '../../../core/services/theme.service';
 
+import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle.component';
+
 @Component({
 	selector: 'app-header',
 	standalone: true,
-	imports: [CommonModule, RouterLink],
+	imports: [CommonModule, RouterLink, ThemeToggleComponent],
 	templateUrl: './header.component.html',
 	styleUrl: './header.component.scss',
 })

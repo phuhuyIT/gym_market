@@ -1,76 +1,205 @@
-@use './styles/tokens';
-@use './styles/mixins' as mix;
-@use './styles/components';
+@use 'styles/glass';
+@use 'styles/buttons';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ── LIGHT MODE ─────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:            #c8d8ff;
+  --bg2:           #d4e2ff;
+  --text:          #040e28;
+  --text-soft:     rgba(4, 14, 40, 0.56);
+  --text-xsoft:    rgba(4, 14, 40, 0.34);
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  /* Glass fill — high opacity so it reads as solid glass */
+  --glass-fill:    rgba(255, 255, 255, 0.72);
+  --glass-fill2:   rgba(255, 255, 255, 0.82);
+  --glass-border:  rgba(255, 255, 255, 0.90);
+  --glass-border2: rgba(255, 255, 255, 1.00);
+
+  /* Specular dome values */
+  --spec-apex:     rgba(255, 255, 255, 0.98);
+  --spec-mid:      rgba(255, 255, 255, 0.55);
+  --spec-fade:     rgba(255, 255, 255, 0.00);
+
+  /* Bottom bounce light */
+  --bounce:        rgba(255, 255, 255, 0.30);
+
+  /* Prismatic chromatic fringe on glass edges */
+  --prism-l:       rgba(130, 180, 255, 0.55);
+  --prism-r:       rgba(200, 130, 255, 0.35);
+
+  /* Float shadows — 3 layers for genuine depth */
+  --float-sm:
+    0 2px 8px   rgba(30, 60, 180, 0.10),
+    0 12px 40px rgba(30, 60, 180, 0.14),
+    0 1.5px 0   rgba(255, 255, 255, 1.00) inset,
+    0 -1px 0    rgba(80, 120, 255, 0.10)  inset;
+
+  --float-md:
+    0 4px 16px  rgba(30, 60, 180, 0.12),
+    0 24px 64px rgba(30, 60, 180, 0.20),
+    0 60px 120px rgba(30, 60, 180, 0.10),
+    0 2px 0     rgba(255, 255, 255, 1.00) inset,
+    0 -1px 0    rgba(80, 120, 255, 0.12)  inset;
+
+  --float-lg:
+    0 8px 24px   rgba(30, 60, 180, 0.18),
+    0 32px 80px  rgba(30, 60, 180, 0.26),
+    0 80px 160px rgba(30, 60, 180, 0.14),
+    0 2px 0      rgba(255, 255, 255, 1.00) inset,
+    0 -1.5px 0   rgba(80, 120, 255, 0.14) inset;
+
+  /* Accent colors */
+  --blue:          #1d4fd8;
+  --blue2:         #1e3fa0;
+  --blue-light:    #60a5fa;
+  --blue-glow:     rgba(29, 79, 216, 0.45);
+  --cyan:          #0284c7;
+  --indigo:        #5b5af0;
+
+  /* Ambient orb colors — rich so they show through glass */
+  --orb1: #7eb0ff;
+  --orb2: #85e9ff;
+  --orb3: #b4b0ff;
+  --orb-op: 0.90;
+
+  /* Nav */
+  --nav-fill:      rgba(255, 255, 255, 0.68);
+  --nav-border:    rgba(255, 255, 255, 1.00);
+  --nav-float:
+    0 4px 16px rgba(30, 60, 180, 0.14),
+    0 24px 56px rgba(30, 60, 180, 0.18),
+    0 2px 0 rgba(255, 255, 255, 1.00) inset,
+    0 -1px 0 rgba(80, 120, 255, 0.10) inset;
+
+  /* Icon tint backgrounds */
+  --icon-blue:     rgba(29,  79, 216, 0.12);
+  --icon-cyan:     rgba(2,  132, 199, 0.11);
+  --icon-indigo:   rgba(91,  90, 240, 0.11);
+
+  --section-alt:   rgba(29, 79, 216, 0.04);
+  --radius:        22px;
 }
 
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
+/* ── DARK MODE ──────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:            #020510;
+  --bg2:           #060918;
+  --text:          #e0ecff;
+  --text-soft:     rgba(224, 236, 255, 0.50);
+  --text-xsoft:    rgba(224, 236, 255, 0.28);
+
+  /* In dark mode the fill is lower opacity but blur + saturation
+     makes the orb colors bleed through as blue iridescence */
+  --glass-fill:    rgba(140, 170, 255, 0.08);
+  --glass-fill2:   rgba(160, 190, 255, 0.13);
+  --glass-border:  rgba(255, 255, 255, 0.18);
+  --glass-border2: rgba(255, 255, 255, 0.26);
+
+  --spec-apex:     rgba(255, 255, 255, 0.60);
+  --spec-mid:      rgba(255, 255, 255, 0.20);
+  --spec-fade:     rgba(255, 255, 255, 0.00);
+
+  --bounce:        rgba(100, 160, 255, 0.12);
+
+  --prism-l:       rgba(80,  140, 255, 0.40);
+  --prism-r:       rgba(160,  80, 255, 0.28);
+
+  --float-sm:
+    0 2px 8px   rgba(0, 0, 0, 0.50),
+    0 12px 40px rgba(0, 0, 0, 0.60),
+    0 1px 0     rgba(255, 255, 255, 0.18) inset,
+    0 -1px 0    rgba(0, 0, 0, 0.30)       inset;
+
+  --float-md:
+    0 4px 16px  rgba(0, 0, 0, 0.55),
+    0 28px 70px rgba(0, 0, 0, 0.65),
+    0 60px 120px rgba(0, 0, 0, 0.40),
+    0 1.5px 0   rgba(255, 255, 255, 0.20) inset,
+    0 -1px 0    rgba(0, 0, 0, 0.35)       inset;
+
+  --float-lg:
+    0 8px 24px   rgba(0, 0, 0, 0.60),
+    0 36px 90px  rgba(0, 0, 0, 0.75),
+    0 80px 160px rgba(0, 0, 0, 0.50),
+    0 2px 0      rgba(255, 255, 255, 0.22) inset,
+    0 -1.5px 0   rgba(0, 0, 0, 0.40)       inset;
+
+  --blue:          #4f8eff;
+  --blue2:         #2563eb;
+  --blue-light:    #93c5fd;
+  --blue-glow:     rgba(79, 142, 255, 0.50);
+  --cyan:          #22d3ee;
+  --indigo:        #818cf8;
+
+  --orb1: #1a3a9e;
+  --orb2: #0b5e7a;
+  --orb3: #2d2880;
+  --orb-op: 0.55;
+
+  --nav-fill:      rgba(10, 18, 50, 0.55);
+  --nav-border:    rgba(255, 255, 255, 0.20);
+  --nav-float:
+    0 4px 16px rgba(0, 0, 0, 0.55),
+    0 24px 56px rgba(0, 0, 0, 0.65),
+    0 1.5px 0 rgba(255, 255, 255, 0.20) inset,
+    0 -1px 0  rgba(0, 0, 0, 0.30)       inset;
+
+  --icon-blue:     rgba(79,  142, 255, 0.18);
+  --icon-cyan:     rgba(34,  211, 238, 0.15);
+  --icon-indigo:   rgba(129, 140, 248, 0.16);
+
+  --section-alt:   rgba(79, 142, 255, 0.05);
+  --radius:        22px;
 }
+
+/* ── GLOBAL RESET ───────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
 body {
+  background: var(--bg);
+  color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  font-weight: 400;
-  background-color: var(--bg-base);
-  color: var(--text-primary);
+  font-size: 16px;
   line-height: 1.6;
+  overflow-x: hidden;
   min-height: 100vh;
-  transition: background-color 0.4s ease, color 0.3s ease;
+  transition: background 0.5s, color 0.45s;
 }
 
-// Typography scale
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Sora', sans-serif;
-  line-height: 1.2;
-  color: var(--text-primary);
+/* ── GLOBAL KEYFRAMES ───────────────────────────────── */
+@keyframes fadeUp  { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes drift   { from { transform: translate(0,0) scale(1); }      to { transform: translate(65px,45px) scale(1.09); } }
+@keyframes pulse   { 0%,100% { box-shadow: 0 0 0 0 var(--blue-glow); } 50% { box-shadow: 0 0 0 8px transparent; } }
+@keyframes blink   { 0%,100% { opacity: 1; } 50% { opacity: 0.18; } }
+@keyframes bounce  { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(9px); } }
+@keyframes shimmer { 0% { left: -80%; } 40%, 100% { left: 160%; } }
+
+/* ── SCROLL REVEAL ──────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity  0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  &.visible { opacity: 1; transform: translateY(0); }
 }
 
-h1 { font-size: clamp(2rem, 5vw, 3.5rem);  font-weight: 800; }
-h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 700; }
-h3 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); font-weight: 700; }
-h4 { font-size: 1.25rem; font-weight: 600; }
-h5 { font-size: 1.125rem; font-weight: 600; }
-h6 { font-size: 1rem;    font-weight: 600; }
-
-p, span, label { font-family: 'DM Sans', sans-serif; }
-
-a {
-  color: var(--accent-500);
-  text-decoration: none;
-  transition: color 0.2s ease;
-  &:hover { color: var(--accent-600); }
+/* ── REDUCED MOTION ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .orb, .reveal, .btn-primary::after { animation: none !important; transition: none !important; }
 }
 
-// Scrollbar
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: var(--accent-200);
-  border-radius: var(--radius-pill);
+/* ── RESPONSIVE PASS (Step 17) ──────────────────────── */
+@media (max-width: 1100px) {
+  section { padding: 80px 44px; }
 }
 
-/* Responsive Container */
-.container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-  
-  @media (max-width: 640px) { padding: 0 16px; }
+@media (max-width: 900px) {
+  .footer-top { grid-template-columns: 1fr 1fr; }
 }
 
-/* Prevent body scroll when modal open */
-body.no-scroll { overflow: hidden; }
+@media (max-width: 600px) {
+  section { padding: 64px 24px; }
+  .footer-top { grid-template-columns: 1fr; }
+}

@@ -1,135 +1,41 @@
-<header class="navbar">
-	<div class="container w-full flex items-center justify-between">
-		<a class="navbar__logo flex items-center gap-3" routerLink="/home">
-			<img class="w-12 h-12" src="/assets/fitness_logo.jpg" alt="Logo" />
-			<span class="hidden md:inline">FITNESS FOR LIFE</span>
-		</a>
+<div class="nav-wrap">
+  <nav>
+    <a routerLink="/" class="nav-logo">Gym<span>Market</span></a>
 
-		<div class="flex items-center gap-4">
-			<div class="relative">
-				<button
-					class="ai-dropdown-btn"
-					type="button"
-					(mouseover)="showAIDropdownMenu = true"
-					(mouseleave)="showAIDropdownMenu = false"
-				>
-					<span>AI Features</span>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="2"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
-						/>
-					</svg>
-				</button>
+    <ul class="nav-links">
+      <li><a routerLink="/home">Home</a></li>
+      
+      <!-- AI Features Dropdown -->
+      <li class="relative" (mouseover)="showAIDropdownMenu = true" (mouseleave)="showAIDropdownMenu = false">
+        <button class="dropdown-trigger">AI Features</button>
+        <div class="dropdown-menu gl" [ngClass]="{'hidden': !showAIDropdownMenu}">
+          @for (item of aiMenu; track $index) {
+            <a [routerLink]="item.link" class="dropdown-item">{{ item.name }}</a>
+          }
+        </div>
+      </li>
 
-				<div
-					class="ai-dropdown-menu"
-					[ngClass]="{
-						block: showAIDropdownMenu === true,
-						hidden: showAIDropdownMenu === false
-					}"
-					(mouseover)="showAIDropdownMenu = true"
-					(mouseleave)="showAIDropdownMenu = false"
-				>
-					@for (item of aiMenu; track $index) {
-					<a [routerLink]="item.link" class="account_option_item">
-						{{ item.name }}
-					</a>
-					}
-				</div>
-			</div>
+      <li><app-theme-toggle></app-theme-toggle></li>
 
-			<button class="btn-icon" (click)="themeService.toggle()" aria-label="Toggle theme">
-				@if (themeService.theme() === 'light') {
-				<svg
-					class="w-6 h-6"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-					></path>
-				</svg>
-				} @else {
-				<svg
-					class="w-6 h-6"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-					></path>
-				</svg>
-				}
-			</button>
-
-			@if(user.id()) {
-			<div class="account">
-				<div
-					class="account-trigger"
-					(mouseover)="onShowAccountOption()"
-					(mouseleave)="onHiddenAccountOption()"
-				>
-					<span>{{ user.fullName() }}</span>
-					<i class="fa-solid fa-caret-down"></i>
-				</div>
-
-				<div
-					class="account_option"
-					[ngClass]="{
-						a: showAccountOption == true,
-						b: showAccountOption == false
-					}"
-					(mouseover)="onShowAccountOption()"
-					(mouseleave)="onHiddenAccountOption()"
-				>
-					<a routerLink="/client/your-profile" class="account_option_item">Profile Info</a>
-					<a routerLink="/client/course-registration" class="account_option_item">My courses</a>
-					<a routerLink="/chat/chat-list" class="account_option_item">Chats</a>
-					<button (click)="logout()" class="account_option_item">Logout</button>
-				</div>
-			</div>
-			} @else {
-			<div class="account">
-				<div
-					(mouseover)="onShowAccountOption()"
-					(mouseleave)="onHiddenAccountOption()"
-					class="login-trigger"
-				>
-					Account
-				</div>
-
-				<div
-					class="account_option"
-					[ngClass]="{
-						a: showAccountOption == true,
-						b: showAccountOption == false
-					}"
-					(mouseover)="onShowAccountOption()"
-					(mouseleave)="onHiddenAccountOption()"
-				>
-					<a routerLink="/login" class="account_option_item">Sign in</a>
-					<a routerLink="/sign-up" class="account_option_item">Sign up</a>
-				</div>
-			</div>
-			}
-		</div>
-	</div>
-</header>
+      @if(user.id()) {
+        <li class="relative" (mouseover)="showAccountOption = true" (mouseleave)="showAccountOption = false">
+          <button class="nav-cta">{{ user.fullName() }}</button>
+          <div class="dropdown-menu gl" [ngClass]="{'hidden': !showAccountOption}">
+            <a routerLink="/client/your-profile" class="dropdown-item">Profile Info</a>
+            <a routerLink="/client/course-registration" class="dropdown-item">My courses</a>
+            <a routerLink="/chat/chat-list" class="dropdown-item">Chats</a>
+            <button (click)="logout()" class="dropdown-item">Logout</button>
+          </div>
+        </li>
+      } @else {
+        <li class="relative" (mouseover)="showAccountOption = true" (mouseleave)="showAccountOption = false">
+          <button class="nav-cta">Account</button>
+          <div class="dropdown-menu gl" [ngClass]="{'hidden': !showAccountOption}">
+            <a routerLink="/login" class="dropdown-item">Sign in</a>
+            <a routerLink="/sign-up" class="dropdown-item">Sign up</a>
+          </div>
+        </li>
+      }
+    </ul>
+  </nav>
+</div>

@@ -1,0 +1,5 @@
+<button class="theme-toggle" (click)="theme.toggle()" [attr.aria-label]="'Switch to ' + (theme.isDark() ? 'light' : 'dark') + ' mode'">
+  <div class="t-knob">
+    <span>{{ theme.isDark() ? '🌙' : '☀️' }}</span>
+  </div>
+</button>

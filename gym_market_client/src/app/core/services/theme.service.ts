@@ -1,29 +1,24 @@
-// src/app/core/services/theme.service.ts
 import { Injectable, signal } from '@angular/core';
-
-export type Theme = 'light' | 'dark';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private _theme = signal<Theme>(
-    (localStorage.getItem('gm-theme') as Theme) ??
-    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-  );
+  private _dark = signal(false);
+  readonly isDark = this._dark.asReadonly();
 
-  readonly theme = this._theme.asReadonly();
-
-  constructor() {
-    this.applyTheme(this._theme());
+  init(): void {
+    const saved = localStorage.getItem('gymmarket-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    this._dark.set(saved ? saved === 'dark' : prefersDark);
+    this.apply();
   }
 
   toggle(): void {
-    const next: Theme = this._theme() === 'light' ? 'dark' : 'light';
-    this._theme.set(next);
-    this.applyTheme(next);
-    localStorage.setItem('gm-theme', next);
+    this._dark.update(d => !d);
+    this.apply();
+    localStorage.setItem('gymmarket-theme', this._dark() ? 'dark' : 'light');
   }
 
-  private applyTheme(theme: Theme): void {
-    document.documentElement.setAttribute('data-theme', theme);
+  private apply(): void {
+    document.documentElement.setAttribute('data-theme', this._dark() ? 'dark' : 'light');
   }
 }

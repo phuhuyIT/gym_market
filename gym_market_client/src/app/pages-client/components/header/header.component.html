@@ -55,7 +55,7 @@
 
 		<div class="flex items-center gap-4">
 			<button class="btn-icon" (click)="themeService.toggle()" aria-label="Toggle theme">
-				@if (themeService.theme() === 'light') {
+				@if (!themeService.isDark()) {
 				<svg
 					class="w-6 h-6"
 					fill="none"

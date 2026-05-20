@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { GmButtonComponent } from '../../shared';
+import { RevealDirective } from '../../shared/directives/reveal.directive';
 
 @Component({
 	selector: 'app-home',
 	standalone: true,
-	imports: [CommonModule, RouterLink, GmButtonComponent],
+	imports: [CommonModule, RouterLink, RevealDirective],
 	templateUrl: './home.component.html',
 	styleUrl: './home.component.scss',
 })

@@ -180,6 +180,20 @@ public class AccountServiceTests
         Assert.Same(user, jwtService.User);
     }
 
+    [Fact]
+    public async Task GoogleLogin_returns_error_for_invalid_token()
+    {
+        var repository = new RecordingAccountRepository();
+        var service = CreateService(repository);
+
+        var response = await service.GoogleLogin(new GoogleLoginDto { IdToken = "invalid-token" });
+
+        Assert.False(response.Success);
+        Assert.Equal(400, response.StatusCode);
+        // The error message comes from Google.Apis.Auth, it will likely complain about the token format
+        Assert.NotEmpty(response.Errors);
+    }
+
     private static AccountService CreateService(IAccountRepository repository)
     {
         return CreateService(repository, new RecordingPasswordSignInService(), new RecordingJwtService());
