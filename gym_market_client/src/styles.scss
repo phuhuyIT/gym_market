@@ -4,93 +4,53 @@
 
 /* ── LIGHT MODE ─────────────────────────────────────── */
 [data-theme="light"] {
-  --bg:            #c8d8ff;
-  --bg2:           #d4e2ff;
-  --text:          #040e28;
-  --text-soft:     rgba(4, 14, 40, 0.56);
-  --text-xsoft:    rgba(4, 14, 40, 0.34);
+  --bg:            #F2F2F7; // iOS System Background
+  --bg2:           #FFFFFF;
+  --text:          #000000;
+  --text-soft:     #3C3C43; // iOS Secondary Label (60% opacity equivalent)
+  --text-xsoft:    #3C3C4399; // iOS Tertiary Label
 
-  /* Glass fill — high opacity so it reads as solid glass */
-  --glass-fill:    rgba(255, 255, 255, 0.72);
-  --glass-fill2:   rgba(255, 255, 255, 0.82);
-  --glass-border:  rgba(255, 255, 255, 0.90);
-  --glass-border2: rgba(255, 255, 255, 1.00);
+  /* iOS Materials */
+  --glass-fill:    rgba(255, 255, 255, 0.7);
+  --glass-fill2:   rgba(255, 255, 255, 0.85);
+  --glass-border:  rgba(0, 0, 0, 0.05);
+  --glass-border2: rgba(0, 0, 0, 0.1);
 
-  /* Specular dome values */
-  --spec-apex:     rgba(255, 255, 255, 0.98);
-  --spec-mid:      rgba(255, 255, 255, 0.55);
-  --spec-fade:     rgba(255, 255, 255, 0.00);
+  /* Shadows — Soft diffuse shadows */
+  --float-sm: 0 2px 8px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.08);
+  --float-md: 0 4px 12px rgba(0,0,0,0.05), 0 12px 32px rgba(0,0,0,0.12);
+  --float-lg: 0 8px 24px rgba(0,0,0,0.08), 0 24px 64px rgba(0,0,0,0.16);
 
-  /* Bottom bounce light */
-  --bounce:        rgba(255, 255, 255, 0.30);
+  /* iOS System Colors */
+  --blue:          #007AFF;
+  --blue2:         #0056b3;
+  --blue-light:    #5856D6;
+  --blue-glow:     rgba(0, 122, 255, 0.3);
+  --cyan:          #32ADE6;
+  --indigo:        #5856D6;
 
-  /* Prismatic chromatic fringe on glass edges */
-  --prism-l:       rgba(130, 180, 255, 0.55);
-  --prism-r:       rgba(200, 130, 255, 0.35);
-
-  /* Float shadows — 3 layers for genuine depth */
-  --float-sm:
-    0 2px 8px   rgba(30, 60, 180, 0.10),
-    0 12px 40px rgba(30, 60, 180, 0.14),
-    0 1.5px 0   rgba(255, 255, 255, 1.00) inset,
-    0 -1px 0    rgba(80, 120, 255, 0.10)  inset;
-
-  --float-md:
-    0 4px 16px  rgba(30, 60, 180, 0.12),
-    0 24px 64px rgba(30, 60, 180, 0.20),
-    0 60px 120px rgba(30, 60, 180, 0.10),
-    0 2px 0     rgba(255, 255, 255, 1.00) inset,
-    0 -1px 0    rgba(80, 120, 255, 0.12)  inset;
-
-  --float-lg:
-    0 8px 24px   rgba(30, 60, 180, 0.18),
-    0 32px 80px  rgba(30, 60, 180, 0.26),
-    0 80px 160px rgba(30, 60, 180, 0.14),
-    0 2px 0      rgba(255, 255, 255, 1.00) inset,
-    0 -1.5px 0   rgba(80, 120, 255, 0.14) inset;
-
-  /* Accent colors */
-  --blue:          #1d4fd8;
-  --blue2:         #1e3fa0;
-  --blue-light:    #60a5fa;
-  --blue-glow:     rgba(29, 79, 216, 0.45);
-  --cyan:          #0284c7;
-  --indigo:        #5b5af0;
-
-  /* Ambient orb colors — rich so they show through glass */
-  --orb1: #7eb0ff;
-  --orb2: #85e9ff;
-  --orb3: #b4b0ff;
-  --orb-op: 0.90;
+  /* Ambient orbs — more subtle */
+  --orb1: #007AFF;
+  --orb2: #5856D6;
+  --orb3: #34C759;
+  --orb-op: 0.15;
 
   /* Nav */
-  --nav-fill:      rgba(255, 255, 255, 0.68);
-  --nav-border:    rgba(255, 255, 255, 1.00);
-  --nav-float:
-    0 4px 16px rgba(30, 60, 180, 0.14),
-    0 24px 56px rgba(30, 60, 180, 0.18),
-    0 2px 0 rgba(255, 255, 255, 1.00) inset,
-    0 -1px 0 rgba(80, 120, 255, 0.10) inset;
+  --nav-fill:      rgba(255, 255, 255, 0.8);
+  --nav-border:    rgba(0, 0, 0, 0.05);
+  --nav-float:     0 4px 12px rgba(0,0,0,0.05);
 
-  /* Icon tint backgrounds */
-  --icon-blue:     rgba(29,  79, 216, 0.12);
-  --icon-cyan:     rgba(2,  132, 199, 0.11);
-  --icon-indigo:   rgba(91,  90, 240, 0.11);
-
-  --section-alt:   rgba(29, 79, 216, 0.04);
-  --radius:        22px;
-
-  /* Status colors */
-  --success:       #10B981;
-  --warning:       #F59E0B;
-  --error:         #EF4444;
-
-  /* Radius scale */
-  --radius-sm:     8px;
-  --radius-md:     14px;
+  --radius:        24px;
+  --radius-sm:     10px;
+  --radius-md:     16px;
   --radius-pill:   100px;
 
-  /* Backward-compat aliases (3rd token system) */
+  /* Status */
+  --success:       #34C759;
+  --warning:       #FF9500;
+  --error:         #FF3B30;
+
+  /* Backward-compat */
   --accent:        var(--blue);
   --text-1:        var(--text);
   --text-2:        var(--text-soft);
@@ -98,94 +58,57 @@
   --surface:       var(--glass-fill);
   --surface-2:     var(--glass-fill2);
   --border:        var(--glass-border);
-  --font-display:  'Syne', sans-serif;
-  --font-mono:     'DM Sans', sans-serif;
-  --font-body:     'DM Sans', sans-serif;
-  --transition:    0.3s ease;
+  --font-display:  'Outfit', sans-serif;
+  --font-mono:     'Inter', sans-serif;
+  --font-body:     'Inter', sans-serif;
+  --transition:    0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── DARK MODE ──────────────────────────────────────── */
 [data-theme="dark"] {
-  --bg:            #020510;
-  --bg2:           #060918;
-  --text:          #e0ecff;
-  --text-soft:     rgba(224, 236, 255, 0.50);
-  --text-xsoft:    rgba(224, 236, 255, 0.28);
+  --bg:            #000000;
+  --bg2:           #1C1C1E;
+  --text:          #FFFFFF;
+  --text-soft:     #EBEBF5;
+  --text-xsoft:    #EBEBF599;
 
-  /* In dark mode the fill is lower opacity but blur + saturation
-     makes the orb colors bleed through as blue iridescence */
-  --glass-fill:    rgba(140, 170, 255, 0.08);
-  --glass-fill2:   rgba(160, 190, 255, 0.13);
-  --glass-border:  rgba(255, 255, 255, 0.18);
-  --glass-border2: rgba(255, 255, 255, 0.26);
+  /* iOS Dark Materials */
+  --glass-fill:    rgba(28, 28, 30, 0.7);
+  --glass-fill2:   rgba(44, 44, 46, 0.85);
+  --glass-border:  rgba(255, 255, 255, 0.08);
+  --glass-border2: rgba(255, 255, 255, 0.12);
 
-  --spec-apex:     rgba(255, 255, 255, 0.60);
-  --spec-mid:      rgba(255, 255, 255, 0.20);
-  --spec-fade:     rgba(255, 255, 255, 0.00);
+  --float-sm: 0 2px 8px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.5);
+  --float-md: 0 4px 12px rgba(0,0,0,0.5), 0 12px 32px rgba(0,0,0,0.6);
+  --float-lg: 0 8px 24px rgba(0,0,0,0.6), 0 24px 64px rgba(0,0,0,0.7);
 
-  --bounce:        rgba(100, 160, 255, 0.12);
+  --blue:          #0A84FF;
+  --blue2:         #0040DD;
+  --blue-light:    #5E5CE6;
+  --blue-glow:     rgba(10, 132, 255, 0.3);
+  --cyan:          #64D2FF;
+  --indigo:        #5E5CE6;
 
-  --prism-l:       rgba(80,  140, 255, 0.40);
-  --prism-r:       rgba(160,  80, 255, 0.28);
+  --orb1: #0A84FF;
+  --orb2: #5E5CE6;
+  --orb3: #30D158;
+  --orb-op: 0.25;
 
-  --float-sm:
-    0 2px 8px   rgba(0, 0, 0, 0.50),
-    0 12px 40px rgba(0, 0, 0, 0.60),
-    0 1px 0     rgba(255, 255, 255, 0.18) inset,
-    0 -1px 0    rgba(0, 0, 0, 0.30)       inset;
+  --nav-fill:      rgba(28, 28, 30, 0.8);
+  --nav-border:    rgba(255, 255, 255, 0.08);
+  --nav-float:     0 4px 12px rgba(0,0,0,0.5);
 
-  --float-md:
-    0 4px 16px  rgba(0, 0, 0, 0.55),
-    0 28px 70px rgba(0, 0, 0, 0.65),
-    0 60px 120px rgba(0, 0, 0, 0.40),
-    0 1.5px 0   rgba(255, 255, 255, 0.20) inset,
-    0 -1px 0    rgba(0, 0, 0, 0.35)       inset;
-
-  --float-lg:
-    0 8px 24px   rgba(0, 0, 0, 0.60),
-    0 36px 90px  rgba(0, 0, 0, 0.75),
-    0 80px 160px rgba(0, 0, 0, 0.50),
-    0 2px 0      rgba(255, 255, 255, 0.22) inset,
-    0 -1.5px 0   rgba(0, 0, 0, 0.40)       inset;
-
-  --blue:          #4f8eff;
-  --blue2:         #2563eb;
-  --blue-light:    #93c5fd;
-  --blue-glow:     rgba(79, 142, 255, 0.50);
-  --cyan:          #22d3ee;
-  --indigo:        #818cf8;
-
-  --orb1: #1a3a9e;
-  --orb2: #0b5e7a;
-  --orb3: #2d2880;
-  --orb-op: 0.55;
-
-  --nav-fill:      rgba(10, 18, 50, 0.55);
-  --nav-border:    rgba(255, 255, 255, 0.20);
-  --nav-float:
-    0 4px 16px rgba(0, 0, 0, 0.55),
-    0 24px 56px rgba(0, 0, 0, 0.65),
-    0 1.5px 0 rgba(255, 255, 255, 0.20) inset,
-    0 -1px 0  rgba(0, 0, 0, 0.30)       inset;
-
-  --icon-blue:     rgba(79,  142, 255, 0.18);
-  --icon-cyan:     rgba(34,  211, 238, 0.15);
-  --icon-indigo:   rgba(129, 140, 248, 0.16);
-
-  --section-alt:   rgba(79, 142, 255, 0.05);
-  --radius:        22px;
-
-  /* Status colors */
-  --success:       #34D399;
-  --warning:       #FBBF24;
-  --error:         #F87171;
-
-  /* Radius scale */
-  --radius-sm:     8px;
-  --radius-md:     14px;
+  --radius:        24px;
+  --radius-sm:     10px;
+  --radius-md:     16px;
   --radius-pill:   100px;
 
-  /* Backward-compat aliases (3rd token system) */
+  /* Status */
+  --success:       #30D158;
+  --warning:       #FF9F0A;
+  --error:         #FF453A;
+
+  /* Backward-compat */
   --accent:        var(--blue);
   --text-1:        var(--text);
   --text-2:        var(--text-soft);
@@ -193,10 +116,10 @@
   --surface:       var(--glass-fill);
   --surface-2:     var(--glass-fill2);
   --border:        var(--glass-border);
-  --font-display:  'Syne', sans-serif;
-  --font-mono:     'DM Sans', sans-serif;
-  --font-body:     'DM Sans', sans-serif;
-  --transition:    0.3s ease;
+  --font-display:  'Outfit', sans-serif;
+  --font-mono:     'Inter', sans-serif;
+  --font-body:     'Inter', sans-serif;
+  --transition:    0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── GLOBAL RESET ───────────────────────────────────── */
@@ -206,9 +129,11 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   min-height: 100vh;
   transition: background 0.5s, color 0.45s;
