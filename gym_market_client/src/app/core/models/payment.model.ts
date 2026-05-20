@@ -7,6 +7,7 @@ export interface Payment {
   paymentStatus: 'Pending' | 'Paid' | 'Canceled';
   paymentType: string;
   note: string;
+  fullName?: string;
   createdAt: string;
 }
 

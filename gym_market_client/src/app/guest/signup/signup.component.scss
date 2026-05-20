@@ -1,13 +1,11 @@
-@use 'mixins' as mix;
-
 .signup {
   display: flex;
   min-height: 100vh;
-  background: var(--bg-base);
+  // background: var(--bg);
 
   &__brand {
     flex: 0 0 35%;
-    background: var(--bg-base);
+    // background: var(--bg);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -17,7 +15,14 @@
     overflow: hidden;
 
     &::before {
-      @include mix.glow-orb(rgba(59, 91, 246, 0.15), 500px);
+      content: '';
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(29, 79, 216, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+      position: absolute;
+      filter: blur(40px);
       bottom: -100px;
       right: -100px;
     }
@@ -28,11 +33,11 @@
   }
 
   &__wordmark {
-    font-family: 'Sora', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-weight: 800;
     font-size: clamp(60px, 6vw, 100px);
     line-height: 0.9;
-    color: var(--text-primary);
+    color: var(--text);
     text-transform: uppercase;
     letter-spacing: -0.04em;
     position: relative;
@@ -41,7 +46,7 @@
 
   &__tagline {
     font-size: 18px;
-    color: var(--text-secondary);
+    color: var(--text-soft);
     margin-top: 24px;
     letter-spacing: 0.02em;
     position: relative;
@@ -55,29 +60,29 @@
     justify-content: center;
     padding: 40px;
     overflow-y: auto;
-    background: radial-gradient(circle at 20% 70%, rgba(59, 91, 246, 0.05) 0%, transparent 70%);
   }
 
   &__form-content {
-    @include mix.glass-card;
     width: 100%;
     max-width: 640px;
-    padding: 3rem;
+    padding: 4rem 3.5rem;
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   &__title {
-    font-family: 'Sora', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-weight: 700;
     font-size: 2.5rem;
-    color: var(--text-primary);
+    color: var(--text);
     line-height: 1.1;
   }
 
   &__subtitle {
-    color: var(--text-secondary);
+    color: var(--text-soft);
     font-size: 1rem;
     margin-top: -1rem;
   }
@@ -93,38 +98,33 @@
   }
 
   &__role-card {
-    background: var(--bg-surface);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
+    padding: 2.5rem 2rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 1rem;
+    gap: 1.25rem;
 
     &:hover {
-      border-color: var(--accent-500);
-      transform: translateY(-6px);
-      background: var(--bg-surface-hover);
-      box-shadow: 0 12px 40px var(--accent-glow);
+      border-color: var(--blue);
+      transform: translateY(-8px);
+      background: var(--icon-blue);
+      box-shadow: 0 12px 40px var(--blue-glow);
     }
 
     h3 {
-      font-family: 'Sora', sans-serif;
+      font-family: 'Syne', sans-serif;
       font-weight: 700;
       font-size: 1.125rem;
-      color: var(--text-primary);
+      color: var(--text);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
     p {
       font-size: 0.875rem;
-      color: var(--text-secondary);
+      color: var(--text-soft);
       line-height: 1.5;
     }
   }
@@ -134,7 +134,7 @@
   }
 
   &__back {
-    color: var(--accent-500);
+    color: var(--blue);
     font-size: 0.875rem;
     cursor: pointer;
     display: flex;
@@ -162,7 +162,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--accent-500);
+    color: var(--blue);
     border-bottom: 1px solid var(--glass-border);
     padding-bottom: 0.5rem;
   }
@@ -189,17 +189,17 @@
     margin-top: 1rem;
     
     a {
-      color: var(--text-secondary);
+      color: var(--text-soft);
       font-size: 0.875rem;
       transition: color 0.2s ease;
 
       .accent {
-        color: var(--accent-500);
+        color: var(--blue);
         font-weight: 600;
       }
 
       &:hover {
-        color: var(--text-primary);
+        color: var(--text);
       }
     }
   }

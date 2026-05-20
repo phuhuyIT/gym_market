@@ -10,7 +10,6 @@
   display: flex; justify-content: center;
 
   &__bar {
-    @extend .gl;
     width: 100%; max-width: 800px;
     padding: 8px 8px 8px 24px;
     border-radius: 100px;

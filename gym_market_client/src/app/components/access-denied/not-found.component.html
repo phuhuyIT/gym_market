@@ -1,10 +1,21 @@
-<section class="bg-white ">
-    <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-        <div class="mx-auto max-w-screen-sm text-center">
-            <h1 class="mb-4 text-7xl tracking-tight font-extrabold lg:text-9xl text-primary-600 ">404</h1>
-            <p class="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl ">Something's missing.</p>
-            <p class="mb-4 text-lg font-light text-gray-500 ">Sorry, we can't find that page. You'll find lots to explore on the home page. </p>
-            <a href="#" class="inline-flex text-white bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center  my-4">Back to Homepage</a>
-        </div>   
+<div class="not-found-wrapper">
+  <div class="hero-content" style="text-align: center; margin: 0 auto;">
+    <div class="hero-badge gl" style="margin: 0 auto 26px;">
+      <span class="hero-badge-dot" style="background: var(--error);"></span>
+      ERROR 404
     </div>
-</section>
+    
+    <h1 class="hero-title" style="font-size: clamp(5rem, 15vw, 12rem); margin-bottom: 0;">404</h1>
+    <h2 class="section-title" style="margin-bottom: 24px;">Lost in the Gym?</h2>
+    
+    <p class="hero-sub" style="margin: 0 auto 44px;">
+      The page you're looking for has either moved or doesn't exist. 
+      Don't worry, even elite athletes get lost sometimes.
+    </p>
+
+    <div class="hero-actions" style="justify-content: center;">
+      <a routerLink="/" class="btn-primary">Back to Homepage</a>
+      <a routerLink="/client/course-search" class="btn-ghost">Find a Course</a>
+    </div>
+  </div>
+</div>

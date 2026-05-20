@@ -130,4 +130,152 @@
       </div>
     </div>
   </section>
+
+  <!-- Section 5: Featured Trainers -->
+  <section>
+    <div class="section-head" appReveal>
+      <span class="section-tag">Experts</span>
+      <h2 class="section-title">Meet Our Elite Trainers</h2>
+    </div>
+
+    <div class="trainer-grid">
+      <div class="trainer-card gl-card" appReveal [style.transitionDelay]="'0.1s'">
+        <div class="trainer-img strength">
+          <span style="font-size: 3rem;">🏋️</span>
+          <span class="specialty-tag">Strength</span>
+        </div>
+        <div style="padding: 24px;">
+          <h3 class="trainer-name">Alex Nguyen</h3>
+          <p class="trainer-role">NASM Certified · 8 years</p>
+          <a routerLink="/client/trainer-list" class="trainer-btn">View Profile</a>
+        </div>
+      </div>
+
+      <div class="trainer-card gl-card" appReveal [style.transitionDelay]="'0.2s'">
+        <div class="trainer-img cardio">
+          <span style="font-size: 3rem;">🏃</span>
+          <span class="specialty-tag">Cardio</span>
+        </div>
+        <div style="padding: 24px;">
+          <h3 class="trainer-name">Sarah Kim</h3>
+          <p class="trainer-role">ACE Certified · 6 years</p>
+          <a routerLink="/client/trainer-list" class="trainer-btn">View Profile</a>
+        </div>
+      </div>
+
+      <div class="trainer-card gl-card" appReveal [style.transitionDelay]="'0.3s'">
+        <div class="trainer-img yoga">
+          <span style="font-size: 3rem;">🧘</span>
+          <span class="specialty-tag">Yoga</span>
+        </div>
+        <div style="padding: 24px;">
+          <h3 class="trainer-name">Maya Patel</h3>
+          <p class="trainer-role">RYT-500 · 10 years</p>
+          <a routerLink="/client/trainer-list" class="trainer-btn">View Profile</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Testimonials -->
+  <section>
+    <div class="section-head" appReveal>
+      <span class="section-tag">Reviews</span>
+      <h2 class="section-title">What Our Members Say</h2>
+    </div>
+
+    <div class="test-grid">
+      <div class="testimonial-card gl-card" appReveal [style.transitionDelay]="'0.1s'">
+        <div class="quote-mark">"</div>
+        <div class="stars">★★★★★</div>
+        <p class="step-text">GymMarket completely transformed how I train. The AI body fat analysis is incredibly accurate!</p>
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 20px;">
+          <div class="author-avatar blue">🏋️</div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem;">Minh Tran</div>
+            <div style="color: var(--text-xsoft); font-size: 0.8rem;">Member · 2 years</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card gl-card" appReveal [style.transitionDelay]="'0.2s'">
+        <div class="quote-mark">"</div>
+        <div class="stars">★★★★★</div>
+        <p class="step-text">Found my perfect yoga instructor within minutes. The booking system is seamless and intuitive.</p>
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 20px;">
+          <div class="author-avatar cyan">🧘</div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem;">Linh Dao</div>
+            <div style="color: var(--text-xsoft); font-size: 0.8rem;">Member · 1 year</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card gl-card" appReveal [style.transitionDelay]="'0.3s'">
+        <div class="quote-mark">"</div>
+        <div class="stars">★★★★☆</div>
+        <p class="step-text">As a trainer, this platform gave me access to hundreds of new clients. Revenue doubled in 3 months.</p>
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 20px;">
+          <div class="author-avatar indigo">💪</div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem;">Duc Vo</div>
+            <div style="color: var(--text-xsoft); font-size: 0.8rem;">Trainer · 3 years</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7: Pricing -->
+  <section>
+    <div class="section-head" appReveal>
+      <span class="section-tag">Plans</span>
+      <h2 class="section-title">Simple, Transparent Pricing</h2>
+    </div>
+
+    <div class="price-grid">
+      <div class="pricing-card gl-card" appReveal [style.transitionDelay]="'0.1s'">
+        <h3 class="price-tier">Starter</h3>
+        <div class="price-amount">Free</div>
+        <p class="price-desc">Perfect for exploring the platform</p>
+        <ul class="price-features">
+          <li>Browse all trainers</li>
+          <li>BMI Calculator</li>
+          <li>1 free course trial</li>
+          <li>Community access</li>
+        </ul>
+        <a routerLink="/sign-up" class="price-btn ghost">Get Started</a>
+      </div>
+
+      <div class="pricing-card gl-card featured" appReveal [style.transitionDelay]="'0.2s'">
+        <div class="price-tint"></div>
+        <span class="popular-tag">Most Popular</span>
+        <h3 class="price-tier">Pro</h3>
+        <div class="price-amount">499k<span>/month</span></div>
+        <p class="price-desc">For dedicated fitness enthusiasts</p>
+        <ul class="price-features">
+          <li>Unlimited courses</li>
+          <li>AI Body Analysis</li>
+          <li>Direct trainer chat</li>
+          <li>Nutrition tracking</li>
+          <li>Priority support</li>
+        </ul>
+        <a routerLink="/sign-up" class="price-btn solid">Start Pro Trial</a>
+      </div>
+
+      <div class="pricing-card gl-card" appReveal [style.transitionDelay]="'0.3s'">
+        <h3 class="price-tier">Elite</h3>
+        <div class="price-amount">999k<span>/month</span></div>
+        <p class="price-desc">For professional athletes & trainers</p>
+        <ul class="price-features">
+          <li>Everything in Pro</li>
+          <li>1-on-1 coaching</li>
+          <li>Custom meal plans</li>
+          <li>Advanced analytics</li>
+          <li>Trainer dashboard</li>
+        </ul>
+        <a routerLink="/sign-up" class="price-btn ghost">Contact Sales</a>
+      </div>
+    </div>
+  </section>
 </div>

@@ -1,22 +1,20 @@
-@use 'mixins' as mix;
-
 .trainer-profile {
-  background: var(--bg-base);
+  background: var(--bg);
   min-height: 100vh;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 // Header Section
 .profile-header {
-  background: var(--bg-surface);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  background: var(--glass-fill);
+  backdrop-filter: blur(48px) saturate(180%);
   border-bottom: 1px solid var(--glass-border);
   position: relative;
   padding-bottom: 3rem;
 
   &__banner {
     height: 200px;
-    background: linear-gradient(135deg, var(--accent-100), var(--accent-50));
+    background: linear-gradient(135deg, var(--icon-blue), var(--icon-blue));
     border-bottom: 1px solid var(--glass-border);
     opacity: 0.5;
   }
@@ -39,11 +37,11 @@
   &__avatar {
     width: 180px;
     height: 180px;
-    border-radius: var(--radius-lg);
-    border: 4px solid var(--bg-base);
-    background: var(--bg-surface);
+    border-radius: var(--radius);
+    border: 4px solid var(--bg);
+    background: var(--glass-fill);
     overflow: hidden;
-    box-shadow: var(--glass-shadow-lg);
+    box-shadow: var(--float-md);
     flex-shrink: 0;
 
     img { width: 100%; height: 100%; object-fit: cover; }
@@ -63,15 +61,15 @@
   }
 
   &__name {
-    font-family: 'Sora', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 3rem;
     font-weight: 800;
     line-height: 1;
-    color: var(--text-primary);
+    color: var(--text);
   }
 
   &__bio {
-    color: var(--text-secondary);
+    color: var(--text-soft);
     font-size: 1rem;
     max-width: 600px;
     margin-bottom: 2rem;
@@ -96,11 +94,11 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.625rem;
     font-weight: 700;
-    background: var(--accent-50);
-    color: var(--accent-500);
+    background: var(--icon-blue);
+    color: var(--blue);
     padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--accent-200);
+    border-radius: 8px;
+    border: 1px solid rgba(29, 79, 216, 0.18);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -117,8 +115,8 @@
   flex-direction: column;
   gap: 0.25rem;
 
-  &__value { font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); }
-  &__label { font-family: 'DM Sans', sans-serif; font-size: 0.5625rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  &__value { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--text); }
+  &__label { font-family: 'DM Sans', sans-serif; font-size: 0.5625rem; font-weight: 700; color: var(--text-xsoft); letter-spacing: 0.1em; text-transform: uppercase; }
 }
 
 // Main Grid
@@ -138,10 +136,10 @@
 }
 
 .section-title {
-  font-family: 'Sora', sans-serif;
+  font-family: 'Syne', sans-serif;
   font-weight: 700;
   font-size: 1.5rem;
-  color: var(--text-primary);
+  color: var(--text);
   margin-bottom: 2rem;
   border-bottom: 1px solid var(--glass-border);
   padding-bottom: 0.75rem;
@@ -160,9 +158,9 @@
   gap: 0.5rem;
 }
 
-.detail-label { font-family: 'DM Sans', sans-serif; font-size: 0.625rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
-.detail-value { font-size: 1rem; color: var(--text-primary); font-weight: 600; }
-.detail-text { font-size: 0.9375rem; color: var(--text-secondary); line-height: 1.6; }
+.detail-label { font-family: 'DM Sans', sans-serif; font-size: 0.625rem; font-weight: 700; color: var(--text-xsoft); letter-spacing: 0.1em; text-transform: uppercase; }
+.detail-value { font-size: 1rem; color: var(--text); font-weight: 600; }
+.detail-text { font-size: 0.9375rem; color: var(--text-soft); line-height: 1.6; }
 
 // Courses Grid
 .courses-grid {
@@ -172,54 +170,66 @@
 }
 
 .course-mini-card {
-  @include mix.glass-card;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--float-sm);
+  backdrop-filter: blur(48px) saturate(2.8) brightness(1.08);
+  -webkit-backdrop-filter: blur(48px) saturate(2.8) brightness(1.08);
+  transition: box-shadow 0.3s, transform 0.3s;
   padding: 0 !important;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.2s ease;
-  &:hover { transform: translateY(-4px); border-color: var(--accent-500); }
+  &:hover { transform: translateY(-4px); border-color: var(--blue); box-shadow: var(--float-md); }
 
   &__img {
     aspect-ratio: 16/9;
-    background: var(--bg-overlay);
+    background: var(--section-alt);
     overflow: hidden;
     margin: 4px 4px 0;
-    border-radius: calc(var(--radius-lg) - 4px);
+    border-radius: calc(var(--radius) - 4px);
     img { width: 100%; height: 100%; object-fit: cover; }
   }
 
   &__content {
     padding: 1rem;
-    h3 { font-family: 'Sora', sans-serif; font-size: 0.9375rem; font-weight: 700; margin-bottom: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    h3 { font-family: 'Syne', sans-serif; font-size: 0.9375rem; font-weight: 700; margin-bottom: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   }
 
   &__footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .price { color: var(--accent-500); font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.25rem; }
-    .category { font-family: 'DM Sans', sans-serif; font-size: 0.5625rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .price { color: var(--blue); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.25rem; }
+    .category { font-family: 'DM Sans', sans-serif; font-size: 0.5625rem; font-weight: 700; color: var(--text-xsoft); text-transform: uppercase; }
   }
 }
 
 // Sidebar
 .activity-card {
-  @include mix.glass-card;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--float-sm);
+  backdrop-filter: blur(48px) saturate(2.8) brightness(1.08);
+  -webkit-backdrop-filter: blur(48px) saturate(2.8) brightness(1.08);
+  transition: box-shadow 0.3s, transform 0.3s;
+  &:hover { box-shadow: var(--float-md); transform: translateY(-2px); }
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.sidebar-title { font-family: 'DM Sans', sans-serif; font-size: 0.6875rem; font-weight: 700; color: var(--accent-500); letter-spacing: 0.1em; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; text-transform: uppercase; }
+.sidebar-title { font-family: 'DM Sans', sans-serif; font-size: 0.6875rem; font-weight: 700; color: var(--blue); letter-spacing: 0.1em; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; text-transform: uppercase; }
 
 .activity-stat {
   display: flex;
   justify-content: space-between;
-  .label { font-size: 0.8125rem; color: var(--text-secondary); font-weight: 500; }
-  .value { font-weight: 700; color: var(--text-primary); font-size: 0.8125rem; }
+  .label { font-size: 0.8125rem; color: var(--text-soft); font-weight: 500; }
+  .value { font-weight: 700; color: var(--text); font-size: 0.8125rem; }
 }
 
-.empty-courses { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.875rem; grid-column: 1 / -1; }
+.empty-courses { text-align: center; padding: 3rem; color: var(--text-xsoft); font-size: 0.875rem; grid-column: 1 / -1; }
 
 gm-button { width: 100%; }
