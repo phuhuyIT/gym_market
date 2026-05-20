@@ -46,24 +46,22 @@
 				}
 			</button>
 
-			<div class="account">
-				<div
-					class="account-trigger"
-					(mouseover)="onShowAccountOption()"
-					(mouseleave)="onHiddenAccountOption()"
-				>
+			<div 
+				class="account"
+				(mouseover)="onShowAccountOption()"
+				(mouseleave)="onHiddenAccountOption()"
+			>
+				<div class="account-trigger">
 					<span>{{ userStore.fullName() }}</span>
 					<i class="fa-solid fa-caret-down"></i>
 				</div>
-
+ 
 				<div
 					class="account_option"
 					[ngClass]="{
 						a: showAccountOption == true,
 						b: showAccountOption == false
 					}"
-					(mouseover)="onShowAccountOption()"
-					(mouseleave)="onHiddenAccountOption()"
 				>
 					<a routerLink="/agency/your-profile" class="account_option_item">Profile</a>
 					<a routerLink="/chat/chat-list" class="account_option_item">Chats</a>
