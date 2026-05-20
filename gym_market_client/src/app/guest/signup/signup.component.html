@@ -4,24 +4,24 @@
     <p class="signup__tagline">Join our community of athletes and trainers.</p>
   </div>
   <div class="signup__form-panel">
-    <div class="signup__form-content">
+    <div class="signup__form-content gl">
       <h2 class="signup__title">Create Account</h2>
       
       <!-- Role Selection -->
       <div class="signup__role-selection" *ngIf="!model.role">
         <p class="signup__subtitle">Select your role to get started</p>
         <div class="signup__role-cards">
-          <div class="signup__role-card" (click)="selectRole('Student')">
-            <div class="signup__role-icon">🏃</div>
-            <h3>I WANT TO TRAIN</h3>
-            <p>Achieve your fitness goals with expert guidance.</p>
-          </div>
-          <div class="signup__role-card" (click)="selectRole('Trainer')">
-            <div class="signup__role-icon">💪</div>
-            <h3>I AM A TRAINER</h3>
-            <p>Share your expertise and grow your business.</p>
-          </div>
+        <div class="signup__role-card gl" (click)="selectRole('Client')">
+          <div class="signup__role-icon">💪</div>
+          <h3>Student</h3>
+          <p>I want to browse courses and train with elite professionals.</p>
         </div>
+        <div class="signup__role-card gl" (click)="selectRole('Agency')">
+          <div class="signup__role-icon">🥇</div>
+          <h3>Trainer</h3>
+          <p>I want to create courses, manage students and grow my brand.</p>
+        </div>
+      </div>
       </div>
 
       <!-- Signup Form -->

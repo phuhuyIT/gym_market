@@ -1,7 +1,5 @@
-@use 'mixins' as mix;
-
 .wrapper {
-  background: var(--bg-base);
+  background: var(--bg);
   min-height: 100vh;
   padding: 4rem 1.5rem;
 }
@@ -20,15 +18,21 @@
 }
 
 .registration-card {
-  @include mix.glass-card;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--float-sm);
+  backdrop-filter: blur(48px) saturate(2.8) brightness(1.08);
+  -webkit-backdrop-filter: blur(48px) saturate(2.8) brightness(1.08);
+  transition: box-shadow 0.3s, transform 0.3s;
   padding: 0 !important;
   overflow: hidden;
-  transition: all 0.3s ease;
   position: relative;
 
   &:hover {
     transform: translateY(-8px);
-    border-color: var(--accent-400);
+    border-color: var(--blue-light);
+    box-shadow: var(--float-md);
   }
 
   &__status {
@@ -37,7 +41,7 @@
     left: 1rem;
     z-index: 10;
     padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-pill);
+    border-radius: 100px;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.625rem;
     font-weight: 700;
@@ -61,10 +65,10 @@
 
   &__img-wrap {
     aspect-ratio: 16 / 9;
-    background: var(--bg-overlay);
+    background: var(--section-alt);
     overflow: hidden;
     margin: 4px 4px 0;
-    border-radius: calc(var(--radius-lg) - 4px);
+    border-radius: calc(var(--radius) - 4px);
     
     img { width: 100%; height: 100%; object-fit: cover; }
   }
@@ -77,10 +81,10 @@
   }
 
   &__title {
-    font-family: 'Sora', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 1.125rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--text);
     line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -90,7 +94,7 @@
 
   &__description {
     font-size: 0.8125rem;
-    color: var(--text-secondary);
+    color: var(--text-soft);
     line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 2;

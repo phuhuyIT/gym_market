@@ -1,20 +1,17 @@
-@use 'mixins' as mix;
-
 .course-details {
-  background: var(--bg-base);
+  // background: var(--bg); // Removed to allow ambient orbs
   min-height: 100vh;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 // Hero Section
 .course-hero {
-  background: var(--bg-surface);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  border-bottom: 1px solid var(--glass-border);
-  padding: 5rem 0;
+  padding: 140px 0 80px;
+  position: relative;
   
   &__content {
-    max-width: 800px;
+    max-width: 900px;
+    animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   &__meta {
@@ -24,13 +21,25 @@
   }
 
   &__title {
-    font-family: 'Sora', sans-serif;
-    font-weight: 800;
-    font-size: clamp(3rem, 8vw, 5rem);
-    line-height: 1;
-    margin-bottom: 2rem;
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    margin-bottom: 32px;
+  }
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &::before {
+    content: ''; width: 4px; height: 24px;
+    background: var(--blue); border-radius: 4px;
   }
 }
 
@@ -39,21 +48,21 @@
   font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--accent-500);
-  border: 1.5px solid var(--accent-200);
+  color: var(--blue);
+  border: 1.5px solid rgba(29, 79, 216, 0.18);
   padding: 0.25rem 0.75rem;
-  border-radius: var(--radius-sm);
-  background: var(--accent-50);
+  border-radius: 8px;
+  background: var(--icon-blue);
 }
 
 .rating-badge {
-  background: var(--bg-overlay);
-  color: var(--text-primary);
+  background: var(--section-alt);
+  color: var(--text);
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
   font-size: 0.6875rem;
   padding: 0.25rem 0.75rem;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   border: 1px solid var(--glass-border);
 }
 
@@ -63,9 +72,14 @@
   gap: 1rem;
 
   &__avatar {
-    @include mix.icon-badge(48px);
-    background: var(--accent-100);
-    color: var(--accent-500);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: var(--icon-blue);
+    color: var(--blue);
     border: 1px solid var(--glass-border);
     font-size: 1.5rem;
   }
@@ -74,12 +88,12 @@
     display: block;
     font-weight: 700;
     font-size: 1rem;
-    color: var(--text-primary);
+    color: var(--text);
   }
 
   &__role {
     font-size: 0.8125rem;
-    color: var(--text-secondary);
+    color: var(--text-soft);
     font-weight: 500;
   }
 }
@@ -104,10 +118,10 @@
 }
 
 .section-title {
-  font-family: 'Sora', sans-serif;
+  font-family: 'Syne', sans-serif;
   font-weight: 700;
   font-size: 1.5rem;
-  color: var(--text-primary);
+  color: var(--text);
   margin-bottom: 2rem;
   border-bottom: 1px solid var(--glass-border);
   padding-bottom: 0.75rem;
@@ -125,19 +139,19 @@
     overflow-x: auto;
     padding-bottom: 1rem;
     scrollbar-width: thin;
-    scrollbar-color: var(--accent-200) transparent;
+    scrollbar-color: rgba(29, 79, 216, 0.18) transparent;
   }
 
   &__item {
     flex: 0 0 240px;
     aspect-ratio: 16 / 9;
-    border-radius: var(--radius-md);
+    border-radius: 14px;
     overflow: hidden;
     cursor: pointer;
     border: 1.5px solid var(--glass-border);
     transition: all 0.2s ease;
 
-    &:hover { border-color: var(--accent-500); transform: translateY(-2px); }
+    &:hover { border-color: var(--blue); transform: translateY(-2px); }
 
     img {
       width: 100%;
@@ -155,11 +169,11 @@
 
 .video-wrapper {
   aspect-ratio: 16 / 9;
-  background: var(--bg-surface-solid);
-  border-radius: var(--radius-lg);
+  background: var(--glass-fill2);
+  border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--float-sm);
   
   video { width: 100%; height: 100%; }
 }
@@ -168,7 +182,7 @@
 .course-description {
   font-size: 1.0625rem;
   line-height: 1.7;
-  color: var(--text-secondary);
+  color: var(--text-soft);
 }
 
 // Options
@@ -179,7 +193,14 @@
 }
 
 .option-card {
-  @include mix.glass-card;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--float-sm);
+  backdrop-filter: blur(48px) saturate(2.8) brightness(1.08);
+  -webkit-backdrop-filter: blur(48px) saturate(2.8) brightness(1.08);
+  transition: box-shadow 0.3s, transform 0.3s;
+  &:hover { box-shadow: var(--float-md); transform: translateY(-2px); }
   padding: 1.5rem;
 
   &__header {
@@ -188,18 +209,18 @@
     align-items: center;
     margin-bottom: 0.5rem;
 
-    h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+    h3 { font-size: 1rem; font-weight: 700; color: var(--text); }
   }
 
   &__price {
-    color: var(--accent-500);
+    color: var(--blue);
     font-weight: 700;
-    font-family: 'Sora', sans-serif;
+    font-family: 'Syne', sans-serif;
   }
 
   &__text {
     font-size: 0.875rem;
-    color: var(--text-secondary);
+    color: var(--text-soft);
     line-height: 1.5;
   }
 }
@@ -213,21 +234,20 @@
 }
 
 .rating-summary {
-  text-align: right;
+  display: flex; align-items: center; gap: 16px;
   
   &__value {
-    display: block;
-    font-family: 'Sora', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: 3rem;
+    font-size: 4rem;
     line-height: 1;
-    color: var(--accent-500);
+    color: var(--blue);
   }
 
   &__stars {
-    color: var(--warning);
+    color: #f59e0b;
+    font-size: 1.25rem;
     letter-spacing: 2px;
-    font-size: 0.875rem;
   }
 }
 
@@ -266,13 +286,13 @@
 
   &__date {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: var(--text-xsoft);
     font-weight: 600;
   }
 
   &__text {
     font-size: 0.9375rem;
-    color: var(--text-secondary);
+    color: var(--text-soft);
     line-height: 1.6;
   }
 }
@@ -287,21 +307,21 @@
 }
 
 .enroll-card {
-  @include mix.glass-card-elevated;
-  padding: 2rem;
+  padding: 40px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  border-color: var(--accent-400);
+  gap: 32px;
+  border-color: rgba(29, 79, 216, 0.3) !important;
+  box-shadow: 0 12px 40px var(--blue-glow);
 
   &__price {
-    font-family: 'Sora', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-weight: 800;
     font-size: 4rem;
-    color: var(--text-primary);
+    color: var(--text);
     line-height: 1;
 
-    .currency { font-size: 2rem; margin-right: 4px; color: var(--accent-500); }
+    .currency { font-size: 2rem; margin-right: 4px; color: var(--blue); }
   }
 
   &__stats {
@@ -316,7 +336,7 @@
   &__guarantee {
     text-align: center;
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: var(--text-xsoft);
     font-weight: 600;
   }
 }
@@ -329,16 +349,23 @@
     font-family: 'DM Sans', sans-serif; 
     font-size: 0.6875rem; 
     font-weight: 700;
-    color: var(--text-muted); 
+    color: var(--text-xsoft); 
     letter-spacing: 0.05em; 
     text-transform: uppercase;
   }
-  &__value { font-size: 0.875rem; font-weight: 700; color: var(--text-primary); }
+  &__value { font-size: 0.875rem; font-weight: 700; color: var(--text); }
 }
 
 // Modal
 .image-modal {
-  @include mix.modal-backdrop;
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 14, 40, 0.55);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
   background: rgba(8, 12, 26, 0.9);
   cursor: zoom-out;
 
@@ -346,9 +373,14 @@
     position: absolute;
     top: 2rem;
     right: 2rem;
-    @include mix.icon-badge(40px);
-    background: var(--bg-surface);
-    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: var(--glass-fill);
+    color: var(--text);
     cursor: pointer;
   }
 
@@ -356,8 +388,8 @@
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--glass-shadow-lg);
+    border-radius: var(--radius);
+    box-shadow: var(--float-md);
     cursor: default;
   }
 }

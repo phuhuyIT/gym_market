@@ -1,13 +1,13 @@
 <div class="course-details" *ngIf="course">
   <!-- Hero Section -->
   <header class="course-hero">
-    <div class="container">
+    <div class="container" appReveal>
       <div class="course-hero__content">
         <div class="course-hero__meta">
           <span class="category-badge">{{course.category}}</span>
           <span class="rating-badge">★ {{course.rating || '4.5'}}</span>
         </div>
-        <h1 class="course-hero__title">{{course.title}}</h1>
+        <h1 class="course-hero__title section-title">{{course.title}}</h1>
         <div class="trainer-brief">
           <div class="trainer-brief__avatar">👤</div>
           <div class="trainer-brief__info">
@@ -24,7 +24,7 @@
       <!-- Left Column: Content -->
       <div class="course-content">
         <!-- Media Gallery -->
-        <section class="course-section">
+        <section class="course-section" appReveal>
           <h2 class="section-title">GALLERY</h2>
           <div class="media-gallery">
             <div class="media-gallery__filmstrip">
@@ -43,7 +43,7 @@
         </section>
 
         <!-- Description -->
-        <section class="course-section">
+        <section class="course-section" appReveal>
           <h2 class="section-title">ABOUT THIS COURSE</h2>
           <div class="course-description">
             <p>{{course.description}}</p>
@@ -51,7 +51,7 @@
         </section>
 
         <!-- Course Options -->
-        <section class="course-section" *ngIf="courseOptions.length > 0">
+        <section class="course-section" *ngIf="courseOptions.length > 0" appReveal>
           <h2 class="section-title">ENROLLMENT OPTIONS</h2>
           <div class="options-list">
             <gm-card class="option-card" *ngFor="let op of courseOptions">
@@ -102,7 +102,7 @@
 
       <!-- Right Column: Sidebar -->
       <aside class="course-sidebar">
-        <gm-card class="enroll-card">
+        <gm-card class="enroll-card gl-2">
           <div class="enroll-card__price">
             <span class="currency">$</span>
             <span class="amount">{{course.price | number:'1.0-0'}}</span>

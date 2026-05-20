@@ -1,5 +1,6 @@
 @use 'styles/glass';
 @use 'styles/buttons';
+@use 'styles/components';
 
 /* ── LIGHT MODE ─────────────────────────────────────── */
 [data-theme="light"] {
@@ -78,6 +79,29 @@
 
   --section-alt:   rgba(29, 79, 216, 0.04);
   --radius:        22px;
+
+  /* Status colors */
+  --success:       #10B981;
+  --warning:       #F59E0B;
+  --error:         #EF4444;
+
+  /* Radius scale */
+  --radius-sm:     8px;
+  --radius-md:     14px;
+  --radius-pill:   100px;
+
+  /* Backward-compat aliases (3rd token system) */
+  --accent:        var(--blue);
+  --text-1:        var(--text);
+  --text-2:        var(--text-soft);
+  --text-3:        var(--text-xsoft);
+  --surface:       var(--glass-fill);
+  --surface-2:     var(--glass-fill2);
+  --border:        var(--glass-border);
+  --font-display:  'Syne', sans-serif;
+  --font-mono:     'DM Sans', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
+  --transition:    0.3s ease;
 }
 
 /* ── DARK MODE ──────────────────────────────────────── */
@@ -150,6 +174,29 @@
 
   --section-alt:   rgba(79, 142, 255, 0.05);
   --radius:        22px;
+
+  /* Status colors */
+  --success:       #34D399;
+  --warning:       #FBBF24;
+  --error:         #F87171;
+
+  /* Radius scale */
+  --radius-sm:     8px;
+  --radius-md:     14px;
+  --radius-pill:   100px;
+
+  /* Backward-compat aliases (3rd token system) */
+  --accent:        var(--blue);
+  --text-1:        var(--text);
+  --text-2:        var(--text-soft);
+  --text-3:        var(--text-xsoft);
+  --surface:       var(--glass-fill);
+  --surface-2:     var(--glass-fill2);
+  --border:        var(--glass-border);
+  --font-display:  'Syne', sans-serif;
+  --font-mono:     'DM Sans', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
+  --transition:    0.3s ease;
 }
 
 /* ── GLOBAL RESET ───────────────────────────────────── */
@@ -188,6 +235,34 @@ body {
 /* ── REDUCED MOTION ─────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .orb, .reveal, .btn-primary::after { animation: none !important; transition: none !important; }
+  .hero-badge-dot { animation: none !important; }
+  .live-dot { animation: none !important; }
+}
+
+/* ── FOCUS VISIBLE (Step 19) ───────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ── SKIP TO CONTENT ───────────────────────────────── */
+.skip-link {
+  position: absolute; top: -100px; left: 16px;
+  padding: 12px 24px; border-radius: 100px; z-index: 9999;
+  background: var(--blue); color: #fff;
+  font-weight: 700; font-size: 0.9rem;
+  text-decoration: none;
+  transition: top 0.25s;
+  &:focus { top: 16px; }
+}
+
+/* ── FIREFOX FALLBACK (Step 19) ─────────────────────── */
+@supports not (backdrop-filter: blur(1px)) {
+  .gl, .gl-2, .gl-card {
+    background: rgba(255, 255, 255, 0.88);
+    [data-theme="dark"] & { background: rgba(10, 20, 50, 0.92); }
+  }
 }
 
 /* ── RESPONSIVE PASS (Step 17) ──────────────────────── */

@@ -1,6 +1,6 @@
 <div class="trainer-list-page">
   <header class="search-header">
-    <div class="search-header__bar">
+    <div class="search-header__bar gl">
       <div class="form-group flex-1">
         <input
           (keydown.enter)="onSubmit()"
@@ -17,7 +17,7 @@
   <main class="container">
     <div class="trainer-grid">
       @for (item of trainers; track $index) {
-      <gm-card class="trainer-card" [routerLink]="['/client/trainer-details', item.trainerId]">
+      <gm-card class="trainer-card gl" [routerLink]="['/client/trainer-details', item.trainerId]">
         <div class="trainer-card__image-wrap">
           <img
             [src]="item.profilePicture || '/assets/fitness_logo.jpg'"

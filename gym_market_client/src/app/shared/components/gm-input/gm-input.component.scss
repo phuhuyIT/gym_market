@@ -1,4 +1,3 @@
-@use 'mixins' as mix;
 
 .gm-input-group {
   display: flex;
@@ -11,31 +10,31 @@
   font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   font-size: 0.8125rem;
-  color: var(--text-secondary);
+  color: var(--text-soft);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .gm-input-field {
-  background: var(--bg-surface);
+  background: var(--glass-fill);
   backdrop-filter: blur(12px);
   border: 1.5px solid var(--glass-border);
-  border-radius: var(--radius-md);
+  border-radius: 14px;
   padding: 0.75rem 1rem;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.9375rem;
-  color: var(--text-primary);
+  color: var(--text);
   transition: all 0.2s ease;
   width: 100%;
 
   &::placeholder {
-    color: var(--text-muted);
+    color: var(--text-xsoft);
   }
 
   &:focus {
     outline: none;
-    border-color: var(--accent-500);
-    box-shadow: 0 0 0 3px rgba(59, 91, 246, 0.15);
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(29, 79, 216, 0.15);
   }
 }
 

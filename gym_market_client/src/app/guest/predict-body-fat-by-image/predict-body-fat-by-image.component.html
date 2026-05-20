@@ -1,8 +1,8 @@
 <div class="ai-tools">
   <div class="container">
-    <header class="ai-tools__header">
-      <h1 class="ai-tools__title">AI HEALTH TOOLS</h1>
-      <p class="ai-tools__subtitle">Advanced analysis powered by neural networks.</p>
+    <header class="ai-tools__header section-head">
+      <h1 class="ai-tools__title section-title">AI HEALTH TOOLS</h1>
+      <p class="ai-tools__subtitle section-tag">Advanced analysis powered by neural networks.</p>
     </header>
 
     <!-- Tab Bar -->
@@ -25,7 +25,7 @@
           </div>
 
           <!-- Upload Zone -->
-          <div class="upload-area" *ngIf="!imageToShow" (click)="fileInput.click()">
+          <div class="upload-area gl" *ngIf="!imageToShow" (click)="fileInput.click()">
             <div class="upload-area__icon">📸</div>
             <p class="upload-area__text">Click to upload a clear front-facing photo</p>
             <p class="upload-area__subtext">Our AI works best with standard lighting and neutral backgrounds.</p>
