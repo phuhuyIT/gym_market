@@ -10,6 +10,7 @@ type UserStore = {
 	amail: string;
 	trainerId: string;
 	studentId: string;
+	role: string | null;
 };
 
 const initalState: UserStore = {
@@ -22,6 +23,7 @@ const initalState: UserStore = {
 	amail: '',
 	trainerId: '',
 	studentId: '',
+	role: null,
 };
 
 export const UserStore = signalStore({ providedIn: 'root' }, withState(initalState));

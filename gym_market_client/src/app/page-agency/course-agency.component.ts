@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AccountService } from '../guest/account.service';
 
 @Component({
   selector: 'app-course-agency',
@@ -10,10 +11,18 @@ import { CommonModule } from '@angular/common';
   styleUrl: './course-agency.component.scss'
 })
 export class CourseAgencyComponent {
+  private accountService = inject(AccountService);
+  private router = inject(Router);
+
   navLinks = [
     { label: 'Dashboard', path: '/agency/course-list', icon: '📊' },
     { label: 'My Profile', path: '/agency/your-profile', icon: '👤' },
     { label: 'Messages', path: '/chat', icon: '💬' },
     { label: 'Payments', path: '/agency/get-payments', icon: '💰' },
   ];
+
+  logout() {
+    this.accountService.logout();
+    this.router.navigateByUrl('');
+  }
 }

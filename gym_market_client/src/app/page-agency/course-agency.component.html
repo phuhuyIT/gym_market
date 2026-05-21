@@ -19,10 +19,10 @@
     </nav>
     
     <div class="sidebar__footer">
-      <a routerLink="/client" class="sidebar__link">
-        <span class="sidebar__icon">🔄</span>
-        <span class="sidebar__label">Switch to Student</span>
-      </a>
+      <button (click)="logout()" class="sidebar__link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
+        <span class="sidebar__icon">🚪</span>
+        <span class="sidebar__label">Logout</span>
+      </button>
     </div>
   </aside>
 

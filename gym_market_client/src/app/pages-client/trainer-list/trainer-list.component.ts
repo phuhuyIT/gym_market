@@ -8,11 +8,12 @@ import { Trainer } from '../../core/models/trainer.model';
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
+import { GmCardComponent } from '../../shared/components/gm-card/gm-card.component';
 
 @Component({
 	selector: 'app-trainer-list',
 	standalone: true,
-	imports: [RouterLink, NgIf, NgFor, FormsModule, GmButtonComponent],
+	imports: [RouterLink, NgIf, NgFor, FormsModule, GmButtonComponent, GmCardComponent],
 	templateUrl: './trainer-list.component.html',
 	styleUrl: './trainer-list.component.scss',
 })

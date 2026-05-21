@@ -1,6 +1,6 @@
 <div class="nav-wrap">
   <nav>
-    <a [routerLink]="userStore.id() ? '/client' : '/'" class="nav-logo">Gym<span>Market</span></a>
+    <a [routerLink]="userStore.role() === 'Trainer' ? '/agency' : (userStore.id() ? '/client' : '/')" class="nav-logo">Gym<span>Market</span></a>
 
     <ul class="nav-links">
       @for (item of navbarItems; track $index) {
@@ -10,23 +10,25 @@
       }
       
       <!-- AI Features Dropdown -->
-      <li 
-        class="relative"
-        (mouseover)="showAIDropdownMenu = true"
-        (mouseleave)="showAIDropdownMenu = false"
-      >
-        <button class="dropdown-trigger">
-          AI Features
-        </button>
-        <div 
-          class="dropdown-menu gl" 
-          [ngClass]="{'visible': showAIDropdownMenu}"
+      @if (userStore.role() !== 'Trainer') {
+        <li 
+          class="relative"
+          (mouseover)="showAIDropdownMenu = true"
+          (mouseleave)="showAIDropdownMenu = false"
         >
-          @for (item of aiMenu; track $index) {
-            <a [routerLink]="item.link" class="dropdown-item">{{ item.name }}</a>
-          }
-        </div>
-      </li>
+          <button class="dropdown-trigger">
+            AI Features
+          </button>
+          <div 
+            class="dropdown-menu gl" 
+            [ngClass]="{'visible': showAIDropdownMenu}"
+          >
+            @for (item of aiMenu; track $index) {
+              <a [routerLink]="item.link" class="dropdown-item">{{ item.name }}</a>
+            }
+          </div>
+        </li>
+      }
 
       <li><app-theme-toggle></app-theme-toggle></li>
 
@@ -43,9 +45,14 @@
             class="dropdown-menu gl" 
             [ngClass]="{'visible': showAccountOption}"
           >
-            <a routerLink="/client/your-profile" class="dropdown-item">Profile Info</a>
-            <a routerLink="/client/course-registration" class="dropdown-item">My courses</a>
-            <a routerLink="/chat/chat-list" class="dropdown-item">Chats</a>
+            @if (userStore.role() === 'Trainer') {
+              <a routerLink="/agency/your-profile" class="dropdown-item">Profile Info</a>
+              <a routerLink="/chat/chat-list" class="dropdown-item">Chats</a>
+            } @else {
+              <a routerLink="/client/your-profile" class="dropdown-item">Profile Info</a>
+              <a routerLink="/client/course-registration" class="dropdown-item">My courses</a>
+              <a routerLink="/chat/chat-list" class="dropdown-item">Chats</a>
+            }
             <button (click)="logout()" class="dropdown-item">Logout</button>
           </div>
         </li>

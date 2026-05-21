@@ -38,7 +38,19 @@ export class HeaderComponent {
 	constructor(private accountService: AccountService, private router: Router) {}
 
 	get navbarItems(): NavItem[] {
-		if (this.userStore.id()) {
+		const role = this.userStore.role();
+		if (role === 'Trainer') {
+			return [
+				{
+					link: '/agency',
+					name: 'Dashboard',
+				},
+				{
+					link: '/chat/chat-list',
+					name: 'Chats',
+				},
+			];
+		} else if (role === 'Student') {
 			return [
 				{
 					link: '/home',
