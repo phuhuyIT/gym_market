@@ -43,8 +43,8 @@ nav {
     cursor: pointer;
     border: none; background: transparent;
 
-    &:hover { color: var(--blue); background: rgba(29,79,216,0.08); }
-    [data-theme="dark"] &:hover { background: rgba(79,142,255,0.12); }
+    &:hover, &.active { color: var(--blue); background: rgba(29,79,216,0.08); }
+    [data-theme="dark"] &:hover, [data-theme="dark"] &.active { background: rgba(79,142,255,0.12); }
   }
 }
 

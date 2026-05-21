@@ -1,9 +1,13 @@
 <div class="nav-wrap">
   <nav>
-    <a routerLink="/" class="nav-logo">Gym<span>Market</span></a>
+    <a [routerLink]="userStore.id() ? '/client' : '/'" class="nav-logo">Gym<span>Market</span></a>
 
     <ul class="nav-links">
-      <li><a routerLink="/home">Home</a></li>
+      @for (item of navbarItems; track $index) {
+        <li>
+          <a [routerLink]="item.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ item.name }}</a>
+        </li>
+      }
       
       <!-- AI Features Dropdown -->
       <li 
@@ -26,14 +30,14 @@
 
       <li><app-theme-toggle></app-theme-toggle></li>
 
-      @if(user.id()) {
+      @if(userStore.id()) {
         <li 
           class="relative"
           (mouseover)="onShowAccountOption()"
           (mouseleave)="onHiddenAccountOption()"
         >
           <button class="nav-cta">
-            {{ user.fullName() }}
+            {{ userStore.fullName() }}
           </button>
           <div 
             class="dropdown-menu gl" 

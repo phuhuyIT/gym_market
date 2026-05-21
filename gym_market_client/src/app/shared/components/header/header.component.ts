@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserStore } from '../../../stores/user.store';
 import { AccountService } from '../../../guest/account.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 
 interface NavItem {
 	link: string;
@@ -13,34 +14,15 @@ interface NavItem {
 @Component({
 	selector: 'app-header',
 	standalone: true,
-	imports: [RouterLinkActive, RouterLink, CommonModule],
+	imports: [RouterLinkActive, RouterLink, CommonModule, ThemeToggleComponent],
 	templateUrl: './header.component.html',
 	styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
 	showAccountOption = false;
+	showAIDropdownMenu = false;
 	userStore = inject(UserStore);
 	themeService = inject(ThemeService);
-
-	navbarItems: NavItem[] = [
-		{
-			link: '/home',
-			name: 'Home',
-		},
-
-		{
-			link: '/client/find-trainer',
-			name: 'Trainers',
-		},
-		{
-			link: '/client/food-nutrition-calculator',
-			name: 'Food Nutrition',
-		},
-		{
-			link: '/client/course-registration',
-			name: 'My Courses',
-		},
-	];
 
 	aiMenu: NavItem[] = [
 		{
@@ -52,9 +34,38 @@ export class HeaderComponent {
 			link: '/predict-body-fat',
 		},
 	];
-	showAIDropdownMenu: boolean = false;
 
 	constructor(private accountService: AccountService, private router: Router) {}
+
+	get navbarItems(): NavItem[] {
+		if (this.userStore.id()) {
+			return [
+				{
+					link: '/home',
+					name: 'Home',
+				},
+				{
+					link: '/client/find-trainer',
+					name: 'Trainers',
+				},
+				{
+					link: '/client/food-nutrition-calculator',
+					name: 'Food Nutrition',
+				},
+				{
+					link: '/client/course-registration',
+					name: 'My Courses',
+				},
+			];
+		} else {
+			return [
+				{
+					link: '/home',
+					name: 'Home',
+				},
+			];
+		}
+	}
 
 	onShowAccountOption() {
 		this.showAccountOption = true;
