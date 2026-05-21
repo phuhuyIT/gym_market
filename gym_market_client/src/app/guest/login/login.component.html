@@ -14,6 +14,16 @@
       </div>
 
       <gm-button variant="primary" [loading]="loading" (clicked)="onLogin()">Sign In</gm-button>
+
+      <div class="login__divider">
+        <span class="login__divider-line"></span>
+        <span class="login__divider-text">or</span>
+        <span class="login__divider-line"></span>
+      </div>
+
+      <div class="login__oauth">
+        <div id="google-login-btn"></div>
+      </div>
       
       <div class="login__footer">
         <a routerLink="/sign-up">No account? <span class="accent">Sign up</span></a>

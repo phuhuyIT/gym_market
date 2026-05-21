@@ -122,8 +122,50 @@ namespace GymMarket.API.Services
                             return new LoginResponse { StatusCode = 400, Success = false, Errors = result.Errors.Select(e => e.Description).ToList() };
                         }
 
-                        // Assign default role (e.g. Student)
-                        await _accountRepository.AddToRole(user, "Student");
+                        // Determine the role (default to Student)
+                        var role = "Student";
+                        if (!string.IsNullOrEmpty(model.Role) && ApplicationRoles.TryNormalize(model.Role, out var normalizedRole))
+                        {
+                            role = normalizedRole;
+                        }
+
+                        var roleResult = await _accountRepository.AddToRole(user, role);
+                        if (!roleResult.Succeeded)
+                        {
+                            return new LoginResponse { StatusCode = 400, Success = false, Errors = ["ROLE_ASSIGNMENT_FAILED"] };
+                        }
+
+                        // Create corresponding role entity
+                        if (role == "Trainer")
+                        {
+                            var trainer = new Trainer
+                            {
+                                TrainerId = Guid.NewGuid().ToString(),
+                                Name = payload.Name,
+                                Email = payload.Email,
+                                ProfilePicture = payload.Picture ?? "https://cdn-icons-png.flaticon.com/512/236/236832.png",
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                                Rating = 0,
+                                Experience = 0,
+                                UserId = user.Id
+                            };
+                            await _accountRepository.CreateTrainerAsync(trainer);
+                        }
+                        else
+                        {
+                            var student = new Student
+                            {
+                                StudentId = Guid.NewGuid().ToString(),
+                                Name = payload.Name,
+                                Email = payload.Email,
+                                ProfilePicture = payload.Picture ?? "https://cdn-icons-png.flaticon.com/512/236/236832.png",
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                                UserId = user.Id
+                            };
+                            await _accountRepository.CreateStudentAsync(student);
+                        }
                     }
 
                     var addLoginResult = await _accountRepository.AddLoginAsync(user, new UserLoginInfo("Google", payload.Subject, "Google"));

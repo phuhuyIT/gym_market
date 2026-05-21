@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { patchState } from '@ngrx/signals';
@@ -8,9 +8,10 @@ import { StudentSignup } from '../models/student-sign-up.model';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { AccountService } from '../account.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SignupResponse } from '../../core/models/auth.model';
+import { SignupResponse, LoginResponse } from '../../core/models/auth.model';
 import { CommonModule } from '@angular/common';
 import { GmInputComponent, GmButtonComponent } from '../../shared';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
 	selector: 'app-signup',
@@ -19,7 +20,7 @@ import { GmInputComponent, GmButtonComponent } from '../../shared';
 	templateUrl: './signup.component.html',
 	styleUrl: './signup.component.scss',
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent implements OnInit, AfterViewInit {
 	model = {
 		fullName: '',
 		email: '',
@@ -50,8 +51,74 @@ export class SignupComponent implements OnInit {
 		}
 	}
 
+	ngAfterViewInit() {
+		this.accountService.loadGoogleLibrary();
+	}
+
 	selectRole(role: string) {
-		this.model.role = role;
+		if (role === 'Client') {
+			this.model.role = 'Student';
+		} else if (role === 'Agency') {
+			this.model.role = 'Trainer';
+		} else {
+			this.model.role = role;
+		}
+
+		// Render the Google button after Angular renders the form container
+		setTimeout(() => {
+			this.initGoogleButton();
+		}, 50);
+	}
+
+	private initGoogleButton() {
+		const google = (window as any).google;
+		if (google?.accounts?.id) {
+			google.accounts.id.initialize({
+				client_id: environment.googleClientId,
+				callback: this.handleGoogleCredential.bind(this),
+			});
+			const element = document.getElementById('google-signup-btn');
+			if (element) {
+				google.accounts.id.renderButton(element, {
+					theme: 'outline',
+					size: 'large',
+					width: 320,
+					text: 'signup_with',
+					shape: 'pill',
+				});
+			}
+		}
+	}
+
+	private handleGoogleCredential(response: any) {
+		if (!response.credential) return;
+
+		this.loading = true;
+		patchState(this.loaderStore, { isShow: true });
+
+		this.accountService
+			.googleLogin(response.credential, this.model.role)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (res: LoginResponse) => {
+					this.loading = false;
+					patchState(this.loaderStore, { isShow: false });
+					this.accountService.saveToken(res.token);
+					this.accountService.checkLogin();
+					
+					if (this.model.role === 'Trainer') {
+						this.router.navigateByUrl('/agency');
+					} else {
+						this.router.navigateByUrl('/client');
+					}
+				},
+				error: err => {
+					this.loading = false;
+					patchState(this.loaderStore, { isShow: false });
+					const errors = err.error?.errors || ['Google signup failed'];
+					this.toastService.show(errors instanceof Array ? errors.join(', ') : errors, 'error');
+				},
+			});
 	}
 
 	onSignUp() {

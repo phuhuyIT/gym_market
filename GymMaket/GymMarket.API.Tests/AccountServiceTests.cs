@@ -218,37 +218,51 @@ public class AccountServiceTests
         public IdentityResult AddToRoleResult { get; init; } = IdentityResult.Success;
         public string? AssignedRole { get; private set; }
         public int CreateUserCallCount { get; private set; }
-
+        public int CreateStudentCallCount { get; private set; }
+        public int CreateTrainerCallCount { get; private set; }
+ 
         public Task<AppUser?> FindByEmail(string email)
         {
             return Task.FromResult(ExistingUser);
         }
-
+ 
         public Task<IdentityResult> CreateUser(AppUser user, string password)
         {
             CreateUserCallCount++;
             return Task.FromResult(CreateResult);
         }
-
+ 
         public Task<IdentityResult> AddToRole(AppUser user, string role)
         {
             AssignedRole = role;
             return Task.FromResult(AddToRoleResult);
         }
-
+ 
         public Task<AppUser?> FindByLoginAsync(string provider, string providerKey)
         {
             return Task.FromResult<AppUser?>(null);
         }
-
+ 
         public Task<IdentityResult> AddLoginAsync(AppUser user, UserLoginInfo login)
         {
             return Task.FromResult(IdentityResult.Success);
         }
-
+ 
         public Task<IdentityResult> CreateUserWithoutPasswordAsync(AppUser user)
         {
             return Task.FromResult(IdentityResult.Success);
+        }
+
+        public Task CreateStudentAsync(Student student)
+        {
+            CreateStudentCallCount++;
+            return Task.CompletedTask;
+        }
+
+        public Task CreateTrainerAsync(Trainer trainer)
+        {
+            CreateTrainerCallCount++;
+            return Task.CompletedTask;
         }
     }
 

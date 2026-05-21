@@ -40,6 +40,25 @@ export class AccountService {
 		return this.http.post<SignupResponse>(`${environment.baseApi}/accounts/sign-up`, model);
 	}
 
+	googleLogin(idToken: string, role?: string): Observable<LoginResponse> {
+		return this.http.post<LoginResponse>(`${environment.baseApi}/accounts/google-login`, { idToken, role });
+	}
+
+	loadGoogleLibrary(): Promise<void> {
+		return new Promise((resolve) => {
+			if ((window as any).google?.accounts?.id) {
+				resolve();
+				return;
+			}
+			const script = document.createElement('script');
+			script.src = 'https://accounts.google.com/gsi/client';
+			script.async = true;
+			script.defer = true;
+			script.onload = () => resolve();
+			document.head.appendChild(script);
+		});
+	}
+
 	studentSignup(model: StudentSignup): Observable<any> {
 		return this.http.post(`${environment.baseApi}/student`, model);
 	}
