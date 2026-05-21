@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccountService } from '../account.service';
 import { Router, RouterLink } from '@angular/router';
@@ -10,6 +10,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoginResponse } from '../../core/models/auth.model';
 import { CommonModule } from '@angular/common';
 import { GmInputComponent, GmButtonComponent } from '../../shared';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
 	selector: 'app-login',
@@ -18,7 +19,7 @@ import { GmInputComponent, GmButtonComponent } from '../../shared';
 	templateUrl: './login.component.html',
 	styleUrl: './login.component.scss',
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit {
 	model = {
 		email: '',
 		password: '',
@@ -37,6 +38,67 @@ export class LoginComponent implements OnInit {
 		if (this.accountService.isLoggedIn()) {
 			this.router.navigateByUrl('/home');
 		}
+	}
+
+	ngAfterViewInit() {
+		this.accountService.loadGoogleLibrary().then(() => {
+			this.initGoogleButton();
+		});
+	}
+
+	private initGoogleButton() {
+		const google = (window as any).google;
+		if (google?.accounts?.id) {
+			google.accounts.id.initialize({
+				client_id: environment.googleClientId,
+				callback: this.handleGoogleCredential.bind(this),
+			});
+			const element = document.getElementById('google-login-btn');
+			if (element) {
+				google.accounts.id.renderButton(element, {
+					theme: 'outline',
+					size: 'large',
+					width: 320,
+					text: 'signin_with',
+					shape: 'pill',
+				});
+			}
+		}
+	}
+
+	private handleGoogleCredential(response: any) {
+		if (!response.credential) return;
+
+		this.loading = true;
+		patchState(this.loader, { isShow: true });
+
+		this.accountService
+			.googleLogin(response.credential)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (res: LoginResponse) => {
+					this.loading = false;
+					patchState(this.loader, { isShow: false });
+					this.accountService.saveToken(res.token);
+					this.accountService.checkLogin();
+					const role = this.accountService.getRole();
+
+					if (role === ROLES.TRAINER) {
+						this.router.navigateByUrl('/agency');
+						return;
+					} else if (role === ROLES.STUDENT) {
+						this.router.navigateByUrl('/client');
+						return;
+					}
+					this.router.navigateByUrl('/access-denied');
+				},
+				error: err => {
+					this.loading = false;
+					patchState(this.loader, { isShow: false });
+					const errors = err.error?.errors || ['Google login failed'];
+					this.toastService.show(errors.join(', '), 'error');
+				},
+			});
 	}
 
 	onLogin() {

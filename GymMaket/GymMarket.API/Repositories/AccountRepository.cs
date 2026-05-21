@@ -9,11 +9,13 @@ namespace GymMarket.API.Repositories
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly GymMarketContext _context;
 
-        public AccountRepository(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AccountRepository(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, GymMarketContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _context = context;
         }
 
         public async Task<AppUser?> FindByEmail(string email)
@@ -49,6 +51,18 @@ namespace GymMarket.API.Repositories
         public async Task<IdentityResult> CreateUserWithoutPasswordAsync(AppUser user)
         {
             return await _userManager.CreateAsync(user);
+        }
+
+        public async Task CreateStudentAsync(Student student)
+        {
+            await _context.Students.AddAsync(student);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task CreateTrainerAsync(Trainer trainer)
+        {
+            await _context.Trainers.AddAsync(trainer);
+            await _context.SaveChangesAsync();
         }
     }
 }

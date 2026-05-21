@@ -110,6 +110,41 @@
       }
     }
   }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0.25rem 0;
+
+    &-line {
+      flex: 1;
+      height: 1px;
+      background: var(--glass-border);
+      opacity: 0.6;
+    }
+
+    &-text {
+      color: var(--text-soft);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+
+  &__oauth {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: -0.25rem;
+
+    #google-login-btn {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+  }
 }
 
 gm-button {

@@ -1,4 +1,4 @@
-﻿using GymMarket.API.Models;
+using GymMarket.API.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace GymMarket.API.Repositories.IRepositories
@@ -11,5 +11,7 @@ namespace GymMarket.API.Repositories.IRepositories
         Task<AppUser?> FindByLoginAsync(string provider, string providerKey);
         Task<IdentityResult> AddLoginAsync(AppUser user, UserLoginInfo login);
         Task<IdentityResult> CreateUserWithoutPasswordAsync(AppUser user);
+        Task CreateStudentAsync(Student student);
+        Task CreateTrainerAsync(Trainer trainer);
     }
 }

@@ -6,5 +6,7 @@ namespace GymMarket.API.DTOs.Account
     {
         [Required]
         public string IdToken { get; set; } = null!;
+
+        public string? Role { get; set; }
     }
 }
