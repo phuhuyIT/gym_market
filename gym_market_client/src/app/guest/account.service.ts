@@ -99,7 +99,7 @@ export class AccountService {
 	checkLogin(): void {
 		const token = this.token;
 		if (token === null) {
-			patchState(this.userStore, { fullName: 'Account', id: null, phoneNumber: '' });
+			patchState(this.userStore, { fullName: 'Account', id: null, phoneNumber: '', role: null });
 		} else {
 			try {
 				const decoded: any = jwtDecode(token);
@@ -110,6 +110,7 @@ export class AccountService {
 					trainerId: decoded.trainerId,
 					studentId: decoded.studentId,
 					avatar: decoded.avatar,
+					role: decoded.role || null,
 				});
 			} catch (e) {
 				this.logout();
@@ -120,6 +121,6 @@ export class AccountService {
 	logout(): void {
 		localStorage.removeItem('gym-token');
 		this._token$.next(null);
-		patchState(this.userStore, { fullName: 'Welcome', id: null, phoneNumber: '' });
+		patchState(this.userStore, { fullName: 'Welcome', id: null, phoneNumber: '', role: null });
 	}
 }

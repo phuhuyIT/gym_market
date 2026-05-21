@@ -17,7 +17,7 @@
   <main class="container">
     <div class="trainer-grid">
       @for (item of trainers; track $index) {
-      <gm-card class="trainer-card gl" [routerLink]="['/client/trainer-details', item.trainerId]">
+      <gm-card class="trainer-card" [routerLink]="['/client/trainer-details', item.trainerId]">
         <div class="trainer-card__image-wrap">
           <img
             [src]="item.profilePicture || '/assets/fitness_logo.jpg'"
@@ -30,12 +30,12 @@
 
           <div class="trainer-card__info-section">
             <h4>Certifications</h4>
-            <p>{{ item.certification || 'Elite Fitness Professional' }}</p>
+            <p class="trainer-card__cert">{{ item.certification || 'Elite Fitness Professional' }}</p>
           </div>
 
           <div class="trainer-card__info-section">
             <h4>Bio</h4>
-            <p>{{ item.bio }}</p>
+            <p class="trainer-card__bio">{{ item.bio }}</p>
           </div>
 
           <div class="trainer-card__footer">

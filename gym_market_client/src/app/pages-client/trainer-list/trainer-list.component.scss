@@ -30,16 +30,38 @@
 }
 
 .trainer-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  ::ng-deep .gm-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
   &__image-wrap {
-    width: 100%; aspect-ratio: 1; border-radius: 14px;
-    overflow: hidden; margin-bottom: 20px;
+    width: 100%;
+    height: 200px;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 20px;
     position: relative;
     background: linear-gradient(145deg, var(--icon-blue), var(--icon-cyan));
+    flex-shrink: 0;
 
     img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
   }
 
   &:hover &__image-wrap img { transform: scale(1.08); }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
 
   &__name {
     font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem;
@@ -55,7 +77,27 @@
     p { font-size: 0.88rem; color: var(--text-soft); line-height: 1.6; }
   }
 
-  &__footer { margin-top: 24px; }
+  &__cert {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__bio {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 4.8em;
+  }
+
+  &__footer {
+    margin-top: auto;
+    padding-top: 16px;
+  }
 }
 
 @media (max-width: 900px) {
