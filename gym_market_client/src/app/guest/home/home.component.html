@@ -1,38 +1,81 @@
 <div class="home">
+  <!-- Dynamic Background Effects -->
+  <div class="cyber-grid"></div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+
   <!-- Section 1: Hero -->
   <section class="hero">
     <div class="hero-content">
-      <div class="hero-badge gl">
+      <div class="hero-badge" appReveal>
         <span class="hero-badge-dot"></span>
         ELEVATE YOUR LIMITS
       </div>
-      <h1 class="hero-title">Transform your <em>Fitness</em> Journey with Elite Experts.</h1>
-      <p class="hero-sub">Connect with world-class trainers and access premium courses. Your evolution starts here, anywhere in the world.</p>
+      <h1 class="hero-title" appReveal [style.transitionDelay]="'0.1s'">
+        Transform your <span class="gradient-text">Fitness</span> Journey with Elite Experts.
+      </h1>
+      <p class="hero-sub" appReveal [style.transitionDelay]="'0.2s'">
+        Connect with world-class trainers and access premium courses. Your evolution starts here, anywhere in the world.
+      </p>
       
-      <div class="hero-actions">
-        <a routerLink="/client/course-search" class="btn-primary">Start Training</a>
-        <a routerLink="/sign-up" class="btn-ghost">Join as Trainer</a>
+      <div class="hero-actions" appReveal [style.transitionDelay]="'0.3s'">
+        <a routerLink="/client/course-search" class="btn-gym-primary">
+          Start Training <i class="fa-solid fa-arrow-trend-up"></i>
+        </a>
+        <a routerLink="/sign-up" class="btn-gym-secondary">
+          Join as Trainer <i class="fa-solid fa-user-plus"></i>
+        </a>
       </div>
     </div>
 
-    <!-- Floating Stats -->
-    <div class="hero-stats">
-      <div class="stat-card gl" appReveal [style.transitionDelay]="'0.2s'">
-        <div class="stat-val">1,200+</div>
-        <div class="stat-lbl">Elite Trainers</div>
-      </div>
-      <div class="stat-card gl" appReveal [style.transitionDelay]="'0.3s'">
-        <div class="stat-val">8.4k</div>
-        <div class="stat-lbl">Active Students</div>
-      </div>
-    </div>
+    <!-- High-Tech Live Telemetry Showcase -->
+    <div class="hero-telemetry" appReveal [style.transitionDelay]="'0.4s'">
+      <div class="telemetry-panel gl-2">
+        <div class="telemetry-header">
+          <span class="live-dot-pulse"></span>
+          <span class="live-text">LIVE PLATFORM METRICS</span>
+        </div>
+        
+        <div class="telemetry-stats">
+          <div class="t-stat">
+            <span class="t-val">1,200+</span>
+            <span class="t-lbl">Elite Trainers</span>
+          </div>
+          <div class="t-stat">
+            <span class="t-val text-cyan">8.4K+</span>
+            <span class="t-lbl">Active Students</span>
+          </div>
+        </div>
 
-    <!-- Floating Leaderboard / Info -->
-    <div class="hero-lb gl-2" appReveal [style.transitionDelay]="'0.4s'">
-      <div class="stat-lbl" style="margin-bottom: 12px;">Top Specialty</div>
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 1.2rem;">🧘</span>
-        <span style="font-weight: 700; font-family: 'Syne';">Yoga & Wellness</span>
+        <div class="telemetry-box gl-card">
+          <div class="box-tag">Active Specialty</div>
+          <div class="specialty-details">
+            <span class="specialty-icon">🧘</span>
+            <div>
+              <div class="specialty-name">Yoga & Wellness</div>
+              <div class="specialty-trend"><i class="fa-solid fa-circle-up"></i> +18% this week</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulated Pulse Scanner -->
+        <div class="pulse-visualizer">
+          <div class="pulse-grid">
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+          </div>
+          <svg class="heartrate-svg" viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg">
+            <path class="heartrate-line" d="M0,15 L25,15 L30,5 L35,25 L40,12 L43,18 L48,15 L100,15" fill="none" stroke="var(--blue)" stroke-width="2" />
+          </svg>
+          <div class="scanner-sweep"></div>
+          <div class="pulse-telemetry">
+            <span>AI Match Rate</span>
+            <span class="pulse-percentage">98.4%</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -46,85 +89,116 @@
 
     <div class="steps-grid">
       <div class="step-card gl-card accent-blue" appReveal [style.transitionDelay]="'0.1s'">
-        <div class="step-number">01</div>
-        <div class="step-icon blue">🔍</div>
+        <div class="step-header">
+          <div class="step-number">01</div>
+          <div class="step-icon blue"><i class="fa-solid fa-magnifying-glass"></i></div>
+        </div>
         <h3 class="step-title">Find Your Match</h3>
         <p class="step-text">Browse through hundreds of certified trainers specializing in everything from Yoga to Crossfit.</p>
+        <div class="step-progress-line"></div>
       </div>
 
       <div class="step-card gl-card accent-cyan" appReveal [style.transitionDelay]="'0.2s'">
-        <div class="step-number">02</div>
-        <div class="step-icon cyan">📅</div>
+        <div class="step-header">
+          <div class="step-number">02</div>
+          <div class="step-icon cyan"><i class="fa-regular fa-calendar-check"></i></div>
+        </div>
         <h3 class="step-title">Enroll & Connect</h3>
         <p class="step-text">Sign up for a course and start communicating directly with your trainer via our built-in chat.</p>
+        <div class="step-progress-line"></div>
       </div>
 
       <div class="step-card gl-card accent-indigo" appReveal [style.transitionDelay]="'0.3s'">
-        <div class="step-number">03</div>
-        <div class="step-icon indigo">📈</div>
+        <div class="step-header">
+          <div class="step-number">03</div>
+          <div class="step-icon indigo"><i class="fa-solid fa-chart-line"></i></div>
+        </div>
         <h3 class="step-title">See Results</h3>
         <p class="step-text">Follow personalized nutrition plans and workout schedules designed to help you reach your goals.</p>
+        <div class="step-progress-line"></div>
       </div>
     </div>
   </section>
 
   <!-- Section 3: Categories -->
-  <section>
+  <section class="categories-section">
     <div class="section-head" appReveal>
       <span class="section-tag">Categories</span>
       <h2 class="section-title">Explore by Specialty</h2>
     </div>
 
-    <div class="cat-grid">
-      <div class="cat-card gl sport" appReveal [style.transitionDelay]="'0.1s'" routerLink="/client/course-search" [queryParams]="{category: 'Strength'}">
-        <span style="font-size: 2rem; display: block; margin-bottom: 16px;">💪</span>
-        <h4 style="font-family: 'Syne'; font-weight: 700;">Strength</h4>
-        <div class="cat-stripe"></div>
-      </div>
-      <div class="cat-card gl wellness" appReveal [style.transitionDelay]="'0.2s'" routerLink="/client/course-search" [queryParams]="{category: 'Yoga'}">
-        <span style="font-size: 2rem; display: block; margin-bottom: 16px;">🧘</span>
-        <h4 style="font-family: 'Syne'; font-weight: 700;">Yoga</h4>
-        <div class="cat-stripe"></div>
-      </div>
-      <div class="cat-card gl combat" appReveal [style.transitionDelay]="'0.3s'" routerLink="/client/course-search" [queryParams]="{category: 'Boxing'}">
-        <span style="font-size: 2rem; display: block; margin-bottom: 16px;">🥊</span>
-        <h4 style="font-family: 'Syne'; font-weight: 700;">Boxing</h4>
-        <div class="cat-stripe"></div>
-      </div>
-      <div class="cat-card gl sport" appReveal [style.transitionDelay]="'0.4s'" routerLink="/client/course-search" [queryParams]="{category: 'Cardio'}">
-        <span style="font-size: 2rem; display: block; margin-bottom: 16px;">🏃</span>
-        <h4 style="font-family: 'Syne'; font-weight: 700;">Cardio</h4>
-        <div class="cat-stripe"></div>
-      </div>
+    <div class="cat-grid-modern">
+      @for (cat of categories; track cat.name; let idx = $index) {
+        <div class="cat-card-modern gl-card" 
+             appReveal 
+             [style.transitionDelay]="(idx * 0.05) + 's'"
+             routerLink="/client/course-search" 
+             [queryParams]="{category: cat.name}">
+          <div class="cat-inner">
+            <span class="cat-icon-emoji">{{ cat.icon }}</span>
+            <h4 class="cat-title-text">{{ cat.name }}</h4>
+          </div>
+          <div class="cat-border-glowing"></div>
+        </div>
+      }
     </div>
   </section>
 
-  <!-- Section 4: Live Banner / AI -->
-  <section>
-    <div class="live-banner gl-card" appReveal>
-      <div class="banner-tint"></div>
-      <div style="position: relative; z-index: 5;">
-        <div class="live-badge">
-          <span class="live-dot"></span>
-          AI Powered Features
+  <!-- Section 4: Live Banner / AI Diagnostic Chamber -->
+  <section class="ai-chamber-section">
+    <div class="ai-chamber-banner gl-card" appReveal>
+      <div class="banner-gradient-background"></div>
+      
+      <div class="chamber-info">
+        <div class="chamber-badge">
+          <span class="live-dot-pulse pulse-red"></span>
+          AI Powered Chamber
         </div>
-        <h2 class="section-title" style="text-align: left; margin-bottom: 24px;">Driven by Intelligence.</h2>
-        <p class="step-text" style="margin-bottom: 32px; max-width: 480px;">Use our advanced computer vision models to predict your body fat percentage from a single photo. Get instant insights into your health markers.</p>
-        <a routerLink="/predict-body-fat" class="btn-primary">Try AI Analysis</a>
+        <h2 class="section-title text-left-align">Driven by Intelligence.</h2>
+        <p class="chamber-text">
+          Use our advanced computer vision models to predict your body fat percentage from a single photo. Get instant insights into your health markers.
+        </p>
+        <a routerLink="/predict-body-fat" class="btn-gym-primary btn-glow-orange">
+          Try AI Analysis <i class="fa-solid fa-microscope"></i>
+        </a>
       </div>
-      <div class="gl-2" style="border-radius: 20px; padding: 32px; position: relative; z-index: 5;">
-        <div class="stat-lbl" style="margin-bottom: 16px;">Instant Marker Scan</div>
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-            <span>Body Fat Est.</span>
-            <span style="color: var(--blue); font-weight: 700;">14.2%</span>
+
+      <!-- High Tech Scanning HUD -->
+      <div class="chamber-scanner gl-2">
+        <div class="scanner-viewport">
+          <div class="scanner-bracket br-tl"></div>
+          <div class="scanner-bracket br-tr"></div>
+          <div class="scanner-bracket br-bl"></div>
+          <div class="scanner-bracket br-br"></div>
+          
+          <div class="laser-scanner"></div>
+          
+          <!-- Mock scanned body metrics visualization -->
+          <div class="scanner-mesh">
+            <div class="mesh-silhouette">🏋️</div>
+            <div class="scanning-nodes">
+              <span class="node n-1"></span>
+              <span class="node n-2"></span>
+              <span class="node n-3"></span>
+            </div>
           </div>
-          <div style="height: 4px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden;">
-            <div style="width: 65%; height: 100%; background: var(--blue);"></div>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-            <span>Muscle Mass</span>
-            <span style="color: var(--cyan); font-weight: 700;">High</span>
+
+          <div class="scanner-metrics">
+            <div class="metric-row">
+              <span class="metric-label">BODY FAT EST.</span>
+              <span class="metric-value text-blue">14.2%</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar-fill bg-blue" style="width: 65%;"></div>
+            </div>
+            
+            <div class="metric-row mt-2">
+              <span class="metric-label">MUSCLE INDEX</span>
+              <span class="metric-value text-cyan">HIGH</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar-fill bg-cyan" style="width: 82%;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -138,40 +212,58 @@
       <h2 class="section-title">Meet Our Elite Trainers</h2>
     </div>
 
-    <div class="trainer-grid">
-      <div class="trainer-card gl-card" appReveal [style.transitionDelay]="'0.1s'">
-        <div class="trainer-img strength">
-          <span style="font-size: 3rem;">🏋️</span>
-          <span class="specialty-tag">Strength</span>
+    <div class="trainer-grid-modern">
+      <div class="trainer-card-modern gl-card" appReveal [style.transitionDelay]="'0.1s'">
+        <div class="trainer-display strength">
+          <div class="trainer-avatar-glow">🏋️</div>
+          <span class="specialty-pill font-syne">Strength</span>
         </div>
-        <div style="padding: 24px;">
-          <h3 class="trainer-name">Alex Nguyen</h3>
-          <p class="trainer-role">NASM Certified · 8 years</p>
-          <a routerLink="/client/trainer-list" class="trainer-btn">View Profile</a>
-        </div>
-      </div>
-
-      <div class="trainer-card gl-card" appReveal [style.transitionDelay]="'0.2s'">
-        <div class="trainer-img cardio">
-          <span style="font-size: 3rem;">🏃</span>
-          <span class="specialty-tag">Cardio</span>
-        </div>
-        <div style="padding: 24px;">
-          <h3 class="trainer-name">Sarah Kim</h3>
-          <p class="trainer-role">ACE Certified · 6 years</p>
-          <a routerLink="/client/trainer-list" class="trainer-btn">View Profile</a>
+        <div class="trainer-details-body">
+          <h3 class="trainer-name-text">Alex Nguyen</h3>
+          <p class="trainer-accreditation">NASM Certified · 8 years</p>
+          <div class="trainer-quick-stats">
+            <div class="t-stat-pill"><i class="fa-solid fa-users"></i> 140+</div>
+            <div class="t-stat-pill"><i class="fa-solid fa-star"></i> 4.9</div>
+          </div>
+          <a routerLink="/client/trainer-list" class="trainer-action-btn">
+            View Profile <i class="fa-solid fa-arrow-right"></i>
+          </a>
         </div>
       </div>
 
-      <div class="trainer-card gl-card" appReveal [style.transitionDelay]="'0.3s'">
-        <div class="trainer-img yoga">
-          <span style="font-size: 3rem;">🧘</span>
-          <span class="specialty-tag">Yoga</span>
+      <div class="trainer-card-modern gl-card" appReveal [style.transitionDelay]="'0.2s'">
+        <div class="trainer-display cardio">
+          <div class="trainer-avatar-glow">🏃</div>
+          <span class="specialty-pill font-syne">Cardio</span>
         </div>
-        <div style="padding: 24px;">
-          <h3 class="trainer-name">Maya Patel</h3>
-          <p class="trainer-role">RYT-500 · 10 years</p>
-          <a routerLink="/client/trainer-list" class="trainer-btn">View Profile</a>
+        <div class="trainer-details-body">
+          <h3 class="trainer-name-text">Sarah Kim</h3>
+          <p class="trainer-accreditation">ACE Certified · 6 years</p>
+          <div class="trainer-quick-stats">
+            <div class="t-stat-pill"><i class="fa-solid fa-users"></i> 95+</div>
+            <div class="t-stat-pill"><i class="fa-solid fa-star"></i> 5.0</div>
+          </div>
+          <a routerLink="/client/trainer-list" class="trainer-action-btn">
+            View Profile <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="trainer-card-modern gl-card" appReveal [style.transitionDelay]="'0.3s'">
+        <div class="trainer-display yoga">
+          <div class="trainer-avatar-glow">🧘</div>
+          <span class="specialty-pill font-syne">Yoga</span>
+        </div>
+        <div class="trainer-details-body">
+          <h3 class="trainer-name-text">Maya Patel</h3>
+          <p class="trainer-accreditation">RYT-500 · 10 years</p>
+          <div class="trainer-quick-stats">
+            <div class="t-stat-pill"><i class="fa-solid fa-users"></i> 180+</div>
+            <div class="t-stat-pill"><i class="fa-solid fa-star"></i> 4.8</div>
+          </div>
+          <a routerLink="/client/trainer-list" class="trainer-action-btn">
+            View Profile <i class="fa-solid fa-arrow-right"></i>
+          </a>
         </div>
       </div>
     </div>
@@ -186,40 +278,70 @@
 
     <div class="test-grid">
       <div class="testimonial-card gl-card" appReveal [style.transitionDelay]="'0.1s'">
-        <div class="quote-mark">"</div>
-        <div class="stars">★★★★★</div>
-        <p class="step-text">GymMarket completely transformed how I train. The AI body fat analysis is incredibly accurate!</p>
-        <div style="display: flex; align-items: center; gap: 12px; margin-top: 20px;">
+        <div class="quote-container">
+          <span class="quote-icon"><i class="fa-solid fa-quote-left"></i></span>
+          <div class="stars">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+        </div>
+        <p class="testimonial-body">
+          GymMarket completely transformed how I train. The AI body fat analysis is incredibly accurate!
+        </p>
+        <div class="testimonial-author">
           <div class="author-avatar blue">🏋️</div>
           <div>
-            <div style="font-weight: 700; font-size: 0.9rem;">Minh Tran</div>
-            <div style="color: var(--text-xsoft); font-size: 0.8rem;">Member · 2 years</div>
+            <div class="author-name">Minh Tran</div>
+            <div class="author-meta">Member · 2 years</div>
           </div>
         </div>
       </div>
 
       <div class="testimonial-card gl-card" appReveal [style.transitionDelay]="'0.2s'">
-        <div class="quote-mark">"</div>
-        <div class="stars">★★★★★</div>
-        <p class="step-text">Found my perfect yoga instructor within minutes. The booking system is seamless and intuitive.</p>
-        <div style="display: flex; align-items: center; gap: 12px; margin-top: 20px;">
+        <div class="quote-container">
+          <span class="quote-icon"><i class="fa-solid fa-quote-left"></i></span>
+          <div class="stars">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+        </div>
+        <p class="testimonial-body">
+          Found my perfect yoga instructor within minutes. The booking system is seamless and intuitive.
+        </p>
+        <div class="testimonial-author">
           <div class="author-avatar cyan">🧘</div>
           <div>
-            <div style="font-weight: 700; font-size: 0.9rem;">Linh Dao</div>
-            <div style="color: var(--text-xsoft); font-size: 0.8rem;">Member · 1 year</div>
+            <div class="author-name">Linh Dao</div>
+            <div class="author-meta">Member · 1 year</div>
           </div>
         </div>
       </div>
 
       <div class="testimonial-card gl-card" appReveal [style.transitionDelay]="'0.3s'">
-        <div class="quote-mark">"</div>
-        <div class="stars">★★★★☆</div>
-        <p class="step-text">As a trainer, this platform gave me access to hundreds of new clients. Revenue doubled in 3 months.</p>
-        <div style="display: flex; align-items: center; gap: 12px; margin-top: 20px;">
+        <div class="quote-container">
+          <span class="quote-icon"><i class="fa-solid fa-quote-left"></i></span>
+          <div class="stars">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+        </div>
+        <p class="testimonial-body">
+          As a trainer, this platform gave me access to hundreds of new clients. Revenue doubled in 3 months.
+        </p>
+        <div class="testimonial-author">
           <div class="author-avatar indigo">💪</div>
           <div>
-            <div style="font-weight: 700; font-size: 0.9rem;">Duc Vo</div>
-            <div style="color: var(--text-xsoft); font-size: 0.8rem;">Trainer · 3 years</div>
+            <div class="author-name">Duc Vo</div>
+            <div class="author-meta">Trainer · 3 years</div>
           </div>
         </div>
       </div>
@@ -227,7 +349,7 @@
   </section>
 
   <!-- Section 7: Pricing -->
-  <section>
+  <section class="pricing-section">
     <div class="section-head" appReveal>
       <span class="section-tag">Plans</span>
       <h2 class="section-title">Simple, Transparent Pricing</h2>
@@ -248,10 +370,10 @@
       </div>
 
       <div class="pricing-card gl-card featured" appReveal [style.transitionDelay]="'0.2s'">
-        <div class="price-tint"></div>
+        <div class="price-glow-accent"></div>
         <span class="popular-tag">Most Popular</span>
         <h3 class="price-tier">Pro</h3>
-        <div class="price-amount">499k<span>/month</span></div>
+        <div class="price-amount">499k<span class="price-period">/month</span></div>
         <p class="price-desc">For dedicated fitness enthusiasts</p>
         <ul class="price-features">
           <li>Unlimited courses</li>
@@ -265,7 +387,7 @@
 
       <div class="pricing-card gl-card" appReveal [style.transitionDelay]="'0.3s'">
         <h3 class="price-tier">Elite</h3>
-        <div class="price-amount">999k<span>/month</span></div>
+        <div class="price-amount">999k<span class="price-period">/month</span></div>
         <p class="price-desc">For professional athletes & trainers</p>
         <ul class="price-features">
           <li>Everything in Pro</li>

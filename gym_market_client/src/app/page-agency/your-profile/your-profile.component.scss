@@ -3,7 +3,7 @@
   min-height: 100vh;
   padding: 80px 0 40px;
   color: var(--text);
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   transition: background 0.45s, color 0.45s;
 }
 
@@ -133,7 +133,7 @@
   }
 
   .coach-name {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 2rem;
     font-weight: 800;
     line-height: 1.2;
@@ -167,7 +167,7 @@
     gap: 4px;
 
     .stat-val {
-      font-family: 'Syne', sans-serif;
+      font-family: 'DM Sans', sans-serif;
       font-size: 1.625rem;
       font-weight: 850;
       color: var(--text);
@@ -262,7 +262,7 @@
 
   .quote-mark {
     position: absolute;
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 4.5rem;
     color: rgba(255, 149, 0, 0.15);
     line-height: 1;

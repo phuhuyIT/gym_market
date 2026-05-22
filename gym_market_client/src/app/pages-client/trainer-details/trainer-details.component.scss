@@ -62,7 +62,7 @@
   }
 
   &__name {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 3rem;
     font-weight: 800;
     line-height: 1;
@@ -116,7 +116,7 @@
   flex-direction: column;
   gap: 0.25rem;
 
-  &__value { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--text); }
+  &__value { font-family: 'DM Sans', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--text); }
   &__label { font-family: 'DM Sans', sans-serif; font-size: 0.5625rem; font-weight: 700; color: var(--text-xsoft); letter-spacing: 0.1em; text-transform: uppercase; }
 }
 
@@ -137,7 +137,7 @@
 }
 
 .section-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--text);
@@ -194,14 +194,14 @@
 
   &__content {
     padding: 1rem;
-    h3 { font-family: 'Syne', sans-serif; font-size: 0.9375rem; font-weight: 700; margin-bottom: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    h3 { font-family: 'DM Sans', sans-serif; font-size: 0.9375rem; font-weight: 700; margin-bottom: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   }
 
   &__footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .price { color: var(--blue); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.25rem; }
+    .price { color: var(--blue); font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1.25rem; }
     .category { font-family: 'DM Sans', sans-serif; font-size: 0.5625rem; font-weight: 700; color: var(--text-xsoft); text-transform: uppercase; }
   }
 }

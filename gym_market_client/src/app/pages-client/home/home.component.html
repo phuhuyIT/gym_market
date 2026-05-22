@@ -1,153 +1,249 @@
 <div class="home">
-	<div class="hero p-10">
-		<div class="banner-header text-center max-w-[1000px] mx-auto mb-10">
-			<div class="text-[1.2rem] font-medium text-secondary mb-4">
-				300,000+ lives transformed by Fitness for life Coaches
-			</div>
-			<h1 class="hero__title text-[3rem] font-bold mb-4">Your perfect coach is just a few steps away</h1>
-			<p class="hero__subtitle text-[0.9rem]">Find the ideal coach for your goals & interests</p>
-		</div>
+  <!-- Dynamic Background Effects -->
+  <div class="cyber-grid"></div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
 
-		<div class="banner-body container mx-auto flex justify-center flex-wrap gap-6 p-5">
-			<div class="gl-card w-[400px] flex flex-col p-6 items-center text-center">
-				<div class="w-[200px] h-[150px] mb-4 overflow-hidden rounded-[calc(var(--radius-lg)-4px)]">
-					<img src="https://www.fittr.com/static-content/fitness_and_nutrition_788d2c4f98.webp" alt="Fitness & Nutrition" class="w-full h-full object-cover"/>
-				</div>
-				<h3 class="font-bold text-[1.2rem] mb-2">Fitness & Nutrition</h3>
-				<p class="text-[0.9rem] text-secondary mb-6 flex-grow">
-					Unlock your dream body with the right diet & workouts
-				</p>
-				<button class="btn-accent mt-auto w-full" routerLink="/client/course-search">View Coaches</button>
-			</div>
+  <!-- Dashboard Greeting Header -->
+  <div class="dashboard-hero" appReveal>
+    <div class="greeting-box">
+      <div class="welcome-badge">
+        <span class="pulse-dot"></span>
+        STUDENT WORKSPACE
+      </div>
+      <h1 class="greeting-title">Welcome back, <span class="gradient-text">Champion!</span></h1>
+      <p class="greeting-subtitle">"Success isn't given. It's earned. In the gym, on the track, every single day."</p>
+      
+      <div class="quick-stats-row">
+        <div class="stat-pill"><i class="fa-solid fa-fire text-orange"></i> Weekly Workouts: <strong>3/5</strong></div>
+        <div class="stat-pill"><i class="fa-solid fa-heart-pulse text-red"></i> Avg. Heartrate: <strong>138 BPM</strong></div>
+        <div class="stat-pill"><i class="fa-solid fa-trophy text-yellow"></i> Streak: <strong>12 Days</strong></div>
+      </div>
+    </div>
 
-			<div class="gl-card w-[400px] flex flex-col p-6 items-center text-center">
-				<div class="w-[200px] h-[150px] mb-4 overflow-hidden rounded-[calc(var(--radius-lg)-4px)]">
-					<img src="https://www.fittr.com/static-content/personal_training_d154e7f2e9.webp" alt="Personal Training" class="w-full h-full object-cover"/>
-				</div>
-				<h3 class="font-bold text-[1.2rem] mb-2">Personal Training</h3>
-				<p class="text-[0.9rem] text-secondary mb-6 flex-grow">
-					Get personalized 1-on-1 coaching sessions
-				</p>
-				<button class="btn-accent mt-auto w-full" routerLink="/client/course-search">View Coaches</button>
-			</div>
+    <!-- Active Weekly Progress Ring -->
+    <div class="progress-ring-card gl-2">
+      <div class="progress-header">
+        <span class="progress-title">WEEKLY GOAL</span>
+        <span class="progress-percentage">60%</span>
+      </div>
+      <div class="ring-visualizer">
+        <svg class="ring-svg" viewBox="0 0 100 100">
+          <circle class="ring-track" cx="50" cy="50" r="40" fill="none" stroke-width="8" />
+          <circle class="ring-fill" cx="50" cy="50" r="40" fill="none" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="100.48" />
+        </svg>
+        <div class="ring-center">
+          <span class="ring-val">3</span>
+          <span class="ring-lbl">Done</span>
+        </div>
+      </div>
+      <div class="progress-footer">2 workouts left to meet target!</div>
+    </div>
+  </div>
 
-			<div class="gl-card w-[400px] flex flex-col p-6 items-center text-center">
-				<div class="w-[200px] h-[150px] mb-4 overflow-hidden rounded-[calc(var(--radius-lg)-4px)]">
-					<img src="https://www.fittr.com/static-content/injury_rehab_e9a0a93435.webp" alt="Injury Rehab" class="w-full h-full object-cover"/>
-				</div>
-				<h3 class="font-bold text-[1.2rem] mb-2">Injury Rehab</h3>
-				<p class="text-[0.9rem] text-secondary mb-6 flex-grow">
-					Recover safely under expert guidance
-				</p>
-				<button class="btn-accent mt-auto w-full" routerLink="/client/course-search">View Coaches</button>
-			</div>
+  <!-- Section 1: Main Training Programs -->
+  <section class="programs-section">
+    <div class="section-head" appReveal>
+      <span class="section-tag">Coaching</span>
+      <h2 class="section-title">Your perfect coach is just a few steps away</h2>
+    </div>
 
-			<div class="gl-card w-[400px] flex flex-col p-6 items-center text-center">
-				<div class="w-[200px] h-[150px] mb-4 overflow-hidden rounded-[calc(var(--radius-lg)-4px)]">
-					<img src="https://www.fittr.com/static-content/fittr_kids_8ff9634e30.webp" alt="Fitness for Kids" class="w-full h-full object-cover"/>
-				</div>
-				<h3 class="font-bold text-[1.2rem] mb-2">Fitness for Kids</h3>
-				<p class="text-[0.9rem] text-secondary mb-6 flex-grow">
-					Healthy habits start young
-				</p>
-				<button class="btn-accent mt-auto w-full" routerLink="/client/course-search">View Coaches</button>
-			</div>
+    <div class="programs-grid">
+      <!-- Card 1 -->
+      <div class="program-card gl-card" appReveal [style.transitionDelay]="'0.05s'">
+        <div class="img-wrapper">
+          <img src="https://www.fittr.com/static-content/fitness_and_nutrition_788d2c4f98.webp" alt="Fitness & Nutrition" class="card-img"/>
+          <div class="img-gradient-overlay"></div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title font-syne">Fitness & Nutrition</h3>
+          <p class="card-desc">Unlock your dream body with the right combination of workouts and personalized meal diets.</p>
+          <button class="btn-gym-action" routerLink="/client/course-search">
+            Explore Courses <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
 
-			<div class="gl-card w-[400px] flex flex-col p-6 items-center text-center">
-				<div class="w-[200px] h-[150px] mb-4 overflow-hidden rounded-[calc(var(--radius-lg)-4px)]">
-					<img src="https://www.fittr.com/static-content/diabetes_management_0431dec303.webp" alt="Diabetes Management" class="w-full h-full object-cover"/>
-				</div>
-				<h3 class="font-bold text-[1.2rem] mb-2">Diabetes Management</h3>
-				<p class="text-[0.9rem] text-secondary mb-6 flex-grow">
-					Manage and reverse through lifestyle changes
-				</p>
-				<button class="btn-accent mt-auto w-full" routerLink="/client/course-search">View Coaches</button>
-			</div>
-		</div>
-	</div>
+      <!-- Card 2 -->
+      <div class="program-card gl-card" appReveal [style.transitionDelay]="'0.1s'">
+        <div class="img-wrapper">
+          <img src="https://www.fittr.com/static-content/personal_training_d154e7f2e9.webp" alt="Personal Training" class="card-img"/>
+          <div class="img-gradient-overlay"></div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title font-syne">Personal Training</h3>
+          <p class="card-desc">Accelerate your results with dedicated 1-on-1 coaching sessions and custom exercise sets.</p>
+          <button class="btn-gym-action" routerLink="/client/course-search">
+            Explore Courses <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
 
-	<div class="stats p-10 mt-10">
-		<div class="banner-header text-center max-w-[1000px] mx-auto mb-10">
-			<h2 class="section-title text-[3rem] font-bold mb-4">Check Your Body Fat</h2>
-			<p class="text-[1.2rem] text-secondary">
-				Checked by <span class="font-bold text-primary">AI Model</span> with
-				<span class="font-bold text-accent-500">85%</span> accuracy
-			</p>
-		</div>
+      <!-- Card 3 -->
+      <div class="program-card gl-card" appReveal [style.transitionDelay]="'0.15s'">
+        <div class="img-wrapper">
+          <img src="https://www.fittr.com/static-content/injury_rehab_e9a0a93435.webp" alt="Injury Rehab" class="card-img"/>
+          <div class="img-gradient-overlay"></div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title font-syne">Injury Rehab</h3>
+          <p class="card-desc">Recover safely and build functional stability under the careful guidance of medical coaches.</p>
+          <button class="btn-gym-action" routerLink="/client/course-search">
+            Explore Courses <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
 
-		<div class="container mx-auto flex justify-center gap-10 p-5 flex-wrap">
-			<div class="gl-card flex flex-col items-center p-8 max-w-[400px] text-center">
-				<div class="icon-badge mb-6">
-					<svg class="w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18.5A2.493 2.493 0 0 1 7.51 20H7.5a2.468 2.468 0 0 1-2.4-3.154 2.98 2.98 0 0 1-.85-5.274 2.468 2.468 0 0 1 .92-3.182 2.477 2.477 0 0 1 1.876-3.344 2.5 2.5 0 0 1 3.41-1.856A2.5 2.5 0 0 1 12 5.5m0 13v-13m0 13a2.493 2.493 0 0 0 4.49 1.5h.01a2.468 2.468 0 0 0 2.403-3.154 2.98 2.98 0 0 0 .847-5.274 2.468 2.468 0 0 0-.921-3.182 2.477 2.477 0 0 0-1.875-3.344A2.5 2.5 0 0 0 14.5 3 2.5 2.5 0 0 0 12 5.5m-8 5a2.5 2.5 0 0 1 3.48-2.3m-.28 8.551a3 3 0 0 1-2.953-5.185M20 10.5a2.5 2.5 0 0 0-3.481-2.3m.28 8.551a3 3 0 0 0 2.954-5.185"/>
-					</svg>
-				</div>
-				<button class="btn-ghost w-full" routerLink="/check-bmi">Predict Body Fat By Metrics</button>
-			</div>
+      <!-- Card 4 -->
+      <div class="program-card gl-card" appReveal [style.transitionDelay]="'0.2s'">
+        <div class="img-wrapper">
+          <img src="https://www.fittr.com/static-content/fittr_kids_8ff9634e30.webp" alt="Fitness for Kids" class="card-img"/>
+          <div class="img-gradient-overlay"></div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title font-syne">Fitness for Kids</h3>
+          <p class="card-desc">Instill healthy habits, coordination, and physical fitness in children with fun sports games.</p>
+          <button class="btn-gym-action" routerLink="/client/course-search">
+            Explore Courses <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
 
-			<div class="gl-card flex flex-col items-center p-8 max-w-[400px] text-center">
-				<div class="icon-badge mb-6">
-					<svg class="w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18.5A2.493 2.493 0 0 1 7.51 20H7.5a2.468 2.468 0 0 1-2.4-3.154 2.98 2.98 0 0 1-.85-5.274 2.468 2.468 0 0 1 .92-3.182 2.477 2.477 0 0 1 1.876-3.344 2.5 2.5 0 0 1 3.41-1.856A2.5 2.5 0 0 1 12 5.5m0 13v-13m0 13a2.493 2.493 0 0 0 4.49 1.5h.01a2.468 2.468 0 0 0 2.403-3.154 2.98 2.98 0 0 0 .847-5.274 2.468 2.468 0 0 0-.921-3.182 2.477 2.477 0 0 0-1.875-3.344A2.5 2.5 0 0 0 14.5 3 2.5 2.5 0 0 0 12 5.5m-8 5a2.5 2.5 0 0 1 3.48-2.3m-.28 8.551a3 3 0 0 1-2.953-5.185M20 10.5a2.5 2.5 0 0 0-3.481-2.3m.28 8.551a3 3 0 0 0 2.954-5.185"/>
-					</svg>
-				</div>
-				<button class="btn-ghost w-full" routerLink="/predict-body-fat">Predict Body Fat By Image</button>
-			</div>
-		</div>
-	</div>
+      <!-- Card 5 -->
+      <div class="program-card gl-card" appReveal [style.transitionDelay]="'0.25s'">
+        <div class="img-wrapper">
+          <img src="https://www.fittr.com/static-content/diabetes_management_0431dec303.webp" alt="Diabetes Management" class="card-img"/>
+          <div class="img-gradient-overlay"></div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title font-syne">Diabetes Management</h3>
+          <p class="card-desc">Manage and reverse lifestyle symptoms through science-backed training and diabetes advisors.</p>
+          <button class="btn-gym-action" routerLink="/client/course-search">
+            Explore Courses <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-	<div class="p-10 mt-10">
-		<div class="banner-header text-center max-w-[1000px] mx-auto mb-10">
-			<h2 class="section-title text-[3rem] font-bold">A judgment-free space for everyone</h2>
-		</div>
-		<div class="gl h-[60vh] rounded-[var(--radius-xl)] bg-no-repeat bg-center bg-cover"
-			style="background-image: url('https://www.fittr.com/static-content/fittr_community_judgement_free_c2ff664eb3.webp');">
-		</div>
-	</div>
+  <!-- Section 2: AI Diagnostics Center -->
+  <section class="ai-diagnostics-section">
+    <div class="section-head" appReveal>
+      <span class="section-tag">Diagnostics</span>
+      <h2 class="section-title">Check Your Body Fat</h2>
+      <p class="section-subtitle">Powered by an advanced neural network matching image and metric telemetry with 85% accuracy</p>
+    </div>
 
-	<div class="p-10 mt-10 mb-20">
-		<div class="banner-header text-center max-w-[1000px] mx-auto mb-10">
-			<h2 class="section-title text-[3rem] font-bold">Your Health Matters!</h2>
-		</div>
+    <div class="diagnostics-grid">
+      <!-- Metrics Card -->
+      <div class="diagnostic-panel gl-card" appReveal [style.transitionDelay]="'0.1s'">
+        <div class="diagnostic-inner">
+          <div class="hud-icon"><i class="fa-solid fa-calculator"></i></div>
+          <h3 class="hud-title font-syne">Metric Scan Chamber</h3>
+          <p class="hud-desc">Input your height, waist, and chest measurements to calculate your body fat using standardized body formulas.</p>
+          <button class="btn-gym-primary w-full" routerLink="/check-bmi">
+            Predict by Metrics <i class="fa-solid fa-chart-bar"></i>
+          </button>
+        </div>
+        <!-- Digital Grid Lines Accent -->
+        <div class="panel-tech-decor"></div>
+      </div>
 
-		<div class="gl container mx-auto max-w-[1000px] p-10 text-[1rem] leading-relaxed text-secondary">
-			<p class="mb-4">
-				<strong class="text-primary">Fitness for life</strong> isn’t just another fitness company. It is an extended community of friends
-				that you can always count on. We value your time and money and will make sure we
-				deliver the best possible health, fitness, and nutrition services possible.
-			</p>
-			<p class="mb-4">
-				We’re proud to have helped thousands of clients manage and even reverse their
-				high sugar and would love to do the same for you too! Our online diabetes
-				coaching program is designed to provide you with the knowledge and support you
-				need to manage your diabetes effectively. Whether you have type 1 or type 2
-				diabetes, our diabetes specialists are here to help you every step of the way.
-			</p>
-			<p class="mb-4">
-				Our diabetes management guidelines and science-backed practices provide you with
-				the best possible diabetes care and support. Our online diabetes coaches have a
-				proven track record of helping people with this lifestyle disease manage their
-				condition effectively and even reverse the condition in specific cases.
-			</p>
-			<p>
-				And why is this solution necessary? Well, diabetes affects you in more ways than
-				you can imagine! Diabetes is a complex medical condition that affects every
-				aspect of your life, and prolonged medication dependence might do more harm than
-				good. Our diabetes specialist will help you learn the science behind diabetic
-				remission and apply it to your life. Learn to manage your blood sugar levels and
-				deal with diabetes symptoms, stress, and comorbidities with Fitness for life Diabetes
-				Coaching. Once you enrol for Fitness for life Diabetes Lifestyle Management, your online
-				diabetes consultant will provide you with expert guidance on diabetes nutrition
-				and help you create a balanced diabetic meal plan that works for you.
-				Additionally, our online diabetes coaches can help you work in consultation with
-				a diabetes doctor near you to incorporate physical activity into your daily
-				routine and address diabetes weight loss and other goals. Our diabetes experts
-				are highly qualified and experienced in online diabetes management. Get to know
-				our diabetes coaches by chatting with them for free and learn more about their
-				experience in helping people with diabetes before you enrol. And if you ever
-				have any questions, shoot us an email on support&#64;fitness-for-life.com and well get back
-				to you in a jiffy!
-			</p>
-		</div>
-	</div>
+      <!-- Image Card -->
+      <div class="diagnostic-panel gl-card" appReveal [style.transitionDelay]="'0.2s'">
+        <div class="diagnostic-inner">
+          <div class="hud-icon icon-cyan"><i class="fa-solid fa-camera"></i></div>
+          <h3 class="hud-title font-syne">Image Vision Chamber</h3>
+          <p class="hud-desc">Upload a progress photograph to scan markers and predict your body fat percentages using computer vision.</p>
+          <button class="btn-gym-primary btn-glow-orange w-full" routerLink="/predict-body-fat">
+            Predict by Image <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </button>
+        </div>
+        <!-- Digital Grid Lines Accent -->
+        <div class="panel-tech-decor"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Community Banner -->
+  <section class="community-banner-section">
+    <div class="community-backdrop gl" appReveal
+         style="background-image: url('https://www.fittr.com/static-content/fittr_community_judgement_free_c2ff664eb3.webp');">
+      <div class="community-tint"></div>
+      <div class="community-content">
+        <span class="comm-tag"><i class="fa-solid fa-users"></i> COMMUNITY HUB</span>
+        <h2 class="comm-title font-syne">A judgment-free space for everyone</h2>
+        <p class="comm-subtitle">Join thousands of active students and certified coaches posting progress tips, healthy recipe meals, and active support.</p>
+        <div class="community-stats-row">
+          <div class="c-stat"><strong>12.4K</strong> Online Now</div>
+          <div class="c-stat"><strong>1.2M+</strong> Shared Workouts</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Detailed Wellness Information -->
+  <section class="info-section">
+    <div class="section-head" appReveal>
+      <span class="section-tag">Support</span>
+      <h2 class="section-title">Your Health Matters!</h2>
+    </div>
+
+    <div class="info-layout" appReveal>
+      <div class="info-headline-box gl-card">
+        <h3 class="info-box-title font-syne">Why online coaching makes the difference</h3>
+        <p class="info-box-lead">
+          <strong class="gradient-text">Fitness for life</strong> isn't just another fitness company. It is an extended community of friends that you can always count on. We value your time and money and will make sure we deliver the best possible health, fitness, and nutrition services.
+        </p>
+        <div class="contact-support-banner">
+          <span>Have questions? Speak to our support coordinators:</span>
+          <a href="mailto:support@fitness-for-life.com" class="support-email-btn">
+            <i class="fa-solid fa-envelope"></i> support&#64;fitness-for-life.com
+          </a>
+        </div>
+      </div>
+
+      <!-- Tabbed Accordion Details -->
+      <div class="info-accordion-container">
+        <!-- Accordion Item 1 -->
+        <details class="info-details gl-card" open>
+          <summary class="details-summary font-syne">
+            <span>Diabetes Lifestyle Coaching Program</span>
+            <i class="fa-solid fa-chevron-down summary-chevron"></i>
+          </summary>
+          <div class="details-content">
+            <p>
+              We're proud to have helped thousands of clients manage and even reverse their high sugar and would love to do the same for you too! Our online diabetes coaching program is designed to provide you with the knowledge and support you need to manage your diabetes effectively. Whether you have type 1 or type 2 diabetes, our diabetes specialists are here to help you every step of the way.
+            </p>
+          </div>
+        </details>
+
+        <!-- Accordion Item 2 -->
+        <details class="info-details gl-card">
+          <summary class="details-summary font-syne">
+            <span>Science-Backed Guidelines & Physical Activity</span>
+            <i class="fa-solid fa-chevron-down summary-chevron"></i>
+          </summary>
+          <div class="details-content">
+            <p>
+              Our diabetes management guidelines and science-backed practices provide you with the best possible diabetes care and support. Our online diabetes coaches have a proven track record of helping people with this lifestyle disease manage their condition effectively and even reverse the condition in specific cases.
+            </p>
+          </div>
+        </details>
+
+        <!-- Accordion Item 3 -->
+        <details class="info-details gl-card">
+          <summary class="details-summary font-syne">
+            <span>Remission, Nutrition, & Dietitian Advice</span>
+            <i class="fa-solid fa-chevron-down summary-chevron"></i>
+          </summary>
+          <div class="details-content">
+            <p>
+              Diabetes affects you in more ways than you can imagine! Extended medication dependence might do more harm than good. Our diabetes specialists will help you learn the science behind diabetic remission and apply it to your life. Learn to manage your blood sugar levels and deal with diabetes symptoms, stress, and comorbidities. Once you enrol, your online diabetes consultant will provide you with expert guidance on diabetes nutrition and help you create a balanced diabetic meal plan that works for you.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
 </div>
