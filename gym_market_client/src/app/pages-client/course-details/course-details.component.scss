@@ -27,7 +27,7 @@
 }
 
 .section-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 800;
   font-size: 1.25rem;
   letter-spacing: -0.02em;
@@ -118,7 +118,7 @@
 }
 
 .section-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--text);
@@ -215,7 +215,7 @@
   &__price {
     color: var(--blue);
     font-weight: 700;
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
   }
 
   &__text {
@@ -237,7 +237,7 @@
   display: flex; align-items: center; gap: 16px;
   
   &__value {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 800;
     font-size: 4rem;
     line-height: 1;
@@ -315,7 +315,7 @@
   box-shadow: 0 12px 40px var(--blue-glow);
 
   &__price {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 800;
     font-size: 4rem;
     color: var(--text);

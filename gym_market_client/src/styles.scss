@@ -63,9 +63,9 @@
   --surface:       var(--glass-fill);
   --surface-2:     var(--glass-fill2);
   --border:        var(--glass-border);
-  --font-display:  'Outfit', sans-serif;
-  --font-mono:     'Inter', sans-serif;
-  --font-body:     'Inter', sans-serif;
+  --font-display:  'DM Sans', sans-serif;
+  --font-mono:     'DM Sans', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
   --transition:    0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -121,9 +121,9 @@
   --surface:       var(--glass-fill);
   --surface-2:     var(--glass-fill2);
   --border:        var(--glass-border);
-  --font-display:  'Outfit', sans-serif;
-  --font-mono:     'Inter', sans-serif;
-  --font-body:     'Inter', sans-serif;
+  --font-display:  'DM Sans', sans-serif;
+  --font-mono:     'DM Sans', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
   --transition:    0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -134,7 +134,7 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;

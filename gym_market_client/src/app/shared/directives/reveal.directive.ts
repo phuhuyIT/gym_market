@@ -5,6 +5,7 @@ export class RevealDirective implements AfterViewInit {
   private el = inject(ElementRef);
 
   ngAfterViewInit() {
+    this.el.nativeElement.classList.add('reveal');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
