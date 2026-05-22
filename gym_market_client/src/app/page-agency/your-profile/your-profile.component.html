@@ -1,67 +1,104 @@
 <div class="wrapper" *ngIf="userInfo && trainerInfo">
   <div class="container">
-    <div class="profile-card">
-      <div class="profile-grid">
-        <!-- Sidebar -->
-        <aside class="avatar-section">
+    
+    <div class="trainer-portfolio-grid">
+      
+      <!-- Left Column: Coach Card & Stats -->
+      <aside class="coach-sidebar-card">
+        <div class="avatar-container">
+          <div class="avatar-ring"></div>
           <img [src]="trainerInfo.profilePicture || '/assets/fitness_logo.jpg'" alt="Trainer profile">
-          
-          <gm-button variant="secondary" routerLink="/agency/update-profile" class="w-full">
-            EDIT PROFILE
+          <span class="online-indicator"></span>
+        </div>
+
+        <div class="coach-title-area">
+          <span class="coach-badge">VERIFIED COACH</span>
+          <h2 class="coach-name">{{userInfo.fullName}}</h2>
+          <p class="coach-subtitle">Specialist Fitness Instructor</p>
+        </div>
+
+        <div class="coach-stats-widget">
+          <div class="stat-item">
+            <span class="stat-val">{{ trainerInfo.rating ? (trainerInfo.rating | number:'1.1-1') : '0.0' }}</span>
+            <span class="stat-label">★ RATING</span>
+          </div>
+          <div class="divider"></div>
+          <div class="stat-item">
+            <span class="stat-val">{{ trainerInfo.experience }}+</span>
+            <span class="stat-label">YEARS EXP</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Actions -->
+        <div class="sidebar-actions">
+          <gm-button variant="secondary" routerLink="/agency/update-profile" class="w-full edit-profile-btn">
+            ✏️ EDIT PROFILE
           </gm-button>
-        </aside>
+        </div>
+      </aside>
 
-        <!-- Main Info -->
-        <main class="info-section">
-          <div class="form-group">
-            <label class="form-label">Full Name</label>
-            <input type="text" class="form-input" [value]="userInfo.fullName" disabled />
+      <!-- Right Column: Deep-dive Info -->
+      <main class="coach-details-area">
+        
+        <!-- Philosophy / Bio Card -->
+        <section class="details-section-card philosophy-card">
+          <div class="section-header">
+            <span class="sec-icon">🎯</span>
+            <h3>Training Philosophy & Bio</h3>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">Address</label>
-            <input type="text" class="form-input" [value]="userInfo.address || 'Global'" disabled />
+          <div class="philosophy-content">
+            <span class="quote-mark open">“</span>
+            <p class="bio-text">{{ trainerInfo.bio || 'This trainer has not shared their training philosophy yet.' }}</p>
+            <span class="quote-mark close">”</span>
           </div>
+        </section>
 
-          <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label">Email Address</label>
-              <input type="text" class="form-input" [value]="userInfo.email" disabled />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Phone Number</label>
-              <input type="text" class="form-input" [value]="userInfo.phoneNumber || 'Not provided'" disabled />
-            </div>
+        <!-- Certifications & Badges Card -->
+        <section class="details-section-card certifications-card">
+          <div class="section-header">
+            <span class="sec-icon">📜</span>
+            <h3>Certifications & Credentials</h3>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">Professional Bio</label>
-            <textarea class="form-input" rows="3" disabled>{{ trainerInfo.bio }}</textarea>
-          </div>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label">Rating</label>
-              <div class="flex items-center gap-2">
-                <span class="text-2xl font-bold text-accent-500">{{ trainerInfo.rating || '0.0' }} ★</span>
+          <div class="certifications-grid">
+            @for (cert of certificationsList; track cert) {
+              <div class="credential-badge">
+                <div class="badge-icon">🎖️</div>
+                <span class="badge-name">{{ cert }}</span>
               </div>
-            </div>
+            } @empty {
+              <div class="empty-certs-state">
+                <p>No certificates listed yet. Add your certifications to display verified badges.</p>
+              </div>
+            }
+          </div>
+        </section>
 
-            <div class="form-group">
-              <label class="form-label">Years of Experience</label>
-              <input type="text" class="form-input" [value]="trainerInfo.experience" disabled />
+        <!-- Contact & Location Card -->
+        <section class="details-section-card contact-card">
+          <div class="section-header">
+            <span class="sec-icon">🪪</span>
+            <h3>Contact & Operations</h3>
+          </div>
+          <div class="contact-grid">
+            <div class="contact-info-block">
+              <span class="info-label">EMAIL ADDRESS</span>
+              <span class="info-val">{{userInfo.email}}</span>
+            </div>
+            <div class="contact-info-block">
+              <span class="info-label">PHONE NUMBER</span>
+              <span class="info-val">{{userInfo.phoneNumber || 'Not provided'}}</span>
+            </div>
+            <div class="contact-info-block">
+              <span class="info-label">BASE LOCATION</span>
+              <span class="info-val">{{userInfo.address || 'Global / Remote'}}</span>
             </div>
           </div>
+        </section>
 
-          <div class="form-group">
-            <label class="form-label">Certifications</label>
-            <div class="form-input bg-overlay min-h-[100px] whitespace-pre-wrap">
-              {{ trainerInfo.certification }}
-            </div>
-          </div>
-        </main>
-      </div>
+      </main>
+
     </div>
+
   </div>
 </div>
+

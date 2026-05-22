@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -12,7 +12,7 @@ namespace GymMarket.API.Repositories.IRepositories
         Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
         Task AddAsync<TCreateDto>(TCreateDto entity) where TCreateDto:class;
         Task AddRangeAsync<TCreateDto>(IEnumerable<TCreateDto> entities) where TCreateDto:class;
-        Task Update<TUpdateDto>(TUpdateDto entity)where TUpdateDto:class;
+        Task Update(TEntity entity);
         Task RemoveAsync(TEntity entity);
         Task RemoveRangeAsync(IEnumerable<TEntity> entities);
     }

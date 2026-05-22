@@ -1,85 +1,172 @@
-<div class="student-profile" *ngIf="userInfo && studentInfo">
+<div class="student-profile" *ngIf="userInfo">
   <div class="container">
-    <!-- Profile Header -->
-    <header class="profile-header">
-      <div class="profile-header__content">
-        <div class="profile-header__avatar">
-          <img [src]="studentInfo.profilePicture || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="User avatar">
+    
+    <!-- Premium Dashboard Hero Header -->
+    <header class="profile-hero-card">
+      <div class="hero-bg-accent"></div>
+      <div class="profile-hero-card__content">
+        <div class="avatar-wrapper">
+          <div class="avatar-ring"></div>
+          <img class="profile-avatar" [src]="(studentInfo?.profilePicture) || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="User avatar">
+          <span class="status-badge" title="Active student"></span>
         </div>
-        <div class="profile-header__info">
-          <h1 class="profile-header__name">{{userInfo.fullName}}</h1>
-          <p class="profile-header__meta">Student since {{studentInfo.createdAt | date}} • {{userInfo.address || 'Location not set'}}</p>
+        
+        <div class="profile-hero-card__info">
+          <div class="badge-row">
+            <span class="role-badge">FITNESS ENTHUSIAST</span>
+            <span class="tier-badge">PREMIUM MEMBER</span>
+          </div>
+          <h1 class="profile-hero-card__name">{{userInfo.fullName}}</h1>
+          <p class="profile-hero-card__meta">
+            <span class="meta-item">
+              <span class="icon">📅</span> Joined {{(studentInfo?.createdAt | date) || 'N/A'}}
+            </span>
+            <span class="meta-item">
+              <span class="icon">📍</span> {{userInfo.address || 'Location not set'}}
+            </span>
+          </p>
         </div>
-        <div class="profile-header__actions">
-          <gm-button variant="secondary" routerLink="/client/update-profile">EDIT PROFILE</gm-button>
+        
+        <div class="profile-hero-card__actions">
+          <gm-button variant="secondary" routerLink="/client/update-profile" class="edit-btn">
+            <span class="btn-icon">✏️</span> EDIT PROFILE
+          </gm-button>
         </div>
       </div>
     </header>
 
     <!-- Navigation Tabs -->
-    <nav class="profile-nav">
-      <div class="profile-nav__tab" [class.active]="activeTab === 'OVERVIEW'" (click)="activeTab = 'OVERVIEW'">OVERVIEW</div>
-      <div class="profile-nav__tab" [class.active]="activeTab === 'COURSES'" (click)="activeTab = 'COURSES'">MY COURSES</div>
-      <div class="profile-nav__tab" [class.active]="activeTab === 'HEALTH'" (click)="activeTab = 'HEALTH'">HEALTH HISTORY</div>
+    <nav class="profile-nav-tabs">
+      <button class="nav-tab-btn" [class.active]="activeTab === 'OVERVIEW'" (click)="activeTab = 'OVERVIEW'">
+        <span class="tab-icon">📊</span> OVERVIEW
+      </button>
+      <button class="nav-tab-btn" [class.active]="activeTab === 'COURSES'" (click)="activeTab = 'COURSES'">
+        <span class="tab-icon">💪</span> MY COURSES
+      </button>
+      <button class="nav-tab-btn" [class.active]="activeTab === 'HEALTH'" (click)="activeTab = 'HEALTH'">
+        <span class="tab-icon">❤️</span> HEALTH HISTORY
+      </button>
     </nav>
 
-    <!-- Main Content -->
-    <main class="profile-content">
+    <!-- Main Content Grid -->
+    <main class="profile-content-area">
       <!-- Overview Tab -->
-      <section class="tab-pane" *ngIf="activeTab === 'OVERVIEW'">
-        <div class="info-grid">
-          <gm-card class="info-card">
-            <h3 class="info-card__title">Contact Information</h3>
-            <div class="info-item">
-              <span class="label">EMAIL</span>
-              <span class="value">{{userInfo.email}}</span>
+      <section class="tab-pane-content" *ngIf="activeTab === 'OVERVIEW'">
+        <div class="overview-grid">
+          
+          <!-- Contact Info Card -->
+          <div class="glass-info-card">
+            <div class="glass-info-card__header">
+              <div class="header-icon">🪪</div>
+              <h3 class="glass-info-card__title">Contact Information</h3>
             </div>
-            <div class="info-item">
-              <span class="label">PHONE</span>
-              <span class="value">{{userInfo.phoneNumber || 'Not provided'}}</span>
+            <div class="glass-info-card__body">
+              <div class="contact-detail-row">
+                <div class="icon-box">✉️</div>
+                <div class="detail-content">
+                  <span class="label">EMAIL ADDRESS</span>
+                  <span class="value">{{userInfo.email}}</span>
+                </div>
+              </div>
+              <div class="contact-detail-row">
+                <div class="icon-box">📞</div>
+                <div class="detail-content">
+                  <span class="label">PHONE NUMBER</span>
+                  <span class="value">{{userInfo.phoneNumber || 'Not provided'}}</span>
+                </div>
+              </div>
+              <div class="contact-detail-row">
+                <div class="icon-box">📍</div>
+                <div class="detail-content">
+                  <span class="label">RESIDENCE</span>
+                  <span class="value">{{userInfo.address || 'Not provided'}}</span>
+                </div>
+              </div>
             </div>
-            <div class="info-item">
-              <span class="label">ADDRESS</span>
-              <span class="value">{{userInfo.address || 'Not provided'}}</span>
-            </div>
-          </gm-card>
+          </div>
 
-          <gm-card class="info-card">
-            <h3 class="info-card__title">Health Status</h3>
-            <p class="health-text">{{studentInfo.healthStatus || 'No health information provided.'}}</p>
-            <div class="health-stats">
-              <div class="health-stat">
-                <span class="label">BMI</span>
-                <span class="value">22.4</span>
+          <!-- Health & Biometrics Card -->
+          <div class="glass-info-card highlighted">
+            <div class="glass-info-card__header">
+              <div class="header-icon">⚡</div>
+              <h3 class="glass-info-card__title">Health & Biometrics</h3>
+            </div>
+            <div class="glass-info-card__body">
+              <div class="health-summary-box">
+                <span class="label">HEALTH STATUS REPORT</span>
+                <p class="health-status-desc">{{studentInfo?.healthStatus || 'No health information provided yet. Keep your records updated to help trainers personalize your workouts.'}}</p>
               </div>
-              <div class="health-stat">
-                <span class="label">BODY FAT</span>
-                <span class="value">18%</span>
+              
+              <div class="biometrics-grid">
+                <div class="biometrics-stat-card">
+                  <span class="bio-label">BODY MASS INDEX (BMI)</span>
+                  <div class="bio-main">
+                    <span class="bio-value">22.4</span>
+                    <span class="bio-status normal">NORMAL</span>
+                  </div>
+                  <!-- Mini BMI visualizer bar -->
+                  <div class="bmi-bar">
+                    <div class="bmi-pointer" style="left: 45%;"></div>
+                  </div>
+                  <div class="bmi-legend">
+                    <span>18.5</span>
+                    <span>25.0</span>
+                  </div>
+                </div>
+                
+                <div class="biometrics-stat-card">
+                  <span class="bio-label">ESTIMATED BODY FAT</span>
+                  <div class="bio-main">
+                    <span class="bio-value">18%</span>
+                    <span class="bio-status good">FIT</span>
+                  </div>
+                  <!-- Body fat indicator bar -->
+                  <div class="fat-bar">
+                    <div class="fat-progress" style="width: 18%;"></div>
+                  </div>
+                  <div class="bmi-legend">
+                    <span>Essential: 2-5%</span>
+                    <span>Athletic: 14-20%</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </gm-card>
+          </div>
+          
         </div>
       </section>
 
-      <!-- Courses Tab (Placeholder) -->
-      <section class="tab-pane" *ngIf="activeTab === 'COURSES'">
-        <div class="empty-tab">
-          <div class="empty-tab__icon">📚</div>
-          <h3>No enrolled courses</h3>
-          <p>Start your fitness journey by browsing available courses.</p>
-          <gm-button variant="primary" routerLink="/client/course-search">BROWSE COURSES</gm-button>
+      <!-- Courses Tab -->
+      <section class="tab-pane-content" *ngIf="activeTab === 'COURSES'">
+        <div class="empty-showcase-card">
+          <div class="glow-sphere"></div>
+          <div class="empty-icon-wrapper">
+            <span class="pulse-emoji">🏋️‍♂️</span>
+          </div>
+          <h3>Embark on Your Fitness Journey</h3>
+          <p>You haven't enrolled in any courses yet. Discover expert-led programs tailored to your fitness goals.</p>
+          <gm-button variant="primary" routerLink="/client/course-search" class="action-btn">
+            EXPLORE COURSES <span>🚀</span>
+          </gm-button>
         </div>
       </section>
 
-      <!-- Health History Tab (Placeholder) -->
-      <section class="tab-pane" *ngIf="activeTab === 'HEALTH'">
-        <div class="empty-tab">
-          <div class="empty-tab__icon">📈</div>
-          <h3>No history found</h3>
-          <p>Your AI health analysis results will appear here.</p>
-          <gm-button variant="primary" routerLink="/check-bmi">USE AI TOOLS</gm-button>
+      <!-- Health History Tab -->
+      <section class="tab-pane-content" *ngIf="activeTab === 'HEALTH'">
+        <div class="empty-showcase-card">
+          <div class="glow-sphere alternate"></div>
+          <div class="empty-icon-wrapper">
+            <span class="pulse-emoji">🤖</span>
+          </div>
+          <h3>AI Health & Fitness Analysis</h3>
+          <p>Scan your stats, log your history, and get custom AI health analysis reports instantly.</p>
+          <gm-button variant="primary" routerLink="/check-bmi" class="action-btn">
+            ANALYZE WITH AI <span>✨</span>
+          </gm-button>
         </div>
       </section>
     </main>
+    
   </div>
 </div>
+

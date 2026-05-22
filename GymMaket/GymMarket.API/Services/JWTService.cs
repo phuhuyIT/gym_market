@@ -1,4 +1,4 @@
-﻿using GymMarket.API.Data;
+using GymMarket.API.Data;
 using GymMarket.API.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,8 +28,82 @@ namespace GymMarket.API.Services
 
         public async Task<string> CreateJWT(AppUser user)
         {
-            var trainerId = await _context.Trainers.AsNoTracking().Where(t => t.UserId == user.Id).Select(t => t.TrainerId).FirstOrDefaultAsync();
-            var studentId = await _context.Students.AsNoTracking().Where(t => t.UserId == user.Id).Select(t => t.StudentId).FirstOrDefaultAsync();
+            var userRoles = await _userManager.GetRolesAsync(user);
+            string? trainerId = null;
+            string? studentId = null;
+
+            if (userRoles.Contains(ApplicationRoles.Trainer))
+            {
+                var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.UserId == user.Id);
+                if (trainer == null)
+                {
+                    trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.Email == user.Email);
+                    if (trainer != null)
+                    {
+                        trainer.UserId = user.Id;
+                        _context.Trainers.Update(trainer);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        trainer = new Trainer
+                        {
+                            TrainerId = Guid.NewGuid().ToString(),
+                            UserId = user.Id,
+                            Name = user.FullName,
+                            Email = user.Email,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow,
+                            ProfilePicture = "https://cdn-icons-png.flaticon.com/512/1999/1999625.png",
+                            Certification = "General Fitness Trainer",
+                            Bio = "Professional fitness instructor.",
+                            Experience = 0,
+                            Rating = 5,
+                            Desciption = ""
+                        };
+                        await _context.Trainers.AddAsync(trainer);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                trainerId = trainer.TrainerId;
+            }
+            else if (userRoles.Contains(ApplicationRoles.Student))
+            {
+                var student = await _context.Students.FirstOrDefaultAsync(t => t.UserId == user.Id);
+                if (student == null)
+                {
+                    student = await _context.Students.FirstOrDefaultAsync(t => t.Email == user.Email);
+                    if (student != null)
+                    {
+                        student.UserId = user.Id;
+                        _context.Students.Update(student);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        student = new Student
+                        {
+                            StudentId = Guid.NewGuid().ToString(),
+                            UserId = user.Id,
+                            Name = user.FullName,
+                            Email = user.Email,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow,
+                            HealthStatus = "Good",
+                            ProfilePicture = "https://cdn-icons-png.flaticon.com/512/236/236832.png"
+                        };
+                        await _context.Students.AddAsync(student);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                studentId = student.StudentId;
+            }
+            else
+            {
+                trainerId = await _context.Trainers.AsNoTracking().Where(t => t.UserId == user.Id).Select(t => t.TrainerId).FirstOrDefaultAsync();
+                studentId = await _context.Students.AsNoTracking().Where(t => t.UserId == user.Id).Select(t => t.StudentId).FirstOrDefaultAsync();
+            }
+
             var userClaims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -40,8 +114,6 @@ namespace GymMarket.API.Services
                 new Claim("studentId", string.IsNullOrEmpty(studentId) == false ? studentId : ""),
                 new Claim("avatar", string.IsNullOrEmpty(user.Avatar) == false ? user.Avatar : "https://cdn-icons-png.flaticon.com/512/1999/1999625.png"),
             };
-
-            var userRoles = await _userManager.GetRolesAsync(user);
 
             foreach (var role in userRoles)
             {

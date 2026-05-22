@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace GymMarket.API.DTOs.Student
 {
@@ -7,15 +7,12 @@ namespace GymMarket.API.DTOs.Student
         [Required(ErrorMessage = "StudentId is required.")]
         public string StudentId { get; set; } = null!;
 
-        [Required(ErrorMessage = "Name is required.")]
         [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
         public string? Name { get; set; }
 
-        [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid email address format.")]
         public string? Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required.")]
         [StringLength(50, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 50 characters.")]
         public string? Password { get; set; }
 

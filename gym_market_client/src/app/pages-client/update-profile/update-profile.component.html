@@ -1,89 +1,196 @@
 <div class="wrapper">
-  <div class="container">
-    <div class="profile-card">
-      <div class="avatar-preview">
-        <img
-          [src]="updateForm.controls['profilePicture'].value || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'"
-          alt="Avatar preview"
-        />
+  <!-- Glowing ambient orbs for depth -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+
+  <div class="container animate-fade-in">
+    <div class="profile-card-container">
+      
+      <!-- Premium card header with gradient background -->
+      <div class="profile-header-banner">
+        <div class="header-overlay"></div>
+        <h2 class="header-title">Edit Profile</h2>
+        <p class="header-subtitle">Update your personal information and profile photo</p>
       </div>
 
-      <form [formGroup]="updateForm">
-        <!-- Avatar URL -->
-        <div class="form-group mb-6">
-          <label class="form-label">Profile Picture URL</label>
-          <input
-            formControlName="profilePicture"
-            type="text"
-            class="form-input"
-            placeholder="Enter image URL..."
-          />
-          @if(updateForm.controls['profilePicture'].invalid && updateForm.controls['profilePicture'].touched) {
-            <small class="error-msg">Profile picture URL is required</small>
-          }
-        </div>
-
-        <div class="form-grid">
-          <!-- Full Name -->
-          <div class="form-group">
-            <label class="form-label">Full Name</label>
-            <input
-              formControlName="fullName"
-              type="text"
-              class="form-input"
-              placeholder="Enter your name"
+      <!-- Main Profile Card -->
+      <div class="profile-card">
+        
+        <!-- Avatar Preview and Trigger -->
+        <div class="avatar-section">
+          <div class="avatar-container" (click)="toggleAvatarInput()" title="Click to edit profile picture URL">
+            <img
+              [src]="updateForm.controls['profilePicture'].value || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'"
+              alt="Avatar preview"
+              class="avatar-image"
             />
-            @if(updateForm.controls['fullName'].invalid && updateForm.controls['fullName'].touched) {
-              <small class="error-msg">Full name is required</small>
-            }
-          </div>
-
-          <!-- Phone Number -->
-          <div class="form-group">
-            <label class="form-label">Phone Number</label>
-            <input
-              formControlName="phoneNumber"
-              type="text"
-              class="form-input"
-              placeholder="Enter phone number"
-            />
-            @if(updateForm.controls['phoneNumber'].invalid && updateForm.controls['phoneNumber'].touched) {
-              <small class="error-msg">Phone number is required</small>
-            }
+            <div class="avatar-hover-overlay">
+              <svg class="camera-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>Change Photo</span>
+            </div>
           </div>
         </div>
 
-        <!-- Address -->
-        <div class="form-group mb-6">
-          <label class="form-label">Address</label>
-          <input
-            formControlName="address"
-            type="text"
-            class="form-input"
-            placeholder="Enter your address"
-          />
-          @if(updateForm.controls['address'].invalid && updateForm.controls['address'].touched) {
-            <small class="error-msg">Address is required</small>
+        <form [formGroup]="updateForm" class="profile-form">
+          
+          <!-- Expandable Avatar URL Input -->
+          @if (showAvatarInput) {
+            <div class="form-group avatar-url-group animate-slide-down">
+              <label class="form-label">Profile Picture URL</label>
+              <div class="input-wrapper">
+                <input
+                  formControlName="profilePicture"
+                  type="text"
+                  class="form-input"
+                  placeholder="Enter image URL (e.g. https://domain.com/photo.jpg)..."
+                />
+              </div>
+              @if (updateForm.controls['profilePicture'].invalid && updateForm.controls['profilePicture'].touched) {
+                <small class="error-msg">Profile picture URL is required</small>
+              }
+            </div>
           }
-        </div>
 
-        <!-- Email (Disabled) -->
-        <div class="form-group mb-8">
-          <label class="form-label">Email Address</label>
-          <input
-            [value]="updateForm.controls['email'].value"
-            disabled
-            type="text"
-            class="form-input"
-          />
-        </div>
+          <div class="form-grid">
+            <!-- Full Name -->
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <input
+                  formControlName="fullName"
+                  type="text"
+                  class="form-input icon-padding"
+                  placeholder="Enter your name"
+                />
+              </div>
+              @if (updateForm.controls['fullName'].invalid && updateForm.controls['fullName'].touched) {
+                <small class="error-msg">Full name is required</small>
+              }
+            </div>
 
-        <div class="form-actions">
-          <gm-button variant="primary" (clicked)="onUpdate()" [disabled]="updateForm.invalid">
-            UPDATE PROFILE
-          </gm-button>
-        </div>
-      </form>
+            <!-- Email (Disabled) -->
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <div class="input-wrapper disabled-wrapper">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <input
+                  [value]="updateForm.controls['email'].value"
+                  disabled
+                  type="text"
+                  class="form-input icon-padding disabled-input"
+                />
+              </div>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                <input
+                  formControlName="phoneNumber"
+                  type="text"
+                  class="form-input icon-padding"
+                  placeholder="Enter phone number"
+                />
+              </div>
+              @if (updateForm.controls['phoneNumber'].invalid && updateForm.controls['phoneNumber'].touched) {
+                <small class="error-msg">Phone number is required</small>
+              }
+            </div>
+
+            <!-- Address -->
+            <div class="form-group">
+              <label class="form-label">Address</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <input
+                  formControlName="address"
+                  type="text"
+                  class="form-input icon-padding"
+                  placeholder="Enter your address"
+                />
+              </div>
+              @if (updateForm.controls['address'].invalid && updateForm.controls['address'].touched) {
+                <small class="error-msg">Address is required</small>
+              }
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions-bar">
+            <gm-button variant="secondary" routerLink="/client/your-profile" class="btn-cancel">
+              CANCEL
+            </gm-button>
+            <gm-button variant="primary" (clicked)="onUpdate()" [disabled]="updateForm.invalid" class="btn-submit">
+              SAVE CHANGES
+            </gm-button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
+
+@if (showPasswordModal) {
+  <div class="modal-backdrop" (click)="closePasswordModal()">
+    <div class="modal confirm-modal-content" (click)="$event.stopPropagation()">
+      <div class="modal__close" (click)="closePasswordModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </div>
+      
+      <div class="lock-icon-container">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="lock-icon">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+        </svg>
+      </div>
+
+      <h3 class="modal__title" style="text-align: center;">Confirm Password</h3>
+      <p style="text-align: center; color: var(--text-soft); font-size: 0.95rem; margin-bottom: 1.5rem;">
+        Please enter your password to save your profile changes.
+      </p>
+
+      <div class="form-group mb-6">
+        <label class="form-label">Password</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          <input
+            #passwordInput
+            type="password"
+            class="form-input icon-padding"
+            placeholder="Enter your password"
+            autofocus
+            (keyup.enter)="confirmUpdate(passwordInput.value)"
+          />
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <gm-button variant="secondary" (clicked)="closePasswordModal()" style="width: 100%;">
+          CANCEL
+        </gm-button>
+        <gm-button variant="primary" (clicked)="confirmUpdate(passwordInput.value)" style="width: 100%;">
+          CONFIRM
+        </gm-button>
+      </div>
+    </div>
+  </div>
+}

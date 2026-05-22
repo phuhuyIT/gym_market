@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
@@ -49,13 +49,17 @@ namespace GymMarket.API.Controllers
 
         // PUT: api/[controller]/{id}
         [HttpPut("{id}")]
-        public virtual async Task<IActionResult> Update([FromBody] TUpdateDto updateDto)
+        public virtual async Task<IActionResult> Update(TKey id, [FromBody] TUpdateDto updateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var entity = _mapper.Map<TUpdateDto, TEntity>(updateDto);
-            await _repository.Update(entity);
+            var existingEntity = await _repository.GetByIdAsync(id);
+            if (existingEntity == null)
+                return NotFound();
+
+            _mapper.Map(updateDto, existingEntity);
+            await _repository.Update(existingEntity);
             return NoContent();
         }
 

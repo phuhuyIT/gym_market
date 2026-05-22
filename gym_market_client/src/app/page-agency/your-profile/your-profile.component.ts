@@ -6,12 +6,13 @@ import { UserService } from '../../user/user.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Trainer } from '../../core/models/trainer.model';
 import { UserInfo, UserInfoResponse } from '../../core/models/auth.model';
-import { NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { GmButtonComponent } from '../../shared';
 
 @Component({
 	selector: 'app-your-profile',
 	standalone: true,
-	imports: [RouterLink, NgIf],
+	imports: [RouterLink, CommonModule, GmButtonComponent],
 	templateUrl: './your-profile.component.html',
 	styleUrl: './your-profile.component.scss',
 })
@@ -20,6 +21,14 @@ export class YourProfileComponent implements OnInit {
 	userStore = inject(UserStore);
 	trainerInfo: Trainer | null = null;
 	private destroyRef = inject(DestroyRef);
+
+	get certificationsList(): string[] {
+		if (!this.trainerInfo || !this.trainerInfo.certification) return [];
+		return this.trainerInfo.certification
+			.split(/[\n,;]/)
+			.map(c => c.trim())
+			.filter(c => c.length > 0);
+	}
 
 	constructor(
 		private trainerService: TrainerService,
