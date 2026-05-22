@@ -1,4 +1,4 @@
-import { DatePipe, CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CourseAgencyService } from '../course-agency.service';
@@ -13,7 +13,7 @@ import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
     selector: 'app-add-course',
-    imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
+    imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
     templateUrl: './add-course.component.html',
     styleUrl: './add-course.component.scss'
 })

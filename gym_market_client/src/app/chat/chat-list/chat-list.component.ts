@@ -3,7 +3,7 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { UserStore } from '../../stores/user.store';
 import { ConversationService } from '../conversation.service';
 import { patchState } from '@ngrx/signals';
-import { CommonModule } from '@angular/common';
+
 import { MessageService } from '../message.service';
 import { ChatHupService } from '../chat-hup.service';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +13,7 @@ import { GmInputComponent, GmButtonComponent, GmCardComponent } from '../../shar
 
 @Component({
     selector: 'app-chat-list',
-    imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent],
+    imports: [FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent],
     templateUrl: './chat-list.component.html',
     styleUrl: './chat-list.component.scss'
 })

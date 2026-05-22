@@ -1,139 +1,147 @@
-<div class="course-details" *ngIf="course">
-  <!-- Hero Section -->
-  <header class="course-hero">
-    <div class="container" appReveal>
-      <div class="course-hero__content">
-        <div class="course-hero__meta">
-          <span class="category-badge">{{course.category}}</span>
-          <span class="rating-badge">★ {{course.rating || '4.5'}}</span>
-        </div>
-        <h1 class="course-hero__title section-title">{{course.title}}</h1>
-        <div class="trainer-brief">
-          <div class="trainer-brief__avatar">👤</div>
-          <div class="trainer-brief__info">
-            <span class="trainer-brief__name">Trainer Name</span>
-            <span class="trainer-brief__role">Professional {{course.category}} Coach</span>
+@if (course) {
+  <div class="course-details">
+    <!-- Hero Section -->
+    <header class="course-hero">
+      <div class="container" appReveal>
+        <div class="course-hero__content">
+          <div class="course-hero__meta">
+            <span class="category-badge">{{course.category}}</span>
+            <span class="rating-badge">★ {{course.rating || '4.5'}}</span>
+          </div>
+          <h1 class="course-hero__title section-title">{{course.title}}</h1>
+          <div class="trainer-brief">
+            <div class="trainer-brief__avatar">👤</div>
+            <div class="trainer-brief__info">
+              <span class="trainer-brief__name">Trainer Name</span>
+              <span class="trainer-brief__role">Professional {{course.category}} Coach</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </header>
-
-  <main class="course-main container">
-    <div class="course-grid">
-      <!-- Left Column: Content -->
-      <div class="course-content">
-        <!-- Media Gallery -->
-        <section class="course-section" appReveal>
-          <h2 class="section-title">GALLERY</h2>
-          <div class="media-gallery">
-            <div class="media-gallery__filmstrip">
-              <div class="media-gallery__item" *ngFor="let img of images" (click)="showImage(img)">
-                <img [src]="img" alt="Course image">
+    </header>
+    <main class="course-main container">
+      <div class="course-grid">
+        <!-- Left Column: Content -->
+        <div class="course-content">
+          <!-- Media Gallery -->
+          <section class="course-section" appReveal>
+            <h2 class="section-title">GALLERY</h2>
+            <div class="media-gallery">
+              <div class="media-gallery__filmstrip">
+                @for (img of images; track img) {
+                  <div class="media-gallery__item" (click)="showImage(img)">
+                    <img [src]="img" alt="Course image">
+                  </div>
+                }
+              </div>
+              @if (videos.length > 0) {
+                <div class="media-gallery__videos">
+                  @for (vid of videos; track vid) {
+                    <div class="video-wrapper">
+                      <video controls>
+                        <source [src]="vid" type="video/mp4">
+                      </video>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </section>
+          <!-- Description -->
+          <section class="course-section" appReveal>
+            <h2 class="section-title">ABOUT THIS COURSE</h2>
+            <div class="course-description">
+              <p>{{course.description}}</p>
+            </div>
+          </section>
+          <!-- Course Options -->
+          @if (courseOptions.length > 0) {
+            <section class="course-section" appReveal>
+              <h2 class="section-title">ENROLLMENT OPTIONS</h2>
+              <div class="options-list">
+                @for (op of courseOptions; track op) {
+                  <gm-card class="option-card">
+                    <div class="option-card__header">
+                      <h3>{{op.optionName}}</h3>
+                      <span class="option-card__price">+ ${{op.price}}</span>
+                    </div>
+                    <p class="option-card__text">{{op.description}}</p>
+                  </gm-card>
+                }
+              </div>
+            </section>
+          }
+          <!-- Reviews -->
+          <section class="course-section">
+            <div class="section-header">
+              <h2 class="section-title">REVIEWS</h2>
+              <div class="rating-summary">
+                <span class="rating-summary__value">{{course.rating || '4.5'}}</span>
+                <div class="rating-summary__stars">★★★★★</div>
               </div>
             </div>
-            <div class="media-gallery__videos" *ngIf="videos.length > 0">
-              <div class="video-wrapper" *ngFor="let vid of videos">
-                <video controls>
-                  <source [src]="vid" type="video/mp4">
-                </video>
+            <!-- Add Review -->
+            <gm-card class="add-review">
+              <h3>Add your review</h3>
+              <div class="add-review__form">
+                <gm-input label="Rating (0-5)" type="number" [(value)]="rate" />
+                <gm-input label="Your thoughts..." [(value)]="comment" />
+                <gm-button variant="secondary" (clicked)="addRating()">POST REVIEW</gm-button>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Description -->
-        <section class="course-section" appReveal>
-          <h2 class="section-title">ABOUT THIS COURSE</h2>
-          <div class="course-description">
-            <p>{{course.description}}</p>
-          </div>
-        </section>
-
-        <!-- Course Options -->
-        <section class="course-section" *ngIf="courseOptions.length > 0" appReveal>
-          <h2 class="section-title">ENROLLMENT OPTIONS</h2>
-          <div class="options-list">
-            <gm-card class="option-card" *ngFor="let op of courseOptions">
-              <div class="option-card__header">
-                <h3>{{op.optionName}}</h3>
-                <span class="option-card__price">+ ${{op.price}}</span>
-              </div>
-              <p class="option-card__text">{{op.description}}</p>
             </gm-card>
-          </div>
-        </section>
-
-        <!-- Reviews -->
-        <section class="course-section">
-          <div class="section-header">
-            <h2 class="section-title">REVIEWS</h2>
-            <div class="rating-summary">
-              <span class="rating-summary__value">{{course.rating || '4.5'}}</span>
-              <div class="rating-summary__stars">★★★★★</div>
+            <!-- Reviews List -->
+            <div class="reviews-list">
+              @for (r of (showAll ? ratings : ratings.slice(0, 3)); track r) {
+                <div class="review-item">
+                  <div class="review-item__header">
+                    <span class="review-item__rating">★ {{r.ratingValue}}</span>
+                    <span class="review-item__date">{{r.ratingDate | date}}</span>
+                  </div>
+                  <p class="review-item__text">{{r.comment}}</p>
+                </div>
+              }
+              @if (ratings.length > 3) {
+                <gm-button variant="ghost" (clicked)="toggleShowAll()">
+                  {{ showAll ? 'SHOW LESS' : 'SHOW ALL ' + ratings.length + ' REVIEWS' }}
+                </gm-button>
+              }
             </div>
-          </div>
-
-          <!-- Add Review -->
-          <gm-card class="add-review">
-            <h3>Add your review</h3>
-            <div class="add-review__form">
-              <gm-input label="Rating (0-5)" type="number" [(value)]="rate" />
-              <gm-input label="Your thoughts..." [(value)]="comment" />
-              <gm-button variant="secondary" (clicked)="addRating()">POST REVIEW</gm-button>
+          </section>
+        </div>
+        <!-- Right Column: Sidebar -->
+        <aside class="course-sidebar">
+          <gm-card class="enroll-card gl-2">
+            <div class="enroll-card__price">
+              <span class="currency">$</span>
+              <span class="amount">{{course.price | number:'1.0-0'}}</span>
             </div>
-          </gm-card>
-
-          <!-- Reviews List -->
-          <div class="reviews-list">
-            <div class="review-item" *ngFor="let r of (showAll ? ratings : ratings.slice(0, 3))">
-              <div class="review-item__header">
-                <span class="review-item__rating">★ {{r.ratingValue}}</span>
-                <span class="review-item__date">{{r.ratingDate | date}}</span>
+            <div class="enroll-card__stats">
+              <div class="stat-item">
+                <span class="stat-item__label">DURATION</span>
+                <span class="stat-item__value">{{course.duration}} Days</span>
               </div>
-              <p class="review-item__text">{{r.comment}}</p>
+              <div class="stat-item">
+                <span class="stat-item__label">START DATE</span>
+                <span class="stat-item__value">{{course.startDate | date}}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-item__label">PARTICIPANTS</span>
+                <span class="stat-item__value">Up to {{course.maxParticipants}}</span>
+              </div>
             </div>
-            <gm-button variant="ghost" *ngIf="ratings.length > 3" (clicked)="toggleShowAll()">
-              {{ showAll ? 'SHOW LESS' : 'SHOW ALL ' + ratings.length + ' REVIEWS' }}
-            </gm-button>
-          </div>
-        </section>
+            <gm-button variant="primary" (clicked)="addToCard(course.courseId)">ENROLL NOW</gm-button>
+            <p class="enroll-card__guarantee">✓ 30-Day Results Guarantee</p>
+          </gm-card>
+        </aside>
       </div>
-
-      <!-- Right Column: Sidebar -->
-      <aside class="course-sidebar">
-        <gm-card class="enroll-card gl-2">
-          <div class="enroll-card__price">
-            <span class="currency">$</span>
-            <span class="amount">{{course.price | number:'1.0-0'}}</span>
-          </div>
-          
-          <div class="enroll-card__stats">
-            <div class="stat-item">
-              <span class="stat-item__label">DURATION</span>
-              <span class="stat-item__value">{{course.duration}} Days</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-item__label">START DATE</span>
-              <span class="stat-item__value">{{course.startDate | date}}</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-item__label">PARTICIPANTS</span>
-              <span class="stat-item__value">Up to {{course.maxParticipants}}</span>
-            </div>
-          </div>
-
-          <gm-button variant="primary" (clicked)="addToCard(course.courseId)">ENROLL NOW</gm-button>
-          
-          <p class="enroll-card__guarantee">✓ 30-Day Results Guarantee</p>
-        </gm-card>
-      </aside>
-    </div>
-  </main>
-</div>
+    </main>
+  </div>
+}
 
 <!-- Fullscreen Image Modal -->
-<div class="image-modal" *ngIf="url" (click)="showImage(null)">
-  <div class="image-modal__close">✕</div>
-  <img [src]="url" alt="Fullscreen preview" (click)="$event.stopPropagation()">
-</div>
+@if (url) {
+  <div class="image-modal" (click)="showImage(null)">
+    <div class="image-modal__close">✕</div>
+    <img [src]="url" alt="Fullscreen preview" (click)="$event.stopPropagation()">
+  </div>
+}

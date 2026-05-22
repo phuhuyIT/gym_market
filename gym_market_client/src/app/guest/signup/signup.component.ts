@@ -9,14 +9,14 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { AccountService } from '../account.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SignupResponse, LoginResponse } from '../../core/models/auth.model';
-import { CommonModule } from '@angular/common';
+
 import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { environment } from '../../../environments/environment.development';
 import { ROLES } from '../../utilities/roles.const';
 
 @Component({
     selector: 'app-signup',
-    imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
+    imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
     templateUrl: './signup.component.html',
     styleUrl: './signup.component.scss'
 })

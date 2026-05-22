@@ -12,14 +12,14 @@
         type="text"
         placeholder="SEARCH PREMIUM COURSES..."
         [(ngModel)]="searchString"
-      />
+        />
       <button class="btn-primary" (click)="onSubmit()" style="padding: 10px 24px;">Search</button>
     </div>
 
     <div class="category-strip gl" appReveal [style.transitionDelay]="'0.2s'">
       @for (cat of categories; track cat) {
-        <button 
-          class="cat-pill btn-ghost" 
+        <button
+          class="cat-pill btn-ghost"
           [class.active]="category === cat"
           (click)="onSelectCategory(cat)">
           {{ cat }}
@@ -35,7 +35,7 @@
           <div class="course-card__image-wrap">
             <img [src]="item.getFileDtos[0].url || '/assets/gym_logo.png'" alt="Course cover" />
           </div>
-          
+
           <div class="course-card__content">
             <span class="course-card__category">{{ item.category }}</span>
             <h3 class="course-card__title">{{ item.title }}</h3>
@@ -52,10 +52,12 @@
       }
     </div>
 
-    <div class="pagination" *ngIf="courses.length > 0">
-      <button class="btn-ghost" (click)="prevPage()" [disabled]="pageIndex === 1">Previous</button>
-      <span style="font-family: 'DM Sans', sans-serif; font-weight: 700;">Page {{ pageIndex }}</span>
-      <button class="btn-ghost" (click)="nexPage()">Next</button>
-    </div>
+    @if (courses.length > 0) {
+      <div class="pagination">
+        <button class="btn-ghost" (click)="prevPage()" [disabled]="pageIndex === 1">Previous</button>
+        <span style="font-family: 'DM Sans', sans-serif; font-weight: 700;">Page {{ pageIndex }}</span>
+        <button class="btn-ghost" (click)="nexPage()">Next</button>
+      </div>
+    }
   </main>
 </div>

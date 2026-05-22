@@ -8,91 +8,108 @@
           <gm-input label="Search messages..." />
         </div>
       </header>
-      
+
       <div class="conversation-list">
-        <div 
-          *ngFor="let item of chats" 
-          (click)="getMessages(item)"
-          class="conversation-item"
-          [class.active]="item.conversationId === conversationId"
-          [class.has-new]="item.hasNewMessage"
-        >
-          <div class="conversation-item__avatar">
-            <img [src]="item.avatar || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="">
-            <div class="status-indicator" *ngIf="item.hasNewMessage"></div>
-          </div>
-          <div class="conversation-item__content">
-            <div class="conversation-item__top">
-              <span class="conversation-item__name">{{item.conversationName}}</span>
-              <span class="conversation-item__time">2m</span>
+        @for (item of chats; track item) {
+          <div
+            (click)="getMessages(item)"
+            class="conversation-item"
+            [class.active]="item.conversationId === conversationId"
+            [class.has-new]="item.hasNewMessage"
+            >
+            <div class="conversation-item__avatar">
+              <img [src]="item.avatar || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="">
+              @if (item.hasNewMessage) {
+                <div class="status-indicator"></div>
+              }
             </div>
-            <p class="conversation-item__preview">{{item.lastMessage || 'Start a conversation...'}}</p>
+            <div class="conversation-item__content">
+              <div class="conversation-item__top">
+                <span class="conversation-item__name">{{item.conversationName}}</span>
+                <span class="conversation-item__time">2m</span>
+              </div>
+              <p class="conversation-item__preview">{{item.lastMessage || 'Start a conversation...'}}</p>
+            </div>
           </div>
-        </div>
-        
-        <div class="conversation-empty" *ngIf="chats.length === 0">
-          <p>No conversations yet.</p>
-        </div>
+        }
+
+        @if (chats.length === 0) {
+          <div class="conversation-empty">
+            <p>No conversations yet.</p>
+          </div>
+        }
       </div>
     </aside>
 
     <!-- Right Panel: Message Thread -->
     <main class="chat-main">
       <!-- Chat Header -->
-      <header class="chat-header" *ngIf="conversationName">
-        <div class="chat-header__info">
-          <div class="chat-header__avatar">
-            <img [src]="conversationUrl || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="">
+      @if (conversationName) {
+        <header class="chat-header">
+          <div class="chat-header__info">
+            <div class="chat-header__avatar">
+              <img [src]="conversationUrl || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="">
+            </div>
+            <div>
+              <h3 class="chat-header__name">{{conversationName}}</h3>
+              <span class="chat-header__status">Active now</span>
+            </div>
           </div>
-          <div>
-            <h3 class="chat-header__name">{{conversationName}}</h3>
-            <span class="chat-header__status">Active now</span>
+          <div class="chat-header__actions">
+            <button class="icon-btn">📞</button>
+            <button class="icon-btn">📹</button>
+            <button class="icon-btn">ℹ️</button>
           </div>
-        </div>
-        <div class="chat-header__actions">
-          <button class="icon-btn">📞</button>
-          <button class="icon-btn">📹</button>
-          <button class="icon-btn">ℹ️</button>
-        </div>
-      </header>
+        </header>
+      }
 
       <!-- Messages Thread -->
-      <div class="message-thread" *ngIf="conversationName">
-        <div 
-          *ngFor="let msg of messages" 
-          class="message-wrapper"
-          [class.message-wrapper--me]="msg.senderId === userStore.id()"
-        >
-          <div class="message-avatar" *ngIf="msg.senderId !== userStore.id()">
-            <img [src]="conversationUrl || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="">
-          </div>
-          <div class="message-bubble">
-            <p class="message-text">{{msg.content}}</p>
-            <span class="message-time">10:42 AM</span>
-          </div>
+      @if (conversationName) {
+        <div class="message-thread">
+          @for (msg of messages; track msg) {
+            <div
+              class="message-wrapper"
+              [class.message-wrapper--me]="msg.senderId === userStore.id()"
+              >
+              @if (msg.senderId !== userStore.id()) {
+                <div class="message-avatar">
+                  <img [src]="conversationUrl || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="">
+                </div>
+              }
+              <div class="message-bubble">
+                <p class="message-text">{{msg.content}}</p>
+                <span class="message-time">10:42 AM</span>
+              </div>
+            </div>
+          }
+          @if (messages.length === 0) {
+            <div class="message-thread__empty">
+              <p>This is the start of your conversation.</p>
+            </div>
+          }
         </div>
-        
-        <div class="message-thread__empty" *ngIf="messages.length === 0">
-          <p>This is the start of your conversation.</p>
-        </div>
-      </div>
+      }
 
       <!-- Message Input -->
-      <footer class="chat-input-area" *ngIf="conversationName">
-        <div class="chat-input-wrapper">
-          <gm-input label="Type a message..." [(value)]="message" (keydown.enter)="sendMessage()" />
-          <button class="send-btn" (click)="sendMessage()" [disabled]="!message">
-            <span>➤</span>
-          </button>
-        </div>
-      </footer>
+      @if (conversationName) {
+        <footer class="chat-input-area">
+          <div class="chat-input-wrapper">
+            <gm-input label="Type a message..." [(value)]="message" (keydown.enter)="sendMessage()" />
+            <button class="send-btn" (click)="sendMessage()" [disabled]="!message">
+              <span>➤</span>
+            </button>
+          </div>
+        </footer>
+      }
 
       <!-- Empty State -->
-      <div class="chat-placeholder" *ngIf="!conversationName">
-        <div class="chat-placeholder__icon">💬</div>
-        <h3>Select a conversation</h3>
-        <p>Choose a trainer or student to start chatting.</p>
-      </div>
+      @if (!conversationName) {
+        <div class="chat-placeholder">
+          <div class="chat-placeholder__icon">💬</div>
+          <h3>Select a conversation</h3>
+          <p>Choose a trainer or student to start chatting.</p>
+        </div>
+      }
     </main>
   </div>
 </div>

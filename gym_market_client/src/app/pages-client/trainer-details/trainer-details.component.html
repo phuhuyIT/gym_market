@@ -1,111 +1,112 @@
-<div class="trainer-profile" *ngIf="trainerInfo && userInfo">
-  <!-- Profile Header -->
-  <header class="profile-header">
-    <div class="profile-header__banner"></div>
-    <div class="container">
-      <div class="profile-header__content">
-        <div class="profile-header__avatar">
-          <img [src]="trainerInfo.profilePicture" alt="Trainer profile picture">
-        </div>
-        <div class="profile-header__info">
-          <div class="profile-header__top">
-            <h1 class="profile-header__name">{{trainerInfo.name}}</h1>
-            <div class="specialization-pills">
-              <span class="pill">{{trainerInfo.certification || 'Elite Coach'}}</span>
+@if (trainerInfo && userInfo) {
+  <div class="trainer-profile">
+    <!-- Profile Header -->
+    <header class="profile-header">
+      <div class="profile-header__banner"></div>
+      <div class="container">
+        <div class="profile-header__content">
+          <div class="profile-header__avatar">
+            <img [src]="trainerInfo.profilePicture" alt="Trainer profile picture">
+          </div>
+          <div class="profile-header__info">
+            <div class="profile-header__top">
+              <h1 class="profile-header__name">{{trainerInfo.name}}</h1>
+              <div class="specialization-pills">
+                <span class="pill">{{trainerInfo.certification || 'Elite Coach'}}</span>
+              </div>
+            </div>
+            <p class="profile-header__bio">{{trainerInfo.bio}}</p>
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+              <div class="quick-stat">
+                <span class="quick-stat__value">{{trainerInfo.rating || '4.8'}} ★</span>
+                <span class="quick-stat__label">RATING</span>
+              </div>
+              <div class="quick-stat">
+                <span class="quick-stat__value">{{trainerInfo.experience}}</span>
+                <span class="quick-stat__label">YEARS EXP.</span>
+              </div>
+              <div class="quick-stat">
+                <span class="quick-stat__value">{{coursesOfTrainer.length}}</span>
+                <span class="quick-stat__label">COURSES</span>
+              </div>
             </div>
           </div>
-          <p class="profile-header__bio">{{trainerInfo.bio}}</p>
-          
-          <!-- Quick Stats -->
-          <div class="quick-stats">
-            <div class="quick-stat">
-              <span class="quick-stat__value">{{trainerInfo.rating || '4.8'}} ★</span>
-              <span class="quick-stat__label">RATING</span>
-            </div>
-            <div class="quick-stat">
-              <span class="quick-stat__value">{{trainerInfo.experience}}</span>
-              <span class="quick-stat__label">YEARS EXP.</span>
-            </div>
-            <div class="quick-stat">
-              <span class="quick-stat__value">{{coursesOfTrainer.length}}</span>
-              <span class="quick-stat__label">COURSES</span>
-            </div>
+          <div class="profile-header__actions">
+            <gm-button variant="primary" (clicked)="onSendMessage()">SEND MESSAGE</gm-button>
+            <gm-button variant="secondary">FOLLOW</gm-button>
           </div>
-        </div>
-        <div class="profile-header__actions">
-          <gm-button variant="primary" (clicked)="onSendMessage()">SEND MESSAGE</gm-button>
-          <gm-button variant="secondary">FOLLOW</gm-button>
         </div>
       </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="profile-main container">
-    <div class="profile-grid">
-      <!-- Left Column: Details -->
-      <div class="profile-details">
-        <section class="profile-section">
-          <h2 class="section-title">PROFESSIONAL DETAILS</h2>
-          <div class="details-grid">
-            <div class="detail-item">
-              <span class="detail-label">EMAIL</span>
-              <span class="detail-value">{{userInfo.email}}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">LOCATION</span>
-              <span class="detail-value">{{userInfo.address || 'Global'}}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="detail-label">CERTIFICATIONS & BIO</span>
-              <p class="detail-text">{{trainerInfo.certification}}</p>
-              <p class="detail-text" style="margin-top: 12px;">{{trainerInfo.bio}}</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Trainer's Courses -->
-        <section class="profile-section">
-          <h2 class="section-title">FEATURED COURSES</h2>
-          <div class="courses-grid">
-            <gm-card class="course-mini-card" *ngFor="let course of coursesOfTrainer" [routerLink]="['/client/course-details', course.courseId]">
-              <div class="course-mini-card__img">
-                <img [src]="course.getFileDtos && course.getFileDtos.length > 0 ? course.getFileDtos[0].url : '/assets/gym_logo.png'" alt="">
+    </header>
+    <!-- Main Content -->
+    <main class="profile-main container">
+      <div class="profile-grid">
+        <!-- Left Column: Details -->
+        <div class="profile-details">
+          <section class="profile-section">
+            <h2 class="section-title">PROFESSIONAL DETAILS</h2>
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="detail-label">EMAIL</span>
+                <span class="detail-value">{{userInfo.email}}</span>
               </div>
-              <div class="course-mini-card__content">
-                <h3>{{course.title}}</h3>
-                <div class="course-mini-card__footer">
-                  <span class="price">${{course.price}}</span>
-                  <span class="category">{{course.category}}</span>
+              <div class="detail-item">
+                <span class="detail-label">LOCATION</span>
+                <span class="detail-value">{{userInfo.address || 'Global'}}</span>
+              </div>
+              <div class="detail-item full-width">
+                <span class="detail-label">CERTIFICATIONS & BIO</span>
+                <p class="detail-text">{{trainerInfo.certification}}</p>
+                <p class="detail-text" style="margin-top: 12px;">{{trainerInfo.bio}}</p>
+              </div>
+            </div>
+          </section>
+          <!-- Trainer's Courses -->
+          <section class="profile-section">
+            <h2 class="section-title">FEATURED COURSES</h2>
+            <div class="courses-grid">
+              @for (course of coursesOfTrainer; track course) {
+                <gm-card class="course-mini-card" [routerLink]="['/client/course-details', course.courseId]">
+                  <div class="course-mini-card__img">
+                    <img [src]="course.getFileDtos && course.getFileDtos.length > 0 ? course.getFileDtos[0].url : '/assets/gym_logo.png'" alt="">
+                  </div>
+                  <div class="course-mini-card__content">
+                    <h3>{{course.title}}</h3>
+                    <div class="course-mini-card__footer">
+                      <span class="price">${{course.price}}</span>
+                      <span class="category">{{course.category}}</span>
+                    </div>
+                  </div>
+                </gm-card>
+              }
+              @if (coursesOfTrainer.length === 0) {
+                <div class="empty-courses">
+                  <p>This trainer hasn't posted any courses yet.</p>
                 </div>
-              </div>
-            </gm-card>
-            
-            <div class="empty-courses" *ngIf="coursesOfTrainer.length === 0">
-              <p>This trainer hasn't posted any courses yet.</p>
+              }
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
+        <!-- Right Column: Sidebar / Stats -->
+        <aside class="profile-sidebar">
+          <gm-card class="activity-card">
+            <h3 class="sidebar-title">ACTIVITY</h3>
+            <div class="activity-stat">
+              <span class="label">Response Time</span>
+              <span class="value">< 2 hours</span>
+            </div>
+            <div class="activity-stat">
+              <span class="label">Member Since</span>
+              <span class="value">{{trainerInfo.createdAt | date:'MMM yyyy'}}</span>
+            </div>
+            <div class="activity-stat">
+              <span class="label">Total Students</span>
+              <span class="value">450+</span>
+            </div>
+          </gm-card>
+        </aside>
       </div>
-
-      <!-- Right Column: Sidebar / Stats -->
-      <aside class="profile-sidebar">
-        <gm-card class="activity-card">
-          <h3 class="sidebar-title">ACTIVITY</h3>
-          <div class="activity-stat">
-            <span class="label">Response Time</span>
-            <span class="value">< 2 hours</span>
-          </div>
-          <div class="activity-stat">
-            <span class="label">Member Since</span>
-            <span class="value">{{trainerInfo.createdAt | date:'MMM yyyy'}}</span>
-          </div>
-          <div class="activity-stat">
-            <span class="label">Total Students</span>
-            <span class="value">450+</span>
-          </div>
-        </gm-card>
-      </aside>
-    </div>
-  </main>
-</div>
+    </main>
+  </div>
+}

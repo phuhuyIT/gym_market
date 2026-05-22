@@ -1,104 +1,94 @@
-<div class="wrapper" *ngIf="userInfo && trainerInfo">
-  <div class="container">
-    
-    <div class="trainer-portfolio-grid">
-      
-      <!-- Left Column: Coach Card & Stats -->
-      <aside class="coach-sidebar-card">
-        <div class="avatar-container">
-          <div class="avatar-ring"></div>
-          <img [src]="trainerInfo.profilePicture || '/assets/fitness_logo.jpg'" alt="Trainer profile">
-          <span class="online-indicator"></span>
-        </div>
-
-        <div class="coach-title-area">
-          <span class="coach-badge">VERIFIED COACH</span>
-          <h2 class="coach-name">{{userInfo.fullName}}</h2>
-          <p class="coach-subtitle">Specialist Fitness Instructor</p>
-        </div>
-
-        <div class="coach-stats-widget">
-          <div class="stat-item">
-            <span class="stat-val">{{ trainerInfo.rating ? (trainerInfo.rating | number:'1.1-1') : '0.0' }}</span>
-            <span class="stat-label">★ RATING</span>
+@if (userInfo && trainerInfo) {
+  <div class="wrapper">
+    <div class="container">
+      <div class="trainer-portfolio-grid">
+        <!-- Left Column: Coach Card & Stats -->
+        <aside class="coach-sidebar-card">
+          <div class="avatar-container">
+            <div class="avatar-ring"></div>
+            <img [src]="trainerInfo.profilePicture || '/assets/fitness_logo.jpg'" alt="Trainer profile">
+            <span class="online-indicator"></span>
           </div>
-          <div class="divider"></div>
-          <div class="stat-item">
-            <span class="stat-val">{{ trainerInfo.experience }}+</span>
-            <span class="stat-label">YEARS EXP</span>
+          <div class="coach-title-area">
+            <span class="coach-badge">VERIFIED COACH</span>
+            <h2 class="coach-name">{{userInfo.fullName}}</h2>
+            <p class="coach-subtitle">Specialist Fitness Instructor</p>
           </div>
-        </div>
-
-        <!-- Sidebar Actions -->
-        <div class="sidebar-actions">
-          <gm-button variant="secondary" routerLink="/agency/update-profile" class="w-full edit-profile-btn">
-            ✏️ EDIT PROFILE
-          </gm-button>
-        </div>
-      </aside>
-
-      <!-- Right Column: Deep-dive Info -->
-      <main class="coach-details-area">
-        
-        <!-- Philosophy / Bio Card -->
-        <section class="details-section-card philosophy-card">
-          <div class="section-header">
-            <span class="sec-icon">🎯</span>
-            <h3>Training Philosophy & Bio</h3>
+          <div class="coach-stats-widget">
+            <div class="stat-item">
+              <span class="stat-val">{{ trainerInfo.rating ? (trainerInfo.rating | number:'1.1-1') : '0.0' }}</span>
+              <span class="stat-label">★ RATING</span>
+            </div>
+            <div class="divider"></div>
+            <div class="stat-item">
+              <span class="stat-val">{{ trainerInfo.experience }}+</span>
+              <span class="stat-label">YEARS EXP</span>
+            </div>
           </div>
-          <div class="philosophy-content">
-            <span class="quote-mark open">“</span>
-            <p class="bio-text">{{ trainerInfo.bio || 'This trainer has not shared their training philosophy yet.' }}</p>
-            <span class="quote-mark close">”</span>
+          <!-- Sidebar Actions -->
+          <div class="sidebar-actions">
+            <gm-button variant="secondary" routerLink="/agency/update-profile" class="w-full edit-profile-btn">
+              ✏️ EDIT PROFILE
+            </gm-button>
           </div>
-        </section>
-
-        <!-- Certifications & Badges Card -->
-        <section class="details-section-card certifications-card">
-          <div class="section-header">
-            <span class="sec-icon">📜</span>
-            <h3>Certifications & Credentials</h3>
-          </div>
-          <div class="certifications-grid">
-            @for (cert of certificationsList; track cert) {
-              <div class="credential-badge">
-                <div class="badge-icon">🎖️</div>
-                <span class="badge-name">{{ cert }}</span>
+        </aside>
+        <!-- Right Column: Deep-dive Info -->
+        <main class="coach-details-area">
+          <!-- Philosophy / Bio Card -->
+          <section class="details-section-card philosophy-card">
+            <div class="section-header">
+              <span class="sec-icon">🎯</span>
+              <h3>Training Philosophy & Bio</h3>
+            </div>
+            <div class="philosophy-content">
+              <span class="quote-mark open">“</span>
+              <p class="bio-text">{{ trainerInfo.bio || 'This trainer has not shared their training philosophy yet.' }}</p>
+              <span class="quote-mark close">”</span>
+            </div>
+          </section>
+          <!-- Certifications & Badges Card -->
+          <section class="details-section-card certifications-card">
+            <div class="section-header">
+              <span class="sec-icon">📜</span>
+              <h3>Certifications & Credentials</h3>
+            </div>
+            <div class="certifications-grid">
+              @for (cert of certificationsList; track cert) {
+                <div class="credential-badge">
+                  <div class="badge-icon">🎖️</div>
+                  <span class="badge-name">{{ cert }}</span>
+                </div>
+                } @empty {
+                <div class="empty-certs-state">
+                  <p>No certificates listed yet. Add your certifications to display verified badges.</p>
+                </div>
+              }
+            </div>
+          </section>
+          <!-- Contact & Location Card -->
+          <section class="details-section-card contact-card">
+            <div class="section-header">
+              <span class="sec-icon">🪪</span>
+              <h3>Contact & Operations</h3>
+            </div>
+            <div class="contact-grid">
+              <div class="contact-info-block">
+                <span class="info-label">EMAIL ADDRESS</span>
+                <span class="info-val">{{userInfo.email}}</span>
               </div>
-            } @empty {
-              <div class="empty-certs-state">
-                <p>No certificates listed yet. Add your certifications to display verified badges.</p>
+              <div class="contact-info-block">
+                <span class="info-label">PHONE NUMBER</span>
+                <span class="info-val">{{userInfo.phoneNumber || 'Not provided'}}</span>
               </div>
-            }
-          </div>
-        </section>
-
-        <!-- Contact & Location Card -->
-        <section class="details-section-card contact-card">
-          <div class="section-header">
-            <span class="sec-icon">🪪</span>
-            <h3>Contact & Operations</h3>
-          </div>
-          <div class="contact-grid">
-            <div class="contact-info-block">
-              <span class="info-label">EMAIL ADDRESS</span>
-              <span class="info-val">{{userInfo.email}}</span>
+              <div class="contact-info-block">
+                <span class="info-label">BASE LOCATION</span>
+                <span class="info-val">{{userInfo.address || 'Global / Remote'}}</span>
+              </div>
             </div>
-            <div class="contact-info-block">
-              <span class="info-label">PHONE NUMBER</span>
-              <span class="info-val">{{userInfo.phoneNumber || 'Not provided'}}</span>
-            </div>
-            <div class="contact-info-block">
-              <span class="info-label">BASE LOCATION</span>
-              <span class="info-val">{{userInfo.address || 'Global / Remote'}}</span>
-            </div>
-          </div>
-        </section>
-
-      </main>
-
+          </section>
+        </main>
+      </div>
     </div>
-
   </div>
-</div>
+}
 

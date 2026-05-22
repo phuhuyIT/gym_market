@@ -6,13 +6,13 @@ import { FormsModule } from '@angular/forms';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { Course } from '../../core/models/course.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
     selector: 'app-update-course',
-    imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent, DatePipe],
+    imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent, DatePipe],
     templateUrl: './update-course.component.html',
     styleUrl: './update-course.component.scss'
 })
