@@ -2,10 +2,9 @@ import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'gm-button',
-  standalone: true,
-  imports: [CommonModule],
-  template: `
+    selector: 'gm-button',
+    imports: [CommonModule],
+    template: `
     <button
       [class]="'gm-btn gm-btn--' + variant()"
       [disabled]="disabled() || loading()"
@@ -14,7 +13,7 @@ import { CommonModule } from '@angular/common';
       <ng-content></ng-content>
     </button>
   `,
-  styleUrl: './gm-button.component.scss'
+    styleUrl: './gm-button.component.scss'
 })
 export class GmButtonComponent {
   variant = input<'primary' | 'secondary' | 'ghost'>('primary');

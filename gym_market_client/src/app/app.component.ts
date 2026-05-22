@@ -10,11 +10,10 @@ import { ThemeService } from './core/services/theme.service';
 import { AmbientComponent } from './shared/components/ambient/ambient.component';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, ErrorModalComponent, LoaderComponent, NoticeComponent, GmToastComponent, AmbientComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [RouterOutlet, ErrorModalComponent, LoaderComponent, NoticeComponent, GmToastComponent, AmbientComponent],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'Fitness_Client';

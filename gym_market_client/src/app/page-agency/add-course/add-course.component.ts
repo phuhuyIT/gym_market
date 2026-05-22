@@ -12,11 +12,10 @@ import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
-	selector: 'app-add-course',
-	standalone: true,
-	imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
-	templateUrl: './add-course.component.html',
-	styleUrl: './add-course.component.scss',
+    selector: 'app-add-course',
+    imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
+    templateUrl: './add-course.component.html',
+    styleUrl: './add-course.component.scss'
 })
 export class AddCourseComponent implements OnInit {
 	model = {

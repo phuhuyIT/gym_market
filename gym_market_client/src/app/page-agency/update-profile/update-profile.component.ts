@@ -15,11 +15,10 @@ import { UserInfoResponse } from '../../core/models/auth.model';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
 
 @Component({
-	selector: 'app-update-profile',
-	standalone: true,
-	imports: [ReactiveFormsModule, GmButtonComponent],
-	templateUrl: './update-profile.component.html',
-	styleUrl: './update-profile.component.scss',
+    selector: 'app-update-profile',
+    imports: [ReactiveFormsModule, GmButtonComponent],
+    templateUrl: './update-profile.component.html',
+    styleUrl: './update-profile.component.scss'
 })
 export class UpdateProfileComponent implements OnInit {
 	userStore = inject(UserStore);

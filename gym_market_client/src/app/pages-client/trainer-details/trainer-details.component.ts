@@ -15,11 +15,10 @@ import { UserInfo } from '../../core/models/auth.model';
 import { GmCardComponent, GmButtonComponent } from '../../shared';
 
 @Component({
-	selector: 'app-trainer-details',
-	standalone: true,
-	imports: [RouterLink, CommonModule, GmCardComponent, GmButtonComponent],
-	templateUrl: './trainer-details.component.html',
-	styleUrl: './trainer-details.component.scss',
+    selector: 'app-trainer-details',
+    imports: [RouterLink, CommonModule, GmCardComponent, GmButtonComponent],
+    templateUrl: './trainer-details.component.html',
+    styleUrl: './trainer-details.component.scss'
 })
 export class TrainerDetailsComponent implements OnInit {
 	loader = inject(LoaderModalStore);

@@ -12,11 +12,10 @@ import { GmCardComponent, GmButtonComponent, GmInputComponent } from '../../shar
 import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
-	selector: 'app-course-list',
-	standalone: true,
-	imports: [RouterLink, DatePipe, FormsModule, CommonModule, GmCardComponent, GmButtonComponent, GmInputComponent],
-	templateUrl: './course-list.component.html',
-	styleUrl: './course-list.component.scss',
+    selector: 'app-course-list',
+    imports: [RouterLink, DatePipe, FormsModule, CommonModule, GmCardComponent, GmButtonComponent, GmInputComponent],
+    templateUrl: './course-list.component.html',
+    styleUrl: './course-list.component.scss'
 })
 export class CourseListComponent implements OnInit {
 	courses: Course[] = [];

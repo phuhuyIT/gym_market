@@ -16,11 +16,10 @@ import { CourseOption } from '../../core/models/course.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-	selector: 'app-course-option-list',
-	standalone: true,
-	imports: [FormsModule, ReactiveFormsModule],
-	templateUrl: './course-option-list.component.html',
-	styleUrl: './course-option-list.component.scss',
+    selector: 'app-course-option-list',
+    imports: [FormsModule, ReactiveFormsModule],
+    templateUrl: './course-option-list.component.html',
+    styleUrl: './course-option-list.component.scss'
 })
 export class CourseOptionListComponent implements OnInit {
 	courseOptions: CourseOption[] = [];

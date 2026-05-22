@@ -10,11 +10,10 @@ import { CommonModule } from '@angular/common';
 import { GmButtonComponent } from '../../shared';
 
 @Component({
-	selector: 'app-your-profile',
-	standalone: true,
-	imports: [RouterLink, CommonModule, GmButtonComponent],
-	templateUrl: './your-profile.component.html',
-	styleUrl: './your-profile.component.scss',
+    selector: 'app-your-profile',
+    imports: [RouterLink, CommonModule, GmButtonComponent],
+    templateUrl: './your-profile.component.html',
+    styleUrl: './your-profile.component.scss'
 })
 export class YourProfileComponent implements OnInit {
 	userInfo: UserInfo | null = null;

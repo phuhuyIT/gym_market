@@ -4,11 +4,10 @@ import { FooterComponent } from '../shared/components/footer/footer.component';
 import { HeaderComponent } from '../shared/components/header/header.component';
 
 @Component({
-  selector: 'app-guest',
-  standalone: true,
-  imports: [RouterOutlet, FooterComponent, HeaderComponent],
-  templateUrl: './account.component.html',
-  styleUrl: './account.component.scss'
+    selector: 'app-guest',
+    imports: [RouterOutlet, FooterComponent, HeaderComponent],
+    templateUrl: './account.component.html',
+    styleUrl: './account.component.scss'
 })
 export class GuestComponent {
 

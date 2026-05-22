@@ -4,11 +4,10 @@ import { CommonModule } from '@angular/common';
 import { AccountService } from '../guest/account.service';
 
 @Component({
-  selector: 'app-course-agency',
-  standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
-  templateUrl: './course-agency.component.html',
-  styleUrl: './course-agency.component.scss'
+    selector: 'app-course-agency',
+    imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+    templateUrl: './course-agency.component.html',
+    styleUrl: './course-agency.component.scss'
 })
 export class CourseAgencyComponent {
   private accountService = inject(AccountService);

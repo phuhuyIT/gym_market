@@ -3,11 +3,10 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../shared/components/header/header.component';
 
 @Component({
-	selector: 'app-chat',
-	standalone: true,
-	imports: [RouterOutlet, HeaderComponent],
-	templateUrl: './chat.component.html',
-	styleUrl: './chat.component.scss',
+    selector: 'app-chat',
+    imports: [RouterOutlet, HeaderComponent],
+    templateUrl: './chat.component.html',
+    styleUrl: './chat.component.scss'
 })
 export class ChatComponent {
 	

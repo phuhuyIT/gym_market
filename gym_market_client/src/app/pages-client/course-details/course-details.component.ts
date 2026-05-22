@@ -20,11 +20,10 @@ import {
 } from '../../core/models/course.model';
 
 @Component({
-	selector: 'app-course-details',
-	standalone: true,
-	imports: [CommonModule, FormsModule, DatePipe, DecimalPipe, GmCardComponent, GmButtonComponent, GmInputComponent],
-	templateUrl: './course-details.component.html',
-	styleUrl: './course-details.component.scss',
+    selector: 'app-course-details',
+    imports: [CommonModule, FormsModule, DatePipe, DecimalPipe, GmCardComponent, GmButtonComponent, GmInputComponent],
+    templateUrl: './course-details.component.html',
+    styleUrl: './course-details.component.scss'
 })
 export class CourseDetailsComponent implements OnInit {
 	courseOptions: CourseOption[] = [];
