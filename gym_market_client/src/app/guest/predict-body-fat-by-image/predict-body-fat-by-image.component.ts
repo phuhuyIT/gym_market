@@ -8,11 +8,10 @@ import { GmInputComponent, GmButtonComponent, GmCardComponent } from '../../shar
 import { RouterLink } from '@angular/router';
 
 @Component({
-	selector: 'app-predict-body-fat-by-image',
-	standalone: true,
-	imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent, RouterLink],
-	templateUrl: './predict-body-fat-by-image.component.html',
-	styleUrl: './predict-body-fat-by-image.component.scss',
+    selector: 'app-predict-body-fat-by-image',
+    imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent, RouterLink],
+    templateUrl: './predict-body-fat-by-image.component.html',
+    styleUrl: './predict-body-fat-by-image.component.scss'
 })
 export class PredictBodyFatByImageComponent implements OnInit {
 	gender: string = 'Male';

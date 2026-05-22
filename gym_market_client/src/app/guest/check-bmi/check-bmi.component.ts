@@ -10,11 +10,10 @@ import { GmInputComponent, GmButtonComponent, GmCardComponent } from '../../shar
 import { RouterLink } from '@angular/router';
 
 @Component({
-	selector: 'app-check-bmi',
-	standalone: true,
-	imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent, RouterLink],
-	templateUrl: './check-bmi.component.html',
-	styleUrl: './check-bmi.component.scss',
+    selector: 'app-check-bmi',
+    imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent, RouterLink],
+    templateUrl: './check-bmi.component.html',
+    styleUrl: './check-bmi.component.scss'
 })
 export class CheckBmiComponent {
 	bmi = 0;

@@ -3,10 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
-  selector: 'gm-toast',
-  standalone: true,
-  imports: [CommonModule],
-  template: `
+    selector: 'gm-toast',
+    imports: [CommonModule],
+    template: `
     <div class="gm-toast-container">
       <div
         *ngFor="let toast of toasts$ | async"
@@ -21,7 +20,7 @@ import { ToastService } from '../../services/toast.service';
       </div>
     </div>
   `,
-  styleUrl: './gm-toast.component.scss'
+    styleUrl: './gm-toast.component.scss'
 })
 export class GmToastComponent {
   private toastService = inject(ToastService);

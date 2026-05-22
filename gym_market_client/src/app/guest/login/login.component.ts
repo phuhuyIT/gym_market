@@ -13,11 +13,10 @@ import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-	selector: 'app-login',
-	standalone: true,
-	imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
-	templateUrl: './login.component.html',
-	styleUrl: './login.component.scss',
+    selector: 'app-login',
+    imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit, AfterViewInit {
 	model = {

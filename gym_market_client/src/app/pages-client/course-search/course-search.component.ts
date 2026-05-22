@@ -12,11 +12,10 @@ import { GmCardComponent, GmInputComponent, GmButtonComponent } from '../../shar
 import { RevealDirective } from '../../shared/directives/reveal.directive';
 
 @Component({
-	selector: 'app-course-search',
-	standalone: true,
-	imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, GmInputComponent, GmButtonComponent, RevealDirective],
-	templateUrl: './course-search.component.html',
-	styleUrl: './course-search.component.scss',
+    selector: 'app-course-search',
+    imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, GmInputComponent, GmButtonComponent, RevealDirective],
+    templateUrl: './course-search.component.html',
+    styleUrl: './course-search.component.scss'
 })
 export class CourseSearchComponent implements OnInit {
 	courses: Course[] = [];

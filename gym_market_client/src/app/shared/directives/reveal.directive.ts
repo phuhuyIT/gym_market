@@ -1,6 +1,6 @@
 import { Directive, ElementRef, AfterViewInit, inject } from '@angular/core';
 
-@Directive({ selector: '[appReveal]', standalone: true })
+@Directive({ selector: '[appReveal]' })
 export class RevealDirective implements AfterViewInit {
   private el = inject(ElementRef);
 

@@ -14,11 +14,10 @@ import { UpdateUserDto } from '../../user/models/update-user.dto';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
 
 @Component({
-	selector: 'app-update-profile',
-	standalone: true,
-	imports: [ReactiveFormsModule, GmButtonComponent, RouterLink],
-	templateUrl: './update-profile.component.html',
-	styleUrl: './update-profile.component.scss',
+    selector: 'app-update-profile',
+    imports: [ReactiveFormsModule, GmButtonComponent, RouterLink],
+    templateUrl: './update-profile.component.html',
+    styleUrl: './update-profile.component.scss'
 })
 export class UpdateProfileComponent implements OnInit {
 	userStore = inject(UserStore);

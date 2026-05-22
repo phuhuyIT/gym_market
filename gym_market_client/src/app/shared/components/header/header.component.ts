@@ -13,11 +13,10 @@ interface NavItem {
 }
 
 @Component({
-	selector: 'app-header',
-	standalone: true,
-	imports: [RouterLinkActive, RouterLink, CommonModule, ThemeToggleComponent],
-	templateUrl: './header.component.html',
-	styleUrl: './header.component.scss',
+    selector: 'app-header',
+    imports: [RouterLinkActive, RouterLink, CommonModule, ThemeToggleComponent],
+    templateUrl: './header.component.html',
+    styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
 	readonly ROLES = ROLES;

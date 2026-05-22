@@ -4,11 +4,10 @@ import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../../shared/directives/reveal.directive';
 
 @Component({
-	selector: 'app-home',
-	standalone: true,
-	imports: [CommonModule, RouterLink, RevealDirective],
-	templateUrl: './home.component.html',
-	styleUrl: './home.component.scss',
+    selector: 'app-home',
+    imports: [CommonModule, RouterLink, RevealDirective],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
 	year = 0;

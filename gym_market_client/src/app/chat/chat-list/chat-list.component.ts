@@ -12,11 +12,10 @@ import { Conversation, Message } from '../../core/models/conversation.model';
 import { GmInputComponent, GmButtonComponent, GmCardComponent } from '../../shared';
 
 @Component({
-	selector: 'app-chat-list',
-	standalone: true,
-	imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent],
-	templateUrl: './chat-list.component.html',
-	styleUrl: './chat-list.component.scss',
+    selector: 'app-chat-list',
+    imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent],
+    templateUrl: './chat-list.component.html',
+    styleUrl: './chat-list.component.scss'
 })
 export class ChatListComponent implements OnInit, OnDestroy {
 	chats: Conversation[] = [];

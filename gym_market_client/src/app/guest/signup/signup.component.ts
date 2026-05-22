@@ -15,11 +15,10 @@ import { environment } from '../../../environments/environment.development';
 import { ROLES } from '../../utilities/roles.const';
 
 @Component({
-	selector: 'app-signup',
-	standalone: true,
-	imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
-	templateUrl: './signup.component.html',
-	styleUrl: './signup.component.scss',
+    selector: 'app-signup',
+    imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
+    templateUrl: './signup.component.html',
+    styleUrl: './signup.component.scss'
 })
 export class SignupComponent implements OnInit, AfterViewInit {
 	readonly ROLES = ROLES;

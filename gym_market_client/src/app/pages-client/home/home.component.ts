@@ -3,11 +3,10 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
-	selector: 'app-home',
-	standalone: true,
-	imports: [CommonModule, RouterLink],
-	templateUrl: './home.component.html',
-	styleUrl: './home.component.scss',
+    selector: 'app-home',
+    imports: [CommonModule, RouterLink],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent {
 	// @ViewChildren('dots') dots!: QueryList<ElementRef>;

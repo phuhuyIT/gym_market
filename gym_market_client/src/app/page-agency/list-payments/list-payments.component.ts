@@ -9,11 +9,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CancelPaymentDto, Payment } from '../../core/models/payment.model';
 
 @Component({
-	selector: 'app-list-payments',
-	standalone: true,
-	imports: [RouterLink, DatePipe, FormsModule, DecimalPipe],
-	templateUrl: './list-payments.component.html',
-	styleUrl: './list-payments.component.scss',
+    selector: 'app-list-payments',
+    imports: [RouterLink, DatePipe, FormsModule, DecimalPipe],
+    templateUrl: './list-payments.component.html',
+    styleUrl: './list-payments.component.scss'
 })
 export class ListPaymentsComponent implements OnInit {
 	payments: Payment[] = [];

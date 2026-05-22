@@ -16,11 +16,10 @@ import {
 import { NgFor, NgIf } from '@angular/common';
 
 @Component({
-	selector: 'app-food-nutrition-calculator',
-	standalone: true,
-	imports: [ReactiveFormsModule, NgIf, NgFor],
-	templateUrl: './food-nutrition-calculator.component.html',
-	styleUrl: './food-nutrition-calculator.component.scss',
+    selector: 'app-food-nutrition-calculator',
+    imports: [ReactiveFormsModule, NgIf, NgFor],
+    templateUrl: './food-nutrition-calculator.component.html',
+    styleUrl: './food-nutrition-calculator.component.scss'
 })
 export class FoodNutritionCalculatorComponent implements OnInit {
 	showAddFood: boolean = false;

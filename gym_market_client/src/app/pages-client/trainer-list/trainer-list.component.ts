@@ -11,11 +11,10 @@ import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.c
 import { GmCardComponent } from '../../shared/components/gm-card/gm-card.component';
 
 @Component({
-	selector: 'app-trainer-list',
-	standalone: true,
-	imports: [RouterLink, NgIf, NgFor, FormsModule, GmButtonComponent, GmCardComponent],
-	templateUrl: './trainer-list.component.html',
-	styleUrl: './trainer-list.component.scss',
+    selector: 'app-trainer-list',
+    imports: [RouterLink, NgIf, NgFor, FormsModule, GmButtonComponent, GmCardComponent],
+    templateUrl: './trainer-list.component.html',
+    styleUrl: './trainer-list.component.scss'
 })
 export class TrainerListComponent implements OnInit {
 	trainers: Trainer[] = [];

@@ -11,11 +11,10 @@ import { GmCardComponent, GmButtonComponent } from '../../shared';
 import { patchState } from '@ngrx/signals';
 
 @Component({
-	selector: 'app-your-profile',
-	standalone: true,
-	imports: [RouterLink, CommonModule, GmCardComponent, GmButtonComponent],
-	templateUrl: './your-profile.component.html',
-	styleUrl: './your-profile.component.scss',
+    selector: 'app-your-profile',
+    imports: [RouterLink, CommonModule, GmCardComponent, GmButtonComponent],
+    templateUrl: './your-profile.component.html',
+    styleUrl: './your-profile.component.scss'
 })
 export class YourProfileComponent implements OnInit {
 	userStore = inject(UserStore);
