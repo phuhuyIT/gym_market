@@ -12,6 +12,7 @@ import { SignupResponse, LoginResponse } from '../../core/models/auth.model';
 import { CommonModule } from '@angular/common';
 import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { environment } from '../../../environments/environment.development';
+import { ROLES } from '../../utilities/roles.const';
 
 @Component({
 	selector: 'app-signup',
@@ -21,6 +22,7 @@ import { environment } from '../../../environments/environment.development';
 	styleUrl: './signup.component.scss',
 })
 export class SignupComponent implements OnInit, AfterViewInit {
+	readonly ROLES = ROLES;
 	model = {
 		fullName: '',
 		email: '',
@@ -56,13 +58,7 @@ export class SignupComponent implements OnInit, AfterViewInit {
 	}
 
 	selectRole(role: string) {
-		if (role === 'Client') {
-			this.model.role = 'Student';
-		} else if (role === 'Agency') {
-			this.model.role = 'Trainer';
-		} else {
-			this.model.role = role;
-		}
+		this.model.role = role;
 
 		// Render the Google button after Angular renders the form container
 		setTimeout(() => {
@@ -106,7 +102,7 @@ export class SignupComponent implements OnInit, AfterViewInit {
 					this.accountService.saveToken(res.token);
 					this.accountService.checkLogin();
 					
-					if (this.model.role === 'Trainer') {
+					if (this.model.role === ROLES.TRAINER) {
 						this.router.navigateByUrl('/agency');
 					} else {
 						this.router.navigateByUrl('/client');
@@ -148,9 +144,9 @@ export class SignupComponent implements OnInit, AfterViewInit {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (res: SignupResponse) => {
-					if (this.model.role === 'Trainer') {
+					if (this.model.role === ROLES.TRAINER) {
 						this.trainerSignup(res);
-					} else if (this.model.role === 'Student') {
+					} else if (this.model.role === ROLES.STUDENT) {
 						this.studentSignup(res);
 					}
 				},

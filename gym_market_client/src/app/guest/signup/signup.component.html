@@ -11,12 +11,12 @@
       <div class="signup__role-selection" *ngIf="!model.role">
         <p class="signup__subtitle">Select your role to get started</p>
         <div class="signup__role-cards">
-        <div class="signup__role-card gl" (click)="selectRole('Client')">
+        <div class="signup__role-card gl" (click)="selectRole(ROLES.STUDENT)">
           <div class="signup__role-icon">💪</div>
           <h3>Student</h3>
           <p>I want to browse courses and train with elite professionals.</p>
         </div>
-        <div class="signup__role-card gl" (click)="selectRole('Agency')">
+        <div class="signup__role-card gl" (click)="selectRole(ROLES.TRAINER)">
           <div class="signup__role-icon">🥇</div>
           <h3>Trainer</h3>
           <p>I want to create courses, manage students and grow my brand.</p>
@@ -41,7 +41,7 @@
         </div>
 
         <!-- Trainer Specific Fields -->
-        <div class="signup__section" *ngIf="model.role === 'Trainer'">
+        <div class="signup__section" *ngIf="model.role === ROLES.TRAINER">
           <h3 class="signup__section-title">Professional Details</h3>
           <div class="signup__grid">
             <gm-input label="Specialization" [(value)]="model.specialization" />
@@ -53,7 +53,7 @@
         </div>
 
         <!-- Student Specific Fields -->
-        <div class="signup__section" *ngIf="model.role === 'Student'">
+        <div class="signup__section" *ngIf="model.role === ROLES.STUDENT">
           <h3 class="signup__section-title">Personal Details</h3>
           <div class="signup__grid">
             <div class="full-width">
