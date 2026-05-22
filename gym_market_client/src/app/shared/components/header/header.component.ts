@@ -5,6 +5,7 @@ import { UserStore } from '../../../stores/user.store';
 import { AccountService } from '../../../guest/account.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
+import { ROLES } from '../../../utilities/roles.const';
 
 interface NavItem {
 	link: string;
@@ -19,6 +20,7 @@ interface NavItem {
 	styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
+	readonly ROLES = ROLES;
 	showAccountOption = false;
 	showAIDropdownMenu = false;
 	userStore = inject(UserStore);
@@ -39,7 +41,7 @@ export class HeaderComponent {
 
 	get navbarItems(): NavItem[] {
 		const role = this.userStore.role();
-		if (role === 'Trainer') {
+		if (role === ROLES.TRAINER) {
 			return [
 				{
 					link: '/agency',
@@ -50,7 +52,7 @@ export class HeaderComponent {
 					name: 'Chats',
 				},
 			];
-		} else if (role === 'Student') {
+		} else if (role === ROLES.STUDENT) {
 			return [
 				{
 					link: '/home',

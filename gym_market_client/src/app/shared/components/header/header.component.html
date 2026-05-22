@@ -1,6 +1,6 @@
 <div class="nav-wrap">
   <nav>
-    <a [routerLink]="userStore.role() === 'Trainer' ? '/agency' : (userStore.id() ? '/client' : '/')" class="nav-logo">Gym<span>Market</span></a>
+    <a [routerLink]="userStore.role() === ROLES.TRAINER ? '/agency' : (userStore.id() ? '/client' : '/')" class="nav-logo">Gym<span>Market</span></a>
 
     <ul class="nav-links">
       @for (item of navbarItems; track $index) {
@@ -10,7 +10,7 @@
       }
       
       <!-- AI Features Dropdown -->
-      @if (userStore.role() !== 'Trainer') {
+      @if (userStore.role() !== ROLES.TRAINER) {
         <li 
           class="relative"
           (mouseover)="showAIDropdownMenu = true"
@@ -45,7 +45,7 @@
             class="dropdown-menu gl" 
             [ngClass]="{'visible': showAccountOption}"
           >
-            @if (userStore.role() === 'Trainer') {
+            @if (userStore.role() === ROLES.TRAINER) {
               <a routerLink="/agency/your-profile" class="dropdown-item">Profile Info</a>
               <a routerLink="/chat/chat-list" class="dropdown-item">Chats</a>
             } @else {
