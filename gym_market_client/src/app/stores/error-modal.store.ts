@@ -10,4 +10,4 @@ const initalState: ErrorState = {
 	isShow: false,
 };
 
-export const ErrorModalStore = signalStore({ providedIn: 'root' }, withState(initalState));
+export const ErrorModalStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initalState));
