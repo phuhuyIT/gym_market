@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using GymMarket.API.Data;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -53,12 +53,10 @@ namespace GymMarket.API.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update<TUpdateDto>(TUpdateDto entity) where TUpdateDto : class
+        public async Task Update(TEntity entity)
         {
-            // map TUpdateDto to TEntity
-            var mapEntity = _mapper.Map<TUpdateDto, TEntity>(entity);
-            _dbSet.Attach(mapEntity);
-            _context.Entry(mapEntity).State = EntityState.Modified;
+            _dbSet.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 

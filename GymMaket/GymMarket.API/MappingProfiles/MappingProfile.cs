@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using GymMarket.API.DTOs.Course;
 using GymMarket.API.DTOs.CourseOption;
 using GymMarket.API.DTOs.CourseRating;
@@ -22,32 +22,32 @@ namespace GymMarket.API.MappingProfiles
                     opt => opt.MapFrom(src => Guid.NewGuid().ToString()));
 
             CreateMap<CourseUpdateDTO, Course>()
-                .ReverseMap()
-            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<Course, CourseUpdateDTO>();
 
             CreateMap<TrainerCreateDTO, Trainer>()
                 .ReverseMap()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<TrainerUpdateDTO, Trainer>()
-                .ReverseMap()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<Trainer, TrainerUpdateDTO>();
 
             CreateMap<CourseOptionCreateDTO, CourseOption>()
                 .ReverseMap()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<CourseOptionUpdateDTO, CourseOption>()
-                .ReverseMap()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<CourseOption, CourseOptionUpdateDTO>();
 
             CreateMap<StudentCreateDTO, Student>()
                .ReverseMap()
                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<StudentUpdateDTO, Student>()
-              .ReverseMap()
-              .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<Student, StudentUpdateDTO>();
 
             CreateMap<CourseRatingCreateDto, CourseRating>()
               .ReverseMap();

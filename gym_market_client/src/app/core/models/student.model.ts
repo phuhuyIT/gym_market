@@ -10,9 +10,11 @@ export interface Student {
 }
 
 export interface UpdateStudentProfileDto {
-  fullName: string;
-  height: number;
-  weight: number;
-  dateOfBirth: string;
-  avatar?: string;
+  studentId: string;
+  name?: string;
+  email?: string;
+  password?: string;
+  healthStatus?: string;
+  profilePicture?: string;
+  updatedAt?: string;
 }

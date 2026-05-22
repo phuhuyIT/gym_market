@@ -5,7 +5,7 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { ErrorModalStore } from '../../stores/error-modal.store';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { StudentService } from '../student.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../user/user.service';
 import { patchState } from '@ngrx/signals';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -16,7 +16,7 @@ import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.c
 @Component({
 	selector: 'app-update-profile',
 	standalone: true,
-	imports: [ReactiveFormsModule, GmButtonComponent],
+	imports: [ReactiveFormsModule, GmButtonComponent, RouterLink],
 	templateUrl: './update-profile.component.html',
 	styleUrl: './update-profile.component.scss',
 })
@@ -28,6 +28,13 @@ export class UpdateProfileComponent implements OnInit {
 	errorModal = inject(ErrorModalStore);
 	noticeModal = inject(NoticeModalStore);
 	private destroyRef = inject(DestroyRef);
+
+	showAvatarInput = false;
+	showPasswordModal = false;
+
+	toggleAvatarInput() {
+		this.showAvatarInput = !this.showAvatarInput;
+	}
 
 	constructor(
 		private studentService: StudentService,
@@ -88,24 +95,80 @@ export class UpdateProfileComponent implements OnInit {
 						this.router.navigateByUrl('/login');
 					},
 				});
+		} else {
+			const userId = this.userStore.id();
+			if (userId) {
+				this.studentService
+					.getStudentInfoByUserId(userId)
+					.pipe(takeUntilDestroyed(this.destroyRef))
+					.subscribe({
+						next: res => {
+							if (res.studentId) {
+								patchState(this.userStore, { studentId: res.studentId });
+							}
+							this.updateForm.patchValue({
+								profilePicture:
+									res.profilePicture || 'https://cdn-icons-png.flaticon.com/512/236/236832.png',
+							});
+						},
+						error: () => {
+							this.router.navigateByUrl('/login');
+						},
+					});
+			}
 		}
+	}
+
+	private getErrors(err: any): string[] {
+		if (err.error?.errors) {
+			if (Array.isArray(err.error.errors)) {
+				return err.error.errors;
+			} else if (typeof err.error.errors === 'object') {
+				return Object.values(err.error.errors).flat() as string[];
+			} else if (typeof err.error.errors === 'string') {
+				return [err.error.errors];
+			}
+		}
+		if (err.error?.message) {
+			return [err.error.message];
+		}
+		return [err.message || 'Update failed'];
 	}
 
 	onUpdate() {
 		if (this.updateForm.valid === false) {
 			return;
 		}
+		this.showPasswordModal = true;
+	}
 
-		const studentUpdate: UpdateStudentProfileDto = {
-			fullName: this.updateForm.value.fullName,
-			dateOfBirth: '', // Not in form, but required by DTO
-			height: 0,
-			weight: 0,
-			avatar: this.updateForm.value.profilePicture,
-		};
+	closePasswordModal() {
+		this.showPasswordModal = false;
+	}
+
+	confirmUpdate(password: string) {
+		if (!password || password.trim().length === 0) {
+			patchState(this.errorModal, {
+				isShow: true,
+				errors: ['Password is required to confirm changes.'],
+			});
+			return;
+		}
 
 		const studentId = this.userStore.studentId();
 		if (!studentId) return;
+
+		const formValues = this.updateForm.getRawValue();
+
+		const studentUpdate: UpdateStudentProfileDto = {
+			studentId: studentId,
+			name: formValues.fullName,
+			email: formValues.email,
+			profilePicture: formValues.profilePicture,
+			password: password,
+		};
+
+		this.showPasswordModal = false;
 
 		patchState(this.loader, { isShow: true });
 		this.studentService
@@ -118,7 +181,7 @@ export class UpdateProfileComponent implements OnInit {
 				error: err => {
 					patchState(this.errorModal, {
 						isShow: true,
-						errors: err.error?.errors || ['Update failed'],
+						errors: this.getErrors(err),
 					});
 					patchState(this.loader, { isShow: false });
 				},
@@ -126,12 +189,13 @@ export class UpdateProfileComponent implements OnInit {
 	}
 
 	onUpdateUser() {
+		const formValues = this.updateForm.getRawValue();
 		const user: UpdateUserDto = {
-			address: this.updateForm.value.address,
-			avatar: this.updateForm.value.profilePicture,
-			fullName: this.updateForm.value.fullName,
+			address: formValues.address,
+			avatar: formValues.profilePicture,
+			fullName: formValues.fullName,
 			id: this.userStore.id(),
-			phoneNumber: this.updateForm.value.phoneNumber,
+			phoneNumber: formValues.phoneNumber,
 			status: null,
 		};
 
@@ -146,7 +210,7 @@ export class UpdateProfileComponent implements OnInit {
 				error: err => {
 					patchState(this.errorModal, {
 						isShow: true,
-						errors: err.error?.errors || ['User update failed'],
+						errors: this.getErrors(err),
 					});
 					patchState(this.loader, { isShow: false });
 				},

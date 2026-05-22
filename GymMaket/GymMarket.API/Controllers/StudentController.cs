@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using GymMarket.API.DTOs.Student;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
@@ -10,8 +11,65 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class StudentController : GenericController<StudentCreateDTO, StudentUpdateDTO, Student, string>
     {
-        public StudentController(IGenericRepository<Student, string> repository, IMapper mapper) : base(repository, mapper)
+        private readonly UserManager<AppUser> _userManager;
+
+        public StudentController(IGenericRepository<Student, string> repository, IMapper mapper, UserManager<AppUser> userManager) : base(repository, mapper)
         {
+            _userManager = userManager;
+        }
+
+        [HttpPut("{id}")]
+        public override async Task<IActionResult> Update(string id, [FromBody] StudentUpdateDTO updateDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var existingEntity = await _repository.GetByIdAsync(id);
+            if (existingEntity == null)
+                return NotFound();
+
+            if (string.IsNullOrWhiteSpace(updateDto.Password))
+            {
+                ModelState.AddModelError("Password", "Password is required to confirm changes.");
+                return BadRequest(ModelState);
+            }
+
+            if (string.IsNullOrEmpty(existingEntity.UserId))
+            {
+                ModelState.AddModelError("User", "Associated user account not found.");
+                return BadRequest(ModelState);
+            }
+
+            var appUser = await _userManager.FindByIdAsync(existingEntity.UserId);
+            if (appUser == null)
+            {
+                ModelState.AddModelError("User", "Associated user account not found.");
+                return BadRequest(ModelState);
+            }
+
+            var isPasswordValid = await _userManager.CheckPasswordAsync(appUser, updateDto.Password);
+            if (!isPasswordValid)
+            {
+                ModelState.AddModelError("Password", "Incorrect password. Please try again.");
+                return BadRequest(ModelState);
+            }
+
+            // Set password to null so AutoMapper does not map it onto the Student entity columns
+            updateDto.Password = null;
+
+            _mapper.Map(updateDto, existingEntity);
+            await _repository.Update(existingEntity);
+            return NoContent();
+        }
+
+        [HttpGet("by-user/{userId}")]
+        public async Task<IActionResult> GetByUserId(string userId)
+        {
+            var students = await _repository.FindAsync(s => s.UserId == userId);
+            var student = students.FirstOrDefault();
+            if (student == null)
+                return NotFound();
+            return Ok(student);
         }
 
         protected override string GetEntityId(Student entity)
