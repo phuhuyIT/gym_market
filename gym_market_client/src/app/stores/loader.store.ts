@@ -8,4 +8,4 @@ const initalState: LoaderState = {
 	isShow: false,
 };
 
-export const LoaderModalStore = signalStore({ providedIn: 'root' }, withState(initalState));
+export const LoaderModalStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initalState));

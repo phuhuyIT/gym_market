@@ -26,4 +26,4 @@ const initalState: UserStore = {
 	role: null,
 };
 
-export const UserStore = signalStore({ providedIn: 'root' }, withState(initalState));
+export const UserStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initalState));
