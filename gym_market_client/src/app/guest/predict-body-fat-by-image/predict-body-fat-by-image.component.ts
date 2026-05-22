@@ -3,13 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { BodyFatService } from '../body-fat.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BodyFatPredictionResponse } from '../../core/models/body-fat.model';
-import { CommonModule } from '@angular/common';
+
 import { GmInputComponent, GmButtonComponent, GmCardComponent } from '../../shared';
 import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-predict-body-fat-by-image',
-    imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent, RouterLink],
+    imports: [FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent, RouterLink],
     templateUrl: './predict-body-fat-by-image.component.html',
     styleUrl: './predict-body-fat-by-image.component.scss'
 })

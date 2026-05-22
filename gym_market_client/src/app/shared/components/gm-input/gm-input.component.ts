@@ -1,10 +1,10 @@
 import { Component, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
     selector: 'gm-input',
-    imports: [CommonModule, FormsModule],
+    imports: [FormsModule],
     template: `
     <div class="gm-input-group">
       <label class="gm-input-label">{{ label() }}</label>

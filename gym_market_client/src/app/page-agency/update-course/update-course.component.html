@@ -65,7 +65,7 @@
       <!-- Media Upload -->
       <section class="form-section">
         <h3 class="form-section__title">COURSE MEDIA</h3>
-        
+
         <div class="media-row">
           <div class="media-col">
             <label class="media-label">IMAGES</label>
@@ -75,11 +75,15 @@
               <input type="file" #imageInput hidden multiple (change)="onSlectImage($event)" accept="image/*">
             </div>
             <div class="media-previews">
-              <div class="media-preview" *ngFor="let img of dataImages" (click)="showImage(img)">
-                <img [src]="img" alt="">
-              </div>
+              @for (img of dataImages; track img) {
+                <div class="media-preview" (click)="showImage(img)">
+                  <img [src]="img" alt="">
+                </div>
+              }
             </div>
-            <gm-button variant="ghost" *ngIf="dataImages.length > 0" (clicked)="onClearImages(imageInput)">CLEAR ALL</gm-button>
+            @if (dataImages.length > 0) {
+              <gm-button variant="ghost" (clicked)="onClearImages(imageInput)">CLEAR ALL</gm-button>
+            }
           </div>
 
           <div class="media-col">
@@ -90,11 +94,15 @@
               <input type="file" #videoInput hidden multiple (change)="onSlectVideo($event)" accept="video/*">
             </div>
             <div class="media-previews">
-              <div class="media-preview media-preview--video" *ngFor="let vid of dataVideos">
-                <video [src]="vid"></video>
-              </div>
+              @for (vid of dataVideos; track vid) {
+                <div class="media-preview media-preview--video">
+                  <video [src]="vid"></video>
+                </div>
+              }
             </div>
-            <gm-button variant="ghost" *ngIf="dataVideos.length > 0" (clicked)="onClearVideo(videoInput)">CLEAR ALL</gm-button>
+            @if (dataVideos.length > 0) {
+              <gm-button variant="ghost" (clicked)="onClearVideo(videoInput)">CLEAR ALL</gm-button>
+            }
           </div>
         </div>
       </section>
@@ -109,7 +117,9 @@
 </div>
 
 <!-- Modal -->
-<div class="image-modal" *ngIf="url" (click)="showImage(null)">
-  <div class="image-modal__close">✕</div>
-  <img [src]="url" alt="Fullscreen preview" (click)="$event.stopPropagation()">
-</div>
+@if (url) {
+  <div class="image-modal" (click)="showImage(null)">
+    <div class="image-modal__close">✕</div>
+    <img [src]="url" alt="Fullscreen preview" (click)="$event.stopPropagation()">
+  </div>
+}

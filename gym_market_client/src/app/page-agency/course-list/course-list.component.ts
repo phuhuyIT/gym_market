@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
-import { CommonModule, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +13,7 @@ import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
     selector: 'app-course-list',
-    imports: [RouterLink, DatePipe, FormsModule, CommonModule, GmCardComponent, GmButtonComponent, GmInputComponent],
+    imports: [RouterLink, DatePipe, FormsModule, GmCardComponent, GmButtonComponent, GmInputComponent],
     templateUrl: './course-list.component.html',
     styleUrl: './course-list.component.scss'
 })

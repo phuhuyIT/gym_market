@@ -13,11 +13,11 @@ import {
 	FoodNutrition,
 	FoodNutritionUser,
 } from '../../core/models/food-nutrition.model';
-import { NgFor, NgIf } from '@angular/common';
+
 
 @Component({
     selector: 'app-food-nutrition-calculator',
-    imports: [ReactiveFormsModule, NgIf, NgFor],
+    imports: [ReactiveFormsModule],
     templateUrl: './food-nutrition-calculator.component.html',
     styleUrl: './food-nutrition-calculator.component.scss'
 })

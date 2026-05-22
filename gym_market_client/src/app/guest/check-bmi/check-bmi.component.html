@@ -38,11 +38,11 @@
         <div class="ai-result-side">
           <gm-card class="result-card">
             <h3 class="card-title text-center">YOUR ANALYSIS</h3>
-            
+
             <div class="gauge-container">
               <svg class="gauge" viewBox="0 0 100 100">
                 <circle class="gauge__bg" cx="50" cy="50" r="45"></circle>
-                <circle class="gauge__fill" cx="50" cy="50" r="45" 
+                <circle class="gauge__fill" cx="50" cy="50" r="45"
                   [style.stroke-dashoffset]="283 - (283 * (bodyFat || 0) / 100)"
                   [class.warning]="bodyFat > 25"
                   [class.danger]="bodyFat > 35"
@@ -57,15 +57,17 @@
               <span class="bmi-value">{{bmi | number:'1.1-1'}}</span>
             </div>
 
-            <div class="evaluation" *ngIf="bmi > 0">
-              <h4 class="evaluation__title">How to evaluate:</h4>
-              <ul class="evaluation__list">
-                <li [class.active]="bmi < 18.5">Underweight (< 18.5)</li>
-                <li [class.active]="bmi >= 18.5 && bmi < 25">Normal (18.5 - 25)</li>
-                <li [class.active]="bmi >= 25 && bmi < 30">Overweight (25 - 30)</li>
-                <li [class.active]="bmi >= 30">Obese (> 30)</li>
-              </ul>
-            </div>
+            @if (bmi > 0) {
+              <div class="evaluation">
+                <h4 class="evaluation__title">How to evaluate:</h4>
+                <ul class="evaluation__list">
+                  <li [class.active]="bmi < 18.5">Underweight (< 18.5)</li>
+                  <li [class.active]="bmi >= 18.5 && bmi < 25">Normal (18.5 - 25)</li>
+                  <li [class.active]="bmi >= 25 && bmi < 30">Overweight (25 - 30)</li>
+                  <li [class.active]="bmi >= 30">Obese (> 30)</li>
+                </ul>
+              </div>
+            }
           </gm-card>
         </div>
       </div>
@@ -74,11 +76,13 @@
 </div>
 
 <!-- Modal Overlay for detailed results -->
-<div class="result-overlay" *ngIf="showBodyFat" (click)="onCloseResult()">
-  <gm-card class="result-modal" (click)="$event.stopPropagation()">
-    <div class="result-modal__icon">⚡</div>
-    <h2>Analysis Complete</h2>
-    <p>Your predicted body fat is <strong>{{bodyFat}}%</strong>. Based on your metrics, you are in the <strong>{{bmi < 25 ? 'Healthy' : 'Caution'}}</strong> range.</p>
-    <gm-button variant="primary" (clicked)="onCloseResult()">GOT IT</gm-button>
-  </gm-card>
-</div>
+@if (showBodyFat) {
+  <div class="result-overlay" (click)="onCloseResult()">
+    <gm-card class="result-modal" (click)="$event.stopPropagation()">
+      <div class="result-modal__icon">⚡</div>
+      <h2>Analysis Complete</h2>
+      <p>Your predicted body fat is <strong>{{bodyFat}}%</strong>. Based on your metrics, you are in the <strong>{{bmi < 25 ? 'Healthy' : 'Caution'}}</strong> range.</p>
+      <gm-button variant="primary" (clicked)="onCloseResult()">GOT IT</gm-button>
+    </gm-card>
+  </div>
+}

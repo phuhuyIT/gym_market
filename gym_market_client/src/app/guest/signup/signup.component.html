@@ -6,74 +6,76 @@
   <div class="signup__form-panel">
     <div class="signup__form-content gl">
       <h2 class="signup__title">Create Account</h2>
-      
+
       <!-- Role Selection -->
-      <div class="signup__role-selection" *ngIf="!model.role">
-        <p class="signup__subtitle">Select your role to get started</p>
-        <div class="signup__role-cards">
-        <div class="signup__role-card gl" (click)="selectRole(ROLES.STUDENT)">
-          <div class="signup__role-icon">💪</div>
-          <h3>Student</h3>
-          <p>I want to browse courses and train with elite professionals.</p>
+      @if (!model.role) {
+        <div class="signup__role-selection">
+          <p class="signup__subtitle">Select your role to get started</p>
+          <div class="signup__role-cards">
+            <div class="signup__role-card gl" (click)="selectRole(ROLES.STUDENT)">
+              <div class="signup__role-icon">💪</div>
+              <h3>Student</h3>
+              <p>I want to browse courses and train with elite professionals.</p>
+            </div>
+            <div class="signup__role-card gl" (click)="selectRole(ROLES.TRAINER)">
+              <div class="signup__role-icon">🥇</div>
+              <h3>Trainer</h3>
+              <p>I want to create courses, manage students and grow my brand.</p>
+            </div>
+          </div>
         </div>
-        <div class="signup__role-card gl" (click)="selectRole(ROLES.TRAINER)">
-          <div class="signup__role-icon">🥇</div>
-          <h3>Trainer</h3>
-          <p>I want to create courses, manage students and grow my brand.</p>
-        </div>
-      </div>
-      </div>
+      }
 
       <!-- Signup Form -->
-      <div class="signup__form-fields" *ngIf="model.role">
-        <div class="signup__back" (click)="model.role = ''">
-          <span class="icon">←</span> Back to role selection ({{model.role}})
-        </div>
-        
-        <div class="signup__section">
-          <h3 class="signup__section-title">Basic Information</h3>
-          <div class="signup__grid">
-            <gm-input label="Full Name" [(value)]="model.fullName" />
-            <gm-input label="Email" type="email" [(value)]="model.email" />
-            <gm-input label="Password" type="password" [(value)]="model.password" />
-            <gm-input label="Confirm Password" type="password" [(value)]="model.confirmPassword" />
+      @if (model.role) {
+        <div class="signup__form-fields">
+          <div class="signup__back" (click)="model.role = ''">
+            <span class="icon">←</span> Back to role selection ({{model.role}})
           </div>
-        </div>
-
-        <!-- Trainer Specific Fields -->
-        <div class="signup__section" *ngIf="model.role === ROLES.TRAINER">
-          <h3 class="signup__section-title">Professional Details</h3>
-          <div class="signup__grid">
-            <gm-input label="Specialization" [(value)]="model.specialization" />
-            <gm-input label="Experience (Years)" type="number" [(value)]="model.experience" />
-            <div class="full-width">
-              <gm-input label="Bio" [(value)]="model.bio" />
+          <div class="signup__section">
+            <h3 class="signup__section-title">Basic Information</h3>
+            <div class="signup__grid">
+              <gm-input label="Full Name" [(value)]="model.fullName" />
+              <gm-input label="Email" type="email" [(value)]="model.email" />
+              <gm-input label="Password" type="password" [(value)]="model.password" />
+              <gm-input label="Confirm Password" type="password" [(value)]="model.confirmPassword" />
             </div>
           </div>
-        </div>
-
-        <!-- Student Specific Fields -->
-        <div class="signup__section" *ngIf="model.role === ROLES.STUDENT">
-          <h3 class="signup__section-title">Personal Details</h3>
-          <div class="signup__grid">
-            <div class="full-width">
-              <gm-input label="Health Status / Goals" [(value)]="model.healthStatus" />
+          <!-- Trainer Specific Fields -->
+          @if (model.role === ROLES.TRAINER) {
+            <div class="signup__section">
+              <h3 class="signup__section-title">Professional Details</h3>
+              <div class="signup__grid">
+                <gm-input label="Specialization" [(value)]="model.specialization" />
+                <gm-input label="Experience (Years)" type="number" [(value)]="model.experience" />
+                <div class="full-width">
+                  <gm-input label="Bio" [(value)]="model.bio" />
+                </div>
+              </div>
             </div>
+          }
+          <!-- Student Specific Fields -->
+          @if (model.role === ROLES.STUDENT) {
+            <div class="signup__section">
+              <h3 class="signup__section-title">Personal Details</h3>
+              <div class="signup__grid">
+                <div class="full-width">
+                  <gm-input label="Health Status / Goals" [(value)]="model.healthStatus" />
+                </div>
+              </div>
+            </div>
+          }
+          <gm-button variant="primary" [loading]="loading" (clicked)="onSignUp()">Complete Sign Up</gm-button>
+          <div class="signup__divider">
+            <span class="signup__divider-line"></span>
+            <span class="signup__divider-text">or</span>
+            <span class="signup__divider-line"></span>
+          </div>
+          <div class="signup__oauth">
+            <div id="google-signup-btn"></div>
           </div>
         </div>
-
-        <gm-button variant="primary" [loading]="loading" (clicked)="onSignUp()">Complete Sign Up</gm-button>
-
-        <div class="signup__divider">
-          <span class="signup__divider-line"></span>
-          <span class="signup__divider-text">or</span>
-          <span class="signup__divider-line"></span>
-        </div>
-
-        <div class="signup__oauth">
-          <div id="google-signup-btn"></div>
-        </div>
-      </div>
+      }
 
       <div class="signup__footer">
         <a routerLink="/login">Already have an account? <span class="accent">Sign in</span></a>

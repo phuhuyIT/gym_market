@@ -8,13 +8,13 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { ROLES } from '../../utilities/roles.const';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoginResponse } from '../../core/models/auth.model';
-import { CommonModule } from '@angular/common';
+
 import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
     selector: 'app-login',
-    imports: [CommonModule, FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
+    imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss'
 })

@@ -53,36 +53,40 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of coursestemp">
-          <td>
-            <div class="course-cell">
-              <div class="course-cell__img">
-                <img [src]="item.getFileDtos && item.getFileDtos.length > 0 ? item.getFileDtos[0].url : '/assets/fitness_logo.jpg'" alt="">
+        @for (item of coursestemp; track item) {
+          <tr>
+            <td>
+              <div class="course-cell">
+                <div class="course-cell__img">
+                  <img [src]="item.getFileDtos && item.getFileDtos.length > 0 ? item.getFileDtos[0].url : '/assets/fitness_logo.jpg'" alt="">
+                </div>
+                <div class="course-cell__info">
+                  <span class="course-cell__name">{{item.title}}</span>
+                  <span class="course-cell__id">ID: {{item.courseId.substring(0,8)}}</span>
+                </div>
               </div>
-              <div class="course-cell__info">
-                <span class="course-cell__name">{{item.title}}</span>
-                <span class="course-cell__id">ID: {{item.courseId.substring(0,8)}}</span>
+            </td>
+            <td><span class="category-pill">{{item.category}}</span></td>
+            <td><span class="price-text">${{item.price}}</span></td>
+            <td><span class="count-text">{{item.maxParticipants}} max</span></td>
+            <td><span class="status-pill active">Active</span></td>
+            <td class="text-right">
+              <div class="action-buttons">
+                <button class="action-btn" [routerLink]="'/agency/update-course/' + item.courseId" title="Edit">✏️</button>
+                <button class="action-btn" [routerLink]="'/agency/get-payments/' + item.courseId" title="Payments">💰</button>
+                <button class="action-btn delete" (click)="onShowDeleteModel(true, item.courseId)" title="Delete">🗑️</button>
               </div>
-            </div>
-          </td>
-          <td><span class="category-pill">{{item.category}}</span></td>
-          <td><span class="price-text">${{item.price}}</span></td>
-          <td><span class="count-text">{{item.maxParticipants}} max</span></td>
-          <td><span class="status-pill active">Active</span></td>
-          <td class="text-right">
-            <div class="action-buttons">
-              <button class="action-btn" [routerLink]="'/agency/update-course/' + item.courseId" title="Edit">✏️</button>
-              <button class="action-btn" [routerLink]="'/agency/get-payments/' + item.courseId" title="Payments">💰</button>
-              <button class="action-btn delete" (click)="onShowDeleteModel(true, item.courseId)" title="Delete">🗑️</button>
-            </div>
-          </td>
-        </tr>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
-    
-    <div class="empty-state" *ngIf="coursestemp.length === 0">
-      <p>No courses found matching your search.</p>
-    </div>
+
+    @if (coursestemp.length === 0) {
+      <div class="empty-state">
+        <p>No courses found matching your search.</p>
+      </div>
+    }
   </section>
 </div>
 
@@ -92,13 +96,15 @@
 </button>
 
 <!-- Delete Modal -->
-<div class="gm-modal-overlay" *ngIf="isShowDeleteModal">
-  <gm-card class="gm-modal">
-    <h3 class="gm-modal__title">Delete Course?</h3>
-    <p class="gm-modal__text">This action cannot be undone. All course data and enrollments will be permanently removed.</p>
-    <div class="gm-modal__actions">
-      <gm-button variant="ghost" (clicked)="onShowDeleteModel(false, '')">CANCEL</gm-button>
-      <gm-button variant="primary" (clicked)="onRemove()">CONFIRM DELETE</gm-button>
-    </div>
-  </gm-card>
-</div>
+@if (isShowDeleteModal) {
+  <div class="gm-modal-overlay">
+    <gm-card class="gm-modal">
+      <h3 class="gm-modal__title">Delete Course?</h3>
+      <p class="gm-modal__text">This action cannot be undone. All course data and enrollments will be permanently removed.</p>
+      <div class="gm-modal__actions">
+        <gm-button variant="ghost" (clicked)="onShowDeleteModel(false, '')">CANCEL</gm-button>
+        <gm-button variant="primary" (clicked)="onRemove()">CONFIRM DELETE</gm-button>
+      </div>
+    </gm-card>
+  </div>
+}

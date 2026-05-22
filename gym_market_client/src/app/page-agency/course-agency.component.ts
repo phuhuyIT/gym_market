@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { AccountService } from '../guest/account.service';
 
 @Component({
     selector: 'app-course-agency',
-    imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+    imports: [RouterOutlet, RouterLink, RouterLinkActive],
     templateUrl: './course-agency.component.html',
     styleUrl: './course-agency.component.scss'
 })

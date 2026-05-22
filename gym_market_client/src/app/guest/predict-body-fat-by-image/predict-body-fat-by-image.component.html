@@ -15,7 +15,7 @@
       <div class="ai-grid ai-grid--center">
         <gm-card class="upload-card">
           <h3 class="card-title text-center">PHOTO ANALYSIS</h3>
-          
+
           <div class="gender-selection">
             <label>YOUR GENDER</label>
             <div class="gender-pills">
@@ -25,23 +25,27 @@
           </div>
 
           <!-- Upload Zone -->
-          <div class="upload-area gl" *ngIf="!imageToShow" (click)="fileInput.click()">
-            <div class="upload-area__icon">📸</div>
-            <p class="upload-area__text">Click to upload a clear front-facing photo</p>
-            <p class="upload-area__subtext">Our AI works best with standard lighting and neutral backgrounds.</p>
-            <input type="file" #fileInput hidden (change)="onSelectImage($event)" accept="image/*">
-          </div>
+          @if (!imageToShow) {
+            <div class="upload-area gl" (click)="fileInput.click()">
+              <div class="upload-area__icon">📸</div>
+              <p class="upload-area__text">Click to upload a clear front-facing photo</p>
+              <p class="upload-area__subtext">Our AI works best with standard lighting and neutral backgrounds.</p>
+              <input type="file" #fileInput hidden (change)="onSelectImage($event)" accept="image/*">
+            </div>
+          }
 
           <!-- Preview Area -->
-          <div class="preview-area" *ngIf="imageToShow">
-            <div class="preview-area__img-container">
-              <img [src]="imageToShow" alt="Upload preview">
-              <button class="preview-area__clear" (click)="clearImage()">✕</button>
+          @if (imageToShow) {
+            <div class="preview-area">
+              <div class="preview-area__img-container">
+                <img [src]="imageToShow" alt="Upload preview">
+                <button class="preview-area__clear" (click)="clearImage()">✕</button>
+              </div>
+              <div class="preview-area__actions">
+                <gm-button variant="primary" (clicked)="predict()" [loading]="loading">START AI ANALYSIS</gm-button>
+              </div>
             </div>
-            <div class="preview-area__actions">
-              <gm-button variant="primary" (clicked)="predict()" [loading]="loading">START AI ANALYSIS</gm-button>
-            </div>
-          </div>
+          }
         </gm-card>
       </div>
     </div>
@@ -49,12 +53,14 @@
 </div>
 
 <!-- Modal Overlay for results -->
-<div class="result-overlay" *ngIf="showPredictResult" (click)="onCloseResult()">
-  <gm-card class="result-modal" (click)="$event.stopPropagation()">
-    <div class="result-modal__icon">🤖</div>
-    <h2>Analysis Complete</h2>
-    <div class="result-modal__value">{{predictResult}}%</div>
-    <p>Based on your photo, our AI predicts a body fat percentage of <strong>{{predictResult}}%</strong>.</p>
-    <gm-button variant="primary" (clicked)="onCloseResult()">DONE</gm-button>
-  </gm-card>
-</div>
+@if (showPredictResult) {
+  <div class="result-overlay" (click)="onCloseResult()">
+    <gm-card class="result-modal" (click)="$event.stopPropagation()">
+      <div class="result-modal__icon">🤖</div>
+      <h2>Analysis Complete</h2>
+      <div class="result-modal__value">{{predictResult}}%</div>
+      <p>Based on your photo, our AI predicts a body fat percentage of <strong>{{predictResult}}%</strong>.</p>
+      <gm-button variant="primary" (clicked)="onCloseResult()">DONE</gm-button>
+    </gm-card>
+  </div>
+}
