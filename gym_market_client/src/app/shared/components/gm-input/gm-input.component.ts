@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -8,21 +8,20 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="gm-input-group">
-      <label class="gm-input-label">{{ label }}</label>
+      <label class="gm-input-label">{{ label() }}</label>
       <input
         class="gm-input-field"
-        [type]="type"
-        [(ngModel)]="value"
-        (ngModelChange)="valueChange.emit($event)"
-        [placeholder]="placeholder">
+        [type]="type()"
+        [ngModel]="value()"
+        (ngModelChange)="value.set($event)"
+        [placeholder]="placeholder()">
     </div>
   `,
   styleUrl: './gm-input.component.scss'
 })
 export class GmInputComponent {
-  @Input() label = '';
-  @Input() type = 'text';
-  @Input() placeholder = '';
-  @Input() value: string | number = '';
-  @Output() valueChange = new EventEmitter<any>();
+  label = input('');
+  type = input('text');
+  placeholder = input('');
+  value = model<string | number>('');
 }
