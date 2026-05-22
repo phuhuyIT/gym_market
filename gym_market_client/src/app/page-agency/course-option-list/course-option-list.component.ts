@@ -154,12 +154,7 @@ export class CourseOptionListComponent implements OnInit {
 			},
 			error: err => {
 				patchState(this.loaderStore, { isShow: false });
-				let result: string[] = [];
-				for (const key in err.error.errors) {
-					if (Object.prototype.hasOwnProperty.call(err.error.errors, key)) {
-						result.push(`${key}: ${err.error.errors[key][0]}\n`);
-					}
-				}
+				patchState(this.errorModalStore, { errors: err.error.errors, isShow: true });
 			},
 		});
 	}
@@ -211,12 +206,7 @@ export class CourseOptionListComponent implements OnInit {
 			},
 			error: err => {
 				patchState(this.loaderStore, { isShow: false });
-				let result: string[] = [];
-				for (const key in err.error.errors) {
-					if (Object.prototype.hasOwnProperty.call(err.error.errors, key)) {
-						result.push(`${key}: ${err.error.errors[key][0]}\n`);
-					}
-				}
+				patchState(this.errorModalStore, { errors: err.error.errors, isShow: true });
 			},
 		});
 	}

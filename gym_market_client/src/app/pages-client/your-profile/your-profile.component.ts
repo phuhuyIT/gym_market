@@ -31,73 +31,60 @@ export class YourProfileComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-		console.log('YourProfileComponent: OnInit called. userStore id:', this.userStore.id(), 'studentId:', this.userStore.studentId());
 		this.getUserInfo();
 		this.getStudentInfo();
 	}
 
 	private getUserInfo() {
 		const userId = this.userStore.id();
-		if (userId !== null) {
-			console.log('YourProfileComponent: Fetching user info for userId:', userId);
-			this.userService
-				.getUserInfo(userId)
-				.pipe(takeUntilDestroyed(this.destroyRef))
-				.subscribe({
-					next: (res: UserInfoResponse) => {
-						console.log('YourProfileComponent: Fetching user info successful. Response:', res);
-						this.userInfo = res.userInfo;
-					},
-					error: (err) => {
-						console.error('YourProfileComponent: Fetching user info failed:', err);
-						this.router.navigateByUrl('/login');
-					},
-				});
-		} else {
-			console.warn('YourProfileComponent: Fetching user info skipped. userId is null.');
-		}
+		if (userId === null) return;
+
+		this.userService
+			.getUserInfo(userId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (res: UserInfoResponse) => {
+					this.userInfo = res.userInfo;
+				},
+				error: () => {
+					this.router.navigateByUrl('/login');
+				},
+			});
 	}
 
 	private getStudentInfo() {
 		const studentId = this.userStore.studentId();
 		if (studentId) {
-			console.log('YourProfileComponent: Fetching student info for studentId:', studentId);
 			this.studentService
 				.getStudentInfo(studentId)
 				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 					next: res => {
-						console.log('YourProfileComponent: Fetching student info successful. Response:', res);
 						this.studentInfo = res;
 					},
-					error: (err) => {
-						console.error('YourProfileComponent: Fetching student info failed:', err);
+					error: () => {
 						this.router.navigateByUrl('/login');
 					},
 				});
-		} else {
-			console.warn('YourProfileComponent: Fetching student info skipped. studentId is falsy. Trying fallback by userId.');
-			const userId = this.userStore.id();
-			if (userId) {
-				this.studentService
-					.getStudentInfoByUserId(userId)
-					.pipe(takeUntilDestroyed(this.destroyRef))
-					.subscribe({
-						next: res => {
-							console.log('YourProfileComponent: Fallback fetching student info successful. Response:', res);
-							this.studentInfo = res;
-							if (res.studentId) {
-								patchState(this.userStore, { studentId: res.studentId });
-							}
-						},
-						error: (err) => {
-							console.error('YourProfileComponent: Fallback fetching student info failed:', err);
-							this.router.navigateByUrl('/login');
-						},
-					});
-			} else {
-				console.warn('YourProfileComponent: Fetching student info skipped. userId is also falsy.');
-			}
+			return;
 		}
+
+		const userId = this.userStore.id();
+		if (!userId) return;
+
+		this.studentService
+			.getStudentInfoByUserId(userId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.studentInfo = res;
+					if (res.studentId) {
+						patchState(this.userStore, { studentId: res.studentId });
+					}
+				},
+				error: () => {
+					this.router.navigateByUrl('/login');
+				},
+			});
 	}
 }
