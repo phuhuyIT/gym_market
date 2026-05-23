@@ -26,6 +26,18 @@ export class AccountService {
 
 	constructor(private http: HttpClient) {
 		this.checkLogin();
+		this.listenForCrossTabAuthChanges();
+	}
+
+	private listenForCrossTabAuthChanges(): void {
+		if (typeof window === 'undefined') return;
+		window.addEventListener('storage', event => {
+			if (event.key !== null && event.key !== 'gym-token') return;
+			const fresh = localStorage.getItem('gym-token');
+			if (fresh === this._token$.value) return;
+			this._token$.next(fresh);
+			this.checkLogin();
+		});
 	}
 	userStore = inject(UserStore);
 

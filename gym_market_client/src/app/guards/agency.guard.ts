@@ -6,17 +6,15 @@ import { AccountService } from '../guest/account.service';
 export const agencyGuard: CanActivateFn = (route, state) => {
 	const accountService = inject(AccountService);
 	const router = inject(Router);
-	const isLoggedIn = accountService.isLoggedIn();
-	const role = accountService.getRole();
 
-    if (isLoggedIn === true && (role === ROLES.TRAINER || role === ROLES.ADMIN)) {
-        return true;
-    }
-
-	if (isLoggedIn === true) {
-		router.navigateByUrl(accountService.defaultLandingUrl());
-	} else {
-		router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+	if (!accountService.isLoggedIn()) {
+		return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
 	}
-	return false;
+
+	const role = accountService.getRole();
+	if (role === ROLES.TRAINER || role === ROLES.ADMIN) {
+		return true;
+	}
+
+	return router.parseUrl(accountService.defaultLandingUrl());
 };
