@@ -10,11 +10,7 @@ import { Login } from './models/login.model';
 import { SignUp } from './models/signup.model';
 import { StudentSignup } from './models/student-sign-up.model';
 import { TrainerSignup } from './models/trainer-sign-up.model';
-import {
-	LoginResponse,
-	SignupResponse,
-	UserTokenPayload,
-} from '../core/models/auth.model';
+import { LoginResponse, SignupResponse } from '../core/models/auth.model';
 
 @Injectable({
 	providedIn: 'root',

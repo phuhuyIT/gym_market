@@ -17,7 +17,7 @@ import { ToastService } from '../../shared/services/toast.service';
     styleUrl: './update-course.component.scss'
 })
 export class UpdateCourseComponent implements OnInit {
-	model: any = {
+	model: Course = {
 		courseId: '',
 		trainerId: '',
 		title: '',
@@ -30,6 +30,8 @@ export class UpdateCourseComponent implements OnInit {
 		endDate: '',
 		duration: 0,
 		maxParticipants: 0,
+		rating: 0,
+		getFileDtos: [],
 	};
 	
 	courseId: string = '';
