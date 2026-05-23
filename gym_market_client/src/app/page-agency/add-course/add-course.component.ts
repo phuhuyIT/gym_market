@@ -1,4 +1,4 @@
-import { Component, inject, DestroyRef , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, DestroyRef , ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CourseAgencyService } from '../course-agency.service';
 import { jwtDecode } from 'jwt-decode';
@@ -36,6 +36,7 @@ export class AddCourseComponent {
 	loaderStore = inject(LoaderModalStore);
 	toastService = inject(ToastService);
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 
 	constructor(
 		private courseAgencyService: CourseAgencyService,
@@ -77,6 +78,7 @@ export class AddCourseComponent {
 					this.loading = false;
 					patchState(this.loaderStore, { isShow: false });
 					this.toastService.show('Failed to create course', 'error');
+					this.cdr.markForCheck();
 				},
 			});
 	}

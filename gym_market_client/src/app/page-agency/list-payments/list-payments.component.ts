@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { PaymentService } from '../payment.service';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -19,6 +19,7 @@ export class ListPaymentsComponent implements OnInit {
 	payments: Payment[] = [];
 	notice = inject(NoticeModalStore);
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 	private paymentService = inject(PaymentService);
 	private activatedRoute = inject(ActivatedRoute);
 
@@ -38,6 +39,7 @@ export class ListPaymentsComponent implements OnInit {
 					this.paymentService.getPayments(courseId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 						next: (res: Payment[]) => {
 							this.payments = res;
+							this.cdr.markForCheck();
 						},
 					});
 				}
@@ -54,6 +56,7 @@ export class ListPaymentsComponent implements OnInit {
 				if (pay) {
 					pay.paymentStatus = 'Paid';
 				}
+				this.cdr.markForCheck();
 			},
 		});
 	}
@@ -84,6 +87,7 @@ export class ListPaymentsComponent implements OnInit {
 				this.paymentNote = '';
 				this.paymentId = null;
 				this.showCancel = false;
+				this.cdr.markForCheck();
 			},
 		});
 	}

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, DestroyRef , ChangeDetectionStrategy } from '@angular/core';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { ErrorModalStore } from '../../stores/error-modal.store';
@@ -31,6 +31,7 @@ export class CourseOptionListComponent implements OnInit {
 	noticeStore = inject(NoticeModalStore);
 	errorModalStore = inject(ErrorModalStore);
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 
 	// add
 	isShowAddCourseOptionModal: boolean = false;
@@ -74,6 +75,7 @@ export class CourseOptionListComponent implements OnInit {
 				this.courseOptions = res;
 				this.courseOptionTemps = this.courseOptions;
 				patchState(this.loaderStore, { isShow: false });
+				this.cdr.markForCheck();
 			},
 		});
 	}
@@ -102,6 +104,7 @@ export class CourseOptionListComponent implements OnInit {
 						this.courseOptions.splice(index, 1);
 					}
 					this.courseOptionIdToDelete = '';
+					this.cdr.markForCheck();
 				},
 				error: err => {
 					patchState(this.loaderStore, { isShow: false });
@@ -151,6 +154,7 @@ export class CourseOptionListComponent implements OnInit {
 				this.courseOptionTemps = this.courseOptions;
 				this.isShowAddCourseOptionModal = false;
 				this.resetAddForm();
+				this.cdr.markForCheck();
 			},
 			error: err => {
 				patchState(this.loaderStore, { isShow: false });
@@ -203,6 +207,7 @@ export class CourseOptionListComponent implements OnInit {
 					option.price = this.updateCourseOptionForm.controls['price'].value;
 				}
 				this.resetUpdateForm();
+				this.cdr.markForCheck();
 			},
 			error: err => {
 				patchState(this.loaderStore, { isShow: false });

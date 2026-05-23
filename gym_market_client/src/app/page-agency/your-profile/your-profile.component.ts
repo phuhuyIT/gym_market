@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TrainerService } from '../trainer.service';
 import { UserStore } from '../../stores/user.store';
@@ -22,6 +22,7 @@ export class YourProfileComponent implements OnInit {
 	userStore = inject(UserStore);
 	trainerInfo: Trainer | null = null;
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 
 	get certificationsList(): string[] {
 		if (!this.trainerInfo || !this.trainerInfo.certification) return [];
@@ -55,6 +56,7 @@ export class YourProfileComponent implements OnInit {
 							this.userInfo.avatar =
 								DEFAULT_AVATAR_URL;
 						}
+						this.cdr.markForCheck();
 					},
 					error: () => {
 						this.router.navigateByUrl('/login');
@@ -76,6 +78,7 @@ export class YourProfileComponent implements OnInit {
 							this.trainerInfo.profilePicture =
 								DEFAULT_AVATAR_URL;
 						}
+						this.cdr.markForCheck();
 					},
 					error: () => {
 						this.router.navigateByUrl('/login');

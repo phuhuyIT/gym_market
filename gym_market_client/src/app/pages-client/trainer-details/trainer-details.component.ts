@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { TrainerService } from '../../page-agency/trainer.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { patchState } from '@ngrx/signals';
@@ -25,6 +25,7 @@ import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 export class TrainerDetailsComponent implements OnInit {
 	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 	trainerId: string = '';
 	trainerInfo: Trainer | null = null;
 	userInfo: UserInfo | null = null;
@@ -66,6 +67,7 @@ export class TrainerDetailsComponent implements OnInit {
 					}
 					this.getUserInfo(res.userId);
 					patchState(this.loader, { isShow: false });
+					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.loader, { isShow: false });
@@ -80,6 +82,7 @@ export class TrainerDetailsComponent implements OnInit {
 			.subscribe({
 				next: res => {
 					this.userInfo = res.userInfo;
+					this.cdr.markForCheck();
 				},
 			});
 	}
@@ -91,6 +94,7 @@ export class TrainerDetailsComponent implements OnInit {
 			.subscribe({
 				next: res => {
 					this.coursesOfTrainer = res;
+					this.cdr.markForCheck();
 				},
 			});
 	}
