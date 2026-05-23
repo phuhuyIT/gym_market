@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject , ChangeDetectionStrategy } from '@angular/core';
 import { CourseRegistrationService } from '../course-registration.service';
 import { UserStore } from '../../stores/user.store';
 import { RouterLink } from '@angular/router';
@@ -25,6 +25,7 @@ export class CourseRegistrationComponent {
 	loader = inject(LoaderModalStore);
 	userStore = inject(UserStore);
 	destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 
 	constructor(private courseRegistrationService: CourseRegistrationService) {}
 
@@ -41,6 +42,7 @@ export class CourseRegistrationComponent {
 				patchState(this.loader, { isShow: false });
 				this.courses = data as unknown as Course[];
 				this.courseSearchs = data as unknown as Course[];
+				this.cdr.markForCheck();
 			});
 	}
 

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../../page-agency/course-agency.service';
 import { LoaderModalStore } from '../../stores/loader.store';
@@ -22,6 +22,7 @@ export class CourseSearchComponent implements OnInit {
 	courses: Course[] = [];
 	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 	pageIndex: number = 1;
 	pageSize: number = 10;
 	searchString: string = '';
@@ -65,6 +66,7 @@ export class CourseSearchComponent implements OnInit {
 				next: res => {
 					this.courses = res;
 					patchState(this.loader, { isShow: false });
+					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.loader, { isShow: false });

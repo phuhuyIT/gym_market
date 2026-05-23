@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, inject, OnInit, Renderer2, ViewChild , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, ElementRef, inject, OnInit, Renderer2, ViewChild , ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
 import { patchState } from '@ngrx/signals';
@@ -40,6 +40,7 @@ export class UpdateCourseComponent implements OnInit {
 	loaderStore = inject(LoaderModalStore);
 	toastService = inject(ToastService);
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 	private route = inject(ActivatedRoute);
 	private courseAgencyService = inject(CourseAgencyService);
 	private router = inject(Router);
@@ -70,6 +71,7 @@ export class UpdateCourseComponent implements OnInit {
 				this.dataImages = res.getFileDtos ? res.getFileDtos.filter((c) => c.typeFile === 'IMAGE').map((c) => c.url) : [];
 				this.dataVideos = res.getFileDtos ? res.getFileDtos.filter((c) => c.typeFile === 'VIDEO').map((c) => c.url) : [];
 				patchState(this.loaderStore, { isShow: false });
+				this.cdr.markForCheck();
 			},
 			error: () => {
 				patchState(this.loaderStore, { isShow: false });

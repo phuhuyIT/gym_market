@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { TrainerService } from '../../page-agency/trainer.service';
 import { RouterLink } from '@angular/router';
 import { LoaderModalStore } from '../../stores/loader.store';
@@ -22,6 +22,7 @@ export class TrainerListComponent implements OnInit {
 	searchString: string = '';
 	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 
 	constructor(private trainerService: TrainerService) {}
 
@@ -38,6 +39,7 @@ export class TrainerListComponent implements OnInit {
 				next: res => {
 					patchState(this.loader, { isShow: false });
 					this.trainers = res;
+					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.loader, { isShow: false });

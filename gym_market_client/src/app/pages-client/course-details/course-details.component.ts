@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, Renderer2 , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, Renderer2 , ChangeDetectionStrategy } from '@angular/core';
 import { CourseAgencyService } from '../../page-agency/course-agency.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseOptionService } from '../../page-agency/course-option.service';
@@ -34,6 +34,7 @@ export class CourseDetailsComponent implements OnInit {
 	userStore = inject(UserStore);
 	toastService = inject(ToastService);
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 
 	// rating
 	rate: number = 0;
@@ -85,6 +86,7 @@ export class CourseDetailsComponent implements OnInit {
 						? res.getFileDtos.filter(c => c.typeFile === 'VIDEO').map(c => c.url)
 						: [];
 					patchState(this.loader, { isShow: false });
+					this.cdr.markForCheck();
 				},
 				error: () => {
 					this.router.navigateByUrl('/client/course-search');
@@ -101,6 +103,7 @@ export class CourseDetailsComponent implements OnInit {
 				next: res => {
 					this.courseOptions = res;
 					patchState(this.loader, { isShow: false });
+					this.cdr.markForCheck();
 				},
 				error: err => {
 					patchState(this.loader, { isShow: false });
@@ -115,6 +118,7 @@ export class CourseDetailsComponent implements OnInit {
 			.subscribe({
 				next: res => {
 					this.ratings = res;
+					this.cdr.markForCheck();
 				},
 			});
 	}
@@ -149,6 +153,7 @@ export class CourseDetailsComponent implements OnInit {
 					this.comment = '';
 					patchState(this.loader, { isShow: false });
 					this.toastService.show('Rating added successfully');
+					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.loader, { isShow: false });

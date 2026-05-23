@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { UserStore } from '../../stores/user.store';
@@ -36,6 +36,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	errorModal = inject(ErrorModalStore);
 	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 
 	foodNutritionUsers: FoodNutritionUser[] = [];
 
@@ -66,6 +67,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 					next: res => {
 						this.foods = res;
 						patchState(this.loader, { isShow: false });
+						this.cdr.markForCheck();
 					},
 					error: () => {
 						patchState(this.loader, { isShow: false });
@@ -84,6 +86,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 					next: res => {
 						this.foodNutritionUsers = res;
 						this.calStatistics();
+						this.cdr.markForCheck();
 					},
 				});
 		}
@@ -141,6 +144,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 					this.foodNutritionUsers.push(res);
 					patchState(this.notice, { isShow: true, message: 'Added successfully' });
 					this.calStatistics();
+					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.errorModal, {
@@ -183,6 +187,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 					);
 					this.calStatistics();
 					this.foodSelectedToDelete = null;
+					this.cdr.markForCheck();
 				},
 			});
 	}

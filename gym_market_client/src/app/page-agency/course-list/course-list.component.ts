@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
 import { LoaderModalStore } from '../../stores/loader.store';
@@ -22,6 +22,7 @@ export class CourseListComponent implements OnInit {
 	coursestemp: Course[] = [];
 	loaderStore = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 	isShowDeleteModal: boolean = false;
 	courseIdToDelete: string = '';
 	userStore = inject(UserStore);
@@ -45,6 +46,7 @@ export class CourseListComponent implements OnInit {
 					this.courses = res;
 					this.coursestemp = this.courses;
 					patchState(this.loaderStore, { isShow: false });
+					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.loaderStore, { isShow: false });
@@ -71,6 +73,7 @@ export class CourseListComponent implements OnInit {
 					this.courses = this.courses.filter(x => x.courseId !== this.courseIdToDelete);
 					this.coursestemp = [...this.courses];
 					this.courseIdToDelete = '';
+					this.cdr.markForCheck();
 				},
 				error: err => {
 					patchState(this.loaderStore, { isShow: false });
