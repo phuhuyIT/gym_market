@@ -9,7 +9,7 @@ export const agencyGuard: CanActivateFn = (route, state) => {
 	const isLoggedIn = accountService.isLoggedIn();
 	const role = accountService.getRole();
 
-    if(isLoggedIn === true && role === ROLES.TRAINER) {
+    if (isLoggedIn === true && (role === ROLES.TRAINER || role === ROLES.ADMIN)) {
         return true;
     }
 

@@ -9,7 +9,7 @@ export const clientGuard: CanActivateFn = (route, state) => {
 	const isLoggedIn = accountService.isLoggedIn();
 	const role = accountService.getRole();
 
-	if (isLoggedIn === true && role === ROLES.STUDENT) {
+	if (isLoggedIn === true && (role === ROLES.STUDENT || role === ROLES.ADMIN)) {
 		return true;
 	}
 

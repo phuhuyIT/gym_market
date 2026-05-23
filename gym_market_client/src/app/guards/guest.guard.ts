@@ -9,18 +9,16 @@ export const guestGuard: CanActivateFn = (route, state) => {
 	const isLoggedIn = accountService.isLoggedIn();
 	const role = accountService.getRole();
 
-	if (isLoggedIn == true) {
+	if (isLoggedIn === true) {
 		if (role === ROLES.TRAINER) {
 			router.navigateByUrl('/agency');
-		} else if (role === ROLES.STUDENT) {
+		} else if (role === ROLES.STUDENT || role === ROLES.ADMIN) {
 			router.navigateByUrl('/client');
+		} else {
+			router.navigateByUrl('/access-denied');
 		}
-		else {
-            router.navigateByUrl('/access-denied');
-        }
 		return false;
 	}
-	// router.navigateByUrl('/');
 
 	return true;
 };
