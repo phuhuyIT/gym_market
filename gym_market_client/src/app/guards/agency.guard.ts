@@ -13,6 +13,10 @@ export const agencyGuard: CanActivateFn = (route, state) => {
         return true;
     }
 
-	router.navigateByUrl('/');
+	if (isLoggedIn === true) {
+		router.navigateByUrl(accountService.defaultLandingUrl());
+	} else {
+		router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+	}
 	return false;
 };
