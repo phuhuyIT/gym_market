@@ -11,6 +11,7 @@ import { SignUp } from './models/signup.model';
 import { StudentSignup } from './models/student-sign-up.model';
 import { TrainerSignup } from './models/trainer-sign-up.model';
 import { LoginResponse, SignupResponse } from '../core/models/auth.model';
+import { ROLES } from '../utilities/roles.const';
 
 @Injectable({
 	providedIn: 'root',
@@ -126,6 +127,17 @@ export class AccountService {
 				this.logout();
 			}
 		}
+	}
+
+	defaultLandingUrl(): string {
+		const role = this.getRole();
+		if (role === ROLES.TRAINER) return '/agency';
+		if (role === ROLES.STUDENT || role === ROLES.ADMIN) return '/client';
+		return '/access-denied';
+	}
+
+	isSafeReturnUrl(url: string | null | undefined): url is string {
+		return !!url && url.startsWith('/') && !url.startsWith('//');
 	}
 
 	logout(): void {

@@ -1,11 +1,10 @@
 import { Component, DestroyRef, inject, OnInit, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccountService } from '../account.service';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../shared/services/toast.service';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
-import { ROLES } from '../../utilities/roles.const';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoginResponse } from '../../core/models/auth.model';
 
@@ -30,13 +29,21 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
 	constructor(
 		private router: Router,
+		private route: ActivatedRoute,
 		private accountService: AccountService
 	) {}
 
 	ngOnInit() {
 		if (this.accountService.isLoggedIn()) {
-			this.router.navigateByUrl('/home');
+			this.navigateAfterLogin();
 		}
+	}
+
+	private navigateAfterLogin() {
+		const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+		this.router.navigateByUrl(
+			this.accountService.isSafeReturnUrl(returnUrl) ? returnUrl : this.accountService.defaultLandingUrl()
+		);
 	}
 
 	ngAfterViewInit() {
@@ -80,16 +87,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 					patchState(this.loader, { isShow: false });
 					this.accountService.saveToken(res.token);
 					this.accountService.checkLogin();
-					const role = this.accountService.getRole();
-
-					if (role === ROLES.TRAINER) {
-						this.router.navigateByUrl('/agency');
-						return;
-					} else if (role === ROLES.STUDENT) {
-						this.router.navigateByUrl('/client');
-						return;
-					}
-					this.router.navigateByUrl('/access-denied');
+					this.navigateAfterLogin();
 				},
 				error: err => {
 					this.loading = false;
@@ -118,16 +116,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 					patchState(this.loader, { isShow: false });
 					this.accountService.saveToken(res.token);
 					this.accountService.checkLogin();
-					const role = this.accountService.getRole();
-
-					if (role === ROLES.TRAINER) {
-						this.router.navigateByUrl('/agency');
-						return;
-					} else if (role === ROLES.STUDENT) {
-						this.router.navigateByUrl('/client');
-						return;
-					}
-					this.router.navigateByUrl('/access-denied');
+					this.navigateAfterLogin();
 				},
 				error: err => {
 					this.loading = false;
