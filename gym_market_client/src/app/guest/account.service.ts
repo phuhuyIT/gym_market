@@ -89,7 +89,21 @@ export class AccountService {
 	}
 
 	isLoggedIn(): boolean {
-		return this.token !== null;
+		const token = this.token;
+		if (token === null) {
+			return false;
+		}
+		try {
+			const decoded: any = jwtDecode(token);
+			if (typeof decoded?.exp !== 'number' || Date.now() >= decoded.exp * 1000) {
+				this.logout();
+				return false;
+			}
+			return true;
+		} catch {
+			this.logout();
+			return false;
+		}
 	}
 
 	checkLogin(): void {
