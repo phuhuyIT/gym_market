@@ -1,0 +1,16 @@
+/* ── TYPOGRAPHY & GRADIENTS ─────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--blue) 20%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  font-weight: 800;
+
+  [data-theme="dark"] & {
+    background: linear-gradient(135deg, #38bdf8 10%, #818cf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}

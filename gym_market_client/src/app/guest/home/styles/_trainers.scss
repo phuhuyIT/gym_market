@@ -1,0 +1,132 @@
+/* ── FEATURED TRAINERS ──────────────────────────────── */
+.trainer-grid-modern {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.trainer-card-modern {
+  overflow: hidden;
+  border-radius: var(--radius) !important;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 !important;
+
+  &:hover {
+    .trainer-avatar-glow { transform: scale(1.1); }
+  }
+}
+
+.trainer-display {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+
+  &.strength { background: linear-gradient(135deg, rgba(29, 79, 216, 0.12), rgba(2, 132, 199, 0.06)); }
+  &.cardio { background: linear-gradient(135deg, rgba(2, 132, 199, 0.12), rgba(88, 86, 214, 0.06)); }
+  &.yoga { background: linear-gradient(135deg, rgba(88, 86, 214, 0.12), rgba(29, 79, 216, 0.06)); }
+
+  [data-theme="dark"] &.strength { background: linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(0, 0, 0, 0.4)); }
+  [data-theme="dark"] &.cardio { background: linear-gradient(135deg, rgba(50, 173, 230, 0.15), rgba(0, 0, 0, 0.4)); }
+  [data-theme="dark"] &.yoga { background: linear-gradient(135deg, rgba(88, 86, 214, 0.15), rgba(0, 0, 0, 0.4)); }
+}
+
+.trainer-avatar-glow {
+  font-size: 4rem;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.specialty-pill {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--glass-fill2);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  color: var(--text);
+}
+
+.trainer-details-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.trainer-name-text {
+  font-family: var(--font-display);
+  font-size: 1.22rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.trainer-accreditation {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  margin-bottom: 16px;
+}
+
+.trainer-quick-stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.t-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(0,0,0,0.03);
+  color: var(--text-soft);
+
+  [data-theme="dark"] & {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  i { color: var(--blue); }
+}
+
+.trainer-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 0;
+  border-radius: 10px;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border2);
+  color: var(--text);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.25s ease;
+
+  i { transition: transform 0.25s ease; }
+
+  &:hover {
+    background: var(--blue);
+    color: #ffffff;
+    border-color: var(--blue);
+    i { transform: translateX(3px); }
+  }
+}
