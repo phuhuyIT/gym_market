@@ -21,7 +21,7 @@
 
 .ai-tab {
   padding: 12px 24px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -48,7 +48,7 @@
 }
 
 .card-title {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-weight: 800;
   font-size: 1.25rem;
   letter-spacing: -0.02em;
@@ -181,7 +181,7 @@
   padding: 60px 48px !important;
 
   &__icon { font-size: 4rem; margin-bottom: 24px; }
-  h2 { font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 2.2rem; margin-bottom: 16px; letter-spacing: -0.02em; }
+  h2 { font-family: var(--font-display); font-weight: 800; font-size: 2.2rem; margin-bottom: 16px; letter-spacing: -0.02em; }
   p { font-size: 1.05rem; color: var(--text-soft); line-height: 1.6; margin-bottom: 40px; }
   strong { color: var(--text); font-weight: 700; }
 }

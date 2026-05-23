@@ -59,12 +59,12 @@ export class AccountService {
 		});
 	}
 
-	studentSignup(model: StudentSignup): Observable<any> {
-		return this.http.post(`${environment.baseApi}/student`, model);
+	studentSignup(model: StudentSignup): Observable<void> {
+		return this.http.post<void>(`${environment.baseApi}/student`, model);
 	}
 
-	trainerSignup(model: TrainerSignup): Observable<any> {
-		return this.http.post(`${environment.baseApi}/trainer`, model);
+	trainerSignup(model: TrainerSignup): Observable<void> {
+		return this.http.post<void>(`${environment.baseApi}/trainer`, model);
 	}
 
 	saveToken(token: string): void {

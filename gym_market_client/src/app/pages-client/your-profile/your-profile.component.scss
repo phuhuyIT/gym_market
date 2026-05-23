@@ -3,7 +3,7 @@
   min-height: 100vh;
   padding: 80px 0 40px;
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   overflow: hidden;
   position: relative;
   transition: background 0.45s, color 0.45s;
@@ -140,7 +140,7 @@
     letter-spacing: 0.1em;
     padding: 4px 10px;
     border-radius: 100px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
   }
 
   .role-badge {
@@ -157,7 +157,7 @@
 }
 
 .profile-hero-card__name {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.2rem;
   font-weight: 850;
   line-height: 1.1;
@@ -244,7 +244,7 @@
     outline: none;
     color: var(--text-soft);
     padding: 12px 24px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-size: 0.8125rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -323,7 +323,7 @@
   }
 
   &__title {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-size: 0.95rem;
     font-weight: 750;
     letter-spacing: 0.05em;
@@ -436,7 +436,7 @@
     margin-bottom: 12px;
 
     .bio-value {
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-display);
       font-size: 2rem;
       font-weight: 800;
       color: var(--text);
@@ -559,7 +559,7 @@
   h3 {
     position: relative;
     z-index: 2;
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.625rem;
     font-weight: 750;
     color: var(--text);

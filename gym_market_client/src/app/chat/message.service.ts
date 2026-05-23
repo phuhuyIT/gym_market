@@ -16,8 +16,8 @@ export class MessageService {
 		);
 	}
 
-	seenMessage(userId: string | null, conversationId: number): Observable<any> {
-		return this.http.get(
+	seenMessage(userId: string | null, conversationId: number): Observable<void> {
+		return this.http.get<void>(
 			`${environment.baseApi}/Conversations/seen-message/${userId}/${conversationId}`
 		);
 	}

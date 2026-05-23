@@ -62,7 +62,7 @@
   }
 
   &__name {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-size: 3rem;
     font-weight: 800;
     line-height: 1;
@@ -92,7 +92,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   .pill {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-size: 0.625rem;
     font-weight: 700;
     background: var(--icon-blue);
@@ -116,8 +116,8 @@
   flex-direction: column;
   gap: 0.25rem;
 
-  &__value { font-family: 'DM Sans', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--text); }
-  &__label { font-family: 'DM Sans', sans-serif; font-size: 0.5625rem; font-weight: 700; color: var(--text-xsoft); letter-spacing: 0.1em; text-transform: uppercase; }
+  &__value { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; color: var(--text); }
+  &__label { font-family: var(--font-display); font-size: 0.5625rem; font-weight: 700; color: var(--text-xsoft); letter-spacing: 0.1em; text-transform: uppercase; }
 }
 
 // Main Grid
@@ -137,7 +137,7 @@
 }
 
 .section-title {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--text);
@@ -159,7 +159,7 @@
   gap: 0.5rem;
 }
 
-.detail-label { font-family: 'DM Sans', sans-serif; font-size: 0.625rem; font-weight: 700; color: var(--text-xsoft); letter-spacing: 0.1em; text-transform: uppercase; }
+.detail-label { font-family: var(--font-display); font-size: 0.625rem; font-weight: 700; color: var(--text-xsoft); letter-spacing: 0.1em; text-transform: uppercase; }
 .detail-value { font-size: 1rem; color: var(--text); font-weight: 600; }
 .detail-text { font-size: 0.9375rem; color: var(--text-soft); line-height: 1.6; }
 
@@ -194,15 +194,15 @@
 
   &__content {
     padding: 1rem;
-    h3 { font-family: 'DM Sans', sans-serif; font-size: 0.9375rem; font-weight: 700; margin-bottom: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    h3 { font-family: var(--font-display); font-size: 0.9375rem; font-weight: 700; margin-bottom: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   }
 
   &__footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .price { color: var(--blue); font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1.25rem; }
-    .category { font-family: 'DM Sans', sans-serif; font-size: 0.5625rem; font-weight: 700; color: var(--text-xsoft); text-transform: uppercase; }
+    .price { color: var(--blue); font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; }
+    .category { font-family: var(--font-display); font-size: 0.5625rem; font-weight: 700; color: var(--text-xsoft); text-transform: uppercase; }
   }
 }
 
@@ -222,7 +222,7 @@
   gap: 1.5rem;
 }
 
-.sidebar-title { font-family: 'DM Sans', sans-serif; font-size: 0.6875rem; font-weight: 700; color: var(--blue); letter-spacing: 0.1em; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; text-transform: uppercase; }
+.sidebar-title { font-family: var(--font-display); font-size: 0.6875rem; font-weight: 700; color: var(--blue); letter-spacing: 0.1em; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; text-transform: uppercase; }
 
 .activity-stat {
   display: flex;

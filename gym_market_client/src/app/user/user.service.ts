@@ -17,7 +17,7 @@ export class UserService {
 		);
 	}
 
-	updateUser(model: UpdateUserDto): Observable<any> {
-		return this.http.put(`${environment.baseApi}/users/update-user`, model);
+	updateUser(model: UpdateUserDto): Observable<void> {
+		return this.http.put<void>(`${environment.baseApi}/users/update-user`, model);
 	}
 }

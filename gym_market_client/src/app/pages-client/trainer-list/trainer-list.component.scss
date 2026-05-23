@@ -19,7 +19,7 @@
 
 .form-input {
   background: transparent; border: none; outline: none;
-  color: var(--text); font-family: 'DM Sans', sans-serif;
+  color: var(--text); font-family: var(--font-display);
   width: 100%; font-size: 0.95rem;
   &::placeholder { color: var(--text-xsoft); }
 }
@@ -64,7 +64,7 @@
   }
 
   &__name {
-    font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1.3rem;
+    font-family: var(--font-display); font-weight: 700; font-size: 1.3rem;
     color: var(--text); margin-bottom: 16px;
   }
 

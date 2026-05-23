@@ -30,7 +30,7 @@
 }
 
 .section-title {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(2.25rem, 5vw, 3.75rem);
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -94,7 +94,7 @@
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 12px 28px; border-radius: 14px;
   border: none; cursor: pointer; text-decoration: none;
-  font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.9375rem;
+  font-family: var(--font-display); font-weight: 600; font-size: 0.9375rem;
   color: #fff;
   background: var(--error);
   box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
@@ -134,7 +134,7 @@
   transition: background 0.35s, border-color 0.45s;
 
   .navbar__logo {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: 1.375rem;
     color: var(--blue);
@@ -144,7 +144,7 @@
   }
 
   .navbar__link {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-weight: 500;
     color: var(--text-soft);
     padding: 0.5rem 1rem;
@@ -180,7 +180,7 @@
 }
 
 .form-label {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: 0.8125rem;
   color: var(--text-soft);
@@ -192,7 +192,7 @@
   border: 1px solid var(--glass-border2);
   border-radius: 12px;
   padding: 0.75rem 1rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-size: 1rem;
   color: var(--text);
   transition: all 0.2s ease;
@@ -224,7 +224,7 @@
   }
 
   thead th {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-weight: 600;
     font-size: 0.75rem;
     letter-spacing: 0.06em;
@@ -274,7 +274,7 @@
   }
 
   .stat-card__value {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: 2.25rem;
     color: var(--text);
@@ -323,7 +323,7 @@
   animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   .modal__title {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: 1.5rem;
     margin-bottom: 1rem;

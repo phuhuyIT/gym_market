@@ -10,8 +10,8 @@ import { CourseRating, CourseRatingCreateDto } from '../core/models/course.model
 export class CourseRatingService {
 	constructor(private http: HttpClient) {}
 
-	addRating(model: CourseRatingCreateDto): Observable<any> {
-		return this.http.post(`${environment.baseApi}/CourseRating/add-course-rating`, model);
+	addRating(model: CourseRatingCreateDto): Observable<void> {
+		return this.http.post<void>(`${environment.baseApi}/CourseRating/add-course-rating`, model);
 	}
 
 	getCourseRatings(courseId: string): Observable<CourseRating[]> {

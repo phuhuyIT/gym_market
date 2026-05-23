@@ -10,7 +10,7 @@
   border: none;
   cursor: pointer;
   text-decoration: none;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: 0.9375rem;
   color: #fff;
@@ -42,7 +42,7 @@
   border-radius: 100px;
   cursor: pointer;
   text-decoration: none;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-weight: 500;
   font-size: 0.9375rem;
   color: var(--blue);

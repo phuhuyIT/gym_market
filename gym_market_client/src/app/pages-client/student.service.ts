@@ -18,7 +18,7 @@ export class StudentService {
 		return this.http.get<Student>(`${environment.baseApi}/student/by-user/${userId}`);
 	}
 
-	updateStudentProfile(model: UpdateStudentProfileDto, studentId: string): Observable<any> {
-		return this.http.put(`${environment.baseApi}/student/${studentId}`, model);
+	updateStudentProfile(model: UpdateStudentProfileDto, studentId: string): Observable<void> {
+		return this.http.put<void>(`${environment.baseApi}/student/${studentId}`, model);
 	}
 }
