@@ -3,15 +3,12 @@ import { inject } from '@angular/core';
 import { ROLES } from '../utilities/roles.const';
 import { AccountService } from '../guest/account.service';
 
-export const preventTrainerGuard: CanActivateFn = (route, state) => {
+export const preventTrainerGuard: CanActivateFn = () => {
 	const accountService = inject(AccountService);
 	const router = inject(Router);
-	const isLoggedIn = accountService.isLoggedIn();
-	const role = accountService.getRole();
 
-	if (isLoggedIn === true && role === ROLES.TRAINER) {
-		router.navigateByUrl('/agency');
-		return false;
+	if (accountService.isLoggedIn() && accountService.getRole() === ROLES.TRAINER) {
+		return router.createUrlTree(['/agency']);
 	}
 
 	return true;

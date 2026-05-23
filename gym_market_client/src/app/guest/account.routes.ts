@@ -14,7 +14,7 @@ export const routes: Routes = [
 		component: GuestComponent,
 		children: [
             { path: '', redirectTo: 'home', pathMatch: 'full' },
-			{ path: 'home', component: HomeComponent, title: 'guest', canActivate: [preventTrainerGuard] },
+			{ path: 'home', component: HomeComponent, title: 'guest', canActivate: [guestGuard] },
 			{ path: 'login', component: LoginComponent, title: 'Login',canActivate: [guestGuard], },
 			{ path: 'sign-up', component: SignupComponent, title: 'Sign up',canActivate: [guestGuard], },
 			{ path: 'check-bmi', component: CheckBmiComponent, title: 'Check BMI', canActivate: [preventTrainerGuard] },
