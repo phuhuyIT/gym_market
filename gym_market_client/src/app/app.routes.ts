@@ -2,7 +2,8 @@ import { Routes } from '@angular/router';
 import { guestGuard } from './guards/guest.guard';
 import { clientGuard } from './guards/client.guard';
 import { agencyGuard } from './guards/agency.guard';
-import { NotFoundComponent } from './components/access-denied/not-found.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 
 export const routes: Routes = [
 	{
@@ -24,6 +25,7 @@ export const routes: Routes = [
 		path: 'chat',
 		loadChildren: () => import('./chat/chat.routes').then(r => r.routes),
 	},
-    { path: 'access-denied', component: NotFoundComponent, title: 'Access denied' },
-	{ path: '**', redirectTo: '/access-denied' },
+    { path: 'access-denied', component: AccessDeniedComponent, title: 'Access denied' },
+    { path: 'not-found', component: NotFoundComponent, title: 'Page not found' },
+	{ path: '**', redirectTo: '/not-found' },
 ];

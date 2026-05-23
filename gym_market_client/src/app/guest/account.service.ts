@@ -71,22 +71,11 @@ export class AccountService {
 	}
 
 	hasRole(role: string): boolean {
-		if (this.token === null) {
-			return false;
-		}
-		const decoded: any = jwtDecode(this.token);
-		const roleIn = decoded.role;
-		return role === roleIn;
+		return this.userStore.role() === role;
 	}
 
 	getRole(): string | null {
-		if (this.token === null) {
-			return null;
-		}
-
-		const decoded: any = jwtDecode(this.token);
-		const roleIn = decoded.role;
-		return roleIn;
+		return this.userStore.role();
 	}
 
 	isLoggedIn(): boolean {
