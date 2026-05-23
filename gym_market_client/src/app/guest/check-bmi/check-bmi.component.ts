@@ -1,4 +1,4 @@
-import { Component, inject, Renderer2, DestroyRef } from '@angular/core';
+import { Component, inject, Renderer2, DestroyRef , ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BodyFatService } from '../body-fat.service';
 import { patchState } from '@ngrx/signals';
@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-check-bmi',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent, RouterLink],
     templateUrl: './check-bmi.component.html',
     styleUrl: './check-bmi.component.scss'

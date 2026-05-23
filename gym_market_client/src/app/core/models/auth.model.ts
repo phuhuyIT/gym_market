@@ -18,6 +18,18 @@ export interface UserTokenPayload {
   email: string;
   role: string;
   exp: number;
+  homePhone?: string;
+  trainerId?: string;
+  studentId?: string;
+  avatar?: string;
+}
+
+export interface HttpErrorBody {
+  error?: {
+    errors?: string[] | Record<string, string[]> | string;
+    message?: string;
+  };
+  message?: string;
 }
 
 export interface UserInfo {

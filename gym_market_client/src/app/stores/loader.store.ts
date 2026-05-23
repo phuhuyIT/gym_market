@@ -4,8 +4,8 @@ type LoaderState = {
 	isShow: boolean;
 };
 
-const initalState: LoaderState = {
+const initialState: LoaderState = {
 	isShow: false,
 };
 
-export const LoaderModalStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initalState));
+export const LoaderModalStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initialState));

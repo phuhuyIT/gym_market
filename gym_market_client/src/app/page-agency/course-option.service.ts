@@ -20,15 +20,15 @@ export class CourseOptionService {
 		);
 	}
 
-	addCourseOptionOftrainer(model: CourseOption): Observable<void> {
+	addCourseOptionOfTrainer(model: CourseOption): Observable<void> {
 		return this.http.post<void>(`${environment.baseApi}/courseoption`, model);
 	}
 
-	removeCourseOptionOftrainer(id: string): Observable<void> {
+	removeCourseOptionOfTrainer(id: string): Observable<void> {
 		return this.http.delete<void>(`${environment.baseApi}/courseoption/${id}`);
 	}
 
-	updateCourseOptionOftrainer(model: CourseOption): Observable<void> {
+	updateCourseOptionOfTrainer(model: CourseOption): Observable<void> {
 		return this.http.put<void>(`${environment.baseApi}/courseoption/${model.optionId}`, model);
 	}
 }

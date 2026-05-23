@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { TrainerService } from '../../page-agency/trainer.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { patchState } from '@ngrx/signals';
@@ -13,9 +13,11 @@ import { Course } from '../../core/models/course.model';
 import { CommonModule } from '@angular/common';
 import { UserInfo } from '../../core/models/auth.model';
 import { GmCardComponent, GmButtonComponent } from '../../shared';
+import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-trainer-details',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterLink, CommonModule, GmCardComponent, GmButtonComponent],
     templateUrl: './trainer-details.component.html',
     styleUrl: './trainer-details.component.scss'
@@ -60,7 +62,7 @@ export class TrainerDetailsComponent implements OnInit {
 				next: res => {
 					this.trainerInfo = res;
 					if (!this.trainerInfo.profilePicture) {
-						this.trainerInfo.profilePicture = 'https://cdn-icons-png.flaticon.com/512/236/236832.png';
+						this.trainerInfo.profilePicture = DEFAULT_AVATAR_URL;
 					}
 					this.getUserInfo(res.userId);
 					patchState(this.loader, { isShow: false });
@@ -84,7 +86,7 @@ export class TrainerDetailsComponent implements OnInit {
 
 	private getCoursesOfTrainer() {
 		this.courseAgencyService
-			.getCoursesOftrainer(this.trainerId)
+			.getCoursesOfTrainer(this.trainerId)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: res => {

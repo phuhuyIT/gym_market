@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject , ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserStore } from '../../../stores/user.store';
 import { AccountService } from '../../../guest/account.service';
@@ -14,6 +14,7 @@ interface NavItem {
 
 @Component({
     selector: 'app-header',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterLinkActive, RouterLink, CommonModule, ThemeToggleComponent],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss'

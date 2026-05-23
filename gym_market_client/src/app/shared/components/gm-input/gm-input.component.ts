@@ -1,9 +1,10 @@
-import { Component, input, model } from '@angular/core';
+import { Component, input, model , ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 
 @Component({
     selector: 'gm-input',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormsModule],
     template: `
     <div class="gm-input-group">

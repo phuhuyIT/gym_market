@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef , ChangeDetectionStrategy } from '@angular/core';
 import { patchState } from '@ngrx/signals';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { ErrorModalStore } from '../../stores/error-modal.store';
@@ -17,6 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-course-option-list',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormsModule, ReactiveFormsModule],
     templateUrl: './course-option-list.component.html',
     styleUrl: './course-option-list.component.scss'
@@ -87,7 +88,7 @@ export class CourseOptionListComponent implements OnInit {
 		patchState(this.loaderStore, { isShow: true });
 
 		this.courseOptionService
-			.removeCourseOptionOftrainer(this.courseOptionIdToDelete)
+			.removeCourseOptionOfTrainer(this.courseOptionIdToDelete)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (_res) => {
@@ -143,7 +144,7 @@ export class CourseOptionListComponent implements OnInit {
 		const model: CourseOption = { ...this.addCourseOptionForm.value };
 
 		patchState(this.loaderStore, { isShow: true });
-		this.courseOptionService.addCourseOptionOftrainer(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+		this.courseOptionService.addCourseOptionOfTrainer(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: (_res) => {
 				patchState(this.loaderStore, { isShow: false });
 				this.courseOptions.push(model);
@@ -187,7 +188,7 @@ export class CourseOptionListComponent implements OnInit {
 		const model: CourseOption = { ...this.updateCourseOptionForm.value };
 		patchState(this.loaderStore, { isShow: true });
 
-		this.courseOptionService.updateCourseOptionOftrainer(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+		this.courseOptionService.updateCourseOptionOfTrainer(model).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: (_res) => {
 				patchState(this.loaderStore, { isShow: false });
 				this.isShowUpdateCourseOptionModal = false;

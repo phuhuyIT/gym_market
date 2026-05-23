@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { TrainerService } from '../../page-agency/trainer.service';
 import { RouterLink } from '@angular/router';
 import { LoaderModalStore } from '../../stores/loader.store';
@@ -12,6 +12,7 @@ import { GmCardComponent } from '../../shared/components/gm-card/gm-card.compone
 
 @Component({
     selector: 'app-trainer-list',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterLink, FormsModule, GmButtonComponent, GmCardComponent],
     templateUrl: './trainer-list.component.html',
     styleUrl: './trainer-list.component.scss'

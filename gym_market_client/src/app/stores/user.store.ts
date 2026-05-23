@@ -4,26 +4,26 @@ type UserStore = {
 	fullName: string;
 	id: string | null;
 	phoneNumber: string;
-	Address: string;
+	address: string;
 	avatar: string;
-	atatus: string;
-	amail: string;
+	status: string;
+	email: string;
 	trainerId: string;
 	studentId: string;
 	role: string | null;
 };
 
-const initalState: UserStore = {
+const initialState: UserStore = {
 	fullName: 'Account',
 	id: null,
 	phoneNumber: '',
-	Address: '',
+	address: '',
 	avatar: '',
-	atatus: '',
-	amail: '',
+	status: '',
+	email: '',
 	trainerId: '',
 	studentId: '',
 	role: null,
 };
 
-export const UserStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initalState));
+export const UserStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initialState));

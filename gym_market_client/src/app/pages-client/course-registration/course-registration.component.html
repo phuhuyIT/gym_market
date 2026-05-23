@@ -14,7 +14,7 @@
     </div>
 
     <div class="registration-grid">
-      @for (item of courseSearchs; track $index) {
+      @for (item of courseSearchs; track item.courseId) {
       <div class="registration-card" [routerLink]="['/client/course-details', item.courseId]">
         <div 
           class="registration-card__status"

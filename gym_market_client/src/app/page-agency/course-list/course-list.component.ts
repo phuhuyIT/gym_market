@@ -1,7 +1,6 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
-import { DatePipe } from '@angular/common';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +12,8 @@ import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
     selector: 'app-course-list',
-    imports: [RouterLink, DatePipe, FormsModule, GmCardComponent, GmButtonComponent, GmInputComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RouterLink, FormsModule, GmCardComponent, GmButtonComponent, GmInputComponent],
     templateUrl: './course-list.component.html',
     styleUrl: './course-list.component.scss'
 })
@@ -38,7 +38,7 @@ export class CourseListComponent implements OnInit {
 	loadCourses() {
 		patchState(this.loaderStore, { isShow: true });
 		this.courseAgencyService
-			.getCoursesOftrainer(this.userStore.trainerId() ?? '')
+			.getCoursesOfTrainer(this.userStore.trainerId() ?? '')
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: res => {

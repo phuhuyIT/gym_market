@@ -50,7 +50,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							@for (item of courseOptionTemps; track $index) {
+							@for (item of courseOptionTemps; track item.optionId) {
 							<tr
 								class="odd:bg-white even:bg-gray-900 odd:text-gray-900 even:text-white"
 							>
@@ -59,7 +59,7 @@
 										<img
 											class="w-10 rounded-full"
 											src="https://yt3.googleusercontent.com/ytc/AGIKgqNh8xK1GI0_yiSfDSOAZfFcezJwI21S-UFRvMxQvA=s900-c-k-c0x00ffffff-no-rj"
-											alt=""
+											[alt]="item.optionName"
 										/>
 									</div>
 								</th>

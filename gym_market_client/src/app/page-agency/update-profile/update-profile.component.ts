@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { UserStore } from '../../stores/user.store';
 import { Trainer, UpdateTrainerProfileDto } from '../../core/models/trainer.model';
 import { TrainerService } from '../trainer.service';
@@ -13,9 +13,11 @@ import { NoticeModalStore } from '../../stores/notice.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserInfoResponse } from '../../core/models/auth.model';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
+import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-update-profile',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, GmButtonComponent],
     templateUrl: './update-profile.component.html',
     styleUrl: './update-profile.component.scss'
@@ -38,7 +40,7 @@ export class UpdateProfileComponent implements OnInit {
 
 	ngOnInit() {
 		this.updateForm = this.formBuilder.group({
-			profilePicture: ['https://cdn-icons-png.flaticon.com/512/236/236832.png'],
+			profilePicture: [DEFAULT_AVATAR_URL],
 			fullName: ['', [Validators.required]],
 			address: ['', [Validators.required]],
 			email: ['', [Validators.required, Validators.email]],

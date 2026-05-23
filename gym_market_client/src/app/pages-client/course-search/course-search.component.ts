@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../../page-agency/course-agency.service';
 import { LoaderModalStore } from '../../stores/loader.store';
@@ -13,7 +13,8 @@ import { RevealDirective } from '../../shared/directives/reveal.directive';
 
 @Component({
     selector: 'app-course-search',
-    imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, GmInputComponent, GmButtonComponent, RevealDirective],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, RevealDirective],
     templateUrl: './course-search.component.html',
     styleUrl: './course-search.component.scss'
 })

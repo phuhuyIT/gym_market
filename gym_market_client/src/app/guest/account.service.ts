@@ -10,7 +10,7 @@ import { Login } from './models/login.model';
 import { SignUp } from './models/signup.model';
 import { StudentSignup } from './models/student-sign-up.model';
 import { TrainerSignup } from './models/trainer-sign-up.model';
-import { LoginResponse, SignupResponse } from '../core/models/auth.model';
+import { LoginResponse, SignupResponse, UserTokenPayload } from '../core/models/auth.model';
 import { ROLES } from '../utilities/roles.const';
 
 @Injectable({
@@ -55,7 +55,7 @@ export class AccountService {
 
 	loadGoogleLibrary(): Promise<void> {
 		return new Promise((resolve) => {
-			if ((window as any).google?.accounts?.id) {
+			if (window.google?.accounts?.id) {
 				resolve();
 				return;
 			}
@@ -82,10 +82,6 @@ export class AccountService {
 		this.checkLogin();
 	}
 
-	hasRole(role: string): boolean {
-		return this.userStore.role() === role;
-	}
-
 	getRole(): string | null {
 		return this.userStore.role();
 	}
@@ -96,7 +92,7 @@ export class AccountService {
 			return false;
 		}
 		try {
-			const decoded: any = jwtDecode(token);
+			const decoded = jwtDecode<UserTokenPayload>(token);
 			if (typeof decoded?.exp !== 'number' || Date.now() >= decoded.exp * 1000) {
 				this.logout();
 				return false;
@@ -114,7 +110,7 @@ export class AccountService {
 			patchState(this.userStore, { fullName: 'Account', id: null, phoneNumber: '', role: null });
 		} else {
 			try {
-				const decoded: any = jwtDecode(token);
+				const decoded = jwtDecode<UserTokenPayload>(token);
 				patchState(this.userStore, {
 					fullName: decoded.unique_name,
 					id: decoded.nameid,

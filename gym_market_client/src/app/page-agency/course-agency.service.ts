@@ -31,20 +31,20 @@ export class CourseAgencyService {
 	}
 
 	getCourse(id: string): Observable<Course> {
-		return this.http.get<Course>(`${environment.baseApi}/Course/get-course/${id}`);
+		return this.http.get<Course>(`${environment.baseApi}/course/get-course/${id}`);
 	}
 
-	updateCourse(model: Partial<Course>): Observable<void> {
-		return this.http.put<void>(`${environment.baseApi}/Course/update-course/`, model);
+	updateCourse(model: Partial<Course> | FormData): Observable<void> {
+		return this.http.put<void>(`${environment.baseApi}/course/update-course/`, model);
 	}
 
 	removeCourse(id: string): Observable<void> {
 		return this.http.delete<void>(`${environment.baseApi}/course/${id}`);
 	}
 
-	getCoursesOftrainer(trainerId: string): Observable<Course[]> {
+	getCoursesOfTrainer(trainerId: string): Observable<Course[]> {
 		return this.http.get<Course[]>(
-			`${environment.baseApi}/Course/get-courses-of-trainer/${trainerId}`
+			`${environment.baseApi}/course/get-courses-of-trainer/${trainerId}`
 		);
 	}
 }

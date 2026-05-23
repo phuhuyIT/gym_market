@@ -1,6 +1,6 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { PaymentService } from '../payment.service';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { patchState } from '@ngrx/signals';
@@ -10,7 +10,8 @@ import { CancelPaymentDto, Payment } from '../../core/models/payment.model';
 
 @Component({
     selector: 'app-list-payments',
-    imports: [RouterLink, DatePipe, FormsModule, DecimalPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePipe, FormsModule, DecimalPipe],
     templateUrl: './list-payments.component.html',
     styleUrl: './list-payments.component.scss'
 })

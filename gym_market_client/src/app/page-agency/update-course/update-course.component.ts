@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, inject, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, OnInit, Renderer2, ViewChild , ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
 import { patchState } from '@ngrx/signals';
@@ -6,13 +6,14 @@ import { FormsModule } from '@angular/forms';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { Course } from '../../core/models/course.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DatePipe } from '@angular/common';
 import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { ToastService } from '../../shared/services/toast.service';
+import { formatDateToInput } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-update-course',
-    imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent, DatePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
     templateUrl: './update-course.component.html',
     styleUrl: './update-course.component.scss'
 })
@@ -57,21 +58,14 @@ export class UpdateCourseComponent implements OnInit {
 		}
 	}
 
-	private formatDate(date: Date): string {
-		const year = date.getFullYear();
-		const month = (date.getMonth() + 1).toString().padStart(2, '0');
-		const day = date.getDate().toString().padStart(2, '0');
-		return `${year}-${month}-${day}`;
-	}
-
 	private getCourse(id: string) {
 		patchState(this.loaderStore, { isShow: true });
 		this.courseAgencyService.getCourse(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: (res: Course) => {
 				this.model = {
 					...res,
-					startDate: this.formatDate(new Date(res.startDate)),
-					endDate: this.formatDate(new Date(res.endDate)),
+					startDate: formatDateToInput(new Date(res.startDate)),
+					endDate: formatDateToInput(new Date(res.endDate)),
 				};
 				this.dataImages = res.getFileDtos ? res.getFileDtos.filter((c) => c.typeFile === 'IMAGE').map((c) => c.url) : [];
 				this.dataVideos = res.getFileDtos ? res.getFileDtos.filter((c) => c.typeFile === 'VIDEO').map((c) => c.url) : [];
@@ -146,7 +140,7 @@ export class UpdateCourseComponent implements OnInit {
 		this.loading = true;
 		patchState(this.loaderStore, { isShow: true });
 
-		this.courseAgencyService.updateCourse(form as any).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+		this.courseAgencyService.updateCourse(form).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: () => {
 				this.loading = false;
 				patchState(this.loaderStore, { isShow: false });

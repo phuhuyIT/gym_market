@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, AfterViewInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, AfterViewInit , ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccountService } from '../account.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -13,6 +13,7 @@ import { environment } from '../../../environments/environment.development';
 
 @Component({
     selector: 'app-login',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss'
@@ -53,7 +54,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 	}
 
 	private initGoogleButton() {
-		const google = (window as any).google;
+		const google = window.google;
 		if (google?.accounts?.id) {
 			google.accounts.id.initialize({
 				client_id: environment.googleClientId,
@@ -72,7 +73,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 		}
 	}
 
-	private handleGoogleCredential(response: any) {
+	private handleGoogleCredential(response: GoogleCredentialResponse) {
 		if (!response.credential) return;
 
 		this.loading = true;

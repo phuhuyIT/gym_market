@@ -1,5 +1,4 @@
-import { DatePipe } from '@angular/common';
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, DestroyRef , ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CourseAgencyService } from '../course-agency.service';
 import { jwtDecode } from 'jwt-decode';
@@ -9,15 +8,17 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserTokenPayload } from '../../core/models/auth.model';
 import { GmInputComponent, GmButtonComponent } from '../../shared';
+import { formatDateToInput } from '../../utilities/defaults.const';
 import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
     selector: 'app-add-course',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
     templateUrl: './add-course.component.html',
     styleUrl: './add-course.component.scss'
 })
-export class AddCourseComponent implements OnInit {
+export class AddCourseComponent {
 	model = {
 		title: '',
 		description: '',
@@ -25,8 +26,8 @@ export class AddCourseComponent implements OnInit {
 		category: 'Yoga',
 		price: 0,
 		additionalPrice: 0,
-		startDate: this.formatDate(new Date()),
-		endDate: this.formatDate(new Date()),
+		startDate: formatDateToInput(new Date()),
+		endDate: formatDateToInput(new Date()),
 		duration: 0,
 		maxParticipants: 0,
 	};
@@ -41,14 +42,6 @@ export class AddCourseComponent implements OnInit {
 		private router: Router
 	) {}
 
-	ngOnInit() {}
-
-	private formatDate(date: Date): string {
-		const year = date.getFullYear();
-		const month = (date.getMonth() + 1).toString().padStart(2, '0');
-		const day = date.getDate().toString().padStart(2, '0');
-		return `${year}-${month}-${day}`;
-	}
 
 	submit() {
 		const token = localStorage.getItem('gym-token');
@@ -88,4 +81,3 @@ export class AddCourseComponent implements OnInit {
 			});
 	}
 }
-//
