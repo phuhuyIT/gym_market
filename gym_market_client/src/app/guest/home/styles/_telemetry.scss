@@ -1,0 +1,205 @@
+/* ── HERO TELEMETRY HUD ─────────────────────────────── */
+.hero-telemetry {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 440px;
+  perspective: 1000px;
+}
+
+.telemetry-panel {
+  border-radius: var(--radius);
+  padding: 30px;
+  background: var(--glass-fill2);
+  border: 1px solid var(--glass-border2);
+  box-shadow: var(--float-md);
+  position: relative;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: rotateY(-3deg) rotateX(3deg) translateY(-4px);
+  }
+}
+
+.telemetry-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.live-dot-pulse {
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--success);
+  animation: liveBlink 1.5s infinite;
+}
+
+.pulse-red {
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+}
+
+@keyframes liveBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(1.15); }
+}
+
+.live-text {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--text-soft);
+}
+
+.telemetry-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.t-stat {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--glass-border);
+  padding: 16px;
+  border-radius: var(--radius-md);
+
+  [data-theme="dark"] & {
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
+
+.t-val {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--blue);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.text-cyan {
+  color: var(--cyan) !important;
+}
+
+.t-lbl {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-xsoft);
+}
+
+.telemetry-box {
+  padding: 16px 20px !important;
+  margin-bottom: 24px;
+}
+
+.box-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-xsoft);
+  margin-bottom: 8px;
+}
+
+.specialty-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.specialty-icon {
+  font-size: 1.6rem;
+}
+
+.specialty-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.specialty-trend {
+  font-size: 0.72rem;
+  color: var(--success);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Simulated Heartrate Pulse */
+.pulse-visualizer {
+  position: relative;
+  height: 70px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: rgba(0,0,0,0.03);
+  overflow: hidden;
+
+  [data-theme="dark"] & {
+    background: rgba(0,0,0,0.25);
+  }
+}
+
+.pulse-grid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-around;
+  opacity: 0.1;
+}
+
+.grid-line {
+  width: 1px;
+  height: 100%;
+  background: var(--text);
+}
+
+.heartrate-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.heartrate-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: pulseDraw 6s linear infinite;
+}
+
+@keyframes pulseDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+.scanner-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  background: linear-gradient(90deg, transparent, rgba(0, 122, 255, 0.15), transparent);
+  left: -30px;
+  animation: scannerGlide 3s linear infinite;
+}
+
+@keyframes scannerGlide {
+  0% { left: -30px; }
+  100% { left: 100%; }
+}
+
+.pulse-telemetry {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-xsoft);
+}
+
+.pulse-percentage {
+  color: var(--blue);
+}

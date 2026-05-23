@@ -1,0 +1,58 @@
+/* ── MODERN CATEGORIES GRID ─────────────────────────── */
+.categories-section {
+  background: rgba(0, 0, 0, 0.01);
+  [data-theme="dark"] & {
+    background: rgba(255, 255, 255, 0.01);
+  }
+}
+
+.cat-grid-modern {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+
+  @media (max-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 768px)  { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 480px)  { grid-template-columns: 1fr; }
+}
+
+.cat-card-modern {
+  padding: 24px !important;
+  border-radius: var(--radius-md) !important;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    .cat-border-glowing { opacity: 1; }
+    .cat-icon-emoji { transform: scale(1.15) rotate(5deg); }
+  }
+}
+
+.cat-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cat-icon-emoji {
+  font-size: 1.8rem;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cat-title-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.cat-border-glowing {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  opacity: 0;
+  transition: opacity 0.3s;
+}

@@ -1,0 +1,65 @@
+/* ── GENERAL & AMBIENT EFFECTS ───────────────────────── */
+.home {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+  min-height: 100vh;
+  transition: background 0.4s ease;
+}
+
+// Tech Background Grid
+.cyber-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 122, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 122, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: 1;
+  mask-image: radial-gradient(circle at 50% 30%, black, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at 50% 30%, black, transparent 80%);
+
+  [data-theme="dark"] & {
+    background-image:
+      linear-gradient(rgba(10, 132, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(10, 132, 255, 0.05) 1px, transparent 1px);
+  }
+}
+
+// Glowing background elements
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+
+  [data-theme="dark"] & {
+    opacity: 0.35;
+  }
+}
+.orb-1 {
+  width: 400px; height: 400px;
+  background: var(--blue);
+  top: -100px; left: -100px;
+  animation: orbDrift 20s infinite alternate ease-in-out;
+}
+.orb-2 {
+  width: 500px; height: 500px;
+  background: var(--indigo);
+  bottom: 10%; right: -100px;
+  animation: orbDrift 25s infinite alternate-reverse ease-in-out;
+}
+.orb-3 {
+  width: 350px; height: 350px;
+  background: var(--cyan);
+  top: 40%; left: 40%;
+  animation: orbDrift 18s infinite alternate ease-in-out;
+}
+
+@keyframes orbDrift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(80px, 50px) scale(1.15); }
+}

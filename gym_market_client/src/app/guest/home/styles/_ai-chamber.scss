@@ -1,0 +1,193 @@
+/* ── AI CHAMBER DIAGNOSTICS VIEWPORT ────────────────── */
+.ai-chamber-banner {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 60px;
+  align-items: center;
+  padding: 60px !important;
+  background: var(--glass-fill2) !important;
+  border-color: rgba(249, 115, 22, 0.25) !important; // orange hint
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    padding: 40px !important;
+    gap: 40px;
+  }
+}
+
+.banner-gradient-background {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 100% 100%, rgba(249, 115, 22, 0.08), transparent 60%);
+  pointer-events: none;
+}
+
+.chamber-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  background: rgba(249, 115, 22, 0.07);
+  color: #f97316;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.chamber-text {
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--text-soft);
+  margin-bottom: 36px;
+}
+
+.chamber-scanner {
+  border-radius: var(--radius-md);
+  padding: 10px;
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.scanner-viewport {
+  position: relative;
+  height: 250px;
+  background: #09090b;
+  border-radius: calc(var(--radius-md) - 6px);
+  overflow: hidden;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.scanner-bracket {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-color: #f97316;
+  border-style: solid;
+  opacity: 0.8;
+}
+.br-tl { top: 12px; left: 12px; border-width: 2px 0 0 2px; }
+.br-tr { top: 12px; right: 12px; border-width: 2px 2px 0 0; }
+.br-bl { bottom: 12px; left: 12px; border-width: 0 0 2px 2px; }
+.br-br { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; }
+
+.laser-scanner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #f97316, transparent);
+  box-shadow: 0 0 8px #f97316;
+  z-index: 5;
+  animation: laserScan 4s infinite ease-in-out;
+}
+
+@keyframes laserScan {
+  0%, 100% { top: 10%; }
+  50% { top: 90%; }
+}
+
+.scanner-mesh {
+  position: absolute;
+  top: 15%;
+  left: 0;
+  right: 0;
+  bottom: 35%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.25;
+}
+
+.mesh-silhouette {
+  font-size: 5.5rem;
+  animation: meshPulse 2s infinite alternate ease-in-out;
+}
+
+@keyframes meshPulse {
+  from { transform: scale(0.95); opacity: 0.2; }
+  to { transform: scale(1.05); opacity: 0.4; }
+}
+
+.scanning-nodes {
+  position: absolute;
+  inset: 0;
+}
+
+.node {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #f97316;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #f97316;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    border-radius: 50%;
+    animation: ringExpand 1.5s infinite linear;
+  }
+}
+
+.n-1 { top: 30%; left: 45%; }
+.n-2 { top: 50%; left: 55%; }
+.n-3 { top: 70%; left: 48%; }
+
+@keyframes ringExpand {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.scanner-metrics {
+  position: relative;
+  z-index: 6;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #a1a1aa;
+}
+
+.metric-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.text-blue { color: #f97316 !important; }
+
+.bar-container {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.bg-blue { background: #f97316; }
+.bg-cyan { background: var(--cyan); }
