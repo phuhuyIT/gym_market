@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject , ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ErrorModalComponent } from './components/error-modal/error-modal.component';
 import { LoaderComponent } from "./components/loader/loader.component";
@@ -11,6 +11,7 @@ import { AmbientComponent } from './shared/components/ambient/ambient.component'
 
 @Component({
     selector: 'app-root',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterOutlet, ErrorModalComponent, LoaderComponent, NoticeComponent, GmToastComponent, AmbientComponent],
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'

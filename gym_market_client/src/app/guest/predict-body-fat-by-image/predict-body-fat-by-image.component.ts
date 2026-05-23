@@ -1,4 +1,4 @@
-import { Component, Renderer2, inject, DestroyRef, OnInit } from '@angular/core';
+import { Component, Renderer2, inject, DestroyRef, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BodyFatService } from '../body-fat.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -9,7 +9,8 @@ import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-predict-body-fat-by-image',
-    imports: [FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent, RouterLink],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FormsModule, GmButtonComponent, GmCardComponent, RouterLink],
     templateUrl: './predict-body-fat-by-image.component.html',
     styleUrl: './predict-body-fat-by-image.component.scss'
 })

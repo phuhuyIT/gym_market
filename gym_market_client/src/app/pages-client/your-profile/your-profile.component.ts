@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../user/user.service';
 import { UserStore } from '../../stores/user.store';
@@ -9,14 +9,17 @@ import { UserInfo, UserInfoResponse } from '../../core/models/auth.model';
 import { CommonModule } from '@angular/common';
 import { GmCardComponent, GmButtonComponent } from '../../shared';
 import { patchState } from '@ngrx/signals';
+import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-your-profile',
-    imports: [RouterLink, CommonModule, GmCardComponent, GmButtonComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RouterLink, CommonModule, GmButtonComponent],
     templateUrl: './your-profile.component.html',
     styleUrl: './your-profile.component.scss'
 })
 export class YourProfileComponent implements OnInit {
+	readonly DEFAULT_AVATAR_URL = DEFAULT_AVATAR_URL;
 	userStore = inject(UserStore);
 	private destroyRef = inject(DestroyRef);
 	studentInfo: Student | null = null;

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, AfterViewInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, AfterViewInit , ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { patchState } from '@ngrx/signals';
@@ -13,9 +13,11 @@ import { SignupResponse, LoginResponse } from '../../core/models/auth.model';
 import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { environment } from '../../../environments/environment.development';
 import { ROLES } from '../../utilities/roles.const';
+import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-signup',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
     templateUrl: './signup.component.html',
     styleUrl: './signup.component.scss'
@@ -66,7 +68,7 @@ export class SignupComponent implements OnInit, AfterViewInit {
 	}
 
 	private initGoogleButton() {
-		const google = (window as any).google;
+		const google = window.google;
 		if (google?.accounts?.id) {
 			google.accounts.id.initialize({
 				client_id: environment.googleClientId,
@@ -85,7 +87,7 @@ export class SignupComponent implements OnInit, AfterViewInit {
 		}
 	}
 
-	private handleGoogleCredential(response: any) {
+	private handleGoogleCredential(response: GoogleCredentialResponse) {
 		if (!response.credential) return;
 
 		this.loading = true;
@@ -167,7 +169,7 @@ export class SignupComponent implements OnInit, AfterViewInit {
 			experience: Number(this.model.experience),
 			name: this.model.fullName,
 			password: this.model.password,
-			profilePicture: 'https://cdn-icons-png.flaticon.com/512/236/236832.png',
+			profilePicture: DEFAULT_AVATAR_URL,
 			rating: 0,
 			updatedAt: new Date(),
 			trainerId: crypto.randomUUID(),
@@ -197,7 +199,7 @@ export class SignupComponent implements OnInit, AfterViewInit {
 			email: this.model.email,
 			name: this.model.fullName,
 			password: this.model.password,
-			profilePicture: 'https://cdn-icons-png.flaticon.com/512/236/236832.png',
+			profilePicture: DEFAULT_AVATAR_URL,
 			updatedAt: new Date(),
 			healthStatus: this.model.healthStatus,
 			studentId: crypto.randomUUID(),

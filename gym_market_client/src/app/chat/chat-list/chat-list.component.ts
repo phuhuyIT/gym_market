@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { UserStore } from '../../stores/user.store';
 import { ConversationService } from '../conversation.service';
@@ -9,15 +9,18 @@ import { ChatHupService } from '../chat-hup.service';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Conversation, Message } from '../../core/models/conversation.model';
-import { GmInputComponent, GmButtonComponent, GmCardComponent } from '../../shared';
+import { GmInputComponent } from '../../shared';
+import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-chat-list',
-    imports: [FormsModule, GmInputComponent, GmButtonComponent, GmCardComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FormsModule, GmInputComponent],
     templateUrl: './chat-list.component.html',
     styleUrl: './chat-list.component.scss'
 })
 export class ChatListComponent implements OnInit, OnDestroy {
+	readonly DEFAULT_AVATAR_URL = DEFAULT_AVATAR_URL;
 	chats: Conversation[] = [];
 	messages: Message[] = [];
 

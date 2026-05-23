@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject , ChangeDetectionStrategy } from '@angular/core';
 import { patchState } from '@ngrx/signals';
 import { ErrorModalStore } from '../../stores/error-modal.store';
 
 @Component({
     selector: 'app-error-modal',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [],
     templateUrl: './error-modal.component.html',
     styleUrl: './error-modal.component.scss'

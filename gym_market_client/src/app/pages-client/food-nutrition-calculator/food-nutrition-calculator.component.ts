@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { UserStore } from '../../stores/user.store';
@@ -13,10 +13,12 @@ import {
 	FoodNutrition,
 	FoodNutritionUser,
 } from '../../core/models/food-nutrition.model';
+import { SEARCH_DEBOUNCE_MS } from '../../utilities/defaults.const';
 
 
 @Component({
     selector: 'app-food-nutrition-calculator',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule],
     templateUrl: './food-nutrition-calculator.component.html',
     styleUrl: './food-nutrition-calculator.component.scss'
@@ -51,7 +53,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		this.getFoodNutritionUser();
 
 		this.searchInput.valueChanges
-			.pipe(debounceTime(500), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+			.pipe(debounceTime(SEARCH_DEBOUNCE_MS), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
 			.subscribe(value => {
 				patchState(this.loader, { isShow: true });
 				if (this.isManualSelection) {

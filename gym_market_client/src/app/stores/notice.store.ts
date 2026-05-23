@@ -5,9 +5,9 @@ type NoticeState = {
 	isShow: boolean;
 };
 
-const initalState: NoticeState = {
+const initialState: NoticeState = {
     message: '',
 	isShow: false,
 };
 
-export const NoticeModalStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initalState));
+export const NoticeModalStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initialState));

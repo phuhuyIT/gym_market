@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
 import { LoaderModalStore } from '../../stores/loader.store';
@@ -11,15 +11,19 @@ import { patchState } from '@ngrx/signals';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpdateStudentProfileDto } from '../../core/models/student.model';
 import { UpdateUserDto } from '../../user/models/update-user.dto';
+import { HttpErrorBody } from '../../core/models/auth.model';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
+import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-update-profile',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, GmButtonComponent, RouterLink],
     templateUrl: './update-profile.component.html',
     styleUrl: './update-profile.component.scss'
 })
 export class UpdateProfileComponent implements OnInit {
+	readonly DEFAULT_AVATAR_URL = DEFAULT_AVATAR_URL;
 	userStore = inject(UserStore);
 	updateForm!: FormGroup;
 
@@ -44,7 +48,7 @@ export class UpdateProfileComponent implements OnInit {
 
 	ngOnInit() {
 		this.updateForm = this.formBuilder.group({
-			profilePicture: ['https://cdn-icons-png.flaticon.com/512/236/236832.png'],
+			profilePicture: [DEFAULT_AVATAR_URL],
 			fullName: ['', [Validators.required]],
 			address: ['', [Validators.required]],
 			email: ['', [Validators.required, Validators.email]],
@@ -87,7 +91,7 @@ export class UpdateProfileComponent implements OnInit {
 					next: res => {
 						this.updateForm.patchValue({
 							profilePicture:
-								res.profilePicture || 'https://cdn-icons-png.flaticon.com/512/236/236832.png',
+								res.profilePicture || DEFAULT_AVATAR_URL,
 						});
 					},
 					error: () => {
@@ -107,7 +111,7 @@ export class UpdateProfileComponent implements OnInit {
 							}
 							this.updateForm.patchValue({
 								profilePicture:
-									res.profilePicture || 'https://cdn-icons-png.flaticon.com/512/236/236832.png',
+									res.profilePicture || DEFAULT_AVATAR_URL,
 							});
 						},
 						error: () => {
@@ -118,7 +122,7 @@ export class UpdateProfileComponent implements OnInit {
 		}
 	}
 
-	private getErrors(err: any): string[] {
+	private getErrors(err: HttpErrorBody): string[] {
 		if (err.error?.errors) {
 			if (Array.isArray(err.error.errors)) {
 				return err.error.errors;

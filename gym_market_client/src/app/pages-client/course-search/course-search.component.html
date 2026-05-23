@@ -30,7 +30,7 @@
 
   <main class="container">
     <div class="course-grid">
-      @for (item of courses; track $index) {
+      @for (item of courses; track item.courseId) {
         <gm-card class="course-card" [routerLink]="['/client/course-details', item.courseId]" appReveal [style.transitionDelay]="$index * 0.05 + 's'">
           <div class="course-card__image-wrap">
             <img [src]="item.getFileDtos[0].url || '/assets/gym_logo.png'" alt="Course cover" />

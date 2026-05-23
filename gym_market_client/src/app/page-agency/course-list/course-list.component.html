@@ -58,7 +58,7 @@
             <td>
               <div class="course-cell">
                 <div class="course-cell__img">
-                  <img [src]="item.getFileDtos && item.getFileDtos.length > 0 ? item.getFileDtos[0].url : '/assets/fitness_logo.jpg'" alt="">
+                  <img [src]="item.getFileDtos && item.getFileDtos.length > 0 ? item.getFileDtos[0].url : '/assets/fitness_logo.jpg'" [alt]="item.title">
                 </div>
                 <div class="course-cell__info">
                   <span class="course-cell__name">{{item.title}}</span>

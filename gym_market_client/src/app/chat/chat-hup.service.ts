@@ -18,14 +18,14 @@ export class ChatHupService {
 			.withUrl(hubUrl)
 			.build();
 
-		this.hubConnection.start().catch(() => {});
+		this.hubConnection.start().catch(err => console.error('SignalR connection failed:', err));
 	}
 
 	sendMessage(roomName: string, message: Message) {
 		if (this.hubConnection) {
 			this.hubConnection
 				.invoke('SendMessageToRoom', roomName, message)
-				.catch(() => {});
+				.catch(err => console.error('SendMessage failed:', err));
 		}
 	}
 
@@ -37,13 +37,13 @@ export class ChatHupService {
 
 	joinGroup(roomName: string) {
 		if (this.hubConnection) {
-			this.hubConnection.invoke('JoinRoom', roomName).catch(() => {});
+			this.hubConnection.invoke('JoinRoom', roomName).catch(err => console.error('JoinRoom failed:', err));
 		}
 	}
 
 	stopConnection() {
 		if (this.hubConnection) {
-			this.hubConnection.stop().catch(() => {});
+			this.hubConnection.stop().catch(err => console.error('SignalR disconnect failed:', err));
 		}
 	}
 }

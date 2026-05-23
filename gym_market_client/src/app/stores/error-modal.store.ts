@@ -5,9 +5,9 @@ type ErrorState = {
 	isShow: boolean;
 };
 
-const initalState: ErrorState = {
+const initialState: ErrorState = {
 	errors: [],
 	isShow: false,
 };
 
-export const ErrorModalStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initalState));
+export const ErrorModalStore = signalStore({ providedIn: 'root', protectedState: false }, withState(initialState));

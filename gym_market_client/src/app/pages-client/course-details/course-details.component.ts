@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, Renderer2 } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, Renderer2 , ChangeDetectionStrategy } from '@angular/core';
 import { CourseAgencyService } from '../../page-agency/course-agency.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseOptionService } from '../../page-agency/course-option.service';
@@ -21,6 +21,7 @@ import {
 
 @Component({
     selector: 'app-course-details',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, FormsModule, DatePipe, DecimalPipe, GmCardComponent, GmButtonComponent, GmInputComponent],
     templateUrl: './course-details.component.html',
     styleUrl: './course-details.component.scss'

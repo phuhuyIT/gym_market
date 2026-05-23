@@ -18,7 +18,7 @@
             [class.has-new]="item.hasNewMessage"
             >
             <div class="conversation-item__avatar">
-              <img [src]="item.avatar || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="">
+              <img [src]="item.avatar || DEFAULT_AVATAR_URL" alt="Avatar">
               @if (item.hasNewMessage) {
                 <div class="status-indicator"></div>
               }
@@ -48,7 +48,7 @@
         <header class="chat-header">
           <div class="chat-header__info">
             <div class="chat-header__avatar">
-              <img [src]="conversationUrl || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="">
+              <img [src]="conversationUrl || DEFAULT_AVATAR_URL" alt="Avatar">
             </div>
             <div>
               <h3 class="chat-header__name">{{conversationName}}</h3>
@@ -73,7 +73,7 @@
               >
               @if (msg.senderId !== userStore.id()) {
                 <div class="message-avatar">
-                  <img [src]="conversationUrl || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'" alt="">
+                  <img [src]="conversationUrl || DEFAULT_AVATAR_URL" alt="Avatar">
                 </div>
               }
               <div class="message-bubble">

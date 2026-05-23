@@ -1,15 +1,16 @@
 
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild , ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SLIDE_INTERVAL_MS } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-home',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterLink],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-	// @ViewChildren('dots') dots!: QueryList<ElementRef>;
 	@ViewChild('slides') slides!: ElementRef;
 	slideTimer: ReturnType<typeof setInterval> | null = null;
 	slideIndex: number = 1;
@@ -35,7 +36,7 @@ export class HomeComponent {
 			this.slides.nativeElement.scrollLeft = this.slideIndex * this.slideWidth;
 
 			this.slideIndex++;
-		}, 3000);
+		}, SLIDE_INTERVAL_MS);
 	}
 
 	onClickSlide(index: number) {

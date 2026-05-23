@@ -16,7 +16,7 @@
 
   <main class="container">
     <div class="trainer-grid">
-      @for (item of trainers; track $index) {
+      @for (item of trainers; track item.trainerId) {
       <gm-card class="trainer-card" [routerLink]="['/client/trainer-details', item.trainerId]">
         <div class="trainer-card__image-wrap">
           <img

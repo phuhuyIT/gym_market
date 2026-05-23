@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { TOAST_DURATION_MS } from '../../utilities/defaults.const';
 
 export interface Toast { message: string; type: 'success' | 'error'; id: number; }
 
@@ -11,7 +12,7 @@ export class ToastService {
   show(message: string, type: 'success' | 'error' = 'success') {
     const id = Date.now();
     this._toasts$.next([...this._toasts$.value, { message, type, id }]);
-    setTimeout(() => this.dismiss(id), 3500);
+    setTimeout(() => this.dismiss(id), TOAST_DURATION_MS);
   }
 
   dismiss(id: number) {

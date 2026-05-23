@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject , ChangeDetectionStrategy } from '@angular/core';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { patchState } from '@ngrx/signals';
 
 @Component({
     selector: 'app-notice',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [],
     templateUrl: './notice.component.html',
     styleUrl: './notice.component.scss'

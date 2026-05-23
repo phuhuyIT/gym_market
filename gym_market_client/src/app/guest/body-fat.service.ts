@@ -5,6 +5,7 @@ import {
 	BodyFatMeasurements,
 	BodyFatPredictionResponse,
 } from '../core/models/body-fat.model';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
 	providedIn: 'root',
@@ -14,21 +15,21 @@ export class BodyFatService {
 
 	predictBodyFat(model: BodyFatMeasurements): Observable<BodyFatPredictionResponse> {
 		return this.http.post<BodyFatPredictionResponse>(
-			'http://127.0.0.1:8000/predict_bodyfat',
+			`${environment.pythonApi}/predict_bodyfat`,
 			model
 		);
 	}
 
 	predictByImageMale(form: FormData): Observable<BodyFatPredictionResponse> {
 		return this.http.post<BodyFatPredictionResponse>(
-			'http://127.0.0.1:8000/predict_image_male/',
+			`${environment.pythonApi}/predict_image_male/`,
 			form
 		);
 	}
 
 	predictByImageFemale(form: FormData): Observable<BodyFatPredictionResponse> {
 		return this.http.post<BodyFatPredictionResponse>(
-			'http://127.0.0.1:8000/predict_image_female/',
+			`${environment.pythonApi}/predict_image_female/`,
 			form
 		);
 	}

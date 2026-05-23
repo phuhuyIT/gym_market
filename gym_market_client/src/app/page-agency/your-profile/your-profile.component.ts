@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TrainerService } from '../trainer.service';
 import { UserStore } from '../../stores/user.store';
@@ -8,9 +8,11 @@ import { Trainer } from '../../core/models/trainer.model';
 import { UserInfo, UserInfoResponse } from '../../core/models/auth.model';
 import { CommonModule } from '@angular/common';
 import { GmButtonComponent } from '../../shared';
+import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-your-profile',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterLink, CommonModule, GmButtonComponent],
     templateUrl: './your-profile.component.html',
     styleUrl: './your-profile.component.scss'
@@ -51,7 +53,7 @@ export class YourProfileComponent implements OnInit {
 						this.userInfo = res.userInfo;
 						if (this.userInfo && !this.userInfo.avatar) {
 							this.userInfo.avatar =
-								'https://cdn-icons-png.flaticon.com/512/236/236832.png';
+								DEFAULT_AVATAR_URL;
 						}
 					},
 					error: () => {
@@ -72,7 +74,7 @@ export class YourProfileComponent implements OnInit {
 						this.trainerInfo = res;
 						if (this.trainerInfo && !this.trainerInfo.profilePicture) {
 							this.trainerInfo.profilePicture =
-								'https://cdn-icons-png.flaticon.com/512/236/236832.png';
+								DEFAULT_AVATAR_URL;
 						}
 					},
 					error: () => {

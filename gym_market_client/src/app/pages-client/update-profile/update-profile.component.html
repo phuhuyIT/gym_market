@@ -21,7 +21,7 @@
         <div class="avatar-section">
           <div class="avatar-container" (click)="toggleAvatarInput()" title="Click to edit profile picture URL">
             <img
-              [src]="updateForm.controls['profilePicture'].value || 'https://cdn-icons-png.flaticon.com/512/236/236832.png'"
+              [src]="updateForm.controls['profilePicture'].value || DEFAULT_AVATAR_URL"
               alt="Avatar preview"
               class="avatar-image"
             />

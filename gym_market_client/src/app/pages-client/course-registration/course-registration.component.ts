@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject , ChangeDetectionStrategy } from '@angular/core';
 import { CourseRegistrationService } from '../course-registration.service';
 import { UserStore } from '../../stores/user.store';
 import { RouterLink } from '@angular/router';
@@ -12,6 +12,7 @@ import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.c
 
 @Component({
     selector: 'app-course-registration',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterLink, FormsModule, CommonModule, GmButtonComponent],
     templateUrl: './course-registration.component.html',
     styleUrl: './course-registration.component.scss'
