@@ -16,11 +16,11 @@ export class PaymentService {
 		);
 	}
 
-	okPayment(paymentId: string): Observable<any> {
-		return this.http.post(`${environment.baseApi}/Payments/ok-payment/${paymentId}`, {});
+	okPayment(paymentId: string): Observable<void> {
+		return this.http.post<void>(`${environment.baseApi}/Payments/ok-payment/${paymentId}`, {});
 	}
 
-	cancelPayment(model: CancelPaymentDto): Observable<any> {
-		return this.http.post(`${environment.baseApi}/Payments/cancel-payment`, model);
+	cancelPayment(model: CancelPaymentDto): Observable<void> {
+		return this.http.post<void>(`${environment.baseApi}/Payments/cancel-payment`, model);
 	}
 }

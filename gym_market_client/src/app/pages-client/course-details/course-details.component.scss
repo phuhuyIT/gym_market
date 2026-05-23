@@ -27,7 +27,7 @@
 }
 
 .section-title {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-weight: 800;
   font-size: 1.25rem;
   letter-spacing: -0.02em;
@@ -44,7 +44,7 @@
 }
 
 .category-badge {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -58,7 +58,7 @@
 .rating-badge {
   background: var(--section-alt);
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.6875rem;
   padding: 0.25rem 0.75rem;
@@ -118,7 +118,7 @@
 }
 
 .section-title {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--text);
@@ -215,7 +215,7 @@
   &__price {
     color: var(--blue);
     font-weight: 700;
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
   }
 
   &__text {
@@ -237,7 +237,7 @@
   display: flex; align-items: center; gap: 16px;
   
   &__value {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
     font-size: 4rem;
     line-height: 1;
@@ -315,7 +315,7 @@
   box-shadow: 0 12px 40px var(--blue-glow);
 
   &__price {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
     font-size: 4rem;
     color: var(--text);
@@ -346,7 +346,7 @@
   justify-content: space-between;
   
   &__label { 
-    font-family: 'DM Sans', sans-serif; 
+    font-family: var(--font-display); 
     font-size: 0.6875rem; 
     font-weight: 700;
     color: var(--text-xsoft); 

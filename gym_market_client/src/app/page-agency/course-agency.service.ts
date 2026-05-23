@@ -10,8 +10,8 @@ import { Course } from '../core/models/course.model';
 export class CourseAgencyService {
 	constructor(private http: HttpClient) {}
 
-	addCourse(model: Partial<Course>): Observable<any> {
-		return this.http.post(`${environment.baseApi}/course`, model);
+	addCourse(model: Partial<Course>): Observable<void> {
+		return this.http.post<void>(`${environment.baseApi}/course`, model);
 	}
 
 	getCourses(
@@ -34,12 +34,12 @@ export class CourseAgencyService {
 		return this.http.get<Course>(`${environment.baseApi}/Course/get-course/${id}`);
 	}
 
-	updateCourse(model: Partial<Course>): Observable<any> {
-		return this.http.put(`${environment.baseApi}/Course/update-course/`, model);
+	updateCourse(model: Partial<Course>): Observable<void> {
+		return this.http.put<void>(`${environment.baseApi}/Course/update-course/`, model);
 	}
 
-	removeCourse(id: string): Observable<any> {
-		return this.http.delete(`${environment.baseApi}/course/${id}`);
+	removeCourse(id: string): Observable<void> {
+		return this.http.delete<void>(`${environment.baseApi}/course/${id}`);
 	}
 
 	getCoursesOftrainer(trainerId: string): Observable<Course[]> {

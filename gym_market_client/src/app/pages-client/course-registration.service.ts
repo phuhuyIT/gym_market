@@ -10,8 +10,8 @@ import { CourseRegistration } from '../core/models/course-registration.model';
 export class CourseRegistrationService {
 	constructor(private http: HttpClient) {}
 
-	registerCourse(courseId: string, studentId: string): Observable<any> {
-		return this.http.post(`${environment.baseApi}/CourseRegistration/register-course`, {
+	registerCourse(courseId: string, studentId: string): Observable<void> {
+		return this.http.post<void>(`${environment.baseApi}/CourseRegistration/register-course`, {
 			courseId,
 			studentId,
 		});
@@ -23,8 +23,8 @@ export class CourseRegistrationService {
 		);
 	}
 
-	cancelCourse(courseId: string, studentId: string): Observable<any> {
-		return this.http.post(`${environment.baseApi}/CourseRegistration/cancel-course`, {
+	cancelCourse(courseId: string, studentId: string): Observable<void> {
+		return this.http.post<void>(`${environment.baseApi}/CourseRegistration/cancel-course`, {
 			courseId,
 			studentId,
 		});

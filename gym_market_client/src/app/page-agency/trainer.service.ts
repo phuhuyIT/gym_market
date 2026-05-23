@@ -14,8 +14,8 @@ export class TrainerService {
 		return this.http.get<Trainer>(`${environment.baseApi}/trainer/${trainerId}`);
 	}
 
-	updateTrainerProfile(model: UpdateTrainerProfileDto, trainerId: string): Observable<any> {
-		return this.http.put(`${environment.baseApi}/trainer/${trainerId}`, model);
+	updateTrainerProfile(model: UpdateTrainerProfileDto, trainerId: string): Observable<void> {
+		return this.http.put<void>(`${environment.baseApi}/trainer/${trainerId}`, model);
 	}
 
 	getTrainers(): Observable<Trainer[]> {

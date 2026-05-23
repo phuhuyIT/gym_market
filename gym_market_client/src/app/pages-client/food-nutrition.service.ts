@@ -33,8 +33,8 @@ export class FoodNutritionService {
 		);
 	}
 
-	deleteFoodNutritionUser(model: { userId: string; foodNutritionUserId: number }): Observable<any> {
-		return this.http.post(
+	deleteFoodNutritionUser(model: { userId: string; foodNutritionUserId: number }): Observable<void> {
+		return this.http.post<void>(
 			`${environment.baseApi}/FoodNutrition/delete-foodnutrition-user`,
 			model
 		);

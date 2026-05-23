@@ -55,7 +55,7 @@
     @if (courses.length > 0) {
       <div class="pagination">
         <button class="btn-ghost" (click)="prevPage()" [disabled]="pageIndex === 1">Previous</button>
-        <span style="font-family: 'DM Sans', sans-serif; font-weight: 700;">Page {{ pageIndex }}</span>
+        <span style="font-family: var(--font-display); font-weight: 700;">Page {{ pageIndex }}</span>
         <button class="btn-ghost" (click)="nexPage()">Next</button>
       </div>
     }
