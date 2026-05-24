@@ -1,4 +1,4 @@
-@if (userInfo) {
+@if (profile) {
   <div class="student-profile">
     <div class="container">
       <!-- Premium Dashboard Hero Header -->
@@ -7,7 +7,7 @@
         <div class="profile-hero-card__content">
           <div class="avatar-wrapper">
             <div class="avatar-ring"></div>
-            <img class="profile-avatar" [src]="(studentInfo?.profilePicture) || DEFAULT_AVATAR_URL" alt="User avatar">
+            <img class="profile-avatar" [src]="profile.profilePicture || DEFAULT_AVATAR_URL" alt="User avatar">
             <span class="status-badge" title="Active student"></span>
           </div>
           <div class="profile-hero-card__info">
@@ -15,13 +15,13 @@
               <span class="role-badge">FITNESS ENTHUSIAST</span>
               <span class="tier-badge">PREMIUM MEMBER</span>
             </div>
-            <h1 class="profile-hero-card__name">{{userInfo.fullName}}</h1>
+            <h1 class="profile-hero-card__name">{{profile.fullName}}</h1>
             <p class="profile-hero-card__meta">
               <span class="meta-item">
-                <span class="icon">📅</span> Joined {{(studentInfo?.createdAt | date) || 'N/A'}}
+                <span class="icon">📅</span> Joined {{(profile.createdAt | date) || 'N/A'}}
               </span>
               <span class="meta-item">
-                <span class="icon">📍</span> {{userInfo.address || 'Location not set'}}
+                <span class="icon">📍</span> {{profile.address || 'Location not set'}}
               </span>
             </p>
           </div>
@@ -61,21 +61,21 @@
                     <div class="icon-box">✉️</div>
                     <div class="detail-content">
                       <span class="label">EMAIL ADDRESS</span>
-                      <span class="value">{{userInfo.email}}</span>
+                      <span class="value">{{profile.email}}</span>
                     </div>
                   </div>
                   <div class="contact-detail-row">
                     <div class="icon-box">📞</div>
                     <div class="detail-content">
                       <span class="label">PHONE NUMBER</span>
-                      <span class="value">{{userInfo.phoneNumber || 'Not provided'}}</span>
+                      <span class="value">{{profile.phoneNumber || 'Not provided'}}</span>
                     </div>
                   </div>
                   <div class="contact-detail-row">
                     <div class="icon-box">📍</div>
                     <div class="detail-content">
                       <span class="label">RESIDENCE</span>
-                      <span class="value">{{userInfo.address || 'Not provided'}}</span>
+                      <span class="value">{{profile.address || 'Not provided'}}</span>
                     </div>
                   </div>
                 </div>
@@ -89,7 +89,7 @@
                 <div class="glass-info-card__body">
                   <div class="health-summary-box">
                     <span class="label">HEALTH STATUS REPORT</span>
-                    <p class="health-status-desc">{{studentInfo?.healthStatus || 'No health information provided yet. Keep your records updated to help trainers personalize your workouts.'}}</p>
+                    <p class="health-status-desc">{{profile.healthStatus || 'No health information provided yet. Keep your records updated to help trainers personalize your workouts.'}}</p>
                   </div>
                   <div class="biometrics-grid">
                     <div class="biometrics-stat-card">
