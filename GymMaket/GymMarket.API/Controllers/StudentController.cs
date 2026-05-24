@@ -12,10 +12,21 @@ namespace GymMarket.API.Controllers
     public class StudentController : GenericController<StudentCreateDTO, StudentUpdateDTO, Student, string>
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IStudentRepository _studentRepository;
 
-        public StudentController(IGenericRepository<Student, string> repository, IMapper mapper, UserManager<AppUser> userManager) : base(repository, mapper)
+        public StudentController(IStudentRepository repository, IMapper mapper, UserManager<AppUser> userManager) : base(repository, mapper)
         {
             _userManager = userManager;
+            _studentRepository = repository;
+        }
+
+        [HttpGet("profile/{userId}")]
+        public async Task<IActionResult> GetProfile(string userId)
+        {
+            var result = await _studentRepository.GetStudentProfileByUserId(userId);
+            if (!result.Success)
+                return StatusCode(result.StatusCode, result);
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
