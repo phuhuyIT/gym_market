@@ -64,6 +64,15 @@
               <h3 class="trainer-card-name">{{ item.name }}</h3>
               <p class="trainer-card-subtitle">{{ item.certification || 'Elite Fitness Professional' }}</p>
               <p class="trainer-card-bio">{{ item.bio || 'Professional personal trainer dedicated to helping you achieve your fitness and wellness goals.' }}</p>
+              <div class="trainer-card-extra">
+                <span class="extra-stat">
+                  <i class="fa-solid fa-briefcase"></i> {{ item.experience }}+ Years Exp
+                </span>
+                <span class="extra-divider">•</span>
+                <span class="extra-email" [title]="item.email">
+                  <i class="fa-solid fa-envelope"></i> {{ item.email }}
+                </span>
+              </div>
             </div>
 
             <div class="trainer-card-footer">

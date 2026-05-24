@@ -1,7 +1,7 @@
 @use 'styles/glass';
 
 .trainer-list-page {
-  padding-top: 100px;
+  padding-top: 70px;
   min-height: 100vh;
 }
 
@@ -119,8 +119,8 @@
 
 .trainer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
   padding: 24px 0 80px;
 }
 
@@ -129,6 +129,12 @@
   flex-direction: column;
   height: 100%;
   text-decoration: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: translateY(-8px) scale(1.04);
+    z-index: 10;
+  }
 
   ::ng-deep .gm-card {
     flex: 1;
@@ -141,10 +147,19 @@
     box-sizing: border-box;
     position: relative;
     border-radius: var(--radius);
+    transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     
     &:hover {
+      border-color: var(--blue);
+      box-shadow: var(--float-md);
+      
       .bookmark-btn {
         opacity: 1;
+      }
+      
+      .trainer-card-extra {
+        opacity: 1;
+        visibility: visible;
       }
     }
   }
@@ -264,6 +279,43 @@
     margin: 0;
   }
 
+  .trainer-card-extra {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    opacity: 0;
+    visibility: hidden;
+    margin-top: 14px;
+    font-size: 0.8rem;
+    color: var(--text-soft);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+
+    .extra-stat, .extra-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+
+      i {
+        font-size: 0.75rem;
+        color: var(--blue);
+      }
+    }
+
+    .extra-email {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 140px;
+    }
+
+    .extra-divider {
+      color: var(--glass-border);
+      font-size: 0.8rem;
+    }
+  }
+
   .trainer-card-footer {
     display: flex;
     align-items: center;
@@ -364,8 +416,15 @@
     max-width: 100%;
   }
   .trainer-grid {
+    grid-template-columns: repeat(2, 1fr);
     padding-left: 24px;
     padding-right: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .trainer-grid {
+    grid-template-columns: 1fr;
   }
 }
 
