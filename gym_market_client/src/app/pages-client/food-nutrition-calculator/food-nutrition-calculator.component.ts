@@ -423,7 +423,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	// UI helper methods
 	getCircleStrokeOffset(val: number, target: number): number {
 		const pct = Math.min(1, Math.max(0, val / (target || 1)));
-		const circumference = 2 * Math.PI * 18; // approx 113.1
+		const circumference = 2 * Math.PI * 26; // approx 163.36
 		return circumference - pct * circumference;
 	}
 
