@@ -12,13 +12,12 @@ import { Trainer } from '../../core/models/trainer.model';
 import { Course } from '../../core/models/course.model';
 import { CommonModule } from '@angular/common';
 import { UserInfo } from '../../core/models/auth.model';
-import { GmCardComponent, GmButtonComponent } from '../../shared';
 import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-trainer-details',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, CommonModule, GmCardComponent, GmButtonComponent],
+    imports: [RouterLink, CommonModule],
     templateUrl: './trainer-details.component.html',
     styleUrl: './trainer-details.component.scss'
 })
@@ -30,6 +29,9 @@ export class TrainerDetailsComponent implements OnInit {
 	trainerInfo: Trainer | null = null;
 	userInfo: UserInfo | null = null;
 	coursesOfTrainer: Course[] = [];
+	otherTrainers: Trainer[] = [];
+	followedTrainersMap: { [id: string]: boolean } = {};
+	bookmarkedCoursesMap: { [id: string]: boolean } = {};
 
 	userStore = inject(UserStore);
 
@@ -49,9 +51,50 @@ export class TrainerDetailsComponent implements OnInit {
 				if (this.trainerId) {
 					this.getTrainerInfo(this.trainerId);
 					this.getCoursesOfTrainer();
+					this.getOtherTrainers();
 				}
 			},
 		});
+	}
+
+	private getOtherTrainers() {
+		this.trainerService
+			.getTrainers()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.otherTrainers = res
+						.filter(t => t.trainerId !== this.trainerId)
+						.slice(0, 3);
+					this.cdr.markForCheck();
+				},
+			});
+	}
+
+	toggleFollow(trainerId: string, event?: Event) {
+		if (event) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+		this.followedTrainersMap[trainerId] = !this.followedTrainersMap[trainerId];
+		this.cdr.markForCheck();
+	}
+
+	isFollowed(trainerId: string): boolean {
+		return !!this.followedTrainersMap[trainerId];
+	}
+
+	toggleCourseBookmark(courseId: string, event?: Event) {
+		if (event) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+		this.bookmarkedCoursesMap[courseId] = !this.bookmarkedCoursesMap[courseId];
+		this.cdr.markForCheck();
+	}
+
+	isCourseBookmarked(courseId: string): boolean {
+		return !!this.bookmarkedCoursesMap[courseId];
 	}
 
 	private getTrainerInfo(trainerId: string) {

@@ -1,112 +1,284 @@
 @if (trainerInfo && userInfo) {
-  <div class="trainer-profile">
-    <!-- Profile Header -->
-    <header class="profile-header">
-      <div class="profile-header__banner"></div>
-      <div class="container">
-        <div class="profile-header__content">
-          <div class="profile-header__avatar">
-            <img [src]="trainerInfo.profilePicture" alt="Trainer profile picture">
+  <div class="trainer-dashboard container">
+    <!-- Top banner matching mockup: "ONLINE COURSE / Sharpen Your Skills with Professional Online Courses" -->
+    <div class="dashboard-banner">
+      <div class="banner-content-wrapper">
+        <div class="banner-text-side">
+          <div class="banner-badge">ELITE COACHING</div>
+          <h1 class="banner-title">Sharpen Your Body & Mind with {{trainerInfo.name}}</h1>
+          <p class="banner-subtitle">{{trainerInfo.bio || 'Transform your health with professional fitness and wellness guidance.'}}</p>
+          
+          <div class="banner-info-chips">
+            <span class="chip">
+              <i class="fa-solid fa-envelope"></i>
+              <span>{{userInfo.email}}</span>
+            </span>
+            @if (userInfo.address) {
+              <span class="chip">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>{{userInfo.address}}</span>
+              </span>
+            }
+            <span class="chip">
+              <i class="fa-solid fa-graduation-cap"></i>
+              <span>{{trainerInfo.certification || 'Elite Coach'}}</span>
+            </span>
           </div>
-          <div class="profile-header__info">
-            <div class="profile-header__top">
-              <h1 class="profile-header__name">{{trainerInfo.name}}</h1>
-              <div class="specialization-pills">
-                <span class="pill">{{trainerInfo.certification || 'Elite Coach'}}</span>
-              </div>
-            </div>
-            <p class="profile-header__bio">{{trainerInfo.bio}}</p>
-            <!-- Quick Stats -->
-            <div class="quick-stats">
-              <div class="quick-stat">
-                <span class="quick-stat__value">{{trainerInfo.rating || '4.8'}} ★</span>
-                <span class="quick-stat__label">RATING</span>
-              </div>
-              <div class="quick-stat">
-                <span class="quick-stat__value">{{trainerInfo.experience}}</span>
-                <span class="quick-stat__label">YEARS EXP.</span>
-              </div>
-              <div class="quick-stat">
-                <span class="quick-stat__value">{{coursesOfTrainer.length}}</span>
-                <span class="quick-stat__label">COURSES</span>
-              </div>
-            </div>
-          </div>
-          <div class="profile-header__actions">
-            <gm-button variant="primary" (clicked)="onSendMessage()">SEND MESSAGE</gm-button>
-            <gm-button variant="secondary">FOLLOW</gm-button>
+
+          <button class="banner-btn" (click)="onSendMessage()">
+            <span>Message Now</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <div class="banner-avatar-side">
+          <div class="banner-avatar-container">
+            <img [src]="trainerInfo.profilePicture" alt="{{trainerInfo.name}}">
+            <div class="banner-avatar-glow"></div>
           </div>
         </div>
       </div>
-    </header>
-    <!-- Main Content -->
-    <main class="profile-main container">
-      <div class="profile-grid">
-        <!-- Left Column: Details -->
-        <div class="profile-details">
-          <section class="profile-section">
-            <h2 class="section-title">PROFESSIONAL DETAILS</h2>
-            <div class="details-grid">
-              <div class="detail-item">
-                <span class="detail-label">EMAIL</span>
-                <span class="detail-value">{{userInfo.email}}</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">LOCATION</span>
-                <span class="detail-value">{{userInfo.address || 'Global'}}</span>
-              </div>
-              <div class="detail-item full-width">
-                <span class="detail-label">CERTIFICATIONS & BIO</span>
-                <p class="detail-text">{{trainerInfo.certification}}</p>
-                <p class="detail-text" style="margin-top: 12px;">{{trainerInfo.bio}}</p>
-              </div>
+    </div>
+
+    <!-- Quick stats grid matching the 3 top watch-progress cards in mockup -->
+    <div class="quick-stats-grid">
+      <div class="quick-stat-card card-purple">
+        <div class="stat-icon-wrapper">
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-progress">{{trainerInfo.rating ? trainerInfo.rating.toFixed(1) : '4.8'}} ★ Rating</span>
+          <span class="stat-title">Client Satisfaction</span>
+        </div>
+      </div>
+      
+      <div class="quick-stat-card card-pink">
+        <div class="stat-icon-wrapper">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-progress">{{trainerInfo.experience}} Years Exp.</span>
+          <span class="stat-title">Active Practice</span>
+        </div>
+      </div>
+
+      <div class="quick-stat-card card-blue">
+        <div class="stat-icon-wrapper">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-progress">{{coursesOfTrainer.length}} Programs</span>
+          <span class="stat-title">Published Courses</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Section: Left Column for Courses/Syllabus, Right Column for Personal stats & recommends -->
+    <div class="dashboard-main-grid">
+      <!-- Left Column: Courses & Syllabus -->
+      <div class="dashboard-content-left">
+        <!-- Featured Courses Section -->
+        <div class="section-container">
+          <div class="section-header-row">
+            <h2 class="section-title">Featured Programs</h2>
+            <div class="slider-controls">
+              <button class="control-btn" disabled><i class="fa-solid fa-chevron-left"></i></button>
+              <button class="control-btn" disabled><i class="fa-solid fa-chevron-right"></i></button>
             </div>
-          </section>
-          <!-- Trainer's Courses -->
-          <section class="profile-section">
-            <h2 class="section-title">FEATURED COURSES</h2>
-            <div class="courses-grid">
-              @for (course of coursesOfTrainer; track course) {
-                <gm-card class="course-mini-card" [routerLink]="['/client/course-details', course.courseId]">
-                  <div class="course-mini-card__img">
-                    <img [src]="course.getFileDtos && course.getFileDtos.length > 0 ? course.getFileDtos[0].url : '/assets/gym_logo.png'" alt="">
-                  </div>
-                  <div class="course-mini-card__content">
-                    <h3>{{course.title}}</h3>
-                    <div class="course-mini-card__footer">
-                      <span class="price">${{course.price}}</span>
-                      <span class="category">{{course.category}}</span>
-                    </div>
-                  </div>
-                </gm-card>
-              }
-              @if (coursesOfTrainer.length === 0) {
-                <div class="empty-courses">
-                  <p>This trainer hasn't posted any courses yet.</p>
+          </div>
+
+          <div class="featured-courses-grid">
+            @for (course of coursesOfTrainer; track course.courseId) {
+              <div class="mock-course-card" [routerLink]="['/client/course-details', course.courseId]">
+                <div class="course-image-container">
+                  <img [src]="course.getFileDtos && course.getFileDtos.length > 0 ? course.getFileDtos[0].url : '/assets/gym_logo.png'" alt="{{course.title}}">
+                  
+                  <button class="heart-bookmark-btn" 
+                          [class.active]="isCourseBookmarked(course.courseId)" 
+                          (click)="toggleCourseBookmark(course.courseId, $event)">
+                    <i class="fa-heart" [class.fa-solid]="isCourseBookmarked(course.courseId)" [class.fa-regular]="!isCourseBookmarked(course.courseId)"></i>
+                  </button>
                 </div>
-              }
-            </div>
-          </section>
+                
+                <div class="course-body">
+                  <span class="course-category-pill">{{course.category || 'Fitness'}}</span>
+                  <h3 class="course-card-title">{{course.title}}</h3>
+                  <div class="course-card-footer">
+                    <div class="mentor-info">
+                      <img [src]="trainerInfo.profilePicture" alt="{{trainerInfo.name}}" class="mentor-avatar">
+                      <div class="mentor-meta">
+                        <span class="mentor-name">{{trainerInfo.name}}</span>
+                        <span class="mentor-title">Trainer</span>
+                      </div>
+                    </div>
+                    <div class="course-price">${{course.price}}</div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            @if (coursesOfTrainer.length === 0) {
+              <div class="empty-state-message">
+                <p>This trainer hasn't posted any courses yet.</p>
+              </div>
+            }
+          </div>
         </div>
-        <!-- Right Column: Sidebar / Stats -->
-        <aside class="profile-sidebar">
-          <gm-card class="activity-card">
-            <h3 class="sidebar-title">ACTIVITY</h3>
-            <div class="activity-stat">
-              <span class="label">Response Time</span>
-              <span class="value">< 2 hours</span>
-            </div>
-            <div class="activity-stat">
-              <span class="label">Member Since</span>
-              <span class="value">{{trainerInfo.createdAt | date:'MMM yyyy'}}</span>
-            </div>
-            <div class="activity-stat">
-              <span class="label">Total Students</span>
-              <span class="value">450+</span>
-            </div>
-          </gm-card>
-        </aside>
+
+        <!-- Qualifications & Syllabus Table -->
+        <div class="section-container">
+          <div class="section-header-row">
+            <h2 class="section-title">Program Qualifications & Syllabus</h2>
+            <a routerLink="/client/trainer-list" class="view-all-link">See all</a>
+          </div>
+
+          <div class="table-responsive">
+            <table class="syllabus-table">
+              <thead>
+                <tr>
+                  <th>PROGRAM</th>
+                  <th>TYPE</th>
+                  <th>DESCRIPTION</th>
+                  <th>ACTION</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (course of coursesOfTrainer; track course.courseId) {
+                  <tr>
+                    <td>
+                      <div class="program-cell">
+                        <div class="program-icon-box">
+                          <i class="fa-solid fa-dumbbell"></i>
+                        </div>
+                        <div class="program-meta">
+                          <span class="program-name">{{course.title}}</span>
+                          <span class="program-sub">Start: {{ course.startDate ? (course.startDate | date:'MM/dd/yyyy') : 'Flexible' }}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="type-badge">{{course.category || 'FITNESS'}}</span>
+                    </td>
+                    <td>
+                      <p class="desc-text">{{course.description || 'Professional coaching program designed for progressive gains and target goals.'}}</p>
+                    </td>
+                    <td>
+                      <button class="action-arrow-btn" [routerLink]="['/client/course-details', course.courseId]">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                      </button>
+                    </td>
+                  </tr>
+                }
+
+                @if (coursesOfTrainer.length === 0) {
+                  <tr>
+                    <td colspan="4" class="no-records-cell">
+                      No active syllabus programs available for this trainer.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </main>
+
+      <!-- Right Column: Sidebar -->
+      <div class="dashboard-content-right">
+        <!-- Statistic Card with avatar progress and bar chart -->
+        <div class="stats-sidebar-card">
+          <div class="stats-card-header">
+            <h3 class="stats-card-title">Statistic</h3>
+            <button class="stats-more-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+          </div>
+
+          <!-- Circular progress overlaying student picture (matching Jason Ranti mockup) -->
+          <div class="radial-avatar-section">
+            <div class="radial-progress-ring">
+              <svg viewBox="0 0 100 100">
+                <!-- Outer ring track -->
+                <circle cx="50" cy="50" r="42" stroke="var(--glass-border2)" stroke-width="6" fill="transparent" />
+                <!-- 32% progress matching the mockup -->
+                <circle cx="50" cy="50" r="42" stroke="var(--blue)" stroke-width="6" fill="transparent"
+                        stroke-dasharray="263.89" stroke-dashoffset="179.4" stroke-linecap="round" />
+              </svg>
+              <div class="radial-avatar-wrapper">
+                <img [src]="userStore.avatar() || '/assets/fitness_logo.jpg'" alt="{{userStore.fullName() || 'Student'}}">
+              </div>
+              <div class="radial-percentage">32%</div>
+            </div>
+          </div>
+
+          <div class="stats-greeting">
+            <h4>Good Day, {{ userStore.fullName() || 'Guest' }} ⚡</h4>
+            <p>Continue your training to achieve your targets!</p>
+          </div>
+
+          <!-- CSS Bar Chart (booking / training hours) -->
+          <div class="css-bar-chart">
+            <div class="chart-bars">
+              <div class="chart-col">
+                <div class="bar-fill" style="height: 35%;"></div>
+                <span class="bar-label">1-10 Aug</span>
+              </div>
+              <div class="chart-col">
+                <div class="bar-fill" style="height: 60%;"></div>
+                <span class="bar-label">11-15 Aug</span>
+              </div>
+              <div class="chart-col">
+                <div class="bar-fill" style="height: 45%;"></div>
+                <span class="bar-label">16-20 Aug</span>
+              </div>
+              <div class="chart-col">
+                <div class="bar-fill" style="height: 90%;"></div>
+                <span class="bar-label">21-25 Aug</span>
+              </div>
+              <div class="chart-col">
+                <div class="bar-fill" style="height: 40%;"></div>
+                <span class="bar-label">26-30 Aug</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trending/Recommended Fitness Experts -->
+        <div class="stats-sidebar-card">
+          <div class="stats-card-header">
+            <h3 class="stats-card-title">Explore Other Experts</h3>
+            <button class="stats-plus-btn" routerLink="/client/trainer-list"><i class="fa-solid fa-plus"></i></button>
+          </div>
+
+          <div class="experts-list">
+            @for (mentor of otherTrainers; track mentor.trainerId) {
+              <div class="expert-item" [routerLink]="['/client/trainer-details', mentor.trainerId]">
+                <div class="expert-avatar-box">
+                  <img [src]="mentor.profilePicture || '/assets/fitness_logo.jpg'" alt="{{mentor.name}}">
+                </div>
+                <div class="expert-info">
+                  <span class="expert-name">{{mentor.name}}</span>
+                  <span class="expert-title">{{mentor.certification || 'Fitness Mentor'}}</span>
+                </div>
+                <button class="expert-follow-btn" 
+                        [class.following]="isFollowed(mentor.trainerId)" 
+                        (click)="toggleFollow(mentor.trainerId, $event)">
+                  @if (!isFollowed(mentor.trainerId)) {
+                    <span class="plus-icon">+ </span>
+                  }
+                  {{ isFollowed(mentor.trainerId) ? 'Following' : 'Follow' }}
+                </button>
+              </div>
+            }
+
+            @if (otherTrainers.length === 0) {
+              <div class="empty-experts">
+                <p>No other certified coaches found.</p>
+              </div>
+            }
+          </div>
+
+          <button class="sidebar-see-all-btn" routerLink="/client/trainer-list">See All</button>
+        </div>
+      </div>
+    </div>
   </div>
 }
