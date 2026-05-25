@@ -376,4 +376,4 @@ CLAUDE.md
 chat_image
 
 # Development secrets
-/workspaces/gym_market/GymMaket/GymMarket.API/appsettings.Development.json
+appsettings.Development.json
