@@ -12,19 +12,22 @@ namespace GymMarket.API.Services
         private readonly IMinioClient _minioClient;
         private readonly IConfiguration _configuration;
         private readonly GymMarketContext _context;
+        private readonly ILogger<MinIOService> _logger;
 
         public static readonly string IMAGE_COURSES = "imagecourses";
         public static readonly string VIDEO_COURSES = "videocourses";
         public static readonly string IMAGE_TYPE = "IMAGE";
         public static readonly string VIDEO_TYPE = "VIDEO";
 
-        public MinIOService(IMinioClient minioClient, 
-            IConfiguration configuration, 
-            GymMarketContext context)
+        public MinIOService(IMinioClient minioClient,
+            IConfiguration configuration,
+            GymMarketContext context,
+            ILogger<MinIOService> logger)
         {
             _minioClient = minioClient;
             _configuration = configuration;
             _context = context;
+            _logger = logger;
         }
 
         public async Task<ApiResponse> UploadFiles(FileAdd fileAdd)
@@ -208,8 +211,9 @@ namespace GymMarket.API.Services
                 await _minioClient.RemoveObjectAsync(removeObjectArgs);
                 return new ApiResponse { Message = "FILE_DELETED_SUCCESSFULLY", StatusCode = 200 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to delete file {ObjectName} from bucket {BucketName}", deleteFile.ObjectName, deleteFile.BucketName);
                 return new ApiResponse { Errors = ["DELETE_FAILED"], StatusCode = 400 };
             }
         }

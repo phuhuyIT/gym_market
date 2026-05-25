@@ -49,30 +49,18 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Password settings
-    options.Password.RequireDigit = false; // Do not require numbers
-    options.Password.RequireLowercase = false; // Do not require lowercase
-    options.Password.RequireNonAlphanumeric = false; // Do not require special characters
-    options.Password.RequireUppercase = false; // Do not require uppercase
-    options.Password.RequiredLength = 8; // Minimum password length
-    options.Password.RequiredUniqueChars = 1; // Number of unique characters
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequiredUniqueChars = 1;
 
-    // Lockout settings - lock user
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Lock for 5 minutes
-    options.Lockout.MaxFailedAccessAttempts = 5; // Lock after 5 failed attempts
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 
-    //// User settings. 
-    //options.User.AllowedUserNameCharacters = // allowed characters for username
-    //"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-    options.User.RequireUniqueEmail = true; // Email must be unique
-
-    // Sign-in settings. 
-    //options.SignIn.RequireConfirmedEmail = true; // Require confirmed email
-    //options.SignIn.RequireConfirmedPhoneNumber = false; // Require confirmed phone number
-    //                                                    // default is false
-    //                                                    // if true => does not allow login and redirects to RegisterConfirmation.cshtml
-    //options.SignIn.RequireConfirmedAccount = false;
+    options.User.RequireUniqueEmail = true;
 });
 
 // authenticate user using jwt
@@ -84,7 +72,7 @@ builder.Services.AddAuthentication(options =>
 }).AddJwtBearer(options =>
 {
     options.SaveToken = true;
-    options.RequireHttpsMetadata = true;
+    options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         // validate the issuer (who ever is issuing the JWT)
@@ -143,10 +131,14 @@ builder.Services.AddScoped<AccountService>();
 
 
 
-// enable cors
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(c =>
 {
-    c.AddPolicy("AllowOrigin", option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+    c.AddPolicy("AllowOrigin", policy => policy
+        .WithOrigins(allowedOrigins)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
 });
 
 builder.Services.AddSignalR();
@@ -186,14 +178,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// enable cors
-app.UseCors(x => x
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .AllowCredentials()
-    .SetIsOriginAllowed(origin => true));
+app.UseCors("AllowOrigin");
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

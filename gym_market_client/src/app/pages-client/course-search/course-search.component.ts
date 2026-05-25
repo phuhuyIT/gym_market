@@ -7,14 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
-import { GmCardComponent, GmInputComponent, GmButtonComponent } from '../../shared';
-
-import { RevealDirective } from '../../shared/directives/reveal.directive';
+import { GmCardComponent } from '../../shared';
 
 @Component({
     selector: 'app-course-search',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, RevealDirective],
+    imports: [RouterLink, FormsModule, CommonModule, GmCardComponent],
     templateUrl: './course-search.component.html',
     styleUrl: './course-search.component.scss'
 })
@@ -38,6 +36,8 @@ export class CourseSearchComponent implements OnInit {
 		'Cross fit',
 	];
 
+	bookmarkedCourses: Set<string> = new Set();
+
 	constructor(
 		private courseService: CourseAgencyService,
 		private activatedRoute: ActivatedRoute,
@@ -45,6 +45,7 @@ export class CourseSearchComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
+		this.loadBookmarks();
 		this.activatedRoute.queryParams
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(params => {
@@ -54,6 +55,44 @@ export class CourseSearchComponent implements OnInit {
 				this.category = params['category'] || 'All';
 				this.getCourses();
 			});
+	}
+
+	private loadBookmarks() {
+		const saved = localStorage.getItem('gym_bookmarked_courses');
+		if (saved) {
+			try {
+				this.bookmarkedCourses = new Set(JSON.parse(saved));
+			} catch (e) {
+				console.error('Failed to parse bookmarks', e);
+			}
+		}
+	}
+
+	toggleBookmark(courseId: string, event: Event) {
+		event.preventDefault();
+		event.stopPropagation();
+		if (this.bookmarkedCourses.has(courseId)) {
+			this.bookmarkedCourses.delete(courseId);
+		} else {
+			this.bookmarkedCourses.add(courseId);
+		}
+		localStorage.setItem('gym_bookmarked_courses', JSON.stringify(Array.from(this.bookmarkedCourses)));
+		this.cdr.markForCheck();
+	}
+
+	isBookmarked(courseId: string): boolean {
+		return this.bookmarkedCourses.has(courseId);
+	}
+
+	getSpecialtyEmoji(category: string): string {
+		const cat = (category || '').toLowerCase();
+		if (cat.includes('yoga')) return '🧘';
+		if (cat.includes('cardio') || cat.includes('run')) return '🏃';
+		if (cat.includes('strength') || cat.includes('weight') || cat.includes('power')) return '💪';
+		if (cat.includes('pilates')) return '🤸';
+		if (cat.includes('stretch')) return '🙆';
+		if (cat.includes('cross fit') || cat.includes('crossfit') || cat.includes('hiit')) return '🏋️';
+		return '💪';
 	}
 
 	private getCourses() {

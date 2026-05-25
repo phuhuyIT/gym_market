@@ -374,3 +374,6 @@ API_AND_ROUTES.md
 CLAUDE.md
 .claude
 chat_image
+
+# Development secrets
+appsettings.Development.json
