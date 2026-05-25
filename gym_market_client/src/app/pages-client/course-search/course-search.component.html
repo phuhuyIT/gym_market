@@ -1,62 +1,104 @@
 <div class="course-search-page">
-  <header class="search-header">
-    <div class="section-head">
-      <span class="section-tag">Explore Marketplace</span>
-      <h1 class="section-title">FIND YOUR <em>FIT</em></h1>
-    </div>
+  <header class="page-header container">
+    <h1 class="page-title">Explore Premium Fitness Courses</h1>
+    
+    <div class="search-filter-row">
+      <div class="categories-tabs">
+        @for (cat of categories; track cat) {
+          <button 
+            type="button"
+            class="category-tab-btn" 
+            [class.active]="category === cat"
+            (click)="onSelectCategory(cat)">
+            {{ cat }}
+          </button>
+        }
+      </div>
 
-    <div class="search-header__bar gl" appReveal>
-      <input
-        (keydown.enter)="onSubmit()"
-        class="form-input"
-        type="text"
-        placeholder="SEARCH PREMIUM COURSES..."
-        [(ngModel)]="searchString"
+      <div class="search-bar-container gl">
+        <input
+          (ngModelChange)="onSubmit()"
+          class="search-input-field"
+          type="text"
+          placeholder="Search courses, focus areas..."
+          [(ngModel)]="searchString"
         />
-      <button class="btn-primary" (click)="onSubmit()" style="padding: 10px 24px;">Search</button>
-    </div>
-
-    <div class="category-strip gl" appReveal [style.transitionDelay]="'0.2s'">
-      @for (cat of categories; track cat) {
-        <button
-          class="cat-pill btn-ghost"
-          [class.active]="category === cat"
-          (click)="onSelectCategory(cat)">
-          {{ cat }}
+        <button class="search-btn" (click)="onSubmit()" type="button" aria-label="Search">
+          <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-      }
+      </div>
     </div>
   </header>
 
   <main class="container">
-    <div class="course-grid">
-      @for (item of courses; track item.courseId) {
-        <gm-card class="course-card" [routerLink]="['/client/course-details', item.courseId]" appReveal [style.transitionDelay]="$index * 0.05 + 's'">
-          <div class="course-card__image-wrap">
-            <img [src]="item.getFileDtos[0].url || '/assets/gym_logo.png'" alt="Course cover" />
-          </div>
+    @if (courses.length === 0) {
+      <div class="empty-state gl">
+        <div class="empty-state__icon">🔍</div>
+        <h3>No Courses Found</h3>
+        <p>We couldn't find any courses matching your current search or category filter. Try adjusting your settings.</p>
+      </div>
+    } @else {
+      <div class="course-grid">
+        @for (item of courses; track item.courseId) {
+          <gm-card class="course-card" [routerLink]="['/client/course-details', item.courseId]">
+            <button 
+              class="bookmark-btn" 
+              (click)="toggleBookmark(item.courseId, $event)" 
+              [class.active]="isBookmarked(item.courseId)"
+              type="button"
+              aria-label="Bookmark course">
+              <i class="fa-bookmark" [class.fa-solid]="isBookmarked(item.courseId)" [class.fa-regular]="!isBookmarked(item.courseId)"></i>
+            </button>
 
-          <div class="course-card__content">
-            <span class="course-card__category">{{ item.category }}</span>
-            <h3 class="course-card__title">{{ item.title }}</h3>
-            <p class="step-text" style="font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-              {{ item.description }}
-            </p>
-
-            <div class="course-card__meta">
-              <span class="course-card__price">{{ item.price | currency:'USD' }}</span>
-              <button class="btn-ghost" style="padding: 8px 16px; font-size: 0.8rem;">Details</button>
+            <div class="course-image-container">
+              <img
+                [src]="(item.getFileDtos && item.getFileDtos.length > 0) ? item.getFileDtos[0].url : '/assets/fitness_logo.jpg'"
+                alt="Course cover"
+                class="course-cover-img"
+              />
             </div>
-          </div>
-        </gm-card>
-      }
-    </div>
+            
+            <div class="course-card-content">
+              <h3 class="course-card-title" [title]="item.title">{{ item.title }}</h3>
+              <p class="course-card-subtitle">{{ item.category }}</p>
+              <p class="course-card-description">{{ item.description }}</p>
+              <div class="course-card-extra">
+                <span class="extra-stat">
+                  <i class="fa-solid fa-clock"></i> {{ item.duration }} Hours
+                </span>
+                <span class="extra-divider">•</span>
+                <span class="extra-stat">
+                  <i class="fa-solid fa-calendar-days"></i> {{ item.startDate | date:'mediumDate' }}
+                </span>
+              </div>
+            </div>
 
-    @if (courses.length > 0) {
+            <div class="course-card-footer">
+              <div class="course-stats-col">
+                <span class="stat-icon"><i class="fa-solid fa-star"></i></span>
+                <span class="stat-value">{{ item.rating ? item.rating.toFixed(1) : '4.8' }}</span>
+              </div>
+              <div class="course-stats-col">
+                <span class="stat-icon"><i class="fa-solid fa-user-group"></i></span>
+                <span class="stat-value">{{ item.maxParticipants || '20' }} Max</span>
+              </div>
+              <div class="course-stats-col">
+                <span class="stat-icon"><i class="fa-solid fa-tag"></i></span>
+                <span class="stat-value">{{ item.price | currency:'USD' }}</span>
+              </div>
+              <div class="course-specialty-badge" [title]="item.category">
+                {{ getSpecialtyEmoji(item.category) }}
+              </div>
+            </div>
+          </gm-card>
+        }
+      </div>
+
+      <!-- Pagination -->
       <div class="pagination">
-        <button class="btn-ghost" (click)="prevPage()" [disabled]="pageIndex === 1">Previous</button>
-        <span style="font-family: var(--font-display); font-weight: 700;">Page {{ pageIndex }}</span>
-        <button class="btn-ghost" (click)="nexPage()">Next</button>
+        <button class="category-tab-btn" (click)="prevPage()" [disabled]="pageIndex === 1">Previous</button>
+        <span style="font-family: var(--font-display); font-weight: 700; color: var(--text-soft); font-size: 0.95rem;">Page {{ pageIndex }}</span>
+        <button class="category-tab-btn" (click)="nexPage()">Next</button>
       </div>
     }
   </main>
