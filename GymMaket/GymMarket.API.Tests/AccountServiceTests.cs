@@ -208,7 +208,8 @@ public class AccountServiceTests
             repository,
             jwtService ?? new RecordingJwtService(),
             signInService ?? new RecordingPasswordSignInService(),
-            new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build());
+            new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build(),
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<AccountService>.Instance);
     }
 
     private sealed class RecordingAccountRepository : IAccountRepository

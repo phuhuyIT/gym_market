@@ -28,7 +28,13 @@ namespace GymMarket.API.Hubs
 
         public async Task SendMessageToRoom(string roomName, SendMessageDto message)
         {
-            message.SenderId = Context.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new HubException("User is not authenticated.");
+            }
+
+            message.SenderId = userId;
             await _conversationRepository.SendMessage(message);
             await Clients.Group(roomName).SendAsync("ReceiveMessage", message);
         }
