@@ -22,10 +22,10 @@ namespace GymMarket.API.Services
             _context = context;
         }
 
-        public async Task<MomoCreatePaymentResponseModel> CreatePaymentAsync(CreatePaymentDto dto)
+        public async Task<MomoCreatePaymentResponseModel?> CreatePaymentAsync(CreatePaymentDto dto)
         {
             var course = await _context.Courses.FindAsync(dto.CourseId);
-            if (course == null) return null!;
+            if (course == null) return null;
 
             string paymentId = DateTime.UtcNow.Ticks.ToString();
             double paymentAmount = (double)((course.Price ?? 0) + (course.AdditionalPrice ?? 0));

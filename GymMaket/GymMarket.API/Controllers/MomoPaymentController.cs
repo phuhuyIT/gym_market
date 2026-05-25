@@ -26,6 +26,10 @@ namespace GymMarket.API.Controllers
         public async Task<IActionResult> CreatePaymentUrl([FromBody] CreatePaymentDto dto)
         {
             var response = await _momoService.CreatePaymentAsync(dto);
+            if (response == null)
+            {
+                return NotFound(new { error = "COURSE_NOT_FOUND" });
+            }
             return Ok(new { payUrl = response.PayUrl });
         }
 

@@ -59,7 +59,7 @@ namespace GymMarket.API.Services
                             Bio = "Professional fitness instructor.",
                             Experience = 0,
                             Rating = 5,
-                            Desciption = ""
+                            Description = ""
                         };
                         await _context.Trainers.AddAsync(trainer);
                         await _context.SaveChangesAsync();
@@ -121,13 +121,13 @@ namespace GymMarket.API.Services
             }
 
             // Signing credentials
-            var creadentials = new SigningCredentials(_jwtKey, SecurityAlgorithms.HmacSha512Signature);
+            var credentials = new SigningCredentials(_jwtKey, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(userClaims),
                 Expires = DateTime.UtcNow.AddDays(int.Parse(_configuration["JWT:ExpiresInDays"]!)),
-                SigningCredentials = creadentials,
+                SigningCredentials = credentials,
                 Issuer = _configuration["JWT:Issuer"]
             };
 

@@ -4,6 +4,7 @@ using GymMarket.API.DTOs.Response.Account;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace GymMarket.API.Services
 {
@@ -13,17 +14,20 @@ namespace GymMarket.API.Services
         private readonly IJwtService _jwtService;
         private readonly IPasswordSignInService _passwordSignInService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AccountService> _logger;
 
         public AccountService(
             IAccountRepository accountRepository,
             IJwtService jwtService,
             IPasswordSignInService passwordSignInService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogger<AccountService> logger)
         {
             _accountRepository = accountRepository;
             _jwtService = jwtService;
             _passwordSignInService = passwordSignInService;
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<SignupResponse> SignUp(SignUpDto model)
@@ -180,7 +184,8 @@ namespace GymMarket.API.Services
             }
             catch (Exception ex)
             {
-                return new LoginResponse { StatusCode = 400, Success = false, Errors = [ex.Message] };
+                _logger.LogError(ex, "Google login failed");
+                return new LoginResponse { StatusCode = 400, Success = false, Errors = ["GOOGLE_LOGIN_FAILED"] };
             }
         }
     }

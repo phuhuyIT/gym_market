@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GymMarket.API.Models;
 
@@ -23,7 +24,8 @@ public partial class Trainer
 
     public string? ProfilePicture { get; set; }
 
-    public string Desciption { get; set; } = string.Empty;
+    [Column("Desciption")]
+    public string Description { get; set; } = string.Empty;
 
     public DateTime? CreatedAt { get; set; }
 
