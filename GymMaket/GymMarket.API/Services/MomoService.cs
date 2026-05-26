@@ -27,7 +27,7 @@ namespace GymMarket.API.Services
             var course = await _context.Courses.FindAsync(dto.CourseId);
             if (course == null) return null;
 
-            string paymentId = DateTime.UtcNow.Ticks.ToString();
+            string paymentId = Guid.NewGuid().ToString("N");
             double paymentAmount = (double)((course.Price ?? 0) + (course.AdditionalPrice ?? 0));
 
             // Store studentId and courseId in extraData as JSON
@@ -69,6 +69,27 @@ namespace GymMarket.API.Services
             var response = await client.ExecuteAsync(request);
             var momoResponse = JsonConvert.DeserializeObject<MomoCreatePaymentResponseModel>(response.Content!);
             return momoResponse!;
+        }
+
+        public bool VerifySignature(Controllers.MomoCallbackDto callback)
+        {
+            var rawData =
+                $"accessKey={_options.Value.AccessKey}" +
+                $"&amount={callback.Amount}" +
+                $"&extraData={callback.ExtraData}" +
+                $"&message={callback.Message}" +
+                $"&orderId={callback.OrderId}" +
+                $"&orderInfo={callback.OrderInfo}" +
+                $"&orderType={callback.OrderType}" +
+                $"&partnerCode={callback.PartnerCode}" +
+                $"&payType={callback.PayType}" +
+                $"&requestId={callback.RequestId}" +
+                $"&responseTime={callback.ResponseTime}" +
+                $"&resultCode={callback.ResultCode}" +
+                $"&transId={callback.TransId}";
+
+            var expectedSignature = ComputeHmacSha256(rawData, _options.Value.SecretKey);
+            return string.Equals(expectedSignature, callback.Signature, StringComparison.OrdinalIgnoreCase);
         }
 
         public MomoExecuteResponseModel PaymentExecuteAsync(IQueryCollection collection)

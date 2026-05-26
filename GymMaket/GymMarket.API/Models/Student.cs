@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace GymMarket.API.Models;
 
@@ -11,6 +12,7 @@ public partial class Student
 
     public string? Email { get; set; }
 
+    [JsonIgnore]
     public string? Password { get; set; }
 
     public string? HealthStatus { get; set; }

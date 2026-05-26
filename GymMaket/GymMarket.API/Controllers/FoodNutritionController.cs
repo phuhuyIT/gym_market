@@ -1,14 +1,14 @@
-﻿using GymMarket.API.DTOs.CourseRegistration;
+using GymMarket.API.DTOs.CourseRegistration;
 using GymMarket.API.DTOs.FoodNutritionUser;
 using GymMarket.API.Repositories;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FoodNutritionController : ControllerBase
     {
         private readonly FoodNutritionRepository _foodNutritionRepository;

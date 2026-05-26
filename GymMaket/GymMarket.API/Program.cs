@@ -79,11 +79,8 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = true,
         ValidateIssuerSigningKey = true, // validate token based on the key we have provided in appsetting.json
 
-        // don't validate audience (angular side)
-        ValidateAudience = false,
-
-        //ValidAudience = builder.Configuration.GetSection("JWT:ValidAudience").Value,
-        // the issuer which in here is the api project url
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration.GetSection("JWT:Audience").Value,
         ValidIssuer = builder.Configuration.GetSection("JWT:Issuer").Value,
 
         // the issuer signin key based on JWT:Key

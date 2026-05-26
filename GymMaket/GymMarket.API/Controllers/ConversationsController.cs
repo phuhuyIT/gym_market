@@ -1,11 +1,13 @@
 ﻿using GymMarket.API.DTOs.UserMessage;
 using GymMarket.API.Repositories.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ConversationsController : ControllerBase
     {
         private readonly IConversationRepository _conversationRepository;

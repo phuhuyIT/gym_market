@@ -53,13 +53,13 @@ namespace GymMarket.API.Repositories
             {
                 CourseId = dto.CourseId,
                 PaymentAmount = course!.Price + course.AdditionalPrice,
-                CreatedAt = DateTime.Now,
-                PaymentDate = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
+                PaymentDate = DateTime.UtcNow,
                 PaymentId = Guid.NewGuid().ToString(),
                 PaymentStatus = "Pending",
                 PaymentType = "",
                 StudentId = dto.StudentId,
-                UpdatedAt = DateTime.Now,
+                UpdatedAt = DateTime.UtcNow,
             };
 
             _context.Payments.Add(payment);
@@ -101,7 +101,7 @@ namespace GymMarket.API.Repositories
             if (timeElapsed > TimeSpan.FromMinutes(5))
             {
                 // Discard registration by updating status and removing from database if needed
-                registration.Status = "Cancelled";
+                registration.Status = "Canceled";
                 registration.PaymentStatus = "Expired";
                 registration.UpdatedAt = currentTime;
 

@@ -3,12 +3,14 @@ using GymMarket.API.DTOs.CourseRating;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories;
 using GymMarket.API.Repositories.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CourseRatingController: ControllerBase
     {
         private readonly ICourseRatingRepository _courseRatingRepository;

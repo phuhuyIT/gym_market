@@ -1,12 +1,13 @@
-﻿using GymMarket.API.DTOs.Payment;
+using GymMarket.API.DTOs.Payment;
 using GymMarket.API.Repositories.IRepositories;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PaymentsController : ControllerBase
     {
         private readonly IPaymentRepository _paymentRepository;
