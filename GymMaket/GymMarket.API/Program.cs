@@ -1,5 +1,4 @@
 ﻿using GymMarket.API.Data;
-using GymMarket.API.DTOs.Momo;
 using GymMarket.API.Hubs;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories;
@@ -79,11 +78,8 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = true,
         ValidateIssuerSigningKey = true, // validate token based on the key we have provided in appsetting.json
 
-        // don't validate audience (angular side)
-        ValidateAudience = false,
-
-        //ValidAudience = builder.Configuration.GetSection("JWT:ValidAudience").Value,
-        // the issuer which in here is the api project url
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration.GetSection("JWT:Audience").Value,
         ValidIssuer = builder.Configuration.GetSection("JWT:Issuer").Value,
 
         // the issuer signin key based on JWT:Key
@@ -117,7 +113,7 @@ builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<ILectureRepository, LectureRepository>();
 builder.Services.AddScoped<ILectureMaterialRepository, LectureMaterialRepository>();
-builder.Services.AddScoped<FoodNutritionRepository>();
+builder.Services.AddScoped<IFoodNutritionRepository, FoodNutritionRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));

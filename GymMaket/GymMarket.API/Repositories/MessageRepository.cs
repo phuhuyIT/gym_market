@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Repositories
 {
-    public class MesageRepository : GenericRepository<Message, string>
+    public class MessageRepository : GenericRepository<Message, string>
     {
         private readonly GymMarketContext _context;
-        public MesageRepository(GymMarketContext context, IMapper mapper) : base(context, mapper)
+        public MessageRepository(GymMarketContext context, IMapper mapper) : base(context, mapper)
         {
             _context = context;
         }

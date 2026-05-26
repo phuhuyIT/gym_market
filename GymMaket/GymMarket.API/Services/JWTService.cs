@@ -54,11 +54,11 @@ namespace GymMarket.API.Services
                             Email = user.Email,
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow,
-                            ProfilePicture = "https://cdn-icons-png.flaticon.com/512/1999/1999625.png",
+                            ProfilePicture = Defaults.AvatarUrl,
                             Certification = "General Fitness Trainer",
                             Bio = "Professional fitness instructor.",
                             Experience = 0,
-                            Rating = 5,
+                            Rating = Defaults.DefaultRating,
                             Description = ""
                         };
                         await _context.Trainers.AddAsync(trainer);
@@ -90,7 +90,7 @@ namespace GymMarket.API.Services
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow,
                             HealthStatus = "Good",
-                            ProfilePicture = "https://cdn-icons-png.flaticon.com/512/236/236832.png"
+                            ProfilePicture = Defaults.StudentAvatarUrl
                         };
                         await _context.Students.AddAsync(student);
                         await _context.SaveChangesAsync();
@@ -112,7 +112,7 @@ namespace GymMarket.API.Services
                 new Claim(ClaimTypes.HomePhone, string.IsNullOrEmpty(user.PhoneNumber) == false ? user.PhoneNumber : ""),
                 new Claim("trainerId", string.IsNullOrEmpty(trainerId) == false ? trainerId : ""),
                 new Claim("studentId", string.IsNullOrEmpty(studentId) == false ? studentId : ""),
-                new Claim("avatar", string.IsNullOrEmpty(user.Avatar) == false ? user.Avatar : "https://cdn-icons-png.flaticon.com/512/1999/1999625.png"),
+                new Claim("avatar", string.IsNullOrEmpty(user.Avatar) == false ? user.Avatar : Defaults.AvatarUrl),
             };
 
             foreach (var role in userRoles)
@@ -128,7 +128,8 @@ namespace GymMarket.API.Services
                 Subject = new ClaimsIdentity(userClaims),
                 Expires = DateTime.UtcNow.AddDays(int.Parse(_configuration["JWT:ExpiresInDays"]!)),
                 SigningCredentials = credentials,
-                Issuer = _configuration["JWT:Issuer"]
+                Issuer = _configuration["JWT:Issuer"],
+                Audience = _configuration["JWT:Audience"]
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

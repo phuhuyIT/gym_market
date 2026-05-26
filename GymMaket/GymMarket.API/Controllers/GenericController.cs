@@ -1,12 +1,14 @@
 using AutoMapper;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public abstract class GenericController<TCreateDto, TUpdateDto, TEntity, TKey> : ControllerBase where TEntity : class where TUpdateDto: class where TCreateDto : class
     {
         protected readonly IGenericRepository<TEntity, TKey> _repository;

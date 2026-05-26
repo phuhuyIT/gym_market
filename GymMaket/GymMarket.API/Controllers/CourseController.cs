@@ -2,6 +2,7 @@ using AutoMapper;
 using GymMarket.API.DTOs.Course;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
@@ -24,6 +25,7 @@ namespace GymMarket.API.Controllers
             return entity.CourseId;
         }
 
+        [AllowAnonymous]
         [HttpGet("search-and-filter")]
         public async Task<IActionResult> SearchAndFilterCourses(
             [FromQuery] string? keyword,
@@ -46,6 +48,7 @@ namespace GymMarket.API.Controllers
             return StatusCode(res.StatusCode, new { res.Message, res.Errors });
         }
 
+        [AllowAnonymous]
         [HttpGet("get-courses-of-trainer/{trainerId}")]
         public async Task<IActionResult> GetCoursesOfTrainer(string trainerId)
         {
@@ -53,6 +56,7 @@ namespace GymMarket.API.Controllers
             return Ok(courses);
         }
 
+        [AllowAnonymous]
         [HttpGet("get-course/{id}")]
         public async Task<IActionResult> GetCourseById(string id)
         {
@@ -65,8 +69,9 @@ namespace GymMarket.API.Controllers
             return Ok(course);
         }
 
+        [AllowAnonymous]
         [HttpGet("get-courses")]
-        public async Task<IActionResult> GetCourses([FromQuery] string? category = null, [FromQuery] string? searchString = null, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 15)
+        public async Task<IActionResult> GetCourses([FromQuery] string? category = null, [FromQuery] string? searchString = null, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = Defaults.PageSize)
         {
             var courses = await _courseRepository.GetCourses(pageIndex, pageSize, searchString, category);
 

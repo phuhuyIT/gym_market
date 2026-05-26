@@ -1,4 +1,4 @@
-﻿namespace GymMarket.API.DTOs.Momo
+namespace GymMarket.API.Models
 {
     public class MomoOptionModel
     {
@@ -9,6 +9,5 @@
         public string NotifyUrl { get; set; } = string.Empty;
         public string PartnerCode { get; set; } = string.Empty;
         public string RequestType { get; set; } = string.Empty;
-
     }
 }

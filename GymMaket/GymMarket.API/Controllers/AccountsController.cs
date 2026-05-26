@@ -1,11 +1,13 @@
-﻿using GymMarket.API.DTOs.Account;
+using GymMarket.API.DTOs.Account;
 using GymMarket.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AccountsController : ControllerBase
     {
         private readonly AccountService _accountService;

@@ -16,6 +16,7 @@ public class ConversationIntegrationTests : BaseIntegrationTests
     public async Task CreateConversation_WithValidData_ReturnsSuccess()
     {
         // Arrange
+        await AuthenticateAsync();
         var senderEmail = "sender@example.com";
         var receiverEmail = "receiver@example.com";
         var password = "Password123";
@@ -58,8 +59,11 @@ public class ConversationIntegrationTests : BaseIntegrationTests
     [Fact]
     public async Task GetConversationOfUser_ReturnsOk()
     {
+        // Arrange
+        await AuthenticateAsync();
+
         // Act
-        var response = await Client.GetAsync("/api/Conversations/GetConversationOfUser/user1");
+        var response = await Client.GetAsync("/api/Conversations/get-conversation-of-user/user1");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

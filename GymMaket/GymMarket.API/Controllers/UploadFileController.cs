@@ -1,12 +1,13 @@
-﻿using GymMarket.API.DTOs.FileMinIO;
+using GymMarket.API.DTOs.FileMinIO;
 using GymMarket.API.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UploadFileController : ControllerBase
     {
         private readonly MinIOService _minioService;

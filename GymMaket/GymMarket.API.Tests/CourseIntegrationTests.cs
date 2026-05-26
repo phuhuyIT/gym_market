@@ -40,6 +40,9 @@ public class CourseIntegrationTests : BaseIntegrationTests
     [Fact]
     public async Task GetAllCourses_ReturnsOk()
     {
+        // Arrange
+        await AuthenticateAsync();
+
         // Act
         var response = await Client.GetAsync("/api/Course");
 

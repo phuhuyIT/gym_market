@@ -1,11 +1,12 @@
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.FoodNutritionUser;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Repositories
 {
-    public class FoodNutritionRepository
+    public class FoodNutritionRepository : IFoodNutritionRepository
     {
 
         private readonly GymMarketContext _context;
@@ -72,7 +73,6 @@ namespace GymMarket.API.Repositories
         public async Task<bool> DeleteFoodNutritionUser(DeleteFoodNutritionUserDto model)
         {
             var nutrition = await _context.FoodNutritionUsers
-                .AsNoTrackingWithIdentityResolution()
                 .Where(f => f.UserId == model.UserId && f.Id == model.FoodNutritionUserId)
                 .FirstOrDefaultAsync();
 

@@ -3,6 +3,7 @@ using GymMarket.API.DTOs.Payment;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
@@ -11,15 +12,18 @@ namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MomoPaymentController : ControllerBase
     {
         private readonly MomoService _momoService;
         private readonly IPaymentRepository _paymentRepository;
+        private readonly IConfiguration _configuration;
 
-        public MomoPaymentController(MomoService momoService, IPaymentRepository paymentRepository)
+        public MomoPaymentController(MomoService momoService, IPaymentRepository paymentRepository, IConfiguration configuration)
         {
             _momoService = momoService;
             _paymentRepository = paymentRepository;
+            _configuration = configuration;
         }
 
         [HttpPost("CreatePaymentUrl")]
@@ -33,19 +37,23 @@ namespace GymMarket.API.Controllers
             return Ok(new { payUrl = response.PayUrl });
         }
 
+        [AllowAnonymous]
         [HttpGet("PaymentCallBack")]
         public async Task<IActionResult> PaymentCallBack([FromQuery] MomoCallbackDto callback)
         {
-            if (callback.ResultCode == 0) // 0 = success in Momo
+            if (!_momoService.VerifySignature(callback))
+                return BadRequest(new { error = "INVALID_SIGNATURE" });
+
+            var redirectUrl = _configuration["MomoAPI:PaymentRedirectUrl"] ?? "/client/course-registration";
+
+            if (callback.ResultCode == Defaults.MomoSuccessResultCode)
             {
-                // Parse extraData
                 var extraDataJson = Encoding.UTF8.GetString(Convert.FromBase64String(callback.ExtraData));
                 var extraData = JsonConvert.DeserializeObject<dynamic>(extraDataJson);
 
                 string studentId = extraData!.StudentId;
                 string courseId = extraData!.CourseId;
 
-                // Create Payment record in DB
                 await _paymentRepository.CreatePayment(new Payment
                 {
                     PaymentId = callback.OrderId,
@@ -53,37 +61,23 @@ namespace GymMarket.API.Controllers
                     StudentId = studentId,
                     PaymentAmount = decimal.Parse(callback.Amount),
                     PaymentDate = DateTime.UtcNow,
-                    PaymentStatus = "COMPLETED",
-                    PaymentType = "MOMO",
+                    PaymentStatus = PaymentStatus.Completed,
+                    PaymentType = PaymentType.Momo,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 });
             }
-            return Redirect("http://localhost:4200/client/course-registration");
+            return Redirect(redirectUrl);
         }
 
+        [AllowAnonymous]
         [HttpPost("MomoNotify")]
         public async Task<IActionResult> MomoNotify([FromBody] MomoCallbackDto callback)
         {
-            // Similar logic to PaymentCallBack for asynchronous notifications
+            if (!_momoService.VerifySignature(callback))
+                return BadRequest(new { error = "INVALID_SIGNATURE" });
+
             return Ok();
         }
-    }
-
-    public class MomoCallbackDto
-    {
-        public string PartnerCode { get; set; } = null!;
-        public string OrderId { get; set; } = null!;
-        public string RequestId { get; set; } = null!;
-        public string Amount { get; set; } = null!;
-        public string OrderInfo { get; set; } = null!;
-        public string OrderType { get; set; } = null!;
-        public string TransId { get; set; } = null!;
-        public int ResultCode { get; set; }
-        public string Message { get; set; } = null!;
-        public string PayType { get; set; } = null!;
-        public string ResponseTime { get; set; } = null!;
-        public string ExtraData { get; set; } = null!;
-        public string Signature { get; set; } = null!;
     }
 }

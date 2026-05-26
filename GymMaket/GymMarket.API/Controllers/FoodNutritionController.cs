@@ -1,19 +1,18 @@
-﻿using GymMarket.API.DTOs.CourseRegistration;
 using GymMarket.API.DTOs.FoodNutritionUser;
-using GymMarket.API.Repositories;
-using Microsoft.AspNetCore.Http;
+using GymMarket.API.Repositories.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FoodNutritionController : ControllerBase
     {
-        private readonly FoodNutritionRepository _foodNutritionRepository;
+        private readonly IFoodNutritionRepository _foodNutritionRepository;
 
-        public FoodNutritionController(FoodNutritionRepository foodNutritionRepository)
+        public FoodNutritionController(IFoodNutritionRepository foodNutritionRepository)
         {
             _foodNutritionRepository = foodNutritionRepository;
         }
@@ -35,23 +34,23 @@ namespace GymMarket.API.Controllers
         [HttpPost("cal-caloric-value")]
         public async Task<IActionResult> CalCaloricValue(AddFoodNutritionUser model)
         {
-            var r = await _foodNutritionRepository.CalculateCaloric(model);
-            if(r == null)
+            var result = await _foodNutritionRepository.CalculateCaloric(model);
+            if(result == null)
             {
-                return BadRequest(r);
+                return BadRequest(new { error = "FOOD_NUTRITION_NOT_FOUND" });
             }
-            return Ok(r);
+            return Ok(result);
         }
 
-        [HttpPost("delete-foodnutrition-user")]
+        [HttpDelete("delete-foodnutrition-user")]
         public async Task<IActionResult> DeleteFoodNutritionUser(DeleteFoodNutritionUserDto model)
         {
-            var r = await _foodNutritionRepository.DeleteFoodNutritionUser(model);
-            if(r == true)
+            var deleted = await _foodNutritionRepository.DeleteFoodNutritionUser(model);
+            if(deleted)
             {
                 return Ok(new { message = "Successfully" });
             }
-            return BadRequest(r);
+            return BadRequest(new { error = "DELETE_FAILED" });
         }
     }
 }

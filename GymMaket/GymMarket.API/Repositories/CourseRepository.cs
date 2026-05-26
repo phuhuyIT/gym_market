@@ -57,55 +57,61 @@ namespace GymMarket.API.Repositories
 
         public async Task<ApiResponse> UpdateCourse(CourseUpdateDTO courseUpdateDTO)
         {
-            // map TUpdateDto to TEntity
             var mapEntity = _mapper.Map<CourseUpdateDTO, Course>(courseUpdateDTO);
 
-
-
-            if (courseUpdateDTO.Images.Count > 0)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                var oldFiles = await _context.FileCourses.AsNoTrackingWithIdentityResolution()
-                          .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == "IMAGE")
-                          .ToListAsync();
-                _context.FileCourses.RemoveRange(oldFiles);
-                await _context.SaveChangesAsync();
-            }
+                if (courseUpdateDTO.Images.Count > 0)
+                {
+                    var oldImageFiles = await _context.FileCourses
+                              .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == FileType.Image)
+                              .ToListAsync();
+                    _context.FileCourses.RemoveRange(oldImageFiles);
+                }
 
-            if (courseUpdateDTO.Videos.Count > 0)
-            {
-                var oldFiles = await _context.FileCourses.AsNoTrackingWithIdentityResolution()
-                          .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == "VIDEO")
-                          .ToListAsync();
-                _context.FileCourses.RemoveRange(oldFiles);
-                await _context.SaveChangesAsync();
-            }
+                if (courseUpdateDTO.Videos.Count > 0)
+                {
+                    var oldVideoFiles = await _context.FileCourses
+                              .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == FileType.Video)
+                              .ToListAsync();
+                    _context.FileCourses.RemoveRange(oldVideoFiles);
+                }
 
-            var rAddFile = await _minioService.UploadFiles(new DTOs.FileMinIO.FileAdd
-            {
-                CourseId = courseUpdateDTO.CourseId,
-                Images = courseUpdateDTO.Images,
-                Videos = courseUpdateDTO.Videos,
-            });
+                await _minioService.UploadFiles(new DTOs.FileMinIO.FileAdd
+                {
+                    CourseId = courseUpdateDTO.CourseId,
+                    Images = courseUpdateDTO.Images,
+                    Videos = courseUpdateDTO.Videos,
+                });
 
-            _context.Courses.Update(mapEntity);
+                _context.Courses.Update(mapEntity);
 
-            var r = await _context.SaveChangesAsync();
-            if (r > 0)
-            {
+                var r = await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                if (r > 0)
+                {
+                    return new ApiResponse
+                    {
+                        Errors = [],
+                        Message = "SUCCESS",
+                        StatusCode = 200,
+                        Success = true
+                    };
+                }
                 return new ApiResponse
                 {
-                    Errors = [],
-                    Message = "SUCCESS",
-                    StatusCode = 200,
-                    Success = true
+                    Errors = ["COURSE_UPDATE_FAILED"],
+                    StatusCode = 400,
+                    Success = false
                 };
             }
-            return new ApiResponse
+            catch
             {
-                Errors = ["COURSE_UPDATE_FAILED"],
-                StatusCode = 400,
-                Success = false
-            };
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<GetCourseDto?> GetCourse(string courseId)
@@ -124,7 +130,7 @@ namespace GymMarket.API.Repositories
             return _mapper.Map<Course, GetCourseDto>(course);
         }
 
-        public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = 15, string? searchString = null, string? category = null)
+        public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = Defaults.PageSize, string? searchString = null, string? category = null)
         {
             var courses = await _context.Courses
                 .AsNoTrackingWithIdentityResolution()

@@ -35,32 +35,37 @@ namespace GymMarket.API.Repositories
                 .OrderBy(h => h.CreatedAt)
                 .ToListAsync();
         }
-        // Get health datum by time
         public async Task<IEnumerable<IGrouping<DateTime, HealthDatum>>> GetHealthDataAggregatedByTimeAsync(string studentId, DateTime startDate, DateTime endDate)
         {
             var healthData = await _context.Set<HealthDatum>()
                 .Where(h => h.StudentId == studentId && h.CreatedAt >= startDate && h.CreatedAt <= endDate)
                 .Include(h => h.HealthIndicators)
-                .GroupBy(h => h.CreatedAt.Value.Date) // Grouping by date
                 .ToListAsync();
-            return healthData;
+
+            return healthData
+                .Where(h => h.CreatedAt.HasValue)
+                .GroupBy(h => h.CreatedAt!.Value.Date);
         }
-        // Get health datum summary by time
+
         public async Task<IEnumerable<object>> GetHealthDataSummaryByTimeAsync(string studentId, DateTime startDate, DateTime endDate)
         {
-            return await _context.Set<HealthDatum>()
+            var healthData = await _context.Set<HealthDatum>()
                 .Where(h => h.StudentId == studentId && h.CreatedAt >= startDate && h.CreatedAt <= endDate)
-                .GroupBy(h => h.CreatedAt.Value.Date)
+                .Include(h => h.HealthIndicators)
+                .ToListAsync();
+
+            return healthData
+                .Where(h => h.CreatedAt.HasValue)
+                .GroupBy(h => h.CreatedAt!.Value.Date)
                 .Select(g => new
                 {
                     Date = g.Key,
                     AverageValue = g.SelectMany(h => h.HealthIndicators)
                                     .Average(ind => ParseIndicatorValue(ind.IndicatorValue))
-                })
-                .ToListAsync();
+                });
         }
 
-        private double ParseIndicatorValue(string indicatorValue)
+        private static double ParseIndicatorValue(string? indicatorValue)
         {
             return double.TryParse(indicatorValue, out double val) ? val : 0;
         }

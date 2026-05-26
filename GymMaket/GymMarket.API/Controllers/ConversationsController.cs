@@ -1,11 +1,13 @@
 ﻿using GymMarket.API.DTOs.UserMessage;
 using GymMarket.API.Repositories.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ConversationsController : ControllerBase
     {
         private readonly IConversationRepository _conversationRepository;
@@ -22,7 +24,7 @@ namespace GymMarket.API.Controllers
             return StatusCode(res.StatusCode, new { res.Errors, res.Message });
         }
 
-        [HttpGet("GetConversationOfUser/{userId}")]
+        [HttpGet("get-conversation-of-user/{userId}")]
         public async Task<IActionResult> GetConversationOfUser(string userId)
         {
             var conversations = await _conversationRepository.GetConversationOfUser(userId);
@@ -36,7 +38,7 @@ namespace GymMarket.API.Controllers
             return Ok(messages);
         }
 
-        [HttpGet("seen-message/{userId}/{conversationId}")]
+        [HttpPost("seen-message/{userId}/{conversationId}")]
         public async Task<IActionResult> SeenMessage(string userId, int conversationId)
         {
             await _conversationRepository.SeenMessage(userId, conversationId);

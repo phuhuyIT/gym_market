@@ -5,7 +5,7 @@ namespace GymMarket.API.DTOs.Course
     public class CourseCreateDTO
     {
         [Required(ErrorMessage = "Course ID is required")]
-        [StringLength(100, ErrorMessage = "Course ID cannot exceed 50 characters")]
+        [StringLength(100, ErrorMessage = "Course ID cannot exceed 100 characters")]
         public string CourseId { get; set; } = null!;
 
         [StringLength(100)]

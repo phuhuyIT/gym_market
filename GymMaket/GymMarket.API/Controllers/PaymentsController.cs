@@ -1,12 +1,13 @@
-﻿using GymMarket.API.DTOs.Payment;
+using GymMarket.API.DTOs.Payment;
 using GymMarket.API.Repositories.IRepositories;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PaymentsController : ControllerBase
     {
         private readonly IPaymentRepository _paymentRepository;
@@ -16,7 +17,7 @@ namespace GymMarket.API.Controllers
             _paymentRepository = paymentRepository;
         }
 
-        [HttpGet("get-payments-ofcourse/{courseId}")]
+        [HttpGet("get-payments-of-course/{courseId}")]
         public async Task<IActionResult> GetPaymentsOfCourse(string courseId)
         {
             var list = await _paymentRepository.GetPaymentsOfCourse(courseId);
@@ -24,17 +25,17 @@ namespace GymMarket.API.Controllers
         }
 
         [HttpPost("ok-payment/{paymentId}")]
-        public async Task<IActionResult> OkePayment(string paymentId)
+        public async Task<IActionResult> OkPayment(string paymentId)
         {
-            var r = await _paymentRepository.OkPayment(paymentId);
-            return Ok(r);
+            var payment = await _paymentRepository.OkPayment(paymentId);
+            return Ok(payment);
         }
 
         [HttpPost("cancel-payment")]
-        public async Task<IActionResult> CancelPayment(CancelPayment paymentId)
+        public async Task<IActionResult> CancelPayment(CancelPayment model)
         {
-            var r = await _paymentRepository.CancelPayment(paymentId);
-            return Ok(r);
+            var payment = await _paymentRepository.CancelPayment(model);
+            return Ok(payment);
         }
     }
 }

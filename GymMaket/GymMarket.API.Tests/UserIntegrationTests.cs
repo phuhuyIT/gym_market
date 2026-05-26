@@ -16,6 +16,7 @@ public class UserIntegrationTests : BaseIntegrationTests
     public async Task GetUserInfo_ReturnsOk()
     {
         // Arrange
+        await AuthenticateAsync();
         var email = "userinfo@example.com";
         var password = "Password123";
         var signupResp = await Client.PostAsJsonAsync("/api/Accounts/sign-up", new SignUpDto
@@ -40,6 +41,7 @@ public class UserIntegrationTests : BaseIntegrationTests
     public async Task UpdateUser_WithValidData_ReturnsSuccess()
     {
         // Arrange
+        await AuthenticateAsync();
         var email = "updateuser@example.com";
         var password = "Password123";
         var signupResp = await Client.PostAsJsonAsync("/api/Accounts/sign-up", new SignUpDto
