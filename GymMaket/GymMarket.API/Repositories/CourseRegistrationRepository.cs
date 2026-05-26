@@ -37,8 +37,8 @@ namespace GymMarket.API.Repositories
                 RegistrationId = Guid.NewGuid().ToString(),
                 CourseId = dto.CourseId,
                 StudentId = dto.StudentId,
-                Status = "Pending Payment",
-                PaymentStatus = "Not Started",
+                Status = PaymentStatus.PendingPayment,
+                PaymentStatus = PaymentStatus.NotStarted,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -56,7 +56,7 @@ namespace GymMarket.API.Repositories
                 CreatedAt = DateTime.UtcNow,
                 PaymentDate = DateTime.UtcNow,
                 PaymentId = Guid.NewGuid().ToString(),
-                PaymentStatus = "Pending",
+                PaymentStatus = PaymentStatus.Pending,
                 PaymentType = "",
                 StudentId = dto.StudentId,
                 UpdatedAt = DateTime.UtcNow,
@@ -73,11 +73,11 @@ namespace GymMarket.API.Repositories
         {
             var registration = await _context.CourseRegistrations.FindAsync(registrationId);
 
-            if (registration == null || registration.PaymentStatus != "Not Started")
+            if (registration == null || registration.PaymentStatus != PaymentStatus.NotStarted)
                 return false;
 
             registration.InitialPayment = initialPayment;
-            registration.PaymentStatus = "Pending";
+            registration.PaymentStatus = PaymentStatus.Pending;
             registration.UpdatedAt = DateTime.UtcNow;
 
             // Update the registration in the database
@@ -92,17 +92,17 @@ namespace GymMarket.API.Repositories
         {
             var registration = await _context.CourseRegistrations.FindAsync(registrationId);
 
-            if (registration == null || registration.PaymentStatus != "Pending")
+            if (registration == null || registration.PaymentStatus != PaymentStatus.Pending)
                 return false;
 
             // Check if more than 5 minutes have passed since payment initialization
             var currentTime = DateTime.UtcNow;
             var timeElapsed = currentTime - registration.UpdatedAt;
-            if (timeElapsed > TimeSpan.FromMinutes(5))
+            if (timeElapsed > TimeSpan.FromMinutes(Defaults.PaymentTimeoutMinutes))
             {
                 // Discard registration by updating status and removing from database if needed
-                registration.Status = "Canceled";
-                registration.PaymentStatus = "Expired";
+                registration.Status = PaymentStatus.Canceled;
+                registration.PaymentStatus = PaymentStatus.Expired;
                 registration.UpdatedAt = currentTime;
 
                 _context.CourseRegistrations.Update(registration);

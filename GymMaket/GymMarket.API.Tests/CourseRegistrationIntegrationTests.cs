@@ -18,6 +18,8 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
     public async Task RegisterCourse_WithValidData_ReturnsSuccess()
     {
         // Arrange
+        await AuthenticateAsync();
+
         // 1. Create a Student
         var studentEmail = "student_reg@example.com";
         var password = "Password123";
@@ -34,7 +36,6 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
 
         var studentCreate = new StudentCreateDTO
         {
-            StudentId = "STU_001",
             UserId = userId,
             Name = "Reg Student",
             Email = studentEmail,

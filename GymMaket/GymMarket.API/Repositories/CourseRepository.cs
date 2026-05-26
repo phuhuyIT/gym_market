@@ -65,7 +65,7 @@ namespace GymMarket.API.Repositories
                 if (courseUpdateDTO.Images.Count > 0)
                 {
                     var oldImageFiles = await _context.FileCourses
-                              .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == "IMAGE")
+                              .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == FileType.Image)
                               .ToListAsync();
                     _context.FileCourses.RemoveRange(oldImageFiles);
                 }
@@ -73,7 +73,7 @@ namespace GymMarket.API.Repositories
                 if (courseUpdateDTO.Videos.Count > 0)
                 {
                     var oldVideoFiles = await _context.FileCourses
-                              .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == "VIDEO")
+                              .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == FileType.Video)
                               .ToListAsync();
                     _context.FileCourses.RemoveRange(oldVideoFiles);
                 }
@@ -130,7 +130,7 @@ namespace GymMarket.API.Repositories
             return _mapper.Map<Course, GetCourseDto>(course);
         }
 
-        public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = 15, string? searchString = null, string? category = null)
+        public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = Defaults.PageSize, string? searchString = null, string? category = null)
         {
             var courses = await _context.Courses
                 .AsNoTrackingWithIdentityResolution()

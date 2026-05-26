@@ -1,7 +1,7 @@
+using GymMarket.API.Data;
 using GymMarket.API.DTOs.Momo;
 using GymMarket.API.DTOs.Payment;
 using GymMarket.API.Models;
-using GymMarket.API.Data;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RestSharp;
@@ -71,7 +71,7 @@ namespace GymMarket.API.Services
             return momoResponse!;
         }
 
-        public bool VerifySignature(Controllers.MomoCallbackDto callback)
+        public bool VerifySignature(MomoCallbackDto callback)
         {
             var rawData =
                 $"accessKey={_options.Value.AccessKey}" +

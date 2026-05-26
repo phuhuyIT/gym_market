@@ -96,7 +96,7 @@ namespace GymMarket.API.Repositories
                                   LastMessage = conversationUser.LastMessage,
                                   Avatar = receive.Avatar != null && receive.Id == userId && sender.Avatar != null ? sender.Avatar 
                                   : sender.Avatar != null && sender.Id == userId && receive.Avatar != null ? receive.Avatar
-                                  : "https://cdn-icons-png.flaticon.com/512/1999/1999625.png"
+                                  : Defaults.AvatarUrl
                               }).ToListAsync();
             return list;
         }
@@ -104,14 +104,12 @@ namespace GymMarket.API.Repositories
         public async Task SeenMessage(string userId, int conversationId)
         {
             var conversationParticipant = await _context.ConversationParticipants
-                .AsNoTrackingWithIdentityResolution()
                 .Where(x => x.UserId == userId && x.ConversationId == conversationId)
                 .FirstOrDefaultAsync();
 
             if (conversationParticipant != null)
             {
                 conversationParticipant.HasNewMessage = false;
-                _context.ConversationParticipants.Update(conversationParticipant);
                 await _context.SaveChangesAsync();
             }
         }
@@ -128,7 +126,6 @@ namespace GymMarket.API.Repositories
             _context.UserMessages.Add(message);
 
             var conversationParticipants = await _context.ConversationParticipants
-               .AsNoTrackingWithIdentityResolution()
                .Where(c => c.ConversationId == model.ConversationId)
                .ToListAsync();
 
@@ -141,7 +138,6 @@ namespace GymMarket.API.Repositories
                     participant.HasNewMessage = true;
                 }
             }
-            _context.ConversationParticipants.UpdateRange(conversationParticipants);
 
             await _context.SaveChangesAsync();
         }
@@ -150,7 +146,6 @@ namespace GymMarket.API.Repositories
         {
             var messages = await _context.UserMessages
                 .AsNoTrackingWithIdentityResolution()
-                .Include(m => m.AppUser)
                 .Where(m => m.ConversationId == conversationId)
                 .Select(m => new UserMessageDto
                 {

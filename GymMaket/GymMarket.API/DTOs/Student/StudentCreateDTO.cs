@@ -4,9 +4,6 @@ namespace GymMarket.API.DTOs.Student
 {
     public class StudentCreateDTO
     {
-        [Required(ErrorMessage = "StudentId is required.")]
-        public string StudentId { get; set; } = null!;
-
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
         public string? Name { get; set; }
@@ -24,10 +21,6 @@ namespace GymMarket.API.DTOs.Student
 
         [Url(ErrorMessage = "ProfilePicture must be a valid URL.")]
         public string? ProfilePicture { get; set; }
-
-        public DateTime? CreatedAt { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
 
         [Required(ErrorMessage = "UserId is required.")]
         public string? UserId { get; set; }

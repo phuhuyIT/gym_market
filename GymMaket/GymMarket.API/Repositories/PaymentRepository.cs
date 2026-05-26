@@ -22,15 +22,6 @@ namespace GymMarket.API.Repositories
             return payments;
         }
 
-        public async Task<IEnumerable<Payment>> GetPaymentsByCourseIdAsync(string courseId)
-        {
-            var payments = await _context.Payments
-                .Where(p => p.CourseId == courseId)
-                .ToListAsync();
-            return payments;
-        }
-
-
         public async Task<List<Payment>> GetPaymentsOfCourse(string courseId)
         {
             var list = await _context.Payments.Where(p => p.CourseId == courseId).ToListAsync();
@@ -42,7 +33,7 @@ namespace GymMarket.API.Repositories
             var payment = await _context.Payments.Where(p => p.PaymentId == paymentId).FirstOrDefaultAsync();
             if (payment != null)
             {
-                payment.PaymentStatus = "Paid";
+                payment.PaymentStatus = PaymentStatus.Paid;
                 _context.Payments.Update(payment);
                 await _context.SaveChangesAsync();
             }
@@ -54,7 +45,7 @@ namespace GymMarket.API.Repositories
             var payment = await _context.Payments.Where(p => p.PaymentId == model.PaymentId).FirstOrDefaultAsync();
             if (payment != null)
             {
-                payment.PaymentStatus = "Canceled";
+                payment.PaymentStatus = PaymentStatus.Canceled;
                 payment.Note = model.Note;
 
                 _context.Payments.Update(payment);

@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using GymMarket.API.DTOs.CourseRating;
-using GymMarket.API.Models;
-using GymMarket.API.Repositories;
+﻿using GymMarket.API.DTOs.CourseRating;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,8 +21,9 @@ namespace GymMarket.API.Controllers
         [HttpPost("add-course-rating")]
         public async Task<IActionResult> AddCourseRating(CourseRatingCreateDto courseRatingCreateDTO)
         {
-            var resposen = await _courseRatingRepository.AddRating(courseRatingCreateDTO);
-            return StatusCode(resposen.StatusCode, resposen.Message);
+            var response = await _courseRatingRepository.AddRating(courseRatingCreateDTO);
+
+            return StatusCode(response.StatusCode, response.Message);
         }
 
         [HttpGet("get-course-rating/{courseId}")]

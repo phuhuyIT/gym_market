@@ -1,4 +1,3 @@
-using AutoMapper;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.CourseRating;
 using GymMarket.API.DTOs.Response;
@@ -11,12 +10,10 @@ namespace GymMarket.API.Repositories
     public class CourseRatingRepository : ICourseRatingRepository
     {
         private readonly GymMarketContext _context;
-        private readonly IMapper _mapper;
 
-        public CourseRatingRepository(GymMarketContext context, IMapper mapper)
+        public CourseRatingRepository(GymMarketContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<ApiResponse> AddRating(CourseRatingCreateDto courseRatingCreateDTO)
@@ -24,27 +21,25 @@ namespace GymMarket.API.Repositories
             var courseRating = new CourseRating
             {
                 CourseId = courseRatingCreateDTO.CourseId,
-                RatingId = courseRatingCreateDTO.RatingId,
+                RatingId = Guid.NewGuid().ToString(),
                 RatingValue = courseRatingCreateDTO.RatingValue,
                 ReviewComment = courseRatingCreateDTO.ReviewComment,
                 StudentId = courseRatingCreateDTO.StudentId,
             };
 
-            var ratings = await _context.CourseRatings
-                   .AsNoTrackingWithIdentityResolution().Where(c => c.CourseId == courseRating.CourseId)
-                   .Select(c => c.RatingValue)
-                   .ToListAsync();
-
-            var averageRating = (ratings.Sum() + courseRating.RatingValue) / (ratings.Count() + 1);
+            var existingSum = await _context.CourseRatings
+                   .Where(c => c.CourseId == courseRating.CourseId)
+                   .SumAsync(c => c.RatingValue) ?? 0;
+            var existingCount = await _context.CourseRatings
+                   .CountAsync(c => c.CourseId == courseRating.CourseId);
+            var averageRating = (existingSum + courseRating.RatingValue) / (existingCount + 1);
 
             var course = await _context.Courses
-                .AsNoTrackingWithIdentityResolution()
                 .Where(c => c.CourseId == courseRating.CourseId)
                 .FirstOrDefaultAsync();
             if (course != null)
             {
                 course.Rating = averageRating;
-                _context.Courses.Update(course);
             }
             _context.CourseRatings.Add(courseRating);
             var r = await _context.SaveChangesAsync();

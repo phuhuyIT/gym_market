@@ -14,6 +14,9 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
     [Fact]
     public async Task SearchFoodNutrition_ReturnsOk()
     {
+        // Arrange
+        await AuthenticateAsync();
+
         // Act
         var response = await Client.GetAsync("/api/FoodNutrition/search-nutrition?search=apple");
 
@@ -24,6 +27,9 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
     [Fact]
     public async Task GetFoodNutritionUser_ReturnsOk()
     {
+        // Arrange
+        await AuthenticateAsync();
+
         // Act
         var response = await Client.GetAsync("/api/FoodNutrition/get-nutrition-user/user1");
 
@@ -35,6 +41,7 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
     public async Task CalCaloricValue_WithValidData_ReturnsOk()
     {
         // Arrange
+        await AuthenticateAsync();
         var model = new AddFoodNutritionUser
         {
             UserId = "user1",

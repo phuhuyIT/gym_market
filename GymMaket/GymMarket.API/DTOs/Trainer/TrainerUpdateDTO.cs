@@ -36,7 +36,7 @@ namespace GymMarket.API.DTOs.Trainer
 
         public DateTime? UpdatedAt { get; set; }
 
-        [Required(ErrorMessage = "TrainerId is required.")]
+        [Required(ErrorMessage = "UserId is required.")]
         public string UserId { get; set; } = string.Empty;
     }
 }

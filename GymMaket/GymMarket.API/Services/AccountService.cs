@@ -4,7 +4,6 @@ using GymMarket.API.DTOs.Response.Account;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 
 namespace GymMarket.API.Services
 {
@@ -147,10 +146,10 @@ namespace GymMarket.API.Services
                                 TrainerId = Guid.NewGuid().ToString(),
                                 Name = payload.Name,
                                 Email = payload.Email,
-                                ProfilePicture = payload.Picture ?? "https://cdn-icons-png.flaticon.com/512/236/236832.png",
+                                ProfilePicture = payload.Picture ?? Defaults.StudentAvatarUrl,
                                 CreatedAt = DateTime.UtcNow,
                                 UpdatedAt = DateTime.UtcNow,
-                                Rating = 0,
+                                Rating = Defaults.DefaultRating,
                                 Experience = 0,
                                 UserId = user.Id
                             };
@@ -163,7 +162,7 @@ namespace GymMarket.API.Services
                                 StudentId = Guid.NewGuid().ToString(),
                                 Name = payload.Name,
                                 Email = payload.Email,
-                                ProfilePicture = payload.Picture ?? "https://cdn-icons-png.flaticon.com/512/236/236832.png",
+                                ProfilePicture = payload.Picture ?? Defaults.StudentAvatarUrl,
                                 CreatedAt = DateTime.UtcNow,
                                 UpdatedAt = DateTime.UtcNow,
                                 UserId = user.Id

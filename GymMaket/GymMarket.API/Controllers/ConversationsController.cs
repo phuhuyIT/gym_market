@@ -24,7 +24,7 @@ namespace GymMarket.API.Controllers
             return StatusCode(res.StatusCode, new { res.Errors, res.Message });
         }
 
-        [HttpGet("GetConversationOfUser/{userId}")]
+        [HttpGet("get-conversation-of-user/{userId}")]
         public async Task<IActionResult> GetConversationOfUser(string userId)
         {
             var conversations = await _conversationRepository.GetConversationOfUser(userId);
@@ -38,7 +38,7 @@ namespace GymMarket.API.Controllers
             return Ok(messages);
         }
 
-        [HttpGet("seen-message/{userId}/{conversationId}")]
+        [HttpPost("seen-message/{userId}/{conversationId}")]
         public async Task<IActionResult> SeenMessage(string userId, int conversationId)
         {
             await _conversationRepository.SeenMessage(userId, conversationId);

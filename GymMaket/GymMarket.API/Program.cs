@@ -1,5 +1,4 @@
 ﻿using GymMarket.API.Data;
-using GymMarket.API.DTOs.Momo;
 using GymMarket.API.Hubs;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories;
@@ -114,7 +113,7 @@ builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<ILectureRepository, LectureRepository>();
 builder.Services.AddScoped<ILectureMaterialRepository, LectureMaterialRepository>();
-builder.Services.AddScoped<FoodNutritionRepository>();
+builder.Services.AddScoped<IFoodNutritionRepository, FoodNutritionRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));

@@ -1,12 +1,14 @@
-﻿namespace GymMarket.API.DTOs.CourseRegistration
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GymMarket.API.DTOs.CourseRegistration
 {
     public class CourseRegistrationCreateDto
     {
-        public string RegistrationId { get; set; } = null!;
+        [Required(ErrorMessage = "CourseId is required.")]
+        public string CourseId { get; set; } = null!;
 
-        public string? CourseId { get; set; }
-
-        public string? StudentId { get; set; }
+        [Required(ErrorMessage = "StudentId is required.")]
+        public string StudentId { get; set; } = null!;
 
         public string? RegistrationType { get; set; }
 
@@ -21,9 +23,5 @@
         public decimal? AdditionalFeaturesPayment { get; set; }
 
         public string? ContractAgreement { get; set; }
-
-        public DateTime? CreatedAt { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
     }
 }

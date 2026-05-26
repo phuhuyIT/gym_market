@@ -8,6 +8,7 @@ namespace GymMarket.API.DTOs.Account
         [Display(Name = "Full Name")]
         public string FullName { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "{0} is required")]
         [EmailAddress(ErrorMessage = "Invalid email format")]
         public string Email { get; set; } = string.Empty;
 

@@ -2,8 +2,6 @@
 {
     public class CourseRegistrationUpdateDto
     {
-        public string RegistrationId { get; set; } = null!;
-
         public string? CourseId { get; set; }
 
         public string? StudentId { get; set; }
@@ -21,9 +19,5 @@
         public decimal? AdditionalFeaturesPayment { get; set; }
 
         public string? ContractAgreement { get; set; }
-
-        public DateTime? CreatedAt { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
     }
 }
