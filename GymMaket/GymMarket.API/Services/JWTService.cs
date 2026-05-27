@@ -109,7 +109,7 @@ namespace GymMarket.API.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.Name, user.FullName!),
-                new Claim(ClaimTypes.HomePhone, string.IsNullOrEmpty(user.PhoneNumber) == false ? user.PhoneNumber : ""),
+                new Claim("homePhone", string.IsNullOrEmpty(user.PhoneNumber) == false ? user.PhoneNumber : ""),
                 new Claim("trainerId", string.IsNullOrEmpty(trainerId) == false ? trainerId : ""),
                 new Claim("studentId", string.IsNullOrEmpty(studentId) == false ? studentId : ""),
                 new Claim("avatar", string.IsNullOrEmpty(user.Avatar) == false ? user.Avatar : Defaults.AvatarUrl),

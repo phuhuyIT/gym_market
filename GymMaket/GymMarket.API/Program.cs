@@ -157,12 +157,15 @@ app.UseExceptionHandler(appError =>
 {
     appError.Run(async context =>
     {
+        var exceptionFeature = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+        var error = exceptionFeature?.Error;
         context.Response.StatusCode = 500;
         context.Response.ContentType = "application/json";
         await context.Response.WriteAsJsonAsync(new
         {
             statusCode = 500,
-            message = "An unexpected error occurred. Please try again later."
+            message = "An unexpected error occurred. Please try again later.",
+            detail = app.Environment.IsDevelopment() ? error?.ToString() : null
         });
     });
 });
