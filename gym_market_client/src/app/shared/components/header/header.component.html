@@ -47,9 +47,11 @@
           >
             @if (userStore.role() === ROLES.TRAINER) {
               <a routerLink="/agency/your-profile" class="dropdown-item">Profile Info</a>
+              <a routerLink="/agency/account-settings" class="dropdown-item">Settings</a>
               <a routerLink="/chat/chat-list" class="dropdown-item">Chats</a>
             } @else {
               <a routerLink="/client/your-profile" class="dropdown-item">Profile Info</a>
+              <a routerLink="/client/account-settings" class="dropdown-item">Settings</a>
               <a routerLink="/client/course-registration" class="dropdown-item">My courses</a>
               <a routerLink="/chat/chat-list" class="dropdown-item">Chats</a>
             }

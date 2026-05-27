@@ -7,6 +7,7 @@ import { CourseOptionListComponent } from './course-option-list/course-option-li
 import { YourProfileComponent } from './your-profile/your-profile.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { ListPaymentsComponent } from './list-payments/list-payments.component';
+import { AccountSettingsComponent } from '../account-settings/account-settings.component';
 
 export const routes: Routes = [
 	{
@@ -20,6 +21,7 @@ export const routes: Routes = [
 			{ path: 'course-option-list', component: CourseOptionListComponent, title: 'Danh sách option của course' },
 			{ path: 'your-profile', component: YourProfileComponent, title: 'Thông tin cá nhân' },
 			{ path: 'edit-profile', component: UpdateProfileComponent, title: 'Chỉnh sửa hồ sơ' },
+			{ path: 'account-settings', component: AccountSettingsComponent, title: 'Account Settings' },
 			{ path: 'get-payments/:courseId', component: ListPaymentsComponent, title: 'Payments' },
 		],
 	},

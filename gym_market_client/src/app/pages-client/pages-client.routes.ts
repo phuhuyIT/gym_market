@@ -9,6 +9,7 @@ import { CourseDetailsComponent } from './course-details/course-details.componen
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { CourseRegistrationComponent } from './course-registration/course-registration.component';
 import { FoodNutritionCalculatorComponent } from './food-nutrition-calculator/food-nutrition-calculator.component';
+import { AccountSettingsComponent } from '../account-settings/account-settings.component';
 
 export const routes: Routes = [
 	{
@@ -19,6 +20,7 @@ export const routes: Routes = [
 			{ path: 'home-client', component: HomeComponent, title: 'Home' },
 			{ path: 'your-profile', component: YourProfileComponent, title: 'Your profile' },
 			{ path: 'update-profile', component: UpdateProfileComponent, title: 'Update profile' },
+			{ path: 'account-settings', component: AccountSettingsComponent, title: 'Account Settings' },
 			{ path: 'find-trainer', component: TrainerListComponent, title: 'Find trainer' },
 			{ path: 'trainer-details/:id', component: TrainerDetailsComponent, title: 'Trainer details' },
 			{ path: 'course-search', component: CourseSearchComponent, title: 'Course search' },

@@ -90,6 +90,7 @@ export class HeaderComponent {
 	}
 
 	logout() {
+		this.accountService.apiLogout().subscribe({ complete: () => {} });
 		this.accountService.logout();
 		this.router.navigateByUrl('');
 	}
