@@ -122,7 +122,7 @@ builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericReposito
 builder.Services.AddScoped<IJwtService, JWTService>();
 builder.Services.AddScoped<IPasswordSignInService, PasswordSignInService>();
 builder.Services.AddScoped<MinIOService>();
-builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 
 

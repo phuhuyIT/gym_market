@@ -43,6 +43,7 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
     public virtual DbSet<FileCourse> FileCourses { get; set; }
     public virtual DbSet<FoodNutrition> FoodNutritions { get; set; }
     public virtual DbSet<FoodNutritionUser> FoodNutritionUsers { get; set; }
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public GymMarketContext(DbContextOptions<GymMarketContext> options)
         : base(options)
@@ -535,6 +536,15 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasOne(d => d.AppUser).WithOne(p => p.Trainer)
                 .HasForeignKey<Trainer>(d => d.UserId)
                 .HasConstraintName("FK_Trainer_AppUser");
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasIndex(e => e.Token).IsUnique();
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.SeedData();

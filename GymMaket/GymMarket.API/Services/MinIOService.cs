@@ -16,6 +16,7 @@ namespace GymMarket.API.Services
 
         public static readonly string IMAGE_COURSES = "imagecourses";
         public static readonly string VIDEO_COURSES = "videocourses";
+        public static readonly string AVATARS = "avatars";
         public static readonly string IMAGE_TYPE = "IMAGE";
         public static readonly string VIDEO_TYPE = "VIDEO";
 
@@ -127,6 +128,23 @@ namespace GymMarket.API.Services
             await _minioClient.SetPolicyAsync(new SetPolicyArgs()
                 .WithBucket(bucketName)
                 .WithPolicy(publicPolicy));
+        }
+
+        public async Task<string> UploadSingleFileAsync(IFormFile file, string bucketName)
+        {
+            await EnsureBucketExists(bucketName);
+            string objectName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            using var stream = file.OpenReadStream();
+            var putObjectArgs = new PutObjectArgs()
+                .WithStreamData(stream)
+                .WithBucket(bucketName)
+                .WithObjectSize(file.Length)
+                .WithObject(objectName)
+                .WithContentType(file.ContentType);
+            await _minioClient.PutObjectAsync(putObjectArgs);
+
+            return $"{_configuration.GetSection("MinIO")["Protocol"]}://{_configuration.GetSection("MinIO")["Endpoint"]}/{bucketName}/{objectName}";
         }
 
         public async Task<ApiResponse> DeleteFile(DeleteFile deleteFile)
