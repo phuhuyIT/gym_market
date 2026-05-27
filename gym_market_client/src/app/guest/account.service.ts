@@ -5,23 +5,38 @@ import { patchState } from '@ngrx/signals';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Login } from './models/login.model';
 import { SignUp } from './models/signup.model';
 import { StudentSignup } from './models/student-sign-up.model';
 import { TrainerSignup } from './models/trainer-sign-up.model';
-import { LoginResponse, SignupResponse, UserTokenPayload } from '../core/models/auth.model';
+import {
+	ApiResponse,
+	AvatarUploadResponse,
+	Enable2FAResponse,
+	LockoutStatusResponse,
+	LoginResponse,
+	SignupResponse,
+	UserTokenPayload,
+} from '../core/models/auth.model';
 import { ROLES } from '../utilities/roles.const';
+
+const TOKEN_KEY = 'gym-token';
+const REFRESH_TOKEN_KEY = 'gym-refresh-token';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class AccountService {
-	private _token$ = new BehaviorSubject<string | null>(localStorage.getItem('gym-token'));
+	private _token$ = new BehaviorSubject<string | null>(localStorage.getItem(TOKEN_KEY));
 	readonly token$ = this._token$.asObservable();
 
 	get token(): string | null {
 		return this._token$.value;
+	}
+
+	get refreshToken(): string | null {
+		return localStorage.getItem(REFRESH_TOKEN_KEY);
 	}
 
 	constructor(private http: HttpClient) {
@@ -32,14 +47,16 @@ export class AccountService {
 	private listenForCrossTabAuthChanges(): void {
 		if (typeof window === 'undefined') return;
 		window.addEventListener('storage', event => {
-			if (event.key !== null && event.key !== 'gym-token') return;
-			const fresh = localStorage.getItem('gym-token');
+			if (event.key !== null && event.key !== TOKEN_KEY) return;
+			const fresh = localStorage.getItem(TOKEN_KEY);
 			if (fresh === this._token$.value) return;
 			this._token$.next(fresh);
 			this.checkLogin();
 		});
 	}
 	userStore = inject(UserStore);
+
+	// ── Auth ──────────────────────────────────────────────────────
 
 	login(model: Login): Observable<LoginResponse> {
 		return this.http.post<LoginResponse>(`${environment.baseApi}/accounts/login`, model);
@@ -52,6 +69,68 @@ export class AccountService {
 	googleLogin(idToken: string, role?: string): Observable<LoginResponse> {
 		return this.http.post<LoginResponse>(`${environment.baseApi}/accounts/google-login`, { idToken, role });
 	}
+
+	apiRefreshToken(): Observable<LoginResponse> {
+		const rt = this.refreshToken;
+		if (!rt) return of({ success: false, token: '', refreshToken: '', message: '', errors: ['NO_REFRESH_TOKEN'] });
+		return this.http.post<LoginResponse>(`${environment.baseApi}/accounts/refresh-token`, { refreshToken: rt });
+	}
+
+	apiLogout(): Observable<ApiResponse> {
+		return this.http.post<ApiResponse>(`${environment.baseApi}/accounts/logout`, {});
+	}
+
+	// ── Profile ───────────────────────────────────────────────────
+
+	updateProfile(model: { fullName?: string; address?: string }): Observable<ApiResponse> {
+		return this.http.put<ApiResponse>(`${environment.baseApi}/accounts/profile`, model);
+	}
+
+	changePassword(model: { currentPassword: string; newPassword: string; confirmNewPassword: string }): Observable<ApiResponse> {
+		return this.http.put<ApiResponse>(`${environment.baseApi}/accounts/change-password`, model);
+	}
+
+	uploadAvatar(file: File): Observable<AvatarUploadResponse> {
+		const formData = new FormData();
+		formData.append('file', file);
+		return this.http.post<AvatarUploadResponse>(`${environment.baseApi}/accounts/avatar`, formData);
+	}
+
+	// ── Email Confirmation ────────────────────────────────────────
+
+	sendEmailConfirmation(): Observable<ApiResponse> {
+		return this.http.post<ApiResponse>(`${environment.baseApi}/accounts/send-email-confirmation`, {});
+	}
+
+	confirmEmail(model: { userId: string; token: string }): Observable<ApiResponse> {
+		return this.http.post<ApiResponse>(`${environment.baseApi}/accounts/confirm-email`, model);
+	}
+
+	// ── Two-Factor Authentication ─────────────────────────────────
+
+	enable2FA(): Observable<Enable2FAResponse> {
+		return this.http.post<Enable2FAResponse>(`${environment.baseApi}/accounts/2fa/enable`, {});
+	}
+
+	verify2FA(code: string): Observable<ApiResponse> {
+		return this.http.post<ApiResponse>(`${environment.baseApi}/accounts/2fa/verify`, { code });
+	}
+
+	disable2FA(): Observable<ApiResponse> {
+		return this.http.post<ApiResponse>(`${environment.baseApi}/accounts/2fa/disable`, {});
+	}
+
+	// ── Lockout (Admin) ───────────────────────────────────────────
+
+	getLockoutStatus(userId: string): Observable<LockoutStatusResponse> {
+		return this.http.get<LockoutStatusResponse>(`${environment.baseApi}/accounts/lockout/${userId}`);
+	}
+
+	unlockAccount(userId: string): Observable<ApiResponse> {
+		return this.http.post<ApiResponse>(`${environment.baseApi}/accounts/lockout/${userId}/unlock`, {});
+	}
+
+	// ── Google OAuth ──────────────────────────────────────────────
 
 	loadGoogleLibrary(): Promise<void> {
 		return new Promise((resolve) => {
@@ -76,8 +155,13 @@ export class AccountService {
 		return this.http.post<void>(`${environment.baseApi}/trainer`, model);
 	}
 
-	saveToken(token: string): void {
-		localStorage.setItem('gym-token', token);
+	// ── Token Management ──────────────────────────────────────────
+
+	saveToken(token: string, refreshToken?: string): void {
+		localStorage.setItem(TOKEN_KEY, token);
+		if (refreshToken) {
+			localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+		}
 		this._token$.next(token);
 		this.checkLogin();
 	}
@@ -118,6 +202,7 @@ export class AccountService {
 					trainerId: decoded.trainerId,
 					studentId: decoded.studentId,
 					avatar: decoded.avatar,
+					email: decoded.email,
 					role: decoded.role || null,
 				});
 			} catch (e) {
@@ -138,7 +223,8 @@ export class AccountService {
 	}
 
 	logout(): void {
-		localStorage.removeItem('gym-token');
+		localStorage.removeItem(TOKEN_KEY);
+		localStorage.removeItem(REFRESH_TOKEN_KEY);
 		this._token$.next(null);
 		patchState(this.userStore, { fullName: 'Welcome', id: null, phoneNumber: '', role: null });
 	}

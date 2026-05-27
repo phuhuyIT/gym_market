@@ -1,0 +1,180 @@
+<div class="wrapper">
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+
+  <div class="container animate-fade-in">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Account Settings</h1>
+      <p class="page-subtitle">Manage your security, profile photo, and account preferences</p>
+    </div>
+
+    <div class="settings-grid">
+
+      <!-- ── Avatar Upload ───────────────────────── -->
+      <section class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="card-title">Profile Photo</h2>
+            <p class="card-desc">Upload a new avatar image (max 5 MB)</p>
+          </div>
+        </div>
+
+        <div class="avatar-upload-area">
+          <div class="avatar-preview-wrap">
+            <img [src]="avatarPreview()" [alt]="userStore.fullName()" class="avatar-preview-img" />
+          </div>
+          <div class="avatar-controls">
+            <label class="file-label">
+              <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" (change)="onFileSelected($event)" class="file-input" />
+              <span class="file-btn">Choose File</span>
+            </label>
+            @if (selectedFile) {
+              <span class="file-name">{{ selectedFile.name }}</span>
+            }
+          </div>
+        </div>
+
+        @if (selectedFile) {
+          <div class="card-actions">
+            <gm-button variant="primary" [loading]="avatarLoading()" (clicked)="uploadAvatar()">Upload Avatar</gm-button>
+          </div>
+        }
+      </section>
+
+      <!-- ── Change Password ─────────────────────── -->
+      <section class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="card-title">Change Password</h2>
+            <p class="card-desc">Update your password to keep your account secure</p>
+          </div>
+        </div>
+
+        <div class="form-stack">
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" class="form-input" placeholder="Enter current password" [(ngModel)]="passwordModel.currentPassword" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">New Password</label>
+              <input type="password" class="form-input" placeholder="8-16 characters" [(ngModel)]="passwordModel.newPassword" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm New Password</label>
+              <input type="password" class="form-input" placeholder="Re-enter password" [(ngModel)]="passwordModel.confirmNewPassword" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <gm-button variant="primary" [loading]="passwordLoading()" (clicked)="onChangePassword()">Update Password</gm-button>
+        </div>
+      </section>
+
+      <!-- ── Email Confirmation ──────────────────── -->
+      <section class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="card-title">Email Verification</h2>
+            <p class="card-desc">Verify your email address to unlock all features</p>
+          </div>
+        </div>
+
+        <div class="email-status">
+          @if (emailConfirmSent()) {
+            <div class="status-badge status-badge--success">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="status-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Confirmation email sent! Check your inbox.</span>
+            </div>
+          } @else {
+            <p class="email-hint">Click below to receive a verification link at <strong>{{ userStore.email() }}</strong></p>
+          }
+        </div>
+
+        <div class="card-actions">
+          <gm-button variant="primary" [loading]="emailConfirmLoading()" [disabled]="emailConfirmSent()" (clicked)="onSendEmailConfirmation()">
+            {{ emailConfirmSent() ? 'Email Sent' : 'Send Verification Email' }}
+          </gm-button>
+        </div>
+      </section>
+
+      <!-- ── Two-Factor Authentication ───────────── -->
+      <section class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="card-title">Two-Factor Authentication</h2>
+            <p class="card-desc">Add an extra layer of security with an authenticator app</p>
+          </div>
+        </div>
+
+        @if (twoFAEnabled()) {
+          <div class="twofa-status">
+            <div class="status-badge status-badge--success">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="status-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Two-factor authentication is <strong>enabled</strong></span>
+            </div>
+          </div>
+          <div class="card-actions">
+            <gm-button variant="secondary" [loading]="twoFALoading()" (clicked)="onDisable2FA()">Disable 2FA</gm-button>
+          </div>
+        } @else if (twoFASetup()) {
+          <!-- Setup flow -->
+          <div class="twofa-setup">
+            <div class="qr-section">
+              <p class="setup-step">1. Scan this QR code with your authenticator app</p>
+              <img [src]="getQrImageUrl(twoFASetup()!.qrCodeUri)" alt="2FA QR Code" class="qr-image" />
+            </div>
+            <div class="key-section">
+              <p class="setup-step">2. Or enter this key manually</p>
+              <div class="shared-key">{{ twoFASetup()!.sharedKey }}</div>
+            </div>
+            <div class="verify-section">
+              <p class="setup-step">3. Enter the 6-digit code from your app</p>
+              <div class="verify-row">
+                <input type="text" class="form-input verify-input" placeholder="000000" maxlength="6" [(ngModel)]="verifyCode" (keyup.enter)="onVerify2FA()" />
+                <gm-button variant="primary" [loading]="verifyLoading()" (clicked)="onVerify2FA()">Verify</gm-button>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div class="twofa-status">
+            <p class="twofa-hint">Protect your account by requiring a code from an authenticator app when you sign in.</p>
+          </div>
+          <div class="card-actions">
+            <gm-button variant="primary" [loading]="twoFALoading()" (clicked)="onEnable2FA()">Enable 2FA</gm-button>
+          </div>
+        }
+      </section>
+
+    </div>
+  </div>
+</div>

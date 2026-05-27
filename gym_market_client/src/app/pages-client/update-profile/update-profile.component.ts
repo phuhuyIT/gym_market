@@ -14,6 +14,8 @@ import { UpdateUserDto } from '../../user/models/update-user.dto';
 import { HttpErrorBody } from '../../core/models/auth.model';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
 import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { AccountService } from '../../guest/account.service';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
     selector: 'app-update-profile',
@@ -32,12 +34,12 @@ export class UpdateProfileComponent implements OnInit {
 	noticeModal = inject(NoticeModalStore);
 	private destroyRef = inject(DestroyRef);
 
-	showAvatarInput = false;
 	showPasswordModal = false;
+	avatarPreviewUrl: string | null = null;
+	private avatarFile: File | null = null;
 
-	toggleAvatarInput() {
-		this.showAvatarInput = !this.showAvatarInput;
-	}
+	private accountService = inject(AccountService);
+	private toastService = inject(ToastService);
 
 	constructor(
 		private studentService: StudentService,
@@ -45,6 +47,47 @@ export class UpdateProfileComponent implements OnInit {
 		private userService: UserService,
 		private formBuilder: FormBuilder
 	) {}
+
+	onAvatarFileSelected(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (!input.files?.length) return;
+		const file = input.files[0];
+
+		const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+		if (!allowedTypes.includes(file.type)) {
+			this.toastService.show('Only JPEG, PNG, WebP, and GIF images are allowed', 'error');
+			return;
+		}
+		if (file.size > 5 * 1024 * 1024) {
+			this.toastService.show('File must be under 5 MB', 'error');
+			return;
+		}
+
+		this.avatarFile = file;
+		const reader = new FileReader();
+		reader.onload = () => (this.avatarPreviewUrl = reader.result as string);
+		reader.readAsDataURL(file);
+	}
+
+	private uploadAvatarIfNeeded(): Promise<void> {
+		if (!this.avatarFile) return Promise.resolve();
+		return new Promise((resolve, reject) => {
+			this.accountService
+				.uploadAvatar(this.avatarFile!)
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: res => {
+						if (res.success) {
+							this.updateForm.patchValue({ profilePicture: res.avatarUrl });
+							patchState(this.userStore, { avatar: res.avatarUrl });
+							this.avatarFile = null;
+						}
+						resolve();
+					},
+					error: () => reject(),
+				});
+		});
+	}
 
 	ngOnInit() {
 		this.updateForm = this.formBuilder.group({
@@ -149,7 +192,7 @@ export class UpdateProfileComponent implements OnInit {
 		this.showPasswordModal = false;
 	}
 
-	confirmUpdate(password: string) {
+	async confirmUpdate(password: string) {
 		if (!password || password.trim().length === 0) {
 			patchState(this.errorModal, {
 				isShow: true,
@@ -161,6 +204,16 @@ export class UpdateProfileComponent implements OnInit {
 		const studentId = this.userStore.studentId();
 		if (!studentId) return;
 
+		this.showPasswordModal = false;
+		patchState(this.loader, { isShow: true });
+
+		try {
+			await this.uploadAvatarIfNeeded();
+		} catch {
+			patchState(this.loader, { isShow: false });
+			return;
+		}
+
 		const formValues = this.updateForm.getRawValue();
 
 		const studentUpdate: UpdateStudentProfileDto = {
@@ -171,9 +224,6 @@ export class UpdateProfileComponent implements OnInit {
 			password: password,
 		};
 
-		this.showPasswordModal = false;
-
-		patchState(this.loader, { isShow: true });
 		this.studentService
 			.updateStudentProfile(studentUpdate, studentId)
 			.pipe(takeUntilDestroyed(this.destroyRef))
