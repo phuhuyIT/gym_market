@@ -4,15 +4,20 @@ export interface Conversation {
   hasNewMessage: boolean;
   lastMessage: string;
   avatar: string;
+  isGroup: boolean;
+  role?: string;
+  memberCount?: number;
 }
 
 export interface Message {
   id?: number;
   content: string;
   senderId: string | null;
+  senderName?: string;
   sentAt?: string;
   conversationId: number;
   avatar?: string;
+  type?: string;
 }
 
 export interface SendMessageDto {
@@ -22,6 +27,37 @@ export interface SendMessageDto {
 }
 
 export interface CreateConversationDto {
-  trainerId: string;
-  studentId: string;
+  senderId: string;
+  recieveId: string;
+}
+
+export interface CreateGroupDto {
+  name: string;
+  avatarUrl?: string;
+  memberIds: string[];
+}
+
+export interface AddMembersDto {
+  conversationId: number;
+  userIds: string[];
+}
+
+export interface UpdateMemberRoleDto {
+  conversationId: number;
+  userId: string;
+  role: string;
+}
+
+export interface GroupMember {
+  userId: string;
+  fullName: string;
+  avatar: string;
+  role: string;
+}
+
+export interface UserSearchResult {
+  id: string;
+  fullName: string;
+  avatar: string;
+  email: string;
 }

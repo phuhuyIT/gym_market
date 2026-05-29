@@ -8,5 +8,9 @@
         public bool HasNewMessage { get; set; }
 
         public string Avatar { get; set; } = string.Empty;
+
+        public bool IsGroup { get; set; }
+        public string Role { get; set; } = string.Empty;
+        public int MemberCount { get; set; }
     }
 }

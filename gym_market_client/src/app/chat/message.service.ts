@@ -17,8 +17,9 @@ export class MessageService {
 	}
 
 	seenMessage(userId: string | null, conversationId: number): Observable<void> {
-		return this.http.get<void>(
-			`${environment.baseApi}/Conversations/seen-message/${userId}/${conversationId}`
+		return this.http.post<void>(
+			`${environment.baseApi}/Conversations/seen-message/${userId}/${conversationId}`,
+			{}
 		);
 	}
 }

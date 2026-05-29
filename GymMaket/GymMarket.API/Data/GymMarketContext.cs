@@ -547,6 +547,23 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<Conversation>(entity =>
+        {
+            entity.Property(e => e.IsGroup).HasDefaultValue(false);
+        });
+
+        modelBuilder.Entity<ConversationParticipant>(entity =>
+        {
+            entity.Property(e => e.Role).HasMaxLength(20).HasDefaultValue(ParticipantRoles.Member);
+            entity.Property(e => e.JoinedAt).HasDefaultValueSql("(getdate())");
+        });
+
+        modelBuilder.Entity<UserMessage>(entity =>
+        {
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Type).HasMaxLength(20).HasDefaultValue(MessageTypes.Text);
+        });
+
         modelBuilder.SeedData();
     }
 

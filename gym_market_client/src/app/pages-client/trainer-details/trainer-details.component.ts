@@ -145,15 +145,15 @@ export class TrainerDetailsComponent implements OnInit {
 	onSendMessage() {
 		if (!this.trainerInfo) return;
 
-		const studentId = this.userStore.studentId();
-		if (!studentId) {
+		const senderId = this.userStore.id();
+		if (!senderId) {
 			this.router.navigateByUrl('/login');
 			return;
 		}
 
 		const model = {
-			trainerId: this.trainerId,
-			studentId: studentId,
+			senderId: senderId,
+			recieveId: this.trainerInfo.userId,
 		};
 
 		patchState(this.loader, { isShow: true });

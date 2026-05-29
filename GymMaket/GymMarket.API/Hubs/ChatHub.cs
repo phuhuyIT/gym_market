@@ -16,6 +16,20 @@ namespace GymMarket.API.Hubs
             _conversationRepository = conversationRepository;
         }
 
+        public override async Task OnConnectedAsync()
+        {
+            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var conversationIds = await _conversationRepository.GetConversationIdsOfUser(userId);
+                foreach (var conversationId in conversationIds)
+                {
+                    await Groups.AddToGroupAsync(Context.ConnectionId, conversationId.ToString());
+                }
+            }
+            await base.OnConnectedAsync();
+        }
+
         public async Task JoinRoom(string roomName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
@@ -35,8 +49,8 @@ namespace GymMarket.API.Hubs
             }
 
             message.SenderId = userId;
-            await _conversationRepository.SendMessage(message);
-            await Clients.Group(roomName).SendAsync("ReceiveMessage", message);
+            var saved = await _conversationRepository.SendMessage(message);
+            await Clients.Group(roomName).SendAsync("ReceiveMessage", saved);
         }
     }
 }
