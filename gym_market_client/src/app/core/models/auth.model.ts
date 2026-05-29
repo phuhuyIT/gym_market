@@ -17,7 +17,7 @@ export interface UserTokenPayload {
   nameid: string;
   unique_name: string;
   email: string;
-  role: string;
+  role: string | string[];
   exp: number;
   homePhone?: string;
   trainerId?: string;

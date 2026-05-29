@@ -1,0 +1,70 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal create-group-modal" (click)="$event.stopPropagation()">
+    <div class="modal__close" (click)="onClose()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </div>
+
+    <h2 class="cg-title">New group</h2>
+
+    <label class="cg-label">Group name</label>
+    <input
+      type="text"
+      class="cg-input"
+      placeholder="e.g. Morning Workout Squad"
+      [(ngModel)]="groupName"
+      maxlength="100"
+    />
+
+    @if (selected.length > 0) {
+      <div class="cg-chips">
+        @for (member of selected; track member.id) {
+          <span class="cg-chip">
+            <img [src]="member.avatar || DEFAULT_AVATAR_URL" alt="">
+            {{ member.fullName }}
+            <button class="cg-chip-remove" (click)="toggleMember(member)" aria-label="Remove">×</button>
+          </span>
+        }
+      </div>
+    }
+
+    <label class="cg-label">Add members</label>
+    <input
+      type="text"
+      class="cg-input"
+      placeholder="Search by name or email"
+      [ngModel]="searchQuery"
+      (ngModelChange)="onSearchChange($event)"
+    />
+
+    <div class="cg-results">
+      @for (user of results; track user.id) {
+        <button class="cg-result-item" [class.selected]="isSelected(user)" (click)="toggleMember(user)">
+          <img [src]="user.avatar || DEFAULT_AVATAR_URL" alt="" class="cg-result-avatar">
+          <div class="cg-result-info">
+            <span class="cg-result-name">{{ user.fullName }}</span>
+            <span class="cg-result-email">{{ user.email }}</span>
+          </div>
+          @if (isSelected(user)) {
+            <span class="cg-check">✓</span>
+          }
+        </button>
+      }
+      @if (results.length === 0 && searchQuery) {
+        <p class="cg-empty">No users found</p>
+      }
+    </div>
+
+    @if (error) {
+      <p class="cg-error">{{ error }}</p>
+    }
+
+    <div class="cg-actions">
+      <button class="cg-btn cg-btn--ghost" (click)="onClose()">Cancel</button>
+      <button class="cg-btn cg-btn--primary" [disabled]="!canCreate" (click)="createGroup()">
+        {{ submitting ? 'Creating…' : 'Create group' }}
+      </button>
+    </div>
+  </div>
+</div>

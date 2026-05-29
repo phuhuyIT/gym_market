@@ -12,6 +12,9 @@ namespace GymMarket.API.Models
         public string SenderId { get; set; } = string.Empty;
         public int ConversationId { get; set; }
 
+        public DateTime CreatedAt { get; set; }
+        public string Type { get; set; } = MessageTypes.Text;
+
         public AppUser? AppUser { get; set; }
     }
 }

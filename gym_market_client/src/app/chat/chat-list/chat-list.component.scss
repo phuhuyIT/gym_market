@@ -974,3 +974,26 @@ $selected-chat-bg: #6b8afd;
   }
 }
 
+.msg-sender {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: $primary-blue;
+  margin-bottom: 2px;
+}
+
+.system-message {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0;
+
+  span {
+    font-size: 11.5px;
+    color: $muted-gray-blue;
+    background: $light-blue-bg;
+    padding: 4px 12px;
+    border-radius: 12px;
+    text-align: center;
+  }
+}
+

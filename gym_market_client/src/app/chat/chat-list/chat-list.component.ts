@@ -13,11 +13,14 @@ import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Conversation, Message } from '../../core/models/conversation.model';
 import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { CreateGroupComponent } from '../create-group/create-group.component';
+import { GroupMembersComponent } from '../group-members/group-members.component';
+import { NewConversationComponent } from '../new-conversation/new-conversation.component';
 
 @Component({
     selector: 'app-chat-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FormsModule, DatePipe],
+    imports: [FormsModule, DatePipe, CreateGroupComponent, GroupMembersComponent, NewConversationComponent],
     templateUrl: './chat-list.component.html',
     styleUrl: './chat-list.component.scss'
 })
@@ -42,6 +45,14 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 	conversationUrl: string = '';
 	roomName: string = '';
 	conversationId: number = 0;
+
+	activeIsGroup = false;
+	activeRole = '';
+	activeMemberCount = 0;
+
+	showCreateGroup = false;
+	showNewConversation = false;
+	showMembers = false;
 
 	message = '';
 
@@ -80,21 +91,29 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 			);
 			if (chatConver) {
 				chatConver.lastMessage = message.content;
-				if (message.senderId !== this.userStore.id()) {
+				if (message.senderId !== this.userStore.id() && message.conversationId !== this.conversationId) {
 					chatConver.hasNewMessage = true;
 				}
 			}
 
 			if (message.conversationId === this.conversationId) {
 				this.messages.push({
+					id: message.id,
 					avatar: message.avatar,
 					content: message.content,
 					conversationId: message.conversationId,
 					senderId: message.senderId,
+					senderName: message.senderName,
+					sentAt: message.sentAt,
+					type: message.type,
 				});
 				this.shouldScrollToBottom = true;
 			}
 			this.cdr.markForCheck();
+		});
+
+		this.chatHupService.onGroupUpdated(() => {
+			this.getConversations();
 		});
 	}
 
@@ -122,6 +141,44 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 		this.conversationUrl = '';
 		this.conversationId = 0;
 		this.messages = [];
+		this.activeIsGroup = false;
+		this.activeRole = '';
+		this.activeMemberCount = 0;
+		this.showMembers = false;
+	}
+
+	openCreateGroup() {
+		this.showCreateGroup = true;
+	}
+
+	onGroupCreated() {
+		this.showCreateGroup = false;
+		this.getConversations();
+	}
+
+	openNewConversation() {
+		this.showNewConversation = true;
+	}
+
+	onConversationCreated() {
+		this.showNewConversation = false;
+		this.getConversations();
+	}
+
+	openMembers() {
+		if (this.activeIsGroup) {
+			this.showMembers = true;
+		}
+	}
+
+	onLeftGroup() {
+		this.showMembers = false;
+		this.clearConversation();
+		this.getConversations();
+	}
+
+	onMembersChanged() {
+		this.getConversations();
 	}
 
 	logout() {
@@ -158,6 +215,10 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 		this.conversationUrl = item.avatar;
 		this.conversationId = item.conversationId;
 		this.roomName = item.conversationId.toString();
+		this.activeIsGroup = item.isGroup;
+		this.activeRole = item.role ?? '';
+		this.activeMemberCount = item.memberCount ?? 0;
+		this.showMembers = false;
 	}
 
 	sendMessage(): void {

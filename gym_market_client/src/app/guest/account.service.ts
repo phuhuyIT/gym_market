@@ -170,6 +170,14 @@ export class AccountService {
 		return this.userStore.role();
 	}
 
+	// The JWT may carry one role (string) or several (array). Reduce it to the
+	// single highest-priority recognized role so route guards can compare directly.
+	private normalizeRole(role: string | string[] | null | undefined): string | null {
+		const roles = Array.isArray(role) ? role : role ? [role] : [];
+		const priority = [ROLES.ADMIN, ROLES.TRAINER, ROLES.STUDENT];
+		return priority.find(r => roles.includes(r)) ?? null;
+	}
+
 	isLoggedIn(): boolean {
 		const token = this.token;
 		if (token === null) {
@@ -203,7 +211,7 @@ export class AccountService {
 					studentId: decoded.studentId,
 					avatar: decoded.avatar,
 					email: decoded.email,
-					role: decoded.role || null,
+					role: this.normalizeRole(decoded.role),
 				});
 			} catch (e) {
 				this.logout();

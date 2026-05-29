@@ -9,6 +9,8 @@ namespace GymMarket.API.Models
         public string LastMessage { get; set; } = string.Empty;
         public bool HasNewMessage { get; set; }
 
+        public string Role { get; set; } = ParticipantRoles.Member;
+        public DateTime JoinedAt { get; set; }
 
         public int ConversationId { get; set; }
         public string UserId { get; set; } = string.Empty;

@@ -30,7 +30,7 @@
           </div>
         </button>
 
-        <button class="nav-item">
+        <button class="nav-item" (click)="openCreateGroup()">
           <div class="nav-icon-box">
             <svg viewBox="0 0 24 24" width="20" height="20">
               <path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
@@ -38,7 +38,7 @@
           </div>
           <div class="nav-item-text">
             <span class="nav-title">Groups</span>
-            <span class="nav-sub">meeting</span>
+            <span class="nav-sub">create group</span>
           </div>
         </button>
 
@@ -116,11 +116,17 @@
             </svg>
           </button>
         </div>
-        <button class="new-chat-btn" aria-label="New conversation">
+        <button class="new-chat-btn" aria-label="New message" (click)="openNewConversation()">
+          <svg viewBox="0 0 24 24" width="14" height="14">
+            <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V9h2v2zm0-4h-2V5h2v2z"/>
+          </svg>
+          <span>New message</span>
+        </button>
+        <button class="new-chat-btn" aria-label="New group" (click)="openCreateGroup()">
           <svg viewBox="0 0 24 24" width="14" height="14">
             <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
           </svg>
-          <span>New conversation</span>
+          <span>New group</span>
         </button>
       </div>
 
@@ -179,7 +185,11 @@
               </div>
               <div class="header-info">
                 <h3 class="header-name">{{conversationName}}</h3>
-                <span class="header-status">Active now</span>
+                @if (activeIsGroup) {
+                  <span class="header-status">{{ activeMemberCount }} members</span>
+                } @else {
+                  <span class="header-status">Active now</span>
+                }
               </div>
             </div>
             <div class="header-actions">
@@ -193,6 +203,13 @@
                   <path fill="currentColor" d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
                 </svg>
               </button>
+              @if (activeIsGroup) {
+                <button class="header-btn" aria-label="Group members" (click)="openMembers()">
+                  <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                  </svg>
+                </button>
+              }
               <button class="header-btn" aria-label="More options">
                 <svg viewBox="0 0 24 24" width="20" height="20">
                   <path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
@@ -209,50 +226,41 @@
                   <p class="start-text">This is the start of your conversation</p>
                 </div>
               }
-              
-              <!-- Mock divider to match the design style -->
-              <div class="time-divider">
-                <span class="divider-line"></span>
-                <span class="divider-text">yesterday, 9:30 pm</span>
-                <span class="divider-line"></span>
-              </div>
 
               @for (msg of messages; track msg; let i = $index) {
-                <div
-                  class="message"
-                  [class.message--out]="msg.senderId === userStore.id()"
-                  [class.message--in]="msg.senderId !== userStore.id()"
-                >
-                  @if (msg.senderId !== userStore.id()) {
-                    <div class="msg-avatar">
-                      <img [src]="msg.avatar || conversationUrl || DEFAULT_AVATAR_URL" alt="">
-                    </div>
-                  }
-                  <div class="msg-bubble">
-                    <p class="msg-text">{{msg.content}}</p>
-                    <span class="msg-meta">
-                      <span class="msg-time">{{msg.sentAt ? (msg.sentAt | date:'HH:mm') : ''}}</span>
-                      @if (msg.senderId === userStore.id()) {
-                        <svg class="msg-check" viewBox="0 0 16 11" width="14" height="10">
-                          <path fill="currentColor" d="M11.07.66L4.43 7.3 2.14 5.01.73 6.42l3.7 3.7 8.05-8.05z"/>
-                          <path fill="currentColor" d="M14.07.66L7.43 7.3 6.83 6.7l-1.41 1.41 2.01 2.01 8.05-8.05z"/>
-                        </svg>
+                @if (msg.type === 'system') {
+                  <div class="system-message">
+                    <span>{{ msg.content }}</span>
+                  </div>
+                } @else {
+                  <div
+                    class="message"
+                    [class.message--out]="msg.senderId === userStore.id()"
+                    [class.message--in]="msg.senderId !== userStore.id()"
+                  >
+                    @if (msg.senderId !== userStore.id()) {
+                      <div class="msg-avatar">
+                        <img [src]="msg.avatar || conversationUrl || DEFAULT_AVATAR_URL" alt="">
+                      </div>
+                    }
+                    <div class="msg-bubble">
+                      @if (activeIsGroup && msg.senderId !== userStore.id() && msg.senderName) {
+                        <span class="msg-sender">{{ msg.senderName }}</span>
                       }
-                    </span>
+                      <p class="msg-text">{{msg.content}}</p>
+                      <span class="msg-meta">
+                        <span class="msg-time">{{msg.sentAt ? (msg.sentAt | date:'HH:mm') : ''}}</span>
+                        @if (msg.senderId === userStore.id()) {
+                          <svg class="msg-check" viewBox="0 0 16 11" width="14" height="10">
+                            <path fill="currentColor" d="M11.07.66L4.43 7.3 2.14 5.01.73 6.42l3.7 3.7 8.05-8.05z"/>
+                            <path fill="currentColor" d="M14.07.66L7.43 7.3 6.83 6.7l-1.41 1.41 2.01 2.01 8.05-8.05z"/>
+                          </svg>
+                        }
+                      </span>
+                    </div>
                   </div>
-                </div>
+                }
               }
-              
-              <!-- Typing Indicator Mockup -->
-              <div class="message message--in typing-indicator-msg">
-                <div class="msg-bubble typing-bubble">
-                  <div class="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -311,4 +319,28 @@
       }
     </main>
   </div>
+
+  @if (showCreateGroup) {
+    <app-create-group
+      (close)="showCreateGroup = false"
+      (created)="onGroupCreated()"
+    ></app-create-group>
+  }
+
+  @if (showNewConversation) {
+    <app-new-conversation
+      (close)="showNewConversation = false"
+      (created)="onConversationCreated()"
+    ></app-new-conversation>
+  }
+
+  @if (showMembers && activeIsGroup) {
+    <app-group-members
+      [conversationId]="conversationId"
+      [groupName]="conversationName"
+      (close)="showMembers = false"
+      (left)="onLeftGroup()"
+      (changed)="onMembersChanged()"
+    ></app-group-members>
+  }
 </div>

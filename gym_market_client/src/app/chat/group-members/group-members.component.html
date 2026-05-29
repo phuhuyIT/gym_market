@@ -1,0 +1,71 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal members-modal" (click)="$event.stopPropagation()">
+    <div class="modal__close" (click)="onClose()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </div>
+
+    <h2 class="gm-title">{{ groupName }}</h2>
+    <p class="gm-subtitle">{{ members.length }} members</p>
+
+    @if (canManage) {
+      <button class="gm-add-toggle" (click)="showAdd = !showAdd">
+        {{ showAdd ? 'Done adding' : '+ Add members' }}
+      </button>
+
+      @if (showAdd) {
+        <input
+          type="text"
+          class="gm-search"
+          placeholder="Search by name or email"
+          [ngModel]="searchQuery"
+          (ngModelChange)="onSearchChange($event)"
+        />
+        <div class="gm-search-results">
+          @for (user of results; track user.id) {
+            <button class="gm-result" (click)="addMember(user)">
+              <img [src]="user.avatar || DEFAULT_AVATAR_URL" alt="">
+              <span class="gm-result-name">{{ user.fullName }}</span>
+              <span class="gm-add-icon">+</span>
+            </button>
+          }
+          @if (results.length === 0 && searchQuery) {
+            <p class="gm-empty">No users found</p>
+          }
+        </div>
+      }
+    }
+
+    <div class="gm-list">
+      @for (member of members; track member.userId) {
+        <div class="gm-member">
+          <img [src]="member.avatar || DEFAULT_AVATAR_URL" alt="" class="gm-avatar">
+          <div class="gm-member-info">
+            <span class="gm-name">
+              {{ member.fullName }}
+              @if (isSelf(member)) { <span class="gm-you">(you)</span> }
+            </span>
+            <span class="gm-role" [class.gm-role--owner]="member.role === 'Owner'">{{ member.role }}</span>
+          </div>
+
+          <div class="gm-member-actions">
+            @if (isOwner && member.role === 'Member') {
+              <button class="gm-action" (click)="setRole(member, 'Admin')">Make admin</button>
+            }
+            @if (isOwner && member.role === 'Admin') {
+              <button class="gm-action" (click)="setRole(member, 'Member')">Remove admin</button>
+            }
+            @if (canManage && !isSelf(member) && member.role !== 'Owner') {
+              <button class="gm-action gm-action--danger" (click)="removeMember(member)">Remove</button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="gm-footer">
+      <button class="gm-leave" (click)="leaveGroup()">Leave group</button>
+    </div>
+  </div>
+</div>
