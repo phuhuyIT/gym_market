@@ -139,7 +139,9 @@
           >
             <div class="conv-avatar">
               <img [src]="item.avatar || DEFAULT_AVATAR_URL" alt="Avatar">
-              <span class="online-dot"></span>
+              @if (item.isOnline) {
+                <span class="online-dot"></span>
+              }
             </div>
             <div class="conv-body">
               <div class="conv-top">
@@ -181,14 +183,18 @@
               </button>
               <div class="header-avatar">
                 <img [src]="conversationUrl || DEFAULT_AVATAR_URL" alt="Avatar">
-                <span class="online-dot"></span>
+                @if (activeIsOnline) {
+                  <span class="online-dot"></span>
+                }
               </div>
               <div class="header-info">
                 <h3 class="header-name">{{conversationName}}</h3>
                 @if (activeIsGroup) {
                   <span class="header-status">{{ activeMemberCount }} members</span>
-                } @else {
+                } @else if (activeIsOnline) {
                   <span class="header-status">Active now</span>
+                } @else {
+                  <span class="header-status">{{ lastSeenText(activeLastSeen) }}</span>
                 }
               </div>
             </div>

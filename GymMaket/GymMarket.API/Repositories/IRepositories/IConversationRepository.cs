@@ -20,5 +20,6 @@ namespace GymMarket.API.Repositories.IRepositories
         Task<UserMessageDto?> SendMessage(SendMessageDto model);
         Task<List<UserMessageDto>> GetMessages(int conversationId);
         Task<List<int>> GetConversationIdsOfUser(string userId);
+        Task UpdateLastSeen(string userId, DateTime lastSeen);
     }
 }

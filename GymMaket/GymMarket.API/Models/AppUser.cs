@@ -8,6 +8,7 @@ namespace GymMarket.API.Models
         public string? Address { get; set; }
         public string? Avatar { get; set; }
         public string? Status { get; set; }
+        public DateTime? LastSeen { get; set; }
         // link to Student and Trainer
         public virtual Student? Student { get; set; }
         public virtual Trainer? Trainer { get; set; }

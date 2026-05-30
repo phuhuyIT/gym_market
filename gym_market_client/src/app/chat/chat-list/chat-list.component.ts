@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnDestroy, OnInit, ChangeDetectionStrategy, ElementRef, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, OnInit, ChangeDetectionStrategy, ElementRef, ViewChild, AfterViewChecked, ChangeDetectorRef, NgZone } from '@angular/core';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { UserStore } from '../../stores/user.store';
 import { ConversationService } from '../conversation.service';
@@ -38,6 +38,7 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 	userStore = inject(UserStore);
 	private destroyRef = inject(DestroyRef);
 	private cdr = inject(ChangeDetectorRef);
+	private ngZone = inject(NgZone);
 	private accountService = inject(AccountService);
 	private router = inject(Router);
 
@@ -49,6 +50,9 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 	activeIsGroup = false;
 	activeRole = '';
 	activeMemberCount = 0;
+	activeOtherUserId: string | null = null;
+	activeIsOnline = false;
+	activeLastSeen: string | null = null;
 
 	showCreateGroup = false;
 	showNewConversation = false;
@@ -85,36 +89,94 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 		this.getConversations();
 
 		this.chatHupService.startConnection();
+		// SignalR callbacks can fire outside Angular's zone, so run them inside
+		// ngZone to guarantee change detection picks up the updates.
 		this.chatHupService.onMessageReceived((message: Message) => {
-			const chatConver = this.chats.find(
-				(c: Conversation) => c.conversationId === message.conversationId
-			);
-			if (chatConver) {
-				chatConver.lastMessage = message.content;
-				if (message.senderId !== this.userStore.id() && message.conversationId !== this.conversationId) {
-					chatConver.hasNewMessage = true;
+			this.ngZone.run(() => {
+				const chatConver = this.chats.find(
+					(c: Conversation) => c.conversationId === message.conversationId
+				);
+				if (chatConver) {
+					chatConver.lastMessage = message.content;
+					if (message.senderId !== this.userStore.id() && message.conversationId !== this.conversationId) {
+						chatConver.hasNewMessage = true;
+					}
 				}
-			}
 
-			if (message.conversationId === this.conversationId) {
-				this.messages.push({
-					id: message.id,
-					avatar: message.avatar,
-					content: message.content,
-					conversationId: message.conversationId,
-					senderId: message.senderId,
-					senderName: message.senderName,
-					sentAt: message.sentAt,
-					type: message.type,
-				});
-				this.shouldScrollToBottom = true;
-			}
-			this.cdr.markForCheck();
+				if (message.conversationId === this.conversationId) {
+					this.messages.push({
+						id: message.id,
+						avatar: message.avatar,
+						content: message.content,
+						conversationId: message.conversationId,
+						senderId: message.senderId,
+						senderName: message.senderName,
+						sentAt: message.sentAt,
+						type: message.type,
+					});
+					this.shouldScrollToBottom = true;
+				}
+				this.cdr.markForCheck();
+			});
 		});
 
 		this.chatHupService.onGroupUpdated(() => {
-			this.getConversations();
+			this.ngZone.run(() => this.getConversations());
 		});
+
+		this.chatHupService.onUserOnline((userId: string) => {
+			this.ngZone.run(() => this.applyPresence(userId, true, null));
+		});
+
+		this.chatHupService.onUserOffline((userId: string, lastSeen: string) => {
+			this.ngZone.run(() => this.applyPresence(userId, false, lastSeen));
+		});
+	}
+
+	private applyPresence(userId: string, isOnline: boolean, lastSeen: string | null) {
+		for (const chat of this.chats) {
+			if (chat.otherUserId === userId) {
+				chat.isOnline = isOnline;
+				if (lastSeen) {
+					chat.lastSeen = lastSeen;
+				}
+			}
+		}
+
+		if (this.activeOtherUserId === userId) {
+			this.activeIsOnline = isOnline;
+			if (lastSeen) {
+				this.activeLastSeen = lastSeen;
+			}
+		}
+		this.cdr.markForCheck();
+	}
+
+	lastSeenText(lastSeen: string | null): string {
+		if (!lastSeen) {
+			return 'Offline';
+		}
+		const then = new Date(lastSeen).getTime();
+		if (isNaN(then)) {
+			return 'Offline';
+		}
+		const diffMs = Date.now() - then;
+		const minutes = Math.floor(diffMs / 60000);
+		if (minutes < 1) {
+			return 'Last seen just now';
+		}
+		if (minutes < 60) {
+			return `Last seen ${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+		}
+		const hours = Math.floor(minutes / 60);
+		if (hours < 24) {
+			return `Last seen ${hours} hour${hours === 1 ? '' : 's'} ago`;
+		}
+		const days = Math.floor(hours / 24);
+		if (days < 7) {
+			return `Last seen ${days} day${days === 1 ? '' : 's'} ago`;
+		}
+		return `Last seen on ${new Date(lastSeen).toLocaleDateString()}`;
 	}
 
 	private getConversations() {
@@ -128,9 +190,11 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 					next: res => {
 						patchState(this.loader, { isShow: false });
 						this.chats = res;
+						this.cdr.markForCheck();
 					},
 					error: () => {
 						patchState(this.loader, { isShow: false });
+						this.cdr.markForCheck();
 					},
 				});
 		}
@@ -144,6 +208,9 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 		this.activeIsGroup = false;
 		this.activeRole = '';
 		this.activeMemberCount = 0;
+		this.activeOtherUserId = null;
+		this.activeIsOnline = false;
+		this.activeLastSeen = null;
 		this.showMembers = false;
 	}
 
@@ -218,6 +285,9 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 		this.activeIsGroup = item.isGroup;
 		this.activeRole = item.role ?? '';
 		this.activeMemberCount = item.memberCount ?? 0;
+		this.activeOtherUserId = item.otherUserId ?? null;
+		this.activeIsOnline = item.isOnline ?? false;
+		this.activeLastSeen = item.lastSeen ?? null;
 		this.showMembers = false;
 	}
 
