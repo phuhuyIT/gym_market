@@ -5,7 +5,7 @@ import { patchState } from '@ngrx/signals';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Login } from './models/login.model';
 import { SignUp } from './models/signup.model';
 import { StudentSignup } from './models/student-sign-up.model';
@@ -93,7 +93,32 @@ export class AccountService {
 	uploadAvatar(file: File): Observable<AvatarUploadResponse> {
 		const formData = new FormData();
 		formData.append('file', file);
-		return this.http.post<AvatarUploadResponse>(`${environment.baseApi}/accounts/avatar`, formData);
+		return this.http.post<AvatarUploadResponse>(`${environment.baseApi}/accounts/avatar`, formData).pipe(
+			tap(res => {
+				if (res.success && res.avatarUrl) {
+					// Reflect the new avatar in the store immediately, and refresh the
+					// JWT so the avatar claim survives a page reload (checkLogin re-reads
+					// it from the token). Without this, reloading reverts to the old avatar.
+					patchState(this.userStore, { avatar: res.avatarUrl });
+					this.refreshSession();
+				}
+			})
+		);
+	}
+
+	// Rotates the access token using the stored refresh token. The new JWT is rebuilt
+	// from the current DB user, so any server-side profile change (e.g. avatar) is
+	// picked up. Fire-and-forget: if there's no refresh token the in-session store
+	// update above still stands for the rest of this session.
+	private refreshSession(): void {
+		this.apiRefreshToken().subscribe({
+			next: res => {
+				if (res.success && res.token) {
+					this.saveToken(res.token, res.refreshToken);
+				}
+			},
+			error: () => {},
+		});
 	}
 
 	// ── Email Confirmation ────────────────────────────────────────

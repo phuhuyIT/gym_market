@@ -95,7 +95,7 @@ namespace GymMarket.API.Services
                     {
                         TypeFile = fileType,
                         ObjectId = objectName,
-                        Url = $"{_configuration.GetSection("MinIO")["Protocol"]}://{_configuration.GetSection("MinIO")["Endpoint"]}/{bucketName}/{objectName}",
+                        Url = BuildPublicUrl(bucketName, objectName),
                         CourseId = courseId,
                     });
                 }
@@ -144,7 +144,23 @@ namespace GymMarket.API.Services
                 .WithContentType(file.ContentType);
             await _minioClient.PutObjectAsync(putObjectArgs);
 
-            return $"{_configuration.GetSection("MinIO")["Protocol"]}://{_configuration.GetSection("MinIO")["Endpoint"]}/{bucketName}/{objectName}";
+            return BuildPublicUrl(bucketName, objectName);
+        }
+
+        // Builds the URL used by the browser to fetch an uploaded object.
+        // When MinIO:PublicBaseUrl is set (e.g. a CDN or public MinIO host in production),
+        // it is used as the absolute base. Otherwise a relative path is returned so the
+        // object is fetched through the app's own origin (the dev-server proxy forwards
+        // /{bucket}/* to MinIO), which works in local dev and forwarded environments alike.
+        private string BuildPublicUrl(string bucketName, string objectName)
+        {
+            var publicBaseUrl = _configuration.GetSection("MinIO")["PublicBaseUrl"];
+            if (!string.IsNullOrWhiteSpace(publicBaseUrl))
+            {
+                return $"{publicBaseUrl.TrimEnd('/')}/{bucketName}/{objectName}";
+            }
+
+            return $"/{bucketName}/{objectName}";
         }
 
         public async Task<ApiResponse> DeleteFile(DeleteFile deleteFile)
