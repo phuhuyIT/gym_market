@@ -1,28 +1,15 @@
-import { Component, inject , ChangeDetectionStrategy } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
-
-import { AccountService } from '../guest/account.service';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from '../shared/components/header/header.component';
+import { FooterComponent } from '../shared/components/footer/footer.component';
 
 @Component({
     selector: 'app-course-agency',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterOutlet, RouterLink, RouterLinkActive],
+    imports: [RouterOutlet, HeaderComponent, FooterComponent],
     templateUrl: './course-agency.component.html',
     styleUrl: './course-agency.component.scss'
 })
 export class CourseAgencyComponent {
-  private accountService = inject(AccountService);
-  private router = inject(Router);
-
-  navLinks = [
-    { label: 'Dashboard', path: '/agency/course-list', icon: '📊' },
-    { label: 'My Profile', path: '/agency/your-profile', icon: '👤' },
-    { label: 'Messages', path: '/chat', icon: '💬' },
-    { label: 'Payments', path: '/agency/get-payments', icon: '💰' },
-  ];
-
-  logout() {
-    this.accountService.logout();
-    this.router.navigateByUrl('');
-  }
 }
+

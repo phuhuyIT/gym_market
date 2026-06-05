@@ -1,34 +1,14 @@
-<div class="dashboard">
-  <!-- Sidebar -->
-  <aside class="dashboard__sidebar gl-2">
-    <div class="sidebar__brand">
-      <h1 class="sidebar__logo">GYM MARKET</h1>
-      <span class="sidebar__role">TRAINER PORTAL</span>
-    </div>
+<div>
+  <div class="sticky top-0 z-10">
+    <app-header></app-header>
+  </div>
 
-    <nav class="sidebar__nav">
-      @for (link of navLinks; track link) {
-        <a
-          [routerLink]="link.path"
-          routerLinkActive="active"
-          class="sidebar__link"
-          >
-          <span class="sidebar__icon">{{link.icon}}</span>
-          <span class="sidebar__label">{{link.label}}</span>
-        </a>
-      }
-    </nav>
-
-    <div class="sidebar__footer">
-      <button (click)="logout()" class="sidebar__link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
-        <span class="sidebar__icon">🚪</span>
-        <span class="sidebar__label">Logout</span>
-      </button>
-    </div>
-  </aside>
-
-  <!-- Main Content Area -->
-  <main class="dashboard__content">
+  <div>
     <router-outlet></router-outlet>
-  </main>
+  </div>
+
+  <div>
+    <app-footer></app-footer>
+  </div>
 </div>
+
