@@ -13,7 +13,14 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// Allow large file uploads (e.g. course videos). Without this, Kestrel's
+// default ~28.6 MiB request-body limit rejects bigger files with 413.
+const long MaxUploadBytes = 100 * 1024 * 1024; // 100 MB
+builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = MaxUploadBytes);
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = MaxUploadBytes;
+});
 
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(Program));

@@ -73,6 +73,7 @@
             <td class="text-right">
               <div class="action-buttons">
                 <button class="action-btn" [routerLink]="'/agency/update-course/' + item.courseId" title="Edit">✏️</button>
+                <button class="action-btn" [routerLink]="'/agency/course-materials/' + item.courseId" title="Materials">📚</button>
                 <button class="action-btn" [routerLink]="'/agency/get-payments/' + item.courseId" title="Payments">💰</button>
                 <button class="action-btn delete" (click)="onShowDeleteModel(true, item.courseId)" title="Delete">🗑️</button>
               </div>

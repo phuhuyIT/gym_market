@@ -109,15 +109,25 @@ export class UpdateCourseComponent implements OnInit {
 		input.value = '';
 	}
 
+	private readonly maxVideoBytes = 100 * 1024 * 1024; // 100 MB, matches server limit
+
 	onSlectVideo(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
 			for (let i = 0; i < input.files.length; i++) {
 				const file = input.files[i];
+				if (file.size > this.maxVideoBytes) {
+					this.toastService.show(
+						`"${file.name}" is too large (max ${this.maxVideoBytes / 1024 / 1024} MB)`,
+						'error'
+					);
+					continue;
+				}
 				this.videosAdd.push(file);
 				const videoUrl = URL.createObjectURL(file);
 				this.dataVideos.push(videoUrl);
 			}
+			input.value = '';
 		}
 	}
 
@@ -149,10 +159,14 @@ export class UpdateCourseComponent implements OnInit {
 				this.toastService.show('Course updated successfully');
 				this.router.navigateByUrl('/agency/course-list');
 			},
-			error: () => {
+			error: err => {
 				this.loading = false;
 				patchState(this.loaderStore, { isShow: false });
-				this.toastService.show('Failed to update course', 'error');
+				const message =
+					err?.status === 413
+						? 'Upload too large. Please use smaller video/image files.'
+						: 'Failed to update course';
+				this.toastService.show(message, 'error');
 			},
 		});
 	}
