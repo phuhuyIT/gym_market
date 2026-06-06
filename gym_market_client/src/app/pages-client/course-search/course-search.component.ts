@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
 import { GmCardComponent } from '../../shared';
+import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
 
 @Component({
     selector: 'app-course-search',
@@ -58,12 +59,12 @@ export class CourseSearchComponent implements OnInit {
 	}
 
 	private loadBookmarks() {
-		const saved = localStorage.getItem('gym_bookmarked_courses');
+		const saved = localStorage.getItem(STORAGE_KEYS.bookmarkedCourses);
 		if (saved) {
 			try {
 				this.bookmarkedCourses = new Set(JSON.parse(saved));
-			} catch (e) {
-				console.error('Failed to parse bookmarks', e);
+			} catch {
+				localStorage.removeItem(STORAGE_KEYS.bookmarkedCourses);
 			}
 		}
 	}
@@ -76,7 +77,7 @@ export class CourseSearchComponent implements OnInit {
 		} else {
 			this.bookmarkedCourses.add(courseId);
 		}
-		localStorage.setItem('gym_bookmarked_courses', JSON.stringify(Array.from(this.bookmarkedCourses)));
+		localStorage.setItem(STORAGE_KEYS.bookmarkedCourses, JSON.stringify(Array.from(this.bookmarkedCourses)));
 		this.cdr.markForCheck();
 	}
 

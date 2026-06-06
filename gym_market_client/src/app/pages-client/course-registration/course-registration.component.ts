@@ -10,6 +10,7 @@ import { patchState } from '@ngrx/signals';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
+import { ACTIVITY_DAYS, RECOMMENDED_COURSES_FALLBACK } from '../../utilities/mock-data.const';
 
 @Component({
     selector: 'app-course-registration',
@@ -27,15 +28,7 @@ export class CourseRegistrationComponent implements OnInit {
 
 	// Activity widget properties
 	selectedActivityDay: string = 'Th';
-	activityDays = [
-		{ day: 'S', hours: 1, label: '1hr' },
-		{ day: 'M', hours: 1.5, label: '1hr 30m' },
-		{ day: 'T', hours: 2.5, label: '2hr 30m' },
-		{ day: 'W', hours: 2, label: '2hr' },
-		{ day: 'Th', hours: 3.5, label: '3hr 30min' },
-		{ day: 'F', hours: 3, label: '3hr' },
-		{ day: 'S', hours: 0.8, label: '48m' }
-	];
+	readonly activityDays = ACTIVITY_DAYS;
 
 	// Calendar widget properties
 	calendarDays: { name: string; date: number; active: boolean; dateObj: Date }[] = [];
@@ -76,56 +69,7 @@ export class CourseRegistrationComponent implements OnInit {
 	}
 
 	private getRecommendedCourses() {
-		const fallbacks: Course[] = [
-			{
-				courseId: 'rec-1',
-				trainerId: 'trainer-1',
-				title: 'Fundamental of UIUX Design',
-				description: 'Use Figma to get a job in UI design, UX design any where in the world',
-				type: 'Design',
-				category: 'Design & Creativity',
-				price: 99,
-				additionalPrice: 0,
-				startDate: '',
-				endDate: '',
-				duration: 8,
-				maxParticipants: 100,
-				rating: 4.8,
-				getFileDtos: [{ fileId: 'f1', courseId: 'rec-1', url: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=600&q=80', typeFile: 'IMAGE' }]
-			},
-			{
-				courseId: 'rec-2',
-				trainerId: 'trainer-2',
-				title: 'Figma UIUX Design Masterclass',
-				description: 'Use Figma to get a job in UI design, UX design any where in the world',
-				type: 'Design',
-				category: 'Data and Technology',
-				price: 129,
-				additionalPrice: 0,
-				startDate: '',
-				endDate: '',
-				duration: 12,
-				maxParticipants: 150,
-				rating: 4.5,
-				getFileDtos: [{ fileId: 'f2', courseId: 'rec-2', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80', typeFile: 'IMAGE' }]
-			},
-			{
-				courseId: 'rec-3',
-				trainerId: 'trainer-3',
-				title: 'Advanced Graphics & Visual Design',
-				description: 'Use Figma to get a job in UI design, UX design any where in the world',
-				type: 'Design',
-				category: 'Software Development',
-				price: 149,
-				additionalPrice: 0,
-				startDate: '',
-				endDate: '',
-				duration: 15,
-				maxParticipants: 80,
-				rating: 4.9,
-				getFileDtos: [{ fileId: 'f3', courseId: 'rec-3', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=600&q=80', typeFile: 'IMAGE' }]
-			}
-		];
+		const fallbacks = RECOMMENDED_COURSES_FALLBACK;
 
 		this.courseService.getCourses(1, 3, '', '').pipe(
 			takeUntilDestroyed(this.destroyRef)

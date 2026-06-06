@@ -8,6 +8,7 @@ import { Trainer } from '../../core/models/trainer.model';
 
 import { FormsModule } from '@angular/forms';
 import { GmCardComponent } from '../../shared/components/gm-card/gm-card.component';
+import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
 
 @Component({
     selector: 'app-trainer-list',
@@ -35,12 +36,12 @@ export class TrainerListComponent implements OnInit {
 	}
 
 	private loadBookmarks() {
-		const saved = localStorage.getItem('gym_bookmarked_trainers');
+		const saved = localStorage.getItem(STORAGE_KEYS.bookmarkedTrainers);
 		if (saved) {
 			try {
 				this.bookmarkedTrainers = new Set(JSON.parse(saved));
-			} catch (e) {
-				console.error('Failed to parse bookmarks', e);
+			} catch {
+				localStorage.removeItem(STORAGE_KEYS.bookmarkedTrainers);
 			}
 		}
 	}
@@ -91,7 +92,7 @@ export class TrainerListComponent implements OnInit {
 		} else {
 			this.bookmarkedTrainers.add(trainerId);
 		}
-		localStorage.setItem('gym_bookmarked_trainers', JSON.stringify(Array.from(this.bookmarkedTrainers)));
+		localStorage.setItem(STORAGE_KEYS.bookmarkedTrainers, JSON.stringify(Array.from(this.bookmarkedTrainers)));
 		this.cdr.markForCheck();
 	}
 

@@ -20,9 +20,10 @@ import {
 	UserTokenPayload,
 } from '../core/models/auth.model';
 import { ROLES } from '../utilities/roles.const';
+import { STORAGE_KEYS } from '../utilities/storage-keys.const';
 
-const TOKEN_KEY = 'gym-token';
-const REFRESH_TOKEN_KEY = 'gym-refresh-token';
+const TOKEN_KEY = STORAGE_KEYS.token;
+const REFRESH_TOKEN_KEY = STORAGE_KEYS.refreshToken;
 
 @Injectable({
 	providedIn: 'root',

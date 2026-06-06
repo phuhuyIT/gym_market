@@ -1,39 +1,32 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy, effect } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
-import { FormsModule } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
-import { ToastService } from '../../shared/services/toast.service';
 import { PaymentService } from '../payment.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-course-list',
+    selector: 'app-dashboard',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, FormsModule, CommonModule],
-    templateUrl: './course-list.component.html',
-    styleUrl: './course-list.component.scss'
+    imports: [RouterLink, CommonModule],
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.scss'
 })
-export class CourseListComponent implements OnInit {
+export class DashboardComponent implements OnInit {
 	courses: Course[] = [];
-	coursestemp: Course[] = [];
 	loaderStore = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
 	private cdr = inject(ChangeDetectorRef);
 	private paymentService = inject(PaymentService);
-	
-	isShowDeleteModal: boolean = false;
-	courseIdToDelete: string = '';
-	userStore = inject(UserStore);
-	toastService = inject(ToastService);
 
-	searchString: string = '';
+	userStore = inject(UserStore);
+
 	recentEnrollments: any[] = [];
 
 	mockEnrollments = [
@@ -43,13 +36,7 @@ export class CourseListComponent implements OnInit {
 		{ studentId: '2c67dfea-8fec-4c6f-b4ef-a887bd41f008', studentName: 'Casey Dooley', courseTitle: 'Yoga Flow & Flexibility', paymentAmount: 90, paymentStatus: 'Paid', date: '2026-05-24T08:15:00Z' }
 	];
 
-	constructor(private courseAgencyService: CourseAgencyService) {
-		// Sync with layout search bar
-		effect(() => {
-			const query = this.courseAgencyService.searchString();
-			this.search(query);
-		});
-	}
+	constructor(private courseAgencyService: CourseAgencyService) {}
 
 	ngOnInit() {
 		this.loadCourses();
@@ -63,8 +50,6 @@ export class CourseListComponent implements OnInit {
 			.subscribe({
 				next: res => {
 					this.courses = res;
-					// Filter immediately with current search string
-					this.search(this.courseAgencyService.searchString());
 					this.loadRecentEnrollments();
 					patchState(this.loaderStore, { isShow: false });
 					this.cdr.markForCheck();
@@ -83,13 +68,13 @@ export class CourseListComponent implements OnInit {
 		}
 
 		// Load payments for all courses of the trainer
-		const requests = this.courses.map(c => 
+		const requests = this.courses.map(c =>
 			this.paymentService.getPayments(c.courseId).pipe(
 				catchError(() => of([]))
 			)
 		);
 
-		forkJoin(requests).subscribe({
+		forkJoin(requests).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: (results) => {
 				const list: any[] = [];
 				results.forEach((payments, idx) => {
@@ -116,10 +101,6 @@ export class CourseListComponent implements OnInit {
 				this.cdr.markForCheck();
 			}
 		});
-	}
-
-	get firstThreeCourses(): Course[] {
-		return this.courses.slice(0, 3);
 	}
 
 	get displayEnrollments() {
@@ -173,47 +154,5 @@ export class CourseListComponent implements OnInit {
 			sum += courseId.charCodeAt(i);
 		}
 		return 35 + (sum % 51); // Returns a stable value between 35% and 85%
-	}
-
-	onShowDeleteModel(flag: boolean, courseIdToDelete: string) {
-		this.isShowDeleteModal = flag;
-		this.courseIdToDelete = courseIdToDelete;
-	}
-
-	onRemove() {
-		this.isShowDeleteModal = false;
-		patchState(this.loaderStore, { isShow: true });
-
-		this.courseAgencyService
-			.removeCourse(this.courseIdToDelete)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: () => {
-					patchState(this.loaderStore, { isShow: false });
-					this.toastService.show('Course removed successfully');
-					this.courses = this.courses.filter(x => x.courseId !== this.courseIdToDelete);
-					this.coursestemp = [...this.courses];
-					this.courseIdToDelete = '';
-					this.loadRecentEnrollments();
-					this.cdr.markForCheck();
-				},
-				error: err => {
-					patchState(this.loaderStore, { isShow: false });
-					this.toastService.show('Failed to remove course', 'error');
-				},
-			});
-	}
-
-	search(query?: string) {
-		const searchVal = query !== undefined ? query : this.searchString;
-		this.searchString = searchVal;
-		if (searchVal === '') {
-			this.coursestemp = this.courses;
-		} else {
-			this.coursestemp = this.courses.filter(c =>
-				c.title.toLowerCase().includes(searchVal.toLowerCase())
-			);
-		}
-		this.cdr.markForCheck();
 	}
 }

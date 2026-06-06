@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, catchError, EMPTY } from 'rxjs';
 import { UserStore } from '../../stores/user.store';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { patchState } from '@ngrx/signals';
@@ -15,6 +15,8 @@ import {
 	FoodNutritionUser,
 } from '../../core/models/food-nutrition.model';
 import { SEARCH_DEBOUNCE_MS } from '../../utilities/defaults.const';
+import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
+import { RECIPES_LIST, getFoodImage } from '../../utilities/mock-data.const';
 
 
 @Component({
@@ -74,45 +76,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	snacksLogs: FoodNutritionUser[] = [];
 	filteredLogs: FoodNutritionUser[] = [];
 
-	// Mock healthy recipes
-	recipesList = [
-		{
-			title: 'High Protein Chicken Salad',
-			desc: 'A fresh, high-protein salad featuring grilled chicken breast, spinach, cucumber, and a light olive oil vinaigrette.',
-			calories: 450,
-			protein: 42,
-			carbs: 12,
-			fat: 14,
-			image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&auto=format&fit=crop&q=60'
-		},
-		{
-			title: 'Avocado Toast & Eggs',
-			desc: 'Crisp sourdough toast topped with creamy mashed avocado, two poached eggs, and red pepper flakes.',
-			calories: 380,
-			protein: 18,
-			carbs: 24,
-			fat: 22,
-			image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&auto=format&fit=crop&q=60'
-		},
-		{
-			title: 'Mixed Berry Protein Shake',
-			desc: 'A delicious blend of organic berries, Greek yogurt, whey protein isolate, and unsweetened almond milk.',
-			calories: 290,
-			protein: 26,
-			carbs: 30,
-			fat: 4,
-			image: 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=400&auto=format&fit=crop&q=60'
-		},
-		{
-			title: 'Grilled Salmon & Quinoa Bowl',
-			desc: 'Wild-caught salmon served alongside a fluffy quinoa salad, steamed asparagus, and lemon herb drizzle.',
-			calories: 520,
-			protein: 38,
-			carbs: 35,
-			fat: 18,
-			image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=400&auto=format&fit=crop&q=60'
-		}
-	];
+	readonly recipesList = RECIPES_LIST;
 
 	constructor(private foodNutritionService: FoodNutritionService) {}
 
@@ -126,25 +90,30 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		this.getFoodNutritionUser();
 
 		this.searchInput.valueChanges
-			.pipe(debounceTime(SEARCH_DEBOUNCE_MS), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-			.subscribe(value => {
-				patchState(this.loader, { isShow: true });
-				if (this.isManualSelection) {
-					this.isManualSelection = false;
-					this.foods = [];
-					patchState(this.loader, { isShow: false });
-					return;
-				}
-				this.foodNutritionService.search(value).subscribe({
-					next: res => {
-						this.foods = res;
+			.pipe(
+				debounceTime(SEARCH_DEBOUNCE_MS),
+				distinctUntilChanged(),
+				switchMap(value => {
+					patchState(this.loader, { isShow: true });
+					if (this.isManualSelection) {
+						this.isManualSelection = false;
+						this.foods = [];
 						patchState(this.loader, { isShow: false });
-						this.cdr.markForCheck();
-					},
-					error: () => {
-						patchState(this.loader, { isShow: false });
-					},
-				});
+						return EMPTY;
+					}
+					return this.foodNutritionService.search(value).pipe(
+						catchError(() => {
+							patchState(this.loader, { isShow: false });
+							return EMPTY;
+						})
+					);
+				}),
+				takeUntilDestroyed(this.destroyRef)
+			)
+			.subscribe(res => {
+				this.foods = res;
+				patchState(this.loader, { isShow: false });
+				this.cdr.markForCheck();
 			});
 	}
 
@@ -194,20 +163,20 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	}
 
 	getMetadata(): Record<number, { date: string; mealType: string }> {
-		const data = localStorage.getItem('gym_market_nutrition_metadata');
+		const data = localStorage.getItem(STORAGE_KEYS.nutritionMetadata);
 		return data ? JSON.parse(data) : {};
 	}
 
 	setMetadata(id: number, date: string, mealType: string) {
 		const metadata = this.getMetadata();
 		metadata[id] = { date, mealType };
-		localStorage.setItem('gym_market_nutrition_metadata', JSON.stringify(metadata));
+		localStorage.setItem(STORAGE_KEYS.nutritionMetadata, JSON.stringify(metadata));
 	}
 
 	deleteMetadata(id: number) {
 		const metadata = this.getMetadata();
 		delete metadata[id];
-		localStorage.setItem('gym_market_nutrition_metadata', JSON.stringify(metadata));
+		localStorage.setItem(STORAGE_KEYS.nutritionMetadata, JSON.stringify(metadata));
 	}
 
 	updateFilteredLogs() {
@@ -228,7 +197,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		});
 
 		if (updated) {
-			localStorage.setItem('gym_market_nutrition_metadata', JSON.stringify(metadata));
+			localStorage.setItem(STORAGE_KEYS.nutritionMetadata, JSON.stringify(metadata));
 		}
 
 		// Filter logs for selected date
@@ -394,10 +363,10 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 
 	// Budget customization methods
 	loadBudgets() {
-		this.calorieBudget = Number(localStorage.getItem('gym_market_calorie_budget') || '2000');
-		this.carbsBudget = Number(localStorage.getItem('gym_market_carbs_budget') || '250');
-		this.fatBudget = Number(localStorage.getItem('gym_market_fat_budget') || '65');
-		this.proteinBudget = Number(localStorage.getItem('gym_market_protein_budget') || '130');
+		this.calorieBudget = Number(localStorage.getItem(STORAGE_KEYS.calorieBudget) || '2000');
+		this.carbsBudget = Number(localStorage.getItem(STORAGE_KEYS.carbsBudget) || '250');
+		this.fatBudget = Number(localStorage.getItem(STORAGE_KEYS.fatBudget) || '65');
+		this.proteinBudget = Number(localStorage.getItem(STORAGE_KEYS.proteinBudget) || '130');
 
 		this.calorieCtrl.setValue(this.calorieBudget);
 		this.carbsCtrl.setValue(this.carbsBudget);
@@ -411,10 +380,10 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		this.fatBudget = this.fatCtrl.value || 65;
 		this.proteinBudget = this.proteinCtrl.value || 130;
 
-		localStorage.setItem('gym_market_calorie_budget', this.calorieBudget.toString());
-		localStorage.setItem('gym_market_carbs_budget', this.carbsBudget.toString());
-		localStorage.setItem('gym_market_fat_budget', this.fatBudget.toString());
-		localStorage.setItem('gym_market_protein_budget', this.proteinBudget.toString());
+		localStorage.setItem(STORAGE_KEYS.calorieBudget, this.calorieBudget.toString());
+		localStorage.setItem(STORAGE_KEYS.carbsBudget, this.carbsBudget.toString());
+		localStorage.setItem(STORAGE_KEYS.fatBudget, this.fatBudget.toString());
+		localStorage.setItem(STORAGE_KEYS.proteinBudget, this.proteinBudget.toString());
 
 		patchState(this.notice, { isShow: true, message: 'Targets updated successfully!' });
 		this.updateFilteredLogs();
@@ -431,25 +400,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		return Math.round(Math.min(100, Math.max(0, (val / (target || 1)) * 100)));
 	}
 
-	getFoodImage(foodName: string): string {
-		const name = foodName.toLowerCase();
-		if (name.includes('chicken') || name.includes('poultry') || name.includes('meat') || name.includes('pork') || name.includes('beef')) {
-			return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&auto=format&fit=crop&q=60';
-		}
-		if (name.includes('salad') || name.includes('lettuce') || name.includes('vegetable') || name.includes('green') || name.includes('tomato') || name.includes('cabbage')) {
-			return 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&auto=format&fit=crop&q=60';
-		}
-		if (name.includes('egg') || name.includes('toast') || name.includes('bread') || name.includes('pancake') || name.includes('oat') || name.includes('cereal') || name.includes('butter')) {
-			return 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&auto=format&fit=crop&q=60';
-		}
-		if (name.includes('apple') || name.includes('banana') || name.includes('fruit') || name.includes('berry') || name.includes('orange') || name.includes('avocado') || name.includes('peach')) {
-			return 'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?w=400&auto=format&fit=crop&q=60';
-		}
-		if (name.includes('shake') || name.includes('smoothie') || name.includes('protein') || name.includes('milk') || name.includes('yogurt') || name.includes('juice') || name.includes('drink')) {
-			return 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=400&auto=format&fit=crop&q=60';
-		}
-		return 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=400&auto=format&fit=crop&q=60';
-	}
+	readonly getFoodImage = getFoodImage;
 
 	getFoodTag(item: FoodNutritionUser): string {
 		if (item.protein > 15) return 'High Protein';

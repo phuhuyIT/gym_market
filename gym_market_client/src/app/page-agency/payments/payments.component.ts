@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { patchState } from '@ngrx/signals';
@@ -13,23 +13,28 @@ import { NoticeModalStore } from '../../stores/notice.store';
 import { UserStore } from '../../stores/user.store';
 import { ToastService } from '../../shared/services/toast.service';
 import { Course } from '../../core/models/course.model';
-import { CancelPaymentDto, Payment } from '../../core/models/payment.model';
+import { CancelPaymentDto } from '../../core/models/payment.model';
 
 @Component({
-    selector: 'app-manage-students',
+    selector: 'app-payments',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, RouterLink, FormsModule, DecimalPipe, DatePipe],
-    templateUrl: './manage-students.component.html'
+    templateUrl: './payments.component.html'
 })
-export class ManageStudentsComponent implements OnInit {
+export class PaymentsComponent implements OnInit {
 	courses: Course[] = [];
-	allStudents: any[] = [];
-	filteredStudents: any[] = [];
+	allPayments: any[] = [];
+	filteredPayments: any[] = [];
 
 	searchString = '';
 	statusFilter = '';
-	
+	// optional context when navigated from a specific course or student
+	courseIdFilter = '';
+	courseTitleFilter = '';
+	studentIdFilter = '';
+	studentNameFilter = '';
+
 	// cancel modal state
 	showCancelModal = false;
 	paymentIdToCancel = '';
@@ -42,11 +47,35 @@ export class ManageStudentsComponent implements OnInit {
 	private destroyRef = inject(DestroyRef);
 	private cdr = inject(ChangeDetectorRef);
 	private paymentService = inject(PaymentService);
+	private activatedRoute = inject(ActivatedRoute);
+	private router = inject(Router);
 
 	constructor(private courseAgencyService: CourseAgencyService) {}
 
 	ngOnInit() {
+		this.activatedRoute.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+			this.courseIdFilter = params['courseId'] || '';
+			this.studentIdFilter = params['studentId'] || '';
+			this.updateContextLabels();
+			this.applyFilters();
+		});
 		this.loadData();
+	}
+
+	private updateContextLabels() {
+		const course = this.courses.find(c => c.courseId === this.courseIdFilter);
+		this.courseTitleFilter = course?.title ?? '';
+		const payment = this.allPayments.find(p => p.studentId === this.studentIdFilter);
+		this.studentNameFilter = payment?.studentName ?? '';
+	}
+
+	clearContextFilter() {
+		this.courseIdFilter = '';
+		this.courseTitleFilter = '';
+		this.studentIdFilter = '';
+		this.studentNameFilter = '';
+		this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: {} });
+		this.applyFilters();
 	}
 
 	loadData() {
@@ -57,7 +86,8 @@ export class ManageStudentsComponent implements OnInit {
 			.subscribe({
 				next: courses => {
 					this.courses = courses;
-					this.loadStudentsFromCourses();
+					this.updateContextLabels();
+					this.loadPaymentsFromCourses();
 				},
 				error: () => {
 					patchState(this.loaderStore, { isShow: false });
@@ -66,22 +96,22 @@ export class ManageStudentsComponent implements OnInit {
 			});
 	}
 
-	loadStudentsFromCourses() {
+	loadPaymentsFromCourses() {
 		if (this.courses.length === 0) {
-			this.allStudents = [];
-			this.filteredStudents = [];
+			this.allPayments = [];
+			this.filteredPayments = [];
 			patchState(this.loaderStore, { isShow: false });
 			this.cdr.markForCheck();
 			return;
 		}
 
-		const requests = this.courses.map(c => 
+		const requests = this.courses.map(c =>
 			this.paymentService.getPayments(c.courseId).pipe(
 				catchError(() => of([]))
 			)
 		);
 
-		forkJoin(requests).subscribe({
+		forkJoin(requests).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: (results) => {
 				const list: any[] = [];
 				results.forEach((payments, idx) => {
@@ -103,34 +133,43 @@ export class ManageStudentsComponent implements OnInit {
 
 				// Sort by registration date desc
 				list.sort((a, b) => new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime());
-				this.allStudents = list;
+				this.allPayments = list;
+				this.updateContextLabels();
 				this.applyFilters();
 				patchState(this.loaderStore, { isShow: false });
 				this.cdr.markForCheck();
 			},
 			error: () => {
 				patchState(this.loaderStore, { isShow: false });
-				this.toastService.show('Failed to load students', 'error');
+				this.toastService.show('Failed to load payments', 'error');
 			}
 		});
 	}
 
 	applyFilters() {
-		let result = this.allStudents;
-		
+		let result = this.allPayments;
+
+		if (this.courseIdFilter) {
+			result = result.filter(p => p.courseId === this.courseIdFilter);
+		}
+
+		if (this.studentIdFilter) {
+			result = result.filter(p => p.studentId === this.studentIdFilter);
+		}
+
 		if (this.searchString.trim()) {
 			const q = this.searchString.toLowerCase();
-			result = result.filter(s => 
-				s.studentName.toLowerCase().includes(q) || 
-				s.courseTitle.toLowerCase().includes(q)
+			result = result.filter(p =>
+				p.studentName.toLowerCase().includes(q) ||
+				p.courseTitle.toLowerCase().includes(q)
 			);
 		}
 
 		if (this.statusFilter) {
-			result = result.filter(s => s.paymentStatus === this.statusFilter);
+			result = result.filter(p => p.paymentStatus === this.statusFilter);
 		}
 
-		this.filteredStudents = result;
+		this.filteredPayments = result;
 		this.cdr.markForCheck();
 	}
 
@@ -151,18 +190,18 @@ export class ManageStudentsComponent implements OnInit {
 			.subscribe({
 				next: () => {
 					patchState(this.loaderStore, { isShow: false });
-					this.toastService.show('Student registration approved');
-					
-					const student = this.allStudents.find(s => s.paymentId === paymentId);
-					if (student) {
-						student.paymentStatus = 'Paid';
+					this.toastService.show('Payment approved');
+
+					const payment = this.allPayments.find(p => p.paymentId === paymentId);
+					if (payment) {
+						payment.paymentStatus = 'Paid';
 					}
 					this.applyFilters();
 					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.loaderStore, { isShow: false });
-					this.toastService.show('Failed to approve registration', 'error');
+					this.toastService.show('Failed to approve payment', 'error');
 				}
 			});
 	}
@@ -193,19 +232,19 @@ export class ManageStudentsComponent implements OnInit {
 			.subscribe({
 				next: () => {
 					patchState(this.loaderStore, { isShow: false });
-					this.toastService.show('Registration canceled');
-					
-					const student = this.allStudents.find(s => s.paymentId === this.paymentIdToCancel);
-					if (student) {
-						student.paymentStatus = 'Canceled';
-						student.note = this.cancelNote;
+					this.toastService.show('Payment canceled');
+
+					const payment = this.allPayments.find(p => p.paymentId === this.paymentIdToCancel);
+					if (payment) {
+						payment.paymentStatus = 'Canceled';
+						payment.note = this.cancelNote;
 					}
 					this.applyFilters();
 					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.loaderStore, { isShow: false });
-					this.toastService.show('Failed to cancel registration', 'error');
+					this.toastService.show('Failed to cancel payment', 'error');
 				}
 			});
 	}

@@ -3,7 +3,7 @@
   <!-- Header with Back link -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-200/60 dark:border-neutral-800/60 pb-5">
     <div>
-      <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 cursor-pointer hover:text-neutral-900 dark:hover:text-white transition-colors" routerLink="/agency/course-list">
+      <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 cursor-pointer hover:text-neutral-900 dark:hover:text-white transition-colors" routerLink="/agency/courses">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
         </svg>
@@ -104,7 +104,7 @@
 
     <!-- Form Actions -->
     <div class="flex items-center justify-end gap-4 pt-4">
-      <gm-button variant="ghost" routerLink="/agency/course-list" class="rounded-xl px-5 py-2.5 font-semibold text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800/40">
+      <gm-button variant="ghost" routerLink="/agency/courses" class="rounded-xl px-5 py-2.5 font-semibold text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800/40">
         CANCEL
       </gm-button>
       <gm-button variant="primary" [loading]="loading" (clicked)="submit()" class="bg-gradient-to-tr from-[#007AFF] to-[#5856D6] hover:from-[#007AFF]/90 hover:to-[#5856D6]/90 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 transition-all">

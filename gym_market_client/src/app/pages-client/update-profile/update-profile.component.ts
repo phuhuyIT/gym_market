@@ -1,6 +1,7 @@
 import { Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
+import { ALLOWED_IMAGE_TYPES, MAX_AVATAR_BYTES } from '../../utilities/upload.const';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { ErrorModalStore } from '../../stores/error-modal.store';
 import { NoticeModalStore } from '../../stores/notice.store';
@@ -53,12 +54,11 @@ export class UpdateProfileComponent implements OnInit {
 		if (!input.files?.length) return;
 		const file = input.files[0];
 
-		const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-		if (!allowedTypes.includes(file.type)) {
+		if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
 			this.toastService.show('Only JPEG, PNG, WebP, and GIF images are allowed', 'error');
 			return;
 		}
-		if (file.size > 5 * 1024 * 1024) {
+		if (file.size > MAX_AVATAR_BYTES) {
 			this.toastService.show('File must be under 5 MB', 'error');
 			return;
 		}

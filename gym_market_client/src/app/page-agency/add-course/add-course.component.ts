@@ -10,6 +10,7 @@ import { UserTokenPayload } from '../../core/models/auth.model';
 import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { formatDateToInput } from '../../utilities/defaults.const';
 import { ToastService } from '../../shared/services/toast.service';
+import { AccountService } from '../../guest/account.service';
 
 @Component({
     selector: 'app-add-course',
@@ -40,12 +41,13 @@ export class AddCourseComponent {
 
 	constructor(
 		private courseAgencyService: CourseAgencyService,
-		private router: Router
+		private router: Router,
+		private accountService: AccountService
 	) {}
 
 
 	submit() {
-		const token = localStorage.getItem('gym-token');
+		const token = this.accountService.token;
 		if (token === null) {
 			this.toastService.show('Unauthorized. Please login.', 'error');
 			return;
@@ -72,7 +74,7 @@ export class AddCourseComponent {
 					this.loading = false;
 					patchState(this.loaderStore, { isShow: false });
 					this.toastService.show('Course created successfully');
-					this.router.navigateByUrl('/agency/course-list');
+					this.router.navigateByUrl('/agency/courses');
 				},
 				error: err => {
 					this.loading = false;

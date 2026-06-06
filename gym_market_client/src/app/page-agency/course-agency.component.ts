@@ -6,6 +6,7 @@ import { AccountService } from '../guest/account.service';
 import { ThemeToggleComponent } from '../shared/components/theme-toggle/theme-toggle.component';
 import { CourseAgencyService } from './course-agency.service';
 import { FormsModule } from '@angular/forms';
+import { take } from 'rxjs';
 
 @Component({
     selector: 'app-course-agency',
@@ -36,15 +37,17 @@ export class CourseAgencyComponent {
 
 	get pageTitle(): string {
 		const url = this.router.url;
-		if (url.includes('/course-list') || url === '/agency') return 'Overview';
+		if (url.includes('/dashboard') || url === '/agency') return 'Overview';
 		if (url.includes('/add-course')) return 'Add New Course';
 		if (url.includes('/update-course')) return 'Edit Course';
 		if (url.includes('/course-materials')) return 'Course Materials';
 		if (url.includes('/course-option-list')) return 'Course Options';
+		if (url.includes('/courses')) return 'Manage Courses';
+		if (url.includes('/students')) return 'Manage Students';
+		if (url.includes('/payments')) return 'Payments';
 		if (url.includes('/your-profile')) return 'Profile Details';
 		if (url.includes('/edit-profile')) return 'Edit Profile';
 		if (url.includes('/account-settings')) return 'Account Settings';
-		if (url.includes('/get-payments')) return 'Course Payments';
 		if (url.includes('/chat')) return 'Community Chat';
 		return 'Trainer Dashboard';
 	}
@@ -62,7 +65,7 @@ export class CourseAgencyComponent {
 	}
 
 	logout() {
-		this.accountService.apiLogout().subscribe({ complete: () => {} });
+		this.accountService.apiLogout().pipe(take(1)).subscribe();
 		this.accountService.logout();
 		this.router.navigateByUrl('');
 	}
