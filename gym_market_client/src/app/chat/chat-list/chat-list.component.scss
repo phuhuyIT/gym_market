@@ -996,4 +996,228 @@ $selected-chat-bg: #6b8afd;
     text-align: center;
   }
 }
+.chat-page-embedded {
+  position: relative;
+  height: 720px;
+  max-height: calc(100vh - 120px);
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  overflow: hidden;
+  font-family: $font-family;
+  box-sizing: border-box;
+}
 
+.chat-container-embedded {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+:host-context([data-theme="dark"]) {
+  .chat-container-embedded {
+    background: rgba(22, 22, 24, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .chat-list-sidebar {
+    background: rgba(22, 22, 24, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    
+    .sidebar-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .search-box {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      
+      .search-input {
+        color: #f5f5f7;
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.4);
+        }
+      }
+      .search-icon {
+        color: rgba(255, 255, 255, 0.4);
+      }
+    }
+    
+    .filter-tab {
+      color: rgba(255, 255, 255, 0.5);
+      
+      &:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.05);
+      }
+      
+      &.active {
+        color: #007aff;
+        background: rgba(0, 122, 255, 0.15);
+      }
+    }
+    
+    .filter-more-btn {
+      color: rgba(255, 255, 255, 0.5);
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+    }
+    
+    .new-chat-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f5f5f7;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  .conversation-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    
+    .conv-name {
+      color: #fff;
+    }
+    
+    .conv-time {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    
+    .conv-preview {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+    
+    &.active {
+      background: rgba(0, 122, 255, 0.15);
+      .conv-name {
+        color: #007aff;
+      }
+      .conv-preview {
+        color: rgba(255, 255, 255, 0.75);
+      }
+    }
+  }
+
+  .chat-main-panel {
+    background: rgba(18, 18, 20, 0.2);
+  }
+
+  .chat-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(22, 22, 24, 0.7);
+    
+    .header-name {
+      color: #fff;
+    }
+    
+    .header-status {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .header-btn {
+      color: rgba(255, 255, 255, 0.6);
+      &:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+      }
+    }
+    
+    .back-btn {
+      color: rgba(255, 255, 255, 0.6);
+      &:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+      }
+    }
+  }
+
+  .messages-area {
+    background: transparent;
+  }
+
+  .message {
+    &--in {
+      .msg-bubble {
+        background: #252528;
+        color: #f5f5f7;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .msg-time {
+        color: rgba(255, 255, 255, 0.4);
+      }
+    }
+    
+    &--out {
+      .msg-bubble {
+        background: linear-gradient(135deg, #007aff 0%, #0051d6 100%);
+        color: #fff;
+      }
+      .msg-time {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .msg-meta {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+
+  .system-message span {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .input-area {
+    background: rgba(22, 22, 24, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .input-pill-wrapper {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    
+    .input-field {
+      color: #fff;
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+      }
+    }
+    
+    .input-action-btn {
+      color: rgba(255, 255, 255, 0.5);
+      &:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.06);
+      }
+    }
+  }
+
+  .chat-placeholder-container {
+    background: rgba(18, 18, 20, 0.2);
+    
+    .chat-placeholder-card {
+      color: rgba(255, 255, 255, 0.4);
+      h3 {
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+  }
+}

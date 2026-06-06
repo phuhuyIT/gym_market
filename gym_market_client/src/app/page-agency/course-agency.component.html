@@ -1,14 +1,339 @@
-<div>
-  <div class="sticky top-0 z-10">
-    <app-header></app-header>
+<div class="min-h-screen flex bg-[#F7F6F3] dark:bg-[#0E0E10] text-neutral-800 dark:text-neutral-200 transition-colors duration-300 font-sans">
+  
+  <!-- Sidebar for Desktop -->
+  <aside class="hidden lg:flex flex-col w-72 bg-white dark:bg-[#161618] border-r border-neutral-200/60 dark:border-neutral-800/60 sticky top-0 h-screen overflow-y-auto z-20 transition-all duration-300">
+    <div class="p-6 flex flex-col h-full justify-between">
+      <!-- Top Part: Logo & Menu -->
+      <div>
+        <!-- Logo -->
+        <div class="flex items-center gap-3 mb-8 px-2">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-[#007AFF] to-[#5856D6] flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+            <svg xmlns="gym_market_client/src/assets/icons/group.png" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5.5 h-5.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 7.5v9m11-9v9M3 10.5v3m18-3v3M6.5 12h11M4.5 9v6m15-6v6" />
+            </svg>
+          </div>
+          <span class="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">Gym<span class="text-[#007AFF]">Market</span></span>
+        </div>
+
+        <!-- MAIN MENU -->
+        <div class="mb-6">
+          <p class="px-3 text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3">Main Menu</p>
+          <ul class="space-y-1">
+            <li>
+              <a routerLink="/agency/course-list" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12h3.375a1.5 1.5 0 011.366 1.018l.75 2.25a.75.75 0 001.428-.059l2.08-6.241a.75.75 0 011.413-.036l1.294 3.882A1.5 1.5 0 0013.99 14.25h2.63c.69 0 1.294-.473 1.455-1.14l.872-3.486a.75.75 0 011.455.03l.87 3.483A1.5 1.5 0 0021.75 14.25H24" />
+                </svg>
+                <span>Overview</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/courses" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 7.5v9m11-9v9M3 10.5v3m18-3v3M6.5 12h11M4.5 9v6m15-6v6" />
+                </svg>
+                <span>Manage Courses</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/students" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                </svg>
+                <span>Manage Students</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/add-course" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Create Course</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/course-option-list" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <span>Course Options</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/chat" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                </svg>
+                <span>Community</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- SETTING -->
+        <div class="mb-6">
+          <p class="px-3 text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3">Settings</p>
+          <ul class="space-y-1">
+            <li>
+              <a routerLink="/agency/your-profile" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <span>Profile Details</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/edit-profile" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                </svg>
+                <span>Edit Profile</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/account-settings" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.28z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+
+      </div>
+
+      <!-- Bottom Part: User info, Theme toggle & Logout -->
+      <div class="space-y-4 border-t border-neutral-200/60 dark:border-neutral-800/60 pt-4">
+        <!-- User Info -->
+        <div class="flex items-center gap-3 px-3 py-2">
+          <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-indigo-500 overflow-hidden flex items-center justify-center text-white font-bold text-sm shadow-md">
+            <img *ngIf="userStore.avatar()" [src]="userStore.avatar()" [alt]="userStore.fullName()" class="h-full w-full object-cover">
+            <span *ngIf="!userStore.avatar()">{{ userStore.fullName().substring(0,1).toUpperCase() }}</span>
+          </div>
+          <div class="truncate">
+            <p class="text-sm font-bold text-neutral-900 dark:text-white truncate">{{ userStore.fullName() }}</p>
+            <p class="text-xs text-neutral-400 dark:text-neutral-500 truncate">Trainer</p>
+          </div>
+        </div>
+
+        <!-- Theme Toggle Row -->
+        <div class="flex items-center justify-between px-3 py-2 bg-neutral-50 dark:bg-neutral-800/30 rounded-2xl">
+          <span class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Theme</span>
+          <app-theme-toggle></app-theme-toggle>
+        </div>
+
+        <!-- Logout button -->
+        <button (click)="logout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+          </svg>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Drawer / Sidebar Overlay -->
+  <div *ngIf="isMobileMenuOpen()" class="fixed inset-0 z-40 lg:hidden flex">
+    <!-- Overlay backdrop -->
+    <div (click)="closeMobileMenu()" class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"></div>
+    
+    <!-- Drawer content -->
+    <div class="relative flex flex-col w-72 max-w-xs bg-white dark:bg-[#161618] h-full p-6 shadow-2xl z-50">
+      <!-- Close button -->
+      <button (click)="closeMobileMenu()" class="absolute top-4 right-4 p-2 rounded-lg text-neutral-400 dark:text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Logo -->
+      <div class="flex items-center gap-3 mb-8 px-2 mt-4">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-[#007AFF] to-[#5856D6] flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5.5 h-5.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 7.5v9m11-9v9M3 10.5v3m18-3v3M6.5 12h11M4.5 9v6m15-6v6" />
+          </svg>
+        </div>
+        <span class="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">Gym<span class="text-[#007AFF]">Market</span></span>
+      </div>
+
+      <!-- Links -->
+      <div class="flex-grow overflow-y-auto space-y-6">
+        <div>
+          <p class="px-3 text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3">Main Menu</p>
+          <ul class="space-y-1">
+            <li>
+              <a routerLink="/agency/course-list" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12h3.375a1.5 1.5 0 011.366 1.018l.75 2.25a.75.75 0 001.428-.059l2.08-6.241a.75.75 0 011.413-.036l1.294 3.882A1.5 1.5 0 0013.99 14.25h2.63c.69 0 1.294-.473 1.455-1.14l.872-3.486a.75.75 0 011.455.03l.87 3.483A1.5 1.5 0 0021.75 14.25H24" />
+                </svg>
+                <span>Overview</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/courses" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-5 h-5 opacity-70">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 7.5v9m11-9v9M3 10.5v3m18-3v3M6.5 12h11M4.5 9v6m15-6v6" />
+                </svg>
+                <span>Manage Courses</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/students" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                </svg>
+                <span>Manage Students</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/add-course" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Create Course</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/course-option-list" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <span>Course Options</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/chat" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                </svg>
+                <span>Community</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- SETTING -->
+        <div class="mb-6">
+          <p class="px-3 text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3">Settings</p>
+          <ul class="space-y-1">
+            <li>
+              <a routerLink="/agency/your-profile" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                Profile Details
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/edit-profile" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                Edit Profile
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/account-settings" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                Settings
+              </a>
+            </li>
+          </ul>
+        </div>
+
+
+      </div>
+
+      <div class="mt-auto pt-6 border-t border-neutral-100 dark:border-neutral-800 space-y-4">
+        <button (click)="logout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold text-sm transition-all">
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
   </div>
 
-  <div>
-    <router-outlet></router-outlet>
-  </div>
+  <!-- Right Content Panel -->
+  <div class="flex-grow flex flex-col min-h-screen overflow-x-hidden">
+    
+    <!-- Top Header -->
+    <header class="lg:hidden h-20 bg-white/80 dark:bg-[#161618]/80 backdrop-blur-md border-b border-neutral-200/60 dark:border-neutral-800/60 px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 transition-all duration-300">
+      <!-- Left side: Hamburger (Mobile) & Title/Search -->
+      <div class="flex items-center gap-4 flex-grow max-w-xl">
+        <!-- Hamburger Menu button -->
+        <button (click)="toggleMobileMenu()" class="lg:hidden p-2 rounded-xl text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
 
-  <div>
-    <app-footer></app-footer>
+        <!-- Search input or Title -->
+        <div class="flex items-center w-full">
+          <!-- Search Bar (Show only on course list / overview) -->
+          <div *ngIf="showSearchBar" class="relative w-full">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-400">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
+              </svg>
+            </div>
+            <input type="text" [(ngModel)]="searchVal" placeholder="Search here..." class="w-full bg-[#F4F3EF] dark:bg-[#252528] pl-11 pr-4 py-2.5 rounded-full border-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-sm font-medium transition-all shadow-inner placeholder:text-neutral-400 dark:placeholder:text-neutral-500 text-neutral-800 dark:text-neutral-200">
+          </div>
+          
+          <!-- Route Title (Show when not searching) -->
+          <div *ngIf="!showSearchBar" class="animate-fade-in">
+            <h1 class="text-xl font-bold text-neutral-900 dark:text-white">{{ pageTitle }}</h1>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Right tools: Theme toggle, Chat Shortcut, User Profile -->
+      <div class="flex items-center gap-4 flex-shrink-0">
+        <!-- Theme Toggle -->
+        <app-theme-toggle class="relative z-10"></app-theme-toggle>
+
+
+
+        <!-- User Profile Dropdown -->
+        <div class="relative">
+          <button (click)="toggleProfileDropdown()" class="flex items-center gap-2.5 p-1 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800/60 transition-colors focus:outline-none">
+            <div class="h-9 w-9 rounded-full bg-gradient-to-tr from-blue-400 to-indigo-500 border-2 border-white dark:border-[#161618] overflow-hidden flex items-center justify-center text-white font-bold text-sm shadow-md">
+              <img *ngIf="userStore.avatar()" [src]="userStore.avatar()" [alt]="userStore.fullName()" class="h-full w-full object-cover">
+              <span *ngIf="!userStore.avatar()">{{ userStore.fullName().substring(0,1).toUpperCase() }}</span>
+            </div>
+            <span class="hidden sm:inline text-sm font-semibold pr-2 text-neutral-700 dark:text-neutral-300">{{ userStore.fullName() }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="hidden sm:inline w-3.5 h-3.5 text-neutral-400 transition-transform duration-200" [ngClass]="{'rotate-180': showProfileDropdown()}">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+
+          <!-- Dropdown Options -->
+          <div *ngIf="showProfileDropdown()" class="absolute right-0 mt-2.5 w-56 bg-white dark:bg-[#1C1C1E] border border-neutral-200/60 dark:border-neutral-800/60 rounded-2xl shadow-xl py-2 z-50 animate-fade-in">
+            <div class="px-4 py-2 border-b border-neutral-100 dark:border-neutral-800/60">
+              <p class="text-xs text-neutral-400 dark:text-neutral-500">Logged in as</p>
+              <p class="text-sm font-semibold truncate text-neutral-800 dark:text-neutral-200">{{ userStore.fullName() }}</p>
+            </div>
+            <a routerLink="/agency/your-profile" (click)="showProfileDropdown.set(false)" class="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800/50 text-neutral-700 dark:text-neutral-300">
+              View Profile
+            </a>
+            <a routerLink="/agency/edit-profile" (click)="showProfileDropdown.set(false)" class="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800/50 text-neutral-700 dark:text-neutral-300">
+              Edit Profile
+            </a>
+            <a routerLink="/agency/account-settings" (click)="showProfileDropdown.set(false)" class="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800/50 text-neutral-700 dark:text-neutral-300">
+              Account Settings
+            </a>
+            <div class="border-t border-neutral-100 dark:border-neutral-800/60 mt-1.5 pt-1.5">
+              <button (click)="logout(); showProfileDropdown.set(false)" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-red-50 dark:hover:bg-red-950/20 text-red-500 font-medium">
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow p-4 md:p-6 lg:p-8">
+      <router-outlet></router-outlet>
+    </main>
+    
   </div>
 </div>
 

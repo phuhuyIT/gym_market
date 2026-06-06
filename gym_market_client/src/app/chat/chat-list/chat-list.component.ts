@@ -3,13 +3,13 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { UserStore } from '../../stores/user.store';
 import { ConversationService } from '../conversation.service';
 import { patchState } from '@ngrx/signals';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AccountService } from '../../guest/account.service';
 
 import { MessageService } from '../message.service';
 import { ChatHupService } from '../chat-hup.service';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
+import { DatePipe, CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Conversation, Message } from '../../core/models/conversation.model';
 import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
@@ -20,7 +20,7 @@ import { NewConversationComponent } from '../new-conversation/new-conversation.c
 @Component({
     selector: 'app-chat-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FormsModule, DatePipe, CreateGroupComponent, GroupMembersComponent, NewConversationComponent],
+    imports: [FormsModule, DatePipe, CommonModule, CreateGroupComponent, GroupMembersComponent, NewConversationComponent],
     templateUrl: './chat-list.component.html',
     styleUrl: './chat-list.component.scss'
 })
@@ -41,6 +41,8 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 	private ngZone = inject(NgZone);
 	private accountService = inject(AccountService);
 	private router = inject(Router);
+	private route = inject(ActivatedRoute);
+	isAgency = false;
 
 	conversationName: string = '';
 	conversationUrl: string = '';
@@ -86,6 +88,7 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	ngOnInit() {
+		this.isAgency = this.router.url.includes('/agency');
 		this.getConversations();
 
 		this.chatHupService.startConnection();
@@ -191,12 +194,55 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 						patchState(this.loader, { isShow: false });
 						this.chats = res;
 						this.cdr.markForCheck();
+
+						const targetUserId = this.route.snapshot.queryParams['userId'] || this.route.snapshot.queryParams['studentId'];
+						if (targetUserId) {
+							this.selectConversationByUserId(targetUserId);
+						}
 					},
 					error: () => {
 						patchState(this.loader, { isShow: false });
 						this.cdr.markForCheck();
 					},
 				});
+		}
+	}
+
+	private selectConversationByUserId(targetUserId: string) {
+		const existingChat = this.chats.find(c => c.otherUserId === targetUserId);
+		if (existingChat) {
+			this.getMessages(existingChat);
+		} else {
+			const senderId = this.userStore.id();
+			if (senderId) {
+				patchState(this.loader, { isShow: true });
+				this.conversationService.createConversation({
+					senderId: senderId,
+					recieveId: targetUserId
+				}).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+					next: () => {
+						this.conversationService.getConversations(senderId)
+							.pipe(takeUntilDestroyed(this.destroyRef))
+							.subscribe({
+								next: res => {
+									patchState(this.loader, { isShow: false });
+									this.chats = res;
+									const newChat = this.chats.find(c => c.otherUserId === targetUserId);
+									if (newChat) {
+										this.getMessages(newChat);
+									}
+									this.cdr.markForCheck();
+								},
+								error: () => {
+									patchState(this.loader, { isShow: false });
+								}
+							});
+					},
+					error: () => {
+						patchState(this.loader, { isShow: false });
+					}
+				});
+			}
 		}
 	}
 

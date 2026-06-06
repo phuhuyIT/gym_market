@@ -12,7 +12,7 @@ export class PaymentService {
 
 	getPayments(courseId: string): Observable<Payment[]> {
 		return this.http.get<Payment[]>(
-			`${environment.baseApi}/Payments/get-payments-ofcourse/${courseId}`
+			`${environment.baseApi}/Payments/get-payments-of-course/${courseId}`
 		);
 	}
 

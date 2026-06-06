@@ -9,6 +9,9 @@ import { YourProfileComponent } from './your-profile/your-profile.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { ListPaymentsComponent } from './list-payments/list-payments.component';
 import { AccountSettingsComponent } from '../account-settings/account-settings.component';
+import { ChatListComponent } from '../chat/chat-list/chat-list.component';
+import { ManageCoursesComponent } from './manage-courses/manage-courses.component';
+import { ManageStudentsComponent } from './manage-students/manage-students.component';
 
 export const routes: Routes = [
 	{
@@ -17,6 +20,8 @@ export const routes: Routes = [
 		children: [
 			{ path: '', redirectTo: 'course-list', pathMatch: 'full' },
 			{ path: 'course-list', component: CourseListComponent, title: 'Danh sách khóa huấn luyện' },
+			{ path: 'courses', component: ManageCoursesComponent, title: 'Quản lý khóa học' },
+			{ path: 'students', component: ManageStudentsComponent, title: 'Quản lý học viên' },
 			{ path: 'add-course', component: AddCourseComponent, title: 'Thêm course' },
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Cập nhật course' },
 			{ path: 'course-materials/:courseId', component: CourseMaterialComponent, title: 'Tài liệu khóa học' },
@@ -25,6 +30,7 @@ export const routes: Routes = [
 			{ path: 'edit-profile', component: UpdateProfileComponent, title: 'Chỉnh sửa hồ sơ' },
 			{ path: 'account-settings', component: AccountSettingsComponent, title: 'Account Settings' },
 			{ path: 'get-payments/:courseId', component: ListPaymentsComponent, title: 'Payments' },
+			{ path: 'chat', component: ChatListComponent, title: 'Community Chat' },
 		],
 	},
 ];

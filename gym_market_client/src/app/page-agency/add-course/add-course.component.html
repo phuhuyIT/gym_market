@@ -1,82 +1,116 @@
-<div class="course-form">
-  <div class="container container--narrow">
-    <header class="course-form__header">
-      <div class="back-link" routerLink="/agency/course-list">← Back to Dashboard</div>
-      <h1 class="course-form__title">Add New Course</h1>
-      <p class="course-form__subtitle">Define your course details, pricing, and schedule.</p>
-    </header>
+<div class="max-w-4xl mx-auto space-y-8 animate-fade-in">
+  
+  <!-- Header with Back link -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-200/60 dark:border-neutral-800/60 pb-5">
+    <div>
+      <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 cursor-pointer hover:text-neutral-900 dark:hover:text-white transition-colors" routerLink="/agency/course-list">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Back to Dashboard
+      </div>
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white mt-2">
+        Add New Course
+      </h1>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+        Define your course details, pricing, and schedule.
+      </p>
+    </div>
+  </div>
 
-    <div class="course-form__content">
-      <!-- General Information -->
-      <section class="form-section">
-        <h3 class="form-section__title">GENERAL INFORMATION</h3>
-        <div class="form-grid">
-          <div class="full-width">
-            <gm-input label="COURSE TITLE" [(value)]="model.title" />
-          </div>
-          <div class="full-width">
-            <gm-input label="DESCRIPTION" [(value)]="model.description" />
-          </div>
-          <div class="custom-select">
-            <label>TYPE</label>
-            <select [(ngModel)]="model.type">
-              <option value="Yoga">Yoga</option>
-              <option value="Cardio">Cardio</option>
-              <option value="Strength">Strength training</option>
-              <option value="Pilates">Pilates</option>
-              <option value="Stretching">Stretching</option>
-              <option value="Cross fit">Cross fit</option>
-            </select>
-          </div>
-          <div class="custom-select">
-            <label>CATEGORY</label>
-            <select [(ngModel)]="model.category">
-              <option value="Yoga">Yoga</option>
-              <option value="Cardio">Cardio</option>
-              <option value="Strength">Strength training</option>
-              <option value="Pilates">Pilates</option>
-              <option value="Stretching">Stretching</option>
-              <option value="Cross fit">Cross fit</option>
-            </select>
-          </div>
+  <!-- Main Form Content -->
+  <div class="space-y-6">
+    
+    <!-- General Information Card -->
+    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+      <div class="border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">General Information</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="md:col-span-2">
+          <gm-input label="Course Title" [(value)]="model.title" placeholder="e.g. Master Power Yoga & Meditation" />
         </div>
-      </section>
-
-      <!-- Pricing & Capacity -->
-      <section class="form-section">
-        <h3 class="form-section__title">PRICING & CAPACITY</h3>
-        <div class="form-grid">
-          <gm-input label="BASE PRICE ($)" type="number" [(value)]="model.price" />
-          <gm-input label="ADDITIONAL PRICE ($)" type="number" [(value)]="model.additionalPrice" />
-          <gm-input label="MAX PARTICIPANTS" type="number" [(value)]="model.maxParticipants" />
-          <gm-input label="DURATION (DAYS)" type="number" [(value)]="model.duration" />
+        <div class="md:col-span-2">
+          <gm-input label="Description" [(value)]="model.description" placeholder="Provide a detailed description of what the course covers..." />
         </div>
-      </section>
-
-      <!-- Schedule -->
-      <section class="form-section">
-        <h3 class="form-section__title">SCHEDULE</h3>
-        <div class="form-grid">
-          <gm-input label="START DATE" type="date" [(value)]="model.startDate" />
-          <gm-input label="END DATE" type="date" [(value)]="model.endDate" />
+        
+        <div class="flex flex-col gap-2">
+          <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Type</label>
+          <select [(ngModel)]="model.type" class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all appearance-none cursor-pointer">
+            <option value="Yoga">Yoga</option>
+            <option value="Cardio">Cardio</option>
+            <option value="Strength">Strength training</option>
+            <option value="Pilates">Pilates</option>
+            <option value="Stretching">Stretching</option>
+            <option value="Cross fit">Cross fit</option>
+          </select>
         </div>
-      </section>
-
-      <!-- Media Upload (Placeholder UI) -->
-      <section class="form-section">
-        <h3 class="form-section__title">COURSE MEDIA</h3>
-        <div class="upload-zone">
-          <div class="upload-zone__icon">📤</div>
-          <p class="upload-zone__text">Drag and drop images or videos, or <span>browse</span></p>
-          <p class="upload-zone__subtext">Recommended: 16:9 aspect ratio, max 5MB per file.</p>
+        
+        <div class="flex flex-col gap-2">
+          <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Category</label>
+          <select [(ngModel)]="model.category" class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all appearance-none cursor-pointer">
+            <option value="Yoga">Yoga</option>
+            <option value="Cardio">Cardio</option>
+            <option value="Strength">Strength training</option>
+            <option value="Pilates">Pilates</option>
+            <option value="Stretching">Stretching</option>
+            <option value="Cross fit">Cross fit</option>
+          </select>
         </div>
-      </section>
-
-      <!-- Form Actions -->
-      <div class="form-actions">
-        <gm-button variant="ghost" routerLink="/agency/course-list">CANCEL</gm-button>
-        <gm-button variant="primary" [loading]="loading" (clicked)="submit()">SAVE COURSE</gm-button>
       </div>
     </div>
+
+    <!-- Pricing & Capacity Card -->
+    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+      <div class="border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Pricing & Capacity</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <gm-input label="Base Price ($)" type="number" [(value)]="model.price" />
+        <gm-input label="Add. Price ($)" type="number" [(value)]="model.additionalPrice" />
+        <gm-input label="Max Participants" type="number" [(value)]="model.maxParticipants" />
+        <gm-input label="Duration (Days)" type="number" [(value)]="model.duration" />
+      </div>
+    </div>
+
+    <!-- Schedule Card -->
+    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+      <div class="border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Schedule</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <gm-input label="Start Date" type="date" [(value)]="model.startDate" />
+        <gm-input label="End Date" type="date" [(value)]="model.endDate" />
+      </div>
+    </div>
+
+    <!-- Course Media Card -->
+    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+      <div class="border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Course Media</h3>
+      </div>
+      
+      <div class="border-2 border-dashed border-neutral-200 dark:border-neutral-800 hover:border-blue-500/60 dark:hover:border-blue-500/60 rounded-3xl p-8 flex flex-col items-center justify-center text-center gap-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/10 transition-all cursor-pointer">
+        <div class="text-3xl text-neutral-400">📤</div>
+        <p class="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+          Drag and drop images or videos, or <span class="text-[#007AFF] hover:underline font-bold">browse</span>
+        </p>
+        <p class="text-xs text-neutral-400 dark:text-neutral-500">Recommended: 16:9 aspect ratio, max 5MB per file.</p>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex items-center justify-end gap-4 pt-4">
+      <gm-button variant="ghost" routerLink="/agency/course-list" class="rounded-xl px-5 py-2.5 font-semibold text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800/40">
+        CANCEL
+      </gm-button>
+      <gm-button variant="primary" [loading]="loading" (clicked)="submit()" class="bg-gradient-to-tr from-[#007AFF] to-[#5856D6] hover:from-[#007AFF]/90 hover:to-[#5856D6]/90 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 transition-all">
+        SAVE COURSE
+      </gm-button>
+    </div>
+    
   </div>
 </div>
