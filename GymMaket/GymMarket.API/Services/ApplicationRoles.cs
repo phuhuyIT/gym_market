@@ -4,7 +4,9 @@ namespace GymMarket.API.Services
     {
         public const string Trainer = "Trainer";
         public const string Student = "Student";
+        public const string Admin = "Admin";
 
+        // Note: Admin is intentionally excluded so it can never be self-assigned via registration.
         public static readonly string[] All = [Trainer, Student];
 
         public static bool TryNormalize(string? role, out string normalizedRole)

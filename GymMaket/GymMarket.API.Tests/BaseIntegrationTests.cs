@@ -57,6 +57,29 @@ public class BaseIntegrationTests : IClassFixture<WebApplicationFactory<Program>
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result!.Token);
     }
 
+    // Reads a claim out of the bearer token currently on the client (e.g. "trainerId",
+    // "studentId"). Used so tests can act as the owner of the resources they create.
+    protected string? GetTokenClaim(string claimType)
+    {
+        var token = Client.DefaultRequestHeaders.Authorization?.Parameter;
+        if (string.IsNullOrWhiteSpace(token)) return null;
+
+        var parts = token.Split('.');
+        if (parts.Length < 2) return null;
+
+        var payload = parts[1].Replace('-', '+').Replace('_', '/');
+        payload = (payload.Length % 4) switch
+        {
+            2 => payload + "==",
+            3 => payload + "=",
+            _ => payload
+        };
+
+        var json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(payload));
+        using var doc = System.Text.Json.JsonDocument.Parse(json);
+        return doc.RootElement.TryGetProperty(claimType, out var value) ? value.GetString() : null;
+    }
+
     // Helper DTO for login result if not already available in the project
     public class LoginResultDto
     {

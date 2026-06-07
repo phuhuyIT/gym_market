@@ -130,6 +130,7 @@ builder.Services.AddScoped<IJwtService, JWTService>();
 builder.Services.AddScoped<IPasswordSignInService, PasswordSignInService>();
 builder.Services.AddScoped<MinIOService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICourseAccessService, CourseAccessService>();
 builder.Services.AddSingleton<IPresenceTracker, PresenceTracker>();
 
 

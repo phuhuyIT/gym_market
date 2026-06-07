@@ -19,6 +19,8 @@ public class LectureIntegrationTests : BaseIntegrationTests
         var courseModel = new CourseCreateDTO
         {
             CourseId = courseId,
+            // Own the course so the trainer is authorized to manage its lectures.
+            TrainerId = GetTokenClaim("trainerId"),
             Title = "Test Course for Lecture",
             Description = "A course for testing lectures",
             Type = "Online",

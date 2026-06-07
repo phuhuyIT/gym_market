@@ -7,7 +7,10 @@ namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    // Viewing a course's payments and approving/canceling them are trainer/admin actions.
+    // Without the role restriction a student could call ok-payment to approve their own
+    // pending payment and study without ever paying.
+    [Authorize(Roles = "Trainer,Admin")]
     public class PaymentsController : ControllerBase
     {
         private readonly IPaymentRepository _paymentRepository;
