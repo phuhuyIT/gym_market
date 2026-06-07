@@ -18,6 +18,7 @@ import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
     styleUrl: './your-profile.component.scss'
 })
 export class YourProfileComponent implements OnInit {
+	readonly DEFAULT_AVATAR_URL = DEFAULT_AVATAR_URL;
 	userInfo: UserInfo | null = null;
 	userStore = inject(UserStore);
 	trainerInfo: Trainer | null = null;

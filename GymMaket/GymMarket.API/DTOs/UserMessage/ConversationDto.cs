@@ -12,5 +12,10 @@
         public bool IsGroup { get; set; }
         public string Role { get; set; } = string.Empty;
         public int MemberCount { get; set; }
+
+        // Presence (for direct chats, this reflects the other participant).
+        public string? OtherUserId { get; set; }
+        public bool IsOnline { get; set; }
+        public DateTime? LastSeen { get; set; }
     }
 }

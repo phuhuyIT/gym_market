@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
@@ -6,7 +7,7 @@ export class ThemeService {
   readonly isDark = this._dark.asReadonly();
 
   init(): void {
-    const saved = localStorage.getItem('gymmarket-theme');
+    const saved = localStorage.getItem(STORAGE_KEYS.theme);
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     this._dark.set(saved ? saved === 'dark' : prefersDark);
     this.apply();
@@ -15,7 +16,7 @@ export class ThemeService {
   toggle(): void {
     this._dark.update(d => !d);
     this.apply();
-    localStorage.setItem('gymmarket-theme', this._dark() ? 'dark' : 'light');
+    localStorage.setItem(STORAGE_KEYS.theme, this._dark() ? 'dark' : 'light');
   }
 
   private apply(): void {

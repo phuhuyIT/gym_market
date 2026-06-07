@@ -14,11 +14,12 @@ import {
 import { CourseOptionService } from '../course-option.service';
 import { CourseOption } from '../../core/models/course.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
     selector: 'app-course-option-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FormsModule, ReactiveFormsModule],
+    imports: [FormsModule, ReactiveFormsModule, DecimalPipe],
     templateUrl: './course-option-list.component.html',
     styleUrl: './course-option-list.component.scss'
 })

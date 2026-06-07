@@ -1,6 +1,7 @@
 import { Component, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccountService } from '../guest/account.service';
+import { ALLOWED_IMAGE_TYPES, MAX_AVATAR_BYTES } from '../utilities/upload.const';
 import { UserStore } from '../stores/user.store';
 import { ToastService } from '../shared/services/toast.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -50,12 +51,11 @@ export class AccountSettingsComponent {
 		if (!input.files?.length) return;
 
 		const file = input.files[0];
-		const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-		if (!allowedTypes.includes(file.type)) {
+		if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
 			this.toastService.show('Only JPEG, PNG, WebP, and GIF images are allowed', 'error');
 			return;
 		}
-		if (file.size > 5 * 1024 * 1024) {
+		if (file.size > MAX_AVATAR_BYTES) {
 			this.toastService.show('File must be under 5 MB', 'error');
 			return;
 		}

@@ -6,6 +6,7 @@ import { AccountService } from '../../../guest/account.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 import { ROLES } from '../../../utilities/roles.const';
+import { take } from 'rxjs';
 
 interface NavItem {
 	link: string;
@@ -90,7 +91,7 @@ export class HeaderComponent {
 	}
 
 	logout() {
-		this.accountService.apiLogout().subscribe({ complete: () => {} });
+		this.accountService.apiLogout().pipe(take(1)).subscribe();
 		this.accountService.logout();
 		this.router.navigateByUrl('');
 	}

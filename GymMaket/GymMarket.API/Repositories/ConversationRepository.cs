@@ -4,6 +4,7 @@ using GymMarket.API.DTOs.UserMessage;
 using GymMarket.API.Hubs;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using GymMarket.API.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +14,13 @@ namespace GymMarket.API.Repositories
     {
         private readonly GymMarketContext _context;
         private readonly IHubContext<ChatHub> _hub;
+        private readonly IPresenceTracker _presenceTracker;
 
-        public ConversationRepository(GymMarketContext context, IHubContext<ChatHub> hub)
+        public ConversationRepository(GymMarketContext context, IHubContext<ChatHub> hub, IPresenceTracker presenceTracker)
         {
             _context = context;
             _hub = hub;
+            _presenceTracker = presenceTracker;
         }
 
         public async Task<ApiResponse> CreateConversation(CreateConversationDto model)
@@ -365,6 +368,7 @@ namespace GymMarket.API.Repositories
                                       p.UserId,
                                       FullName = u.FullName,
                                       Avatar = u.Avatar,
+                                      LastSeen = u.LastSeen,
                                   }).ToListAsync();
 
             var result = new List<ConversationDto>();
@@ -374,16 +378,24 @@ namespace GymMarket.API.Repositories
 
                 string name;
                 string avatar;
+                string? otherUserId = null;
+                bool isOnline;
+                DateTime? lastSeen = null;
                 if (conv.IsGroup)
                 {
                     name = conv.Name;
                     avatar = string.IsNullOrEmpty(conv.AvatarUrl) ? Defaults.AvatarUrl : conv.AvatarUrl;
+                    // A group is "active" when any member other than the current user is online.
+                    isOnline = participants.Any(x => x.UserId != userId && _presenceTracker.IsOnline(x.UserId));
                 }
                 else
                 {
                     var other = participants.FirstOrDefault(x => x.UserId != userId);
                     name = other?.FullName ?? conv.Name;
                     avatar = string.IsNullOrEmpty(other?.Avatar) ? Defaults.AvatarUrl : other!.Avatar!;
+                    otherUserId = other?.UserId;
+                    isOnline = otherUserId != null && _presenceTracker.IsOnline(otherUserId);
+                    lastSeen = other?.LastSeen;
                 }
 
                 result.Add(new ConversationDto
@@ -396,6 +408,9 @@ namespace GymMarket.API.Repositories
                     IsGroup = conv.IsGroup,
                     Role = conv.Role,
                     MemberCount = participants.Count,
+                    OtherUserId = otherUserId,
+                    IsOnline = isOnline,
+                    LastSeen = lastSeen,
                 });
             }
 
@@ -486,6 +501,13 @@ namespace GymMarket.API.Repositories
                 .Where(p => p.UserId == userId)
                 .Select(p => p.ConversationId)
                 .ToListAsync();
+        }
+
+        public async Task UpdateLastSeen(string userId, DateTime lastSeen)
+        {
+            await _context.Users
+                .Where(u => u.Id == userId)
+                .ExecuteUpdateAsync(s => s.SetProperty(u => u.LastSeen, lastSeen));
         }
 
         private async Task AddSystemMessage(int conversationId, string text)

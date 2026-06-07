@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, DestroyRef, ElementRef, inject, OnInit, Renderer2, ViewChild , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, Renderer2, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
 import { patchState } from '@ngrx/signals';
@@ -9,6 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { ToastService } from '../../shared/services/toast.service';
 import { formatDateToInput } from '../../utilities/defaults.const';
+import { MAX_VIDEO_BYTES } from '../../utilities/upload.const';
 
 @Component({
     selector: 'app-update-course',
@@ -76,7 +77,7 @@ export class UpdateCourseComponent implements OnInit {
 			error: () => {
 				patchState(this.loaderStore, { isShow: false });
 				this.toastService.show('Course not found', 'error');
-				this.router.navigateByUrl('/agency/course-list');
+				this.router.navigateByUrl('/agency/courses');
 			},
 		});
 	}
@@ -114,10 +115,18 @@ export class UpdateCourseComponent implements OnInit {
 		if (input.files && input.files.length > 0) {
 			for (let i = 0; i < input.files.length; i++) {
 				const file = input.files[i];
+				if (file.size > MAX_VIDEO_BYTES) {
+					this.toastService.show(
+						`"${file.name}" is too large (max ${MAX_VIDEO_BYTES / 1024 / 1024} MB)`,
+						'error'
+					);
+					continue;
+				}
 				this.videosAdd.push(file);
 				const videoUrl = URL.createObjectURL(file);
 				this.dataVideos.push(videoUrl);
 			}
+			input.value = '';
 		}
 	}
 
@@ -147,12 +156,16 @@ export class UpdateCourseComponent implements OnInit {
 				this.loading = false;
 				patchState(this.loaderStore, { isShow: false });
 				this.toastService.show('Course updated successfully');
-				this.router.navigateByUrl('/agency/course-list');
+				this.router.navigateByUrl('/agency/courses');
 			},
-			error: () => {
+			error: err => {
 				this.loading = false;
 				patchState(this.loaderStore, { isShow: false });
-				this.toastService.show('Failed to update course', 'error');
+				const message =
+					err?.status === 413
+						? 'Upload too large. Please use smaller video/image files.'
+						: 'Failed to update course';
+				this.toastService.show(message, 'error');
 			},
 		});
 	}

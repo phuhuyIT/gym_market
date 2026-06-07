@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { Course } from '../core/models/course.model';
@@ -8,6 +8,8 @@ import { Course } from '../core/models/course.model';
 	providedIn: 'root',
 })
 export class CourseAgencyService {
+	searchString = signal<string>('');
+
 	constructor(private http: HttpClient) {}
 
 	addCourse(model: Partial<Course>): Observable<void> {

@@ -1,34 +1,37 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { patchState } from '@ngrx/signals';
 import { CourseAgencyService } from '../course-agency.service';
 import { LoaderModalStore } from '../../stores/loader.store';
-import { patchState } from '@ngrx/signals';
-import { FormsModule } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Course } from '../../core/models/course.model';
-import { GmCardComponent, GmButtonComponent, GmInputComponent } from '../../shared';
 import { ToastService } from '../../shared/services/toast.service';
+import { Course } from '../../core/models/course.model';
 
 @Component({
-    selector: 'app-course-list',
+    selector: 'app-manage-courses',
+    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, FormsModule, GmCardComponent, GmButtonComponent, GmInputComponent],
-    templateUrl: './course-list.component.html',
-    styleUrl: './course-list.component.scss'
+    imports: [CommonModule, RouterLink, FormsModule, DecimalPipe],
+    templateUrl: './manage-courses.component.html'
 })
-export class CourseListComponent implements OnInit {
+export class ManageCoursesComponent implements OnInit {
 	courses: Course[] = [];
-	coursestemp: Course[] = [];
+	filteredCourses: Course[] = [];
+	
+	searchString = '';
+	selectedCategory = '';
+	
+	isShowDeleteModal = false;
+	courseIdToDelete = '';
+	
 	loaderStore = inject(LoaderModalStore);
-	private destroyRef = inject(DestroyRef);
-	private cdr = inject(ChangeDetectorRef);
-	isShowDeleteModal: boolean = false;
-	courseIdToDelete: string = '';
 	userStore = inject(UserStore);
 	toastService = inject(ToastService);
-
-	searchString: string = '';
+	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 
 	constructor(private courseAgencyService: CourseAgencyService) {}
 
@@ -44,19 +47,42 @@ export class CourseListComponent implements OnInit {
 			.subscribe({
 				next: res => {
 					this.courses = res;
-					this.coursestemp = this.courses;
+					this.applyFilters();
 					patchState(this.loaderStore, { isShow: false });
 					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.loaderStore, { isShow: false });
+					this.toastService.show('Failed to load courses', 'error');
 				},
 			});
 	}
 
-	onShowDeleteModel(flag: boolean, courseIdToDelete: string) {
+	applyFilters() {
+		let result = this.courses;
+		if (this.searchString.trim()) {
+			const q = this.searchString.toLowerCase();
+			result = result.filter(c => c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q));
+		}
+		if (this.selectedCategory) {
+			result = result.filter(c => c.category === this.selectedCategory);
+		}
+		this.filteredCourses = result;
+		this.cdr.markForCheck();
+	}
+
+	onSearch() {
+		this.applyFilters();
+	}
+
+	onCategoryChange(cat: string) {
+		this.selectedCategory = cat;
+		this.applyFilters();
+	}
+
+	onShowDeleteModel(flag: boolean, id: string) {
 		this.isShowDeleteModal = flag;
-		this.courseIdToDelete = courseIdToDelete;
+		this.courseIdToDelete = id;
 	}
 
 	onRemove() {
@@ -71,24 +97,19 @@ export class CourseListComponent implements OnInit {
 					patchState(this.loaderStore, { isShow: false });
 					this.toastService.show('Course removed successfully');
 					this.courses = this.courses.filter(x => x.courseId !== this.courseIdToDelete);
-					this.coursestemp = [...this.courses];
 					this.courseIdToDelete = '';
+					this.applyFilters();
 					this.cdr.markForCheck();
 				},
-				error: err => {
+				error: () => {
 					patchState(this.loaderStore, { isShow: false });
 					this.toastService.show('Failed to remove course', 'error');
 				},
 			});
 	}
 
-	search() {
-		if (this.searchString === '') {
-			this.coursestemp = this.courses;
-			return;
-		}
-		this.coursestemp = this.courses.filter(c =>
-			c.title.toLowerCase().includes(this.searchString.toLowerCase())
-		);
+	get categories(): string[] {
+		const cats = this.courses.map(c => c.category).filter(Boolean);
+		return Array.from(new Set(cats));
 	}
 }

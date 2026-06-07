@@ -7,6 +7,9 @@ export interface Conversation {
   isGroup: boolean;
   role?: string;
   memberCount?: number;
+  otherUserId?: string | null;
+  isOnline?: boolean;
+  lastSeen?: string | null;
 }
 
 export interface Message {

@@ -1,81 +1,83 @@
-<div class="chat-page">
+<div [ngClass]="isAgency ? 'chat-page-embedded' : 'chat-page'">
   <!-- Main Glass Card Container -->
-  <div class="chat-container">
+  <div [ngClass]="isAgency ? 'chat-container-embedded' : 'chat-container'">
     
     <!-- Column 1: Navigation Sidebar -->
-    <aside class="chat-nav-sidebar">
-      <div class="profile-section">
-        <div class="avatar-wrapper">
-          <img [src]="userStore.avatar() || DEFAULT_AVATAR_URL" alt="User Avatar" class="user-avatar">
-          <span class="active-status-dot"></span>
+    @if (!isAgency) {
+      <aside class="chat-nav-sidebar">
+        <div class="profile-section">
+          <div class="avatar-wrapper">
+            <img [src]="userStore.avatar() || DEFAULT_AVATAR_URL" alt="User Avatar" class="user-avatar">
+            <span class="active-status-dot"></span>
+          </div>
+          <button class="notif-bell-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+              <path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+          </button>
         </div>
-        <button class="notif-bell-btn" aria-label="Notifications">
-          <svg viewBox="0 0 24 24" width="20" height="20">
-            <path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-          </svg>
-        </button>
-      </div>
-      <h2 class="user-display-name">{{ userStore.fullName() }}</h2>
+        <h2 class="user-display-name">{{ userStore.fullName() }}</h2>
 
-      <nav class="nav-links">
-        <button class="nav-item nav-item--active">
-          <div class="nav-icon-box">
+        <nav class="nav-links">
+          <button class="nav-item nav-item--active">
+            <div class="nav-icon-box">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+              </svg>
+            </div>
+            <div class="nav-item-text">
+              <span class="nav-title">Chats</span>
+              <span class="nav-sub">conversation</span>
+            </div>
+          </button>
+
+          <button class="nav-item" (click)="openCreateGroup()">
+            <div class="nav-icon-box">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+              </svg>
+            </div>
+            <div class="nav-item-text">
+              <span class="nav-title">Groups</span>
+              <span class="nav-sub">create group</span>
+            </div>
+          </button>
+
+          <button class="nav-item">
+            <div class="nav-icon-box">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H5v-4h6v4z"/>
+              </svg>
+            </div>
+            <div class="nav-item-text">
+              <span class="nav-title">Marketplace</span>
+              <span class="nav-sub">buy & sell</span>
+            </div>
+          </button>
+
+          <button class="nav-item">
+            <div class="nav-icon-box">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+            </div>
+            <div class="nav-item-text">
+              <span class="nav-title">Friend Requests</span>
+              <span class="nav-sub">people</span>
+            </div>
+          </button>
+        </nav>
+
+        <div class="nav-sidebar-footer">
+          <button (click)="logout()" class="logout-btn">
             <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+              <path fill="currentColor" d="M13 3h-2v10h2V3zm4.72 2.28l-1.41 1.41C17.79 7.82 19 9.77 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.23 1.21-4.18 2.7-5.3L6.28 5.28C4.27 7.03 3 9.62 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.38-1.27-4.97-3.28-6.72z"/>
             </svg>
-          </div>
-          <div class="nav-item-text">
-            <span class="nav-title">Chats</span>
-            <span class="nav-sub">conversation</span>
-          </div>
-        </button>
-
-        <button class="nav-item" (click)="openCreateGroup()">
-          <div class="nav-icon-box">
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-            </svg>
-          </div>
-          <div class="nav-item-text">
-            <span class="nav-title">Groups</span>
-            <span class="nav-sub">create group</span>
-          </div>
-        </button>
-
-        <button class="nav-item">
-          <div class="nav-icon-box">
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="currentColor" d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H5v-4h6v4z"/>
-            </svg>
-          </div>
-          <div class="nav-item-text">
-            <span class="nav-title">Marketplace</span>
-            <span class="nav-sub">buy & sell</span>
-          </div>
-        </button>
-
-        <button class="nav-item">
-          <div class="nav-icon-box">
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="currentColor" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-            </svg>
-          </div>
-          <div class="nav-item-text">
-            <span class="nav-title">Friend Requests</span>
-            <span class="nav-sub">people</span>
-          </div>
-        </button>
-      </nav>
-
-      <div class="nav-sidebar-footer">
-        <button (click)="logout()" class="logout-btn">
-          <svg viewBox="0 0 24 24" width="20" height="20">
-            <path fill="currentColor" d="M13 3h-2v10h2V3zm4.72 2.28l-1.41 1.41C17.79 7.82 19 9.77 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.23 1.21-4.18 2.7-5.3L6.28 5.28C4.27 7.03 3 9.62 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.38-1.27-4.97-3.28-6.72z"/>
-          </svg>
-          <span>Log out</span>
-        </button>
-      </div>
-    </aside>
+            <span>Log out</span>
+          </button>
+        </div>
+      </aside>
+    }
 
     <!-- Column 2: Conversations Sidebar -->
     <aside class="chat-list-sidebar">
@@ -139,7 +141,9 @@
           >
             <div class="conv-avatar">
               <img [src]="item.avatar || DEFAULT_AVATAR_URL" alt="Avatar">
-              <span class="online-dot"></span>
+              @if (item.isOnline) {
+                <span class="online-dot"></span>
+              }
             </div>
             <div class="conv-body">
               <div class="conv-top">
@@ -181,14 +185,18 @@
               </button>
               <div class="header-avatar">
                 <img [src]="conversationUrl || DEFAULT_AVATAR_URL" alt="Avatar">
-                <span class="online-dot"></span>
+                @if (activeIsOnline) {
+                  <span class="online-dot"></span>
+                }
               </div>
               <div class="header-info">
                 <h3 class="header-name">{{conversationName}}</h3>
                 @if (activeIsGroup) {
                   <span class="header-status">{{ activeMemberCount }} members</span>
-                } @else {
+                } @else if (activeIsOnline) {
                   <span class="header-status">Active now</span>
+                } @else {
+                  <span class="header-status">{{ lastSeenText(activeLastSeen) }}</span>
                 }
               </div>
             </div>

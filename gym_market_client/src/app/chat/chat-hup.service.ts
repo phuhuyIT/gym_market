@@ -44,6 +44,18 @@ export class ChatHupService {
 		}
 	}
 
+	onUserOnline(callback: (userId: string) => void) {
+		if (this.hubConnection) {
+			this.hubConnection.on('UserOnline', callback);
+		}
+	}
+
+	onUserOffline(callback: (userId: string, lastSeen: string) => void) {
+		if (this.hubConnection) {
+			this.hubConnection.on('UserOffline', callback);
+		}
+	}
+
 	joinGroup(roomName: string) {
 		if (this.hubConnection) {
 			this.hubConnection.invoke('JoinRoom', roomName).catch(err => console.error('JoinRoom failed:', err));

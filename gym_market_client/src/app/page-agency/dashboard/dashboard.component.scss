@@ -1,0 +1,32 @@
+/* Trainer Dashboard Page Styles */
+
+:host {
+  display: block;
+}
+
+// Smooth micro-interaction transitions for hover states of our new grid cards
+.rounded-3xl {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.3s ease, 
+              background-color 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+}
+
+// Custom line clamps in case Tailwind version doesn't support them fully
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
