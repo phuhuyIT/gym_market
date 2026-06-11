@@ -15,12 +15,14 @@ namespace GymMarket.API.Repositories
         private readonly GymMarketContext _context;
         private readonly IHubContext<ChatHub> _hub;
         private readonly IPresenceTracker _presenceTracker;
+        private readonly INotificationRepository _notificationRepository;
 
-        public ConversationRepository(GymMarketContext context, IHubContext<ChatHub> hub, IPresenceTracker presenceTracker)
+        public ConversationRepository(GymMarketContext context, IHubContext<ChatHub> hub, IPresenceTracker presenceTracker, INotificationRepository notificationRepository)
         {
             _context = context;
             _hub = hub;
             _presenceTracker = presenceTracker;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<ApiResponse> CreateConversation(CreateConversationDto model)
@@ -138,6 +140,13 @@ namespace GymMarket.API.Repositories
 
             await AddSystemMessage(conversation.Id, $"{creator.FullName} created the group");
 
+            await _notificationRepository.NotifyUsers(
+                memberIds,
+                NotificationTypes.Chat,
+                "Added to a group",
+                $"{creator.FullName} added you to the group \"{model.Name}\"",
+                "/chat/chat-list");
+
             return new ApiResponse { StatusCode = 200, Success = true, Message = conversation.Id.ToString() };
         }
 
@@ -188,6 +197,13 @@ namespace GymMarket.API.Repositories
             var names = string.Join(", ", newUsers.Select(u => u.FullName));
             await AddSystemMessage(model.ConversationId, $"{actorUser?.FullName} added {names}");
             await BroadcastGroupUpdated(model.ConversationId);
+
+            await _notificationRepository.NotifyUsers(
+                newUsers.Select(u => u.Id),
+                NotificationTypes.Chat,
+                "Added to a group",
+                $"{actorUser?.FullName} added you to the group \"{conversation.Name}\"",
+                "/chat/chat-list");
 
             return new ApiResponse { StatusCode = 200, Success = true, Message = "SUCCESS" };
         }
@@ -461,6 +477,8 @@ namespace GymMarket.API.Repositories
 
             var sender = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == model.SenderId);
 
+            await NotifyMessageRecipients(model, sender, conversationParticipants);
+
             return new UserMessageDto
             {
                 Id = message.Id,
@@ -472,6 +490,33 @@ namespace GymMarket.API.Repositories
                 SentAt = message.CreatedAt,
                 Type = message.Type,
             };
+        }
+
+        // Bell notification for everyone else in the conversation. Upsert keyed on the
+        // conversation link so a burst of messages collapses into one unread entry
+        // showing the latest preview instead of one row per message.
+        private async Task NotifyMessageRecipients(SendMessageDto model, AppUser? sender, List<ConversationParticipant> participants)
+        {
+            var conversation = await _context.Conversations.AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == model.ConversationId);
+
+            var title = conversation?.IsGroup == true
+                ? $"New message in \"{conversation.Name}\""
+                : $"New message from {sender?.FullName ?? "someone"}";
+
+            var preview = model.Content.Length > 120 ? model.Content[..120] + "…" : model.Content;
+            if (conversation?.IsGroup == true)
+            {
+                preview = $"{sender?.FullName}: {preview}";
+            }
+
+            var link = $"/chat/chat-list?conversationId={model.ConversationId}";
+
+            foreach (var participant in participants.Where(p => p.UserId != model.SenderId))
+            {
+                await _notificationRepository.NotifyUserUpsert(
+                    participant.UserId, NotificationTypes.Chat, title, preview, link);
+            }
         }
 
         public async Task<List<UserMessageDto>> GetMessages(int conversationId)

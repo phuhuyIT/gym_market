@@ -118,6 +118,7 @@ builder.Services.AddScoped<ICourseRegistrationRepository, CourseRegistrationRepo
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<ILectureRepository, LectureRepository>();
 builder.Services.AddScoped<ILectureMaterialRepository, LectureMaterialRepository>();
 builder.Services.AddScoped<IFoodNutritionRepository, FoodNutritionRepository>();
@@ -195,6 +196,7 @@ app.UseAuthorization();
 
 app.UseWebSockets();
 app.MapHub<ChatHub>("hubs/chat");
+app.MapHub<NotificationHub>("hubs/notifications");
 
 app.MapControllers();
 

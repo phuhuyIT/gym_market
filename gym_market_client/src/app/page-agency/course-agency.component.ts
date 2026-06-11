@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UserStore } from '../stores/user.store';
 import { AccountService } from '../guest/account.service';
 import { ThemeToggleComponent } from '../shared/components/theme-toggle/theme-toggle.component';
+import { NotificationBellComponent } from '../shared/components/notification-bell/notification-bell.component';
 import { CourseAgencyService } from './course-agency.service';
 import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs';
@@ -11,7 +12,7 @@ import { take } from 'rxjs';
 @Component({
     selector: 'app-course-agency',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, ThemeToggleComponent, FormsModule],
+    imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, ThemeToggleComponent, FormsModule, NotificationBellComponent],
     templateUrl: './course-agency.component.html',
     styleUrl: './course-agency.component.scss'
 })

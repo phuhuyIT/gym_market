@@ -10,9 +10,36 @@ namespace GymMarket.API.Repositories
     public class PaymentRepository : GenericRepository<Payment, string>, IPaymentRepository
     {
         private readonly GymMarketContext _context;
-        public PaymentRepository(GymMarketContext context, IMapper mapper) : base(context, mapper)
+        private readonly INotificationRepository _notificationRepository;
+        public PaymentRepository(GymMarketContext context, IMapper mapper, INotificationRepository notificationRepository) : base(context, mapper)
         {
             _context = context;
+            _notificationRepository = notificationRepository;
+        }
+
+        // Resolves the AppUser id of a payment's student so a notification can target them.
+        private async Task<string?> GetUserIdOfStudent(string? studentId)
+        {
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return null;
+            }
+            return await _context.Students
+                .Where(s => s.StudentId == studentId)
+                .Select(s => s.UserId)
+                .FirstOrDefaultAsync();
+        }
+
+        private async Task<string?> GetCourseTitle(string? courseId)
+        {
+            if (string.IsNullOrEmpty(courseId))
+            {
+                return null;
+            }
+            return await _context.Courses
+                .Where(c => c.CourseId == courseId)
+                .Select(c => c.Title)
+                .FirstOrDefaultAsync();
         }
         public async Task<IEnumerable<Payment>> GetPaymentsByStudentIdAsync(string studentId)
         {
@@ -60,6 +87,18 @@ namespace GymMarket.API.Repositories
                 payment.UpdatedAt = DateTime.UtcNow;
                 await SyncRegistrationStatusAsync(payment.StudentId, payment.CourseId, PaymentStatus.Paid);
                 await _context.SaveChangesAsync();
+
+                var userId = await GetUserIdOfStudent(payment.StudentId);
+                if (userId != null)
+                {
+                    var courseTitle = await GetCourseTitle(payment.CourseId);
+                    await _notificationRepository.NotifyUser(
+                        userId,
+                        NotificationTypes.Payment,
+                        "Payment confirmed",
+                        $"Your payment for \"{courseTitle ?? "a course"}\" has been confirmed. You now have full access.",
+                        "/client/course-registration");
+                }
             }
             return payment;
         }
@@ -74,6 +113,19 @@ namespace GymMarket.API.Repositories
                 payment.UpdatedAt = DateTime.UtcNow;
                 await SyncRegistrationStatusAsync(payment.StudentId, payment.CourseId, PaymentStatus.Canceled);
                 await _context.SaveChangesAsync();
+
+                var userId = await GetUserIdOfStudent(payment.StudentId);
+                if (userId != null)
+                {
+                    var courseTitle = await GetCourseTitle(payment.CourseId);
+                    var reason = string.IsNullOrWhiteSpace(model.Note) ? "" : $" Reason: {model.Note}";
+                    await _notificationRepository.NotifyUser(
+                        userId,
+                        NotificationTypes.Payment,
+                        "Payment canceled",
+                        $"Your payment for \"{courseTitle ?? "a course"}\" was canceled.{reason}",
+                        "/client/course-registration");
+                }
             }
             return payment;
         }

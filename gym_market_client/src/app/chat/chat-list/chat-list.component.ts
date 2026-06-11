@@ -3,7 +3,7 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { UserStore } from '../../stores/user.store';
 import { ConversationService } from '../conversation.service';
 import { patchState } from '@ngrx/signals';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { AccountService } from '../../guest/account.service';
 
 import { MessageService } from '../message.service';
@@ -16,11 +16,12 @@ import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 import { CreateGroupComponent } from '../create-group/create-group.component';
 import { GroupMembersComponent } from '../group-members/group-members.component';
 import { NewConversationComponent } from '../new-conversation/new-conversation.component';
+import { NotificationBellComponent } from '../../shared/components/notification-bell/notification-bell.component';
 
 @Component({
     selector: 'app-chat-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FormsModule, DatePipe, CommonModule, CreateGroupComponent, GroupMembersComponent, NewConversationComponent],
+    imports: [FormsModule, DatePipe, CommonModule, CreateGroupComponent, GroupMembersComponent, NewConversationComponent, NotificationBellComponent],
     templateUrl: './chat-list.component.html',
     styleUrl: './chat-list.component.scss'
 })
@@ -62,6 +63,11 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 	message = '';
 
+	// Latest query params, applied once conversations are loaded. Kept outside the
+	// snapshot so notification clicks that only change the query string (the
+	// component is reused, not remounted) still switch the conversation.
+	private routeParams: Params = {};
+
 	get filteredChats(): Conversation[] {
 		let result = this.chats;
 		if (this.activeFilter === 'unread') {
@@ -90,6 +96,13 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 	ngOnInit() {
 		this.isAgency = this.router.url.includes('/agency');
 		this.getConversations();
+
+		this.route.queryParams
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(params => {
+				this.routeParams = params;
+				this.applyRouteTarget();
+			});
 
 		this.chatHupService.startConnection();
 		// SignalR callbacks can fire outside Angular's zone, so run them inside
@@ -194,17 +207,35 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 						patchState(this.loader, { isShow: false });
 						this.chats = res;
 						this.cdr.markForCheck();
-
-						const targetUserId = this.route.snapshot.queryParams['userId'] || this.route.snapshot.queryParams['studentId'];
-						if (targetUserId) {
-							this.selectConversationByUserId(targetUserId);
-						}
+						this.applyRouteTarget();
 					},
 					error: () => {
 						patchState(this.loader, { isShow: false });
 						this.cdr.markForCheck();
 					},
 				});
+		}
+	}
+
+	// Opens the conversation the query params point at (conversationId from a bell
+	// notification, userId/studentId from profile/manage-students deep links).
+	// No-op until conversations have loaded; params are consumed so later list
+	// refreshes (e.g. GroupUpdated) don't re-trigger the selection.
+	private applyRouteTarget() {
+		if (this.chats.length === 0) {
+			return;
+		}
+		const conversationId = Number(this.routeParams['conversationId']);
+		const targetUserId = this.routeParams['userId'] || this.routeParams['studentId'];
+		this.routeParams = {};
+
+		if (conversationId) {
+			const chat = this.chats.find(c => c.conversationId === conversationId);
+			if (chat) {
+				this.getMessages(chat);
+			}
+		} else if (targetUserId) {
+			this.selectConversationByUserId(targetUserId);
 		}
 	}
 

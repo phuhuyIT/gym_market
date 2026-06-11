@@ -33,6 +33,10 @@
       <li><app-theme-toggle></app-theme-toggle></li>
 
       @if(userStore.id()) {
+        <li><app-notification-bell></app-notification-bell></li>
+      }
+
+      @if(userStore.id()) {
         <li 
           class="relative"
           (mouseover)="onShowAccountOption()"

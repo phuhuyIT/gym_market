@@ -113,22 +113,6 @@ $selected-chat-bg: #6b8afd;
       }
     }
 
-    .notif-bell-btn {
-      width: 36px;
-      height: 36px;
-      border: none;
-      background: transparent;
-      color: $primary-blue;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s ease;
-
-      &:hover {
-        transform: rotate(15deg) scale(1.08);
-      }
-    }
   }
 
   .user-display-name {
