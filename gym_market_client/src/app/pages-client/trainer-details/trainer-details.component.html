@@ -1,4 +1,4 @@
-@if (trainerInfo && userInfo) {
+@if (trainerInfo) {
   <div class="trainer-dashboard container">
     <!-- Top banner matching mockup: "ONLINE COURSE / Sharpen Your Skills with Professional Online Courses" -->
     <div class="dashboard-banner">
@@ -9,14 +9,10 @@
           <p class="banner-subtitle">{{trainerInfo.bio || 'Transform your health with professional fitness and wellness guidance.'}}</p>
           
           <div class="banner-info-chips">
-            <span class="chip">
-              <i class="fa-solid fa-envelope"></i>
-              <span>{{userInfo.email}}</span>
-            </span>
-            @if (userInfo.address) {
+            @if (trainerInfo.email) {
               <span class="chip">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>{{userInfo.address}}</span>
+                <i class="fa-solid fa-envelope"></i>
+                <span>{{trainerInfo.email}}</span>
               </span>
             }
             <span class="chip">

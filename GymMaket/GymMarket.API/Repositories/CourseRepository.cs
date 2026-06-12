@@ -57,7 +57,26 @@ namespace GymMarket.API.Repositories
 
         public async Task<ApiResponse> UpdateCourse(CourseUpdateDTO courseUpdateDTO)
         {
+            // The DTO carries no TrainerId; keep the current owner so the full-entity
+            // Update below can't clear (or transfer) course ownership.
+            var currentTrainerId = await _context.Courses
+                .AsNoTracking()
+                .Where(c => c.CourseId == courseUpdateDTO.CourseId)
+                .Select(c => c.TrainerId)
+                .FirstOrDefaultAsync();
+
+            if (currentTrainerId == null)
+            {
+                return new ApiResponse
+                {
+                    Errors = ["COURSE_NOT_FOUND"],
+                    StatusCode = 404,
+                    Success = false
+                };
+            }
+
             var mapEntity = _mapper.Map<CourseUpdateDTO, Course>(courseUpdateDTO);
+            mapEntity.TrainerId = currentTrainerId;
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try

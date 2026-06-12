@@ -26,8 +26,9 @@ export class ConversationService {
 		return this.http.post<ApiResponse>(`${this.base}/create-conversation`, model);
 	}
 
-	getConversations(userId: string | null): Observable<Conversation[]> {
-		return this.http.get<Conversation[]>(`${this.base}/get-conversation-of-user/${userId}`);
+	// The backend resolves the user from the JWT.
+	getConversations(): Observable<Conversation[]> {
+		return this.http.get<Conversation[]>(`${this.base}/get-conversation-of-user`);
 	}
 
 	createGroup(model: CreateGroupDto): Observable<ApiResponse> {

@@ -6,6 +6,7 @@ import {
 	CaloricValueDto,
 	FoodNutrition,
 	FoodNutritionUser,
+	UpdateFoodNutritionUserDto,
 } from '../core/models/food-nutrition.model';
 
 @Injectable({
@@ -20,9 +21,9 @@ export class FoodNutritionService {
 		);
 	}
 
-	getFoodNutritionUser(userId: string | null): Observable<FoodNutritionUser[]> {
+	getFoodNutritionUser(): Observable<FoodNutritionUser[]> {
 		return this.http.get<FoodNutritionUser[]>(
-			`${environment.baseApi}/FoodNutrition/get-nutrition-user/${userId}`
+			`${environment.baseApi}/FoodNutrition/get-nutrition-user`
 		);
 	}
 
@@ -33,10 +34,17 @@ export class FoodNutritionService {
 		);
 	}
 
-	deleteFoodNutritionUser(model: { userId: string; foodNutritionUserId: number }): Observable<void> {
-		return this.http.post<void>(
-			`${environment.baseApi}/FoodNutrition/delete-foodnutrition-user`,
+	updateFoodNutritionUser(model: UpdateFoodNutritionUserDto): Observable<FoodNutritionUser> {
+		return this.http.put<FoodNutritionUser>(
+			`${environment.baseApi}/FoodNutrition/update-foodnutrition-user`,
 			model
+		);
+	}
+
+	deleteFoodNutritionUser(model: { foodNutritionUserId: number }): Observable<void> {
+		return this.http.delete<void>(
+			`${environment.baseApi}/FoodNutrition/delete-foodnutrition-user`,
+			{ body: model }
 		);
 	}
 }

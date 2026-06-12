@@ -18,5 +18,10 @@ namespace GymMarket.API.Models
         public double Fat { get; set; }
         public double Sugars { get; set; }
         public double Protein { get; set; }
+
+        // Nullable so rows logged before these columns existed stay distinguishable
+        // (the client falls back to its localStorage metadata for them).
+        public DateOnly? Date { get; set; }
+        public string? MealType { get; set; }
     }
 }

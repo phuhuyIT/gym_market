@@ -284,9 +284,14 @@
                       <div class="space-y-1.5 mb-2.5">
                         <div class="flex justify-between items-start gap-1">
                           <h5 class="font-black text-gray-900 dark:text-zinc-100 text-sm leading-tight line-clamp-2" title="{{ item.foodName }}">{{ item.foodName }}</h5>
-                          <button (click)="onShowDelete(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1 flex-shrink-0 -mt-1 -mr-1">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                          </button>
+                          <div class="flex items-center flex-shrink-0 -mt-1 -mr-1">
+                            <button (click)="onShowEdit(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-emerald-500 p-1">
+                              <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                            <button (click)="onShowDelete(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1">
+                              <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                          </div>
                         </div>
                         <p class="text-[11px] md:text-xs text-gray-400 dark:text-zinc-500 font-bold">
                           {{ item.weight.toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
@@ -347,9 +352,14 @@
                       <div class="space-y-1.5 mb-2.5">
                         <div class="flex justify-between items-start gap-1">
                           <h5 class="font-black text-gray-900 dark:text-zinc-100 text-sm leading-tight line-clamp-2" title="{{ item.foodName }}">{{ item.foodName }}</h5>
-                          <button (click)="onShowDelete(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1 flex-shrink-0 -mt-1 -mr-1">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                          </button>
+                          <div class="flex items-center flex-shrink-0 -mt-1 -mr-1">
+                            <button (click)="onShowEdit(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-emerald-500 p-1">
+                              <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                            <button (click)="onShowDelete(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1">
+                              <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                          </div>
                         </div>
                         <p class="text-[11px] md:text-xs text-gray-400 dark:text-zinc-500 font-bold">
                           {{ item.weight.toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
@@ -410,9 +420,14 @@
                       <div class="space-y-1.5 mb-2.5">
                         <div class="flex justify-between items-start gap-1">
                           <h5 class="font-black text-gray-900 dark:text-zinc-100 text-sm leading-tight line-clamp-2" title="{{ item.foodName }}">{{ item.foodName }}</h5>
-                          <button (click)="onShowDelete(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1 flex-shrink-0 -mt-1 -mr-1">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                          </button>
+                          <div class="flex items-center flex-shrink-0 -mt-1 -mr-1">
+                            <button (click)="onShowEdit(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-emerald-500 p-1">
+                              <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                            <button (click)="onShowDelete(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1">
+                              <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                          </div>
                         </div>
                         <p class="text-[11px] md:text-xs text-gray-400 dark:text-zinc-500 font-bold">
                           {{ item.weight.toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
@@ -473,9 +488,14 @@
                       <div class="space-y-1.5 mb-2.5">
                         <div class="flex justify-between items-start gap-1">
                           <h5 class="font-black text-gray-900 dark:text-zinc-100 text-sm leading-tight line-clamp-2" title="{{ item.foodName }}">{{ item.foodName }}</h5>
-                          <button (click)="onShowDelete(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1 flex-shrink-0 -mt-1 -mr-1">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                          </button>
+                          <div class="flex items-center flex-shrink-0 -mt-1 -mr-1">
+                            <button (click)="onShowEdit(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-emerald-500 p-1">
+                              <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                            <button (click)="onShowDelete(true, item)" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1">
+                              <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                          </div>
                         </div>
                         <p class="text-[11px] md:text-xs text-gray-400 dark:text-zinc-500 font-bold">
                           {{ item.weight.toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
@@ -575,6 +595,59 @@
         Add Log
       </button>
       <button (click)="onShowAddFoodNutrition(false)" class="flex-1 bg-gray-50 dark:bg-zinc-800/80 hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400 font-extrabold text-sm py-3.5 rounded-2xl transition-all border border-gray-100 dark:border-zinc-700/50 uppercase tracking-wider">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Modal Dialog: Edit Food Entry -->
+@if(showEdit && foodSelectedToEdit) {
+<div class="modal-backdrop bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="modal bg-white dark:bg-zinc-900 rounded-[32px] p-8 w-full max-w-md border border-gray-100 dark:border-zinc-800 shadow-2xl relative" appReveal>
+    <button (click)="onShowEdit(false, null)" class="absolute right-6 top-6 w-9 h-9 rounded-full bg-gray-50 dark:bg-zinc-800/80 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 transition-colors">
+      <i class="fa-solid fa-xmark text-base"></i>
+    </button>
+
+    <h3 class="text-xl font-black text-gray-900 dark:text-white mb-6">Edit Food Entry</h3>
+
+    <!-- Food name (read-only) -->
+    <div class="mb-5">
+      <label class="block text-sm font-black text-gray-400 dark:text-zinc-555 uppercase tracking-wider mb-2">Food Name</label>
+      <div class="form-input bg-gray-50 dark:bg-zinc-800/60 text-gray-500 dark:text-zinc-400 cursor-not-allowed">
+        {{ foodSelectedToEdit.foodName }}
+      </div>
+    </div>
+
+    <!-- Meal Type selector -->
+    <div class="mb-5">
+      <label class="block text-sm font-black text-gray-400 dark:text-zinc-555 uppercase tracking-wider mb-2">Meal Type</label>
+      <select [value]="editMealType" (change)="editMealType = $any($event.target).value" class="form-input bg-white dark:bg-zinc-900">
+        <option value="Breakfast">Breakfast</option>
+        <option value="Lunch">Lunch</option>
+        <option value="Dinner">Dinner</option>
+        <option value="Snacks">Snacks</option>
+      </select>
+    </div>
+
+    <!-- Weight in grams field -->
+    <div class="mb-7">
+      <label class="block text-sm font-black text-gray-400 dark:text-zinc-555 uppercase tracking-wider mb-2">Weight (grams)</label>
+      <input
+        [formControl]="editWeight"
+        type="number"
+        class="form-input"
+        placeholder="e.g. 100"
+        required
+      />
+    </div>
+
+    <div class="flex gap-3">
+      <button (click)="onUpdate()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-sm py-3.5 rounded-2xl transition-all shadow-md uppercase tracking-wider">
+        Save Changes
+      </button>
+      <button (click)="onShowEdit(false, null)" class="flex-1 bg-gray-50 dark:bg-zinc-800/80 hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400 font-extrabold text-sm py-3.5 rounded-2xl transition-all border border-gray-100 dark:border-zinc-700/50 uppercase tracking-wider">
         Cancel
       </button>
     </div>

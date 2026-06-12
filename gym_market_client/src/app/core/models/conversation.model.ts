@@ -30,8 +30,8 @@ export interface SendMessageDto {
   senderId: string;
 }
 
+// The sender is derived from the JWT on the backend.
 export interface CreateConversationDto {
-  senderId: string;
   recieveId: string;
 }
 

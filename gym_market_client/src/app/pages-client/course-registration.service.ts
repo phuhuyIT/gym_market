@@ -10,24 +10,25 @@ import { Course } from '../core/models/course.model';
 export class CourseRegistrationService {
 	constructor(private http: HttpClient) {}
 
-	registerCourse(courseId: string, studentId: string): Observable<void> {
+	// The acting student is derived from the JWT on the backend, so no
+	// studentId is ever sent.
+	registerCourse(courseId: string): Observable<void> {
 		return this.http.post<void>(`${environment.baseApi}/CourseRegistration/register-course`, {
 			courseId,
-			studentId,
 		});
 	}
 
 	// The API returns the registered courses (with statusPayment), not registration rows.
-	getCourses(studentId: string): Observable<Course[]> {
+	getCourses(): Observable<Course[]> {
 		return this.http.get<Course[]>(
-			`${environment.baseApi}/CourseRegistration/get-course-registrations/${studentId}`
+			`${environment.baseApi}/CourseRegistration/get-course-registrations`
 		);
 	}
 
-	cancelCourse(courseId: string, studentId: string): Observable<void> {
-		return this.http.post<void>(`${environment.baseApi}/CourseRegistration/cancel-course`, {
-			courseId,
-			studentId,
-		});
+	cancelRegistration(registrationId: string): Observable<void> {
+		return this.http.post<void>(
+			`${environment.baseApi}/CourseRegistration/cancel-registration/${registrationId}`,
+			{}
+		);
 	}
 }

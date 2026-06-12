@@ -16,16 +16,20 @@ namespace GymMarket.API.Repositories
             _context = context;
         }
 
+        private const int MaxSearchResults = 20;
+
         public async Task<List<FoodNutrition>> SearchFoodNutrition(string search)
         {
             var list = await _context.FoodNutritions.AsNoTrackingWithIdentityResolution()
                 .Where(f => f.Name!.ToLower().Contains(search.ToLower()))
+                .OrderBy(f => f.Name)
+                .Take(MaxSearchResults)
                 .ToListAsync();
 
             return list;
         }
 
-        public async Task<FoodNutritionUser?> CalculateCaloric(AddFoodNutritionUser model)
+        public async Task<FoodNutritionUser?> CalculateCaloric(AddFoodNutritionUser model, string userId)
         {
             var foodNutrition = await _context.FoodNutritions
                 .AsNoTrackingWithIdentityResolution()
@@ -50,7 +54,9 @@ namespace GymMarket.API.Repositories
                 Fat = fat,
                 Protein = protein,
                 Sugars = sugars,
-                UserId = model.UserId,
+                UserId = userId,
+                Date = model.Date ?? DateOnly.FromDateTime(DateTime.Today),
+                MealType = model.MealType,
             };
             _context.FoodNutritionUsers.Add(newFoodNutritionUser);
             var r = await _context.SaveChangesAsync();
@@ -70,10 +76,10 @@ namespace GymMarket.API.Repositories
             return list;
         }
 
-        public async Task<bool> DeleteFoodNutritionUser(DeleteFoodNutritionUserDto model)
+        public async Task<bool> DeleteFoodNutritionUser(DeleteFoodNutritionUserDto model, string userId)
         {
             var nutrition = await _context.FoodNutritionUsers
-                .Where(f => f.UserId == model.UserId && f.Id == model.FoodNutritionUserId)
+                .Where(f => f.UserId == userId && f.Id == model.FoodNutritionUserId)
                 .FirstOrDefaultAsync();
 
             if(nutrition == null)
@@ -86,9 +92,37 @@ namespace GymMarket.API.Repositories
             return r > 0;
         }
 
-        public async Task<FoodNutritionUser?> UpdateCalculateCaloric(AddFoodNutritionUser model)
+        public async Task<FoodNutritionUser?> UpdateFoodNutritionUser(UpdateFoodNutritionUserDto model, string userId)
         {
-            return await CalculateCaloric(model);
+            var nutrition = await _context.FoodNutritionUsers
+                .Where(f => f.UserId == userId && f.Id == model.FoodNutritionUserId)
+                .FirstOrDefaultAsync();
+
+            if (nutrition == null || nutrition.Weight <= 0)
+            {
+                return null;
+            }
+
+            // The stored macros scale linearly with weight, so rescale them instead of
+            // re-reading FoodNutritions (the log doesn't keep the source food's id).
+            var factor = model.Weight / nutrition.Weight;
+            nutrition.CaloricValue *= factor;
+            nutrition.Fat *= factor;
+            nutrition.Sugars *= factor;
+            nutrition.Protein *= factor;
+            nutrition.Weight = model.Weight;
+
+            if (model.Date.HasValue)
+            {
+                nutrition.Date = model.Date;
+            }
+            if (!string.IsNullOrWhiteSpace(model.MealType))
+            {
+                nutrition.MealType = model.MealType;
+            }
+
+            await _context.SaveChangesAsync();
+            return nutrition;
         }
     }
 }

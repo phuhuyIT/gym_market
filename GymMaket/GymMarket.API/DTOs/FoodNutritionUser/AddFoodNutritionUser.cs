@@ -4,9 +4,6 @@ namespace GymMarket.API.DTOs.FoodNutritionUser
 {
     public class AddFoodNutritionUser
     {
-        [Required(ErrorMessage = "UserId is required.")]
-        public string UserId { get; set; } = string.Empty;
-
         [Required(ErrorMessage = "FoodNutritionId is required.")]
         public int FoodNutritionId { get; set; }
 
@@ -19,5 +16,8 @@ namespace GymMarket.API.DTOs.FoodNutritionUser
         public double Fat { get; set; }
         public double Sugars { get; set; }
         public double Protein { get; set; }
+
+        public DateOnly? Date { get; set; }
+        public string? MealType { get; set; }
     }
 }

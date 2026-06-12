@@ -5,6 +5,7 @@ using GymMarket.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using System.Text;
 
 namespace GymMarket.API.Controllers
@@ -28,7 +29,15 @@ namespace GymMarket.API.Controllers
         [HttpPost("CreatePaymentUrl")]
         public async Task<IActionResult> CreatePaymentUrl([FromBody] CreatePaymentDto dto)
         {
-            var response = await _momoService.CreatePaymentAsync(dto);
+            // The payment is always made by the authenticated student — never trust
+            // a client-sent id, or anyone could mint payment URLs for other students.
+            var studentId = User.FindFirstValue("studentId");
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { error = "NOT_A_STUDENT" });
+            }
+
+            var response = await _momoService.CreatePaymentAsync(dto.CourseId, studentId);
             if (response == null)
             {
                 return NotFound(new { error = "COURSE_NOT_FOUND" });

@@ -25,10 +25,10 @@ namespace GymMarket.API.Repositories
             _notificationRepository = notificationRepository;
         }
 
-        public async Task<ApiResponse> CreateConversation(CreateConversationDto model)
+        public async Task<ApiResponse> CreateConversation(CreateConversationDto model, string senderId)
         {
             var sender = await _context.Users.AsNoTrackingWithIdentityResolution()
-                .Where(u => u.Id == model.SenderId)
+                .Where(u => u.Id == senderId)
                 .FirstOrDefaultAsync();
 
             if (sender == null)
@@ -47,7 +47,7 @@ namespace GymMarket.API.Repositories
 
             var conversationExists = await _context.Conversations
                 .AsNoTrackingWithIdentityResolution()
-                .Where(c => !c.IsGroup && (c.SenderId == model.SenderId || c.SenderId == model.RecieveId) && (c.RecieveId == model.RecieveId || c.RecieveId == model.SenderId))
+                .Where(c => !c.IsGroup && (c.SenderId == senderId || c.SenderId == model.RecieveId) && (c.RecieveId == model.RecieveId || c.RecieveId == senderId))
                 .FirstOrDefaultAsync();
 
             if (conversationExists != null)
@@ -608,6 +608,12 @@ namespace GymMarket.API.Repositories
                 message.SentAt = DateTime.SpecifyKind(message.SentAt, DateTimeKind.Utc);
             }
             return messages;
+        }
+
+        public async Task<bool> IsMember(int conversationId, string userId)
+        {
+            return await _context.ConversationParticipants
+                .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
         }
 
         public async Task<List<int>> GetConversationIdsOfUser(string userId)

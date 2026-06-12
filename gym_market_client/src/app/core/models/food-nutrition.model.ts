@@ -16,12 +16,25 @@ export interface FoodNutritionUser {
   fat: number;
   sugars: number;
   protein: number;
-  date?: string;
+  // Null on entries logged before the backend persisted these — the
+  // calculator falls back to its localStorage metadata for those.
+  date?: string | null;
+  mealType?: string | null;
 }
 
+// The owning user is derived from the JWT on the backend, so none of the
+// request DTOs carry a userId.
 export interface CaloricValueDto {
-  userId: string | null;
   foodNutritionId: number;
   weight: number;
   foodName: string;
+  date: string;
+  mealType: string;
+}
+
+export interface UpdateFoodNutritionUserDto {
+  foodNutritionUserId: number;
+  weight: number;
+  date: string;
+  mealType: string;
 }
