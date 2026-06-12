@@ -10,21 +10,36 @@ namespace GymMarket.API.Repositories
     public class CourseRatingRepository : ICourseRatingRepository
     {
         private readonly GymMarketContext _context;
+        private readonly IPaymentRepository _paymentRepository;
 
-        public CourseRatingRepository(GymMarketContext context)
+        public CourseRatingRepository(GymMarketContext context, IPaymentRepository paymentRepository)
         {
             _context = context;
+            _paymentRepository = paymentRepository;
         }
 
-        public async Task<ApiResponse> AddRating(CourseRatingCreateDto courseRatingCreateDTO)
+        public async Task<ApiResponse> AddRating(CourseRatingCreateDto courseRatingCreateDTO, string studentId)
         {
+            // Only students with a successful payment for this course may review it.
+            if (!await _paymentRepository.HasPaidForCourse(studentId, courseRatingCreateDTO.CourseId!))
+            {
+                return new ApiResponse { Message = "NOT_ENROLLED", Errors = ["NOT_ENROLLED"], StatusCode = 403, Success = false };
+            }
+
+            var alreadyReviewed = await _context.CourseRatings
+                .AnyAsync(c => c.CourseId == courseRatingCreateDTO.CourseId && c.StudentId == studentId);
+            if (alreadyReviewed)
+            {
+                return new ApiResponse { Message = "ALREADY_REVIEWED", Errors = ["ALREADY_REVIEWED"], StatusCode = 409, Success = false };
+            }
+
             var courseRating = new CourseRating
             {
                 CourseId = courseRatingCreateDTO.CourseId,
                 RatingId = Guid.NewGuid().ToString(),
                 RatingValue = courseRatingCreateDTO.RatingValue,
                 ReviewComment = courseRatingCreateDTO.ReviewComment,
-                StudentId = courseRatingCreateDTO.StudentId,
+                StudentId = studentId,
             };
 
             var existingSum = await _context.CourseRatings

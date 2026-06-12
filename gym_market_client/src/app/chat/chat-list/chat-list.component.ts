@@ -114,6 +114,7 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 				);
 				if (chatConver) {
 					chatConver.lastMessage = message.content;
+					chatConver.lastMessageAt = message.sentAt ?? new Date().toISOString();
 					if (message.senderId !== this.userStore.id() && message.conversationId !== this.conversationId) {
 						chatConver.hasNewMessage = true;
 					}
@@ -168,6 +169,34 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 		this.cdr.markForCheck();
 	}
 
+	// Compact relative time for the conversation list, rendered in the
+	// viewer's local timezone (timestamps arrive as UTC ISO strings).
+	timeAgo(dateStr: string | null | undefined): string {
+		if (!dateStr) {
+			return '';
+		}
+		const then = new Date(dateStr).getTime();
+		if (isNaN(then)) {
+			return '';
+		}
+		const minutes = Math.floor((Date.now() - then) / 60000);
+		if (minutes < 1) {
+			return 'Just now';
+		}
+		if (minutes < 60) {
+			return `${minutes}m ago`;
+		}
+		const hours = Math.floor(minutes / 60);
+		if (hours < 24) {
+			return `${hours}h ago`;
+		}
+		const days = Math.floor(hours / 24);
+		if (days < 7) {
+			return `${days}d ago`;
+		}
+		return new Date(dateStr).toLocaleDateString();
+	}
+
 	lastSeenText(lastSeen: string | null): string {
 		if (!lastSeen) {
 			return 'Offline';
@@ -206,6 +235,7 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 					next: res => {
 						patchState(this.loader, { isShow: false });
 						this.chats = res;
+						this.syncActiveConversation();
 						this.cdr.markForCheck();
 						this.applyRouteTarget();
 					},
@@ -214,6 +244,22 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 						this.cdr.markForCheck();
 					},
 				});
+		}
+	}
+
+	// Keeps the open chat's header in step with the refreshed list, so a group
+	// rename, photo change or membership change (GroupUpdated) shows up without
+	// reopening the conversation.
+	private syncActiveConversation() {
+		if (!this.conversationId) {
+			return;
+		}
+		const chat = this.chats.find(c => c.conversationId === this.conversationId);
+		if (chat) {
+			this.conversationName = chat.conversationName;
+			this.conversationUrl = chat.avatar;
+			this.activeRole = chat.role ?? '';
+			this.activeMemberCount = chat.memberCount ?? 0;
 		}
 	}
 

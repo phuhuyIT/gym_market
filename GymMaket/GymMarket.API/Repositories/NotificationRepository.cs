@@ -37,7 +37,7 @@ namespace GymMarket.API.Repositories
                     Content = content,
                     Link = link,
                     IsRead = false,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                 })
                 .ToList();
 
@@ -76,7 +76,7 @@ namespace GymMarket.API.Repositories
 
             existing.Title = title;
             existing.Content = content;
-            existing.CreatedAt = DateTime.Now;
+            existing.CreatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             // Same id as before — the client replaces the entry instead of appending.
@@ -85,7 +85,7 @@ namespace GymMarket.API.Repositories
 
         public async Task<List<NotificationDto>> GetNotificationsOfUser(string userId, int take = 50)
         {
-            return await _context.Notifications
+            var notifications = await _context.Notifications
                 .AsNoTracking()
                 .Where(n => n.UserId == userId)
                 .OrderByDescending(n => n.CreatedAt)
@@ -101,6 +101,13 @@ namespace GymMarket.API.Repositories
                     CreatedAt = n.CreatedAt,
                 })
                 .ToListAsync();
+            // Stored as UTC, but SQL roundtrips lose the Kind; re-stamp so the JSON
+            // carries 'Z' and clients convert to their local time.
+            foreach (var notification in notifications)
+            {
+                notification.CreatedAt = DateTime.SpecifyKind(notification.CreatedAt, DateTimeKind.Utc);
+            }
+            return notifications;
         }
 
         public async Task<int> GetUnreadCount(string userId)

@@ -8,10 +8,11 @@ import {
 	CreateConversationDto,
 	CreateGroupDto,
 	GroupMember,
+	UpdateGroupDto,
 	UpdateMemberRoleDto,
 	UserSearchResult,
 } from '../core/models/conversation.model';
-import { ApiResponse } from '../core/models/auth.model';
+import { ApiResponse, AvatarUploadResponse } from '../core/models/auth.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -47,6 +48,16 @@ export class ConversationService {
 
 	updateMemberRole(model: UpdateMemberRoleDto): Observable<ApiResponse> {
 		return this.http.post<ApiResponse>(`${this.base}/update-member-role`, model);
+	}
+
+	updateGroup(model: UpdateGroupDto): Observable<ApiResponse> {
+		return this.http.post<ApiResponse>(`${this.base}/update-group`, model);
+	}
+
+	uploadGroupAvatar(file: File): Observable<AvatarUploadResponse> {
+		const formData = new FormData();
+		formData.append('file', file);
+		return this.http.post<AvatarUploadResponse>(`${this.base}/group-avatar`, formData);
 	}
 
 	getGroupMembers(conversationId: number): Observable<GroupMember[]> {

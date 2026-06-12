@@ -9,6 +9,6 @@ namespace GymMarket.API.Repositories.IRepositories
     public interface ICourseRatingRepository
     {
         Task<IEnumerable<CourseRating>> GetRatingsByCourseId(string courseId);
-        Task<ApiResponse> AddRating(CourseRatingCreateDto dto);
+        Task<ApiResponse> AddRating(CourseRatingCreateDto dto, string studentId);
     }
 }

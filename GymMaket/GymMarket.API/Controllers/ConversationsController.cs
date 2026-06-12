@@ -1,5 +1,7 @@
+using GymMarket.API.DTOs.Response.Account;
 using GymMarket.API.DTOs.UserMessage;
 using GymMarket.API.Repositories.IRepositories;
+using GymMarket.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -12,10 +14,12 @@ namespace GymMarket.API.Controllers
     public class ConversationsController : ControllerBase
     {
         private readonly IConversationRepository _conversationRepository;
+        private readonly MinIOService _minioService;
 
-        public ConversationsController(IConversationRepository conversationRepository)
+        public ConversationsController(IConversationRepository conversationRepository, MinIOService minioService)
         {
             _conversationRepository = conversationRepository;
+            _minioService = minioService;
         }
 
         [HttpPost("create-conversation")]
@@ -58,6 +62,39 @@ namespace GymMarket.API.Controllers
         {
             var res = await _conversationRepository.UpdateMemberRole(model, GetUserId());
             return StatusCode(res.StatusCode, new { res.Errors, res.Message, res.Success });
+        }
+
+        [HttpPost("update-group")]
+        public async Task<IActionResult> UpdateGroup(UpdateGroupDto model)
+        {
+            var res = await _conversationRepository.UpdateGroup(model, GetUserId());
+            return StatusCode(res.StatusCode, new { res.Errors, res.Message, res.Success });
+        }
+
+        // Uploads a group avatar image and returns its public URL. The URL is attached
+        // to a conversation via create-group or update-group (which enforce permissions),
+        // so this endpoint only stores the file.
+        [HttpPost("group-avatar")]
+        public async Task<IActionResult> UploadGroupAvatar(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new AvatarUploadResponse { StatusCode = 400, Success = false, Errors = ["NO_FILE"] });
+            }
+
+            var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp", "image/gif" };
+            if (!allowedTypes.Contains(file.ContentType))
+            {
+                return BadRequest(new AvatarUploadResponse { StatusCode = 400, Success = false, Errors = ["INVALID_IMAGE_FORMAT"] });
+            }
+
+            if (file.Length > 5 * 1024 * 1024)
+            {
+                return BadRequest(new AvatarUploadResponse { StatusCode = 400, Success = false, Errors = ["FILE_TOO_LARGE"] });
+            }
+
+            var avatarUrl = await _minioService.UploadSingleFileAsync(file, MinIOService.AVATARS);
+            return Ok(new AvatarUploadResponse { StatusCode = 200, Success = true, Message = "AVATAR_UPLOADED", AvatarUrl = avatarUrl });
         }
 
         [HttpGet("group-members/{conversationId}")]

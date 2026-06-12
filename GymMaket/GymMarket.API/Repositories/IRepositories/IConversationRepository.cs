@@ -13,6 +13,7 @@ namespace GymMarket.API.Repositories.IRepositories
         Task<ApiResponse> RemoveMember(int conversationId, string userId, string actorId);
         Task<ApiResponse> LeaveGroup(int conversationId, string userId);
         Task<ApiResponse> UpdateMemberRole(UpdateMemberRoleDto model, string actorId);
+        Task<ApiResponse> UpdateGroup(UpdateGroupDto model, string actorId);
         Task<List<GroupMemberDto>> GetGroupMembers(int conversationId);
         Task<List<UserSearchDto>> SearchUsers(string query, string currentUserId);
         Task<List<ConversationDto>> GetConversationOfUser(string userId);

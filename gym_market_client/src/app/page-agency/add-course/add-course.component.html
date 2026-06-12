@@ -1,116 +1,275 @@
-<div class="max-w-4xl mx-auto space-y-8 animate-fade-in">
-  
-  <!-- Header with Back link -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-200/60 dark:border-neutral-800/60 pb-5">
-    <div>
-      <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 cursor-pointer hover:text-neutral-900 dark:hover:text-white transition-colors" routerLink="/agency/courses">
+<div class="max-w-6xl mx-auto animate-fade-in pb-12">
+
+  <!-- ── Hero header ── -->
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-tr from-[#007AFF] via-[#4F46E5] to-[#5856D6] p-8 md:p-10 mb-8 shadow-xl shadow-blue-500/20">
+    <!-- decorative blobs -->
+    <div class="pointer-events-none absolute -top-24 -right-16 w-72 h-72 rounded-full bg-white/15 blur-2xl"></div>
+    <div class="pointer-events-none absolute -bottom-28 left-1/3 w-80 h-80 rounded-full bg-white/10 blur-3xl"></div>
+
+    <div class="relative">
+      <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white/70 cursor-pointer hover:text-white transition-colors" routerLink="/agency/courses">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
         </svg>
         Back to Dashboard
       </div>
-      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white mt-2">
-        Add New Course
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white mt-3">
+        Create a new course ✨
       </h1>
-      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-        Define your course details, pricing, and schedule.
+      <p class="text-sm md:text-base text-white/80 mt-2 max-w-xl">
+        Craft something your students will love — the live preview on the right shows exactly how it will appear to them.
       </p>
     </div>
   </div>
 
-  <!-- Main Form Content -->
-  <div class="space-y-6">
-    
-    <!-- General Information Card -->
-    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
-      <div class="border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">General Information</h3>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+    <!-- ── Left: form sections ── -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <!-- Step 1: Basics -->
+      <div class="group bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-lg hover:shadow-blue-500/5 transition-shadow space-y-6">
+        <div class="flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+          <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-[#007AFF] to-[#5856D6] text-white text-sm font-extrabold shadow-md shadow-blue-500/25">1</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-neutral-900 dark:text-white">The basics</h3>
+            <p class="text-xs text-neutral-400 dark:text-neutral-500">Name it, describe it, pick its style</p>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Course Title</label>
+            <input
+              type="text"
+              [(ngModel)]="model.title"
+              maxlength="120"
+              placeholder="e.g. Master Power Yoga & Meditation"
+              class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 border-none rounded-2xl px-4 py-3.5 text-base font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <div class="flex items-baseline justify-between">
+              <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Description</label>
+              <span class="text-[11px] font-semibold tabular-nums"
+                    [class.text-neutral-400]="model.description.length < descriptionLimit"
+                    [class.text-rose-500]="model.description.length >= descriptionLimit">
+                {{ model.description.length }}/{{ descriptionLimit }}
+              </span>
+            </div>
+            <textarea
+              [(ngModel)]="model.description"
+              [maxlength]="descriptionLimit"
+              rows="4"
+              placeholder="What will students learn? What makes this course special?"
+              class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 border-none rounded-2xl px-4 py-3.5 text-sm font-medium leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all resize-y"
+            ></textarea>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Type</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              @for (option of courseTypes; track option.value) {
+                <button
+                  type="button"
+                  (click)="model.type = option.value"
+                  class="flex items-center gap-2.5 px-3.5 py-3 rounded-2xl border text-sm font-semibold transition-all"
+                  [class]="model.type === option.value
+                    ? 'bg-gradient-to-tr ' + option.gradient + ' text-white border-transparent shadow-md scale-[1.02]'
+                    : 'bg-[#F7F6F3] dark:bg-[#252528] text-neutral-600 dark:text-neutral-300 border-transparent hover:border-blue-400/40 hover:scale-[1.01]'"
+                >
+                  <span class="text-lg leading-none">{{ option.icon }}</span>
+                  {{ option.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Category</label>
+            <div class="flex flex-wrap gap-2">
+              @for (option of courseTypes; track option.value) {
+                <button
+                  type="button"
+                  (click)="model.category = option.value"
+                  class="px-4 py-2 rounded-full text-xs font-bold transition-all"
+                  [class]="model.category === option.value
+                    ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-md'
+                    : 'bg-[#F7F6F3] dark:bg-[#252528] text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'"
+                >
+                  {{ option.label }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
       </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="md:col-span-2">
-          <gm-input label="Course Title" [(value)]="model.title" placeholder="e.g. Master Power Yoga & Meditation" />
+
+      <!-- Step 2: Pricing & capacity -->
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-lg hover:shadow-blue-500/5 transition-shadow space-y-6">
+        <div class="flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+          <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-400 to-teal-500 text-white text-sm font-extrabold shadow-md shadow-emerald-500/25">2</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-neutral-900 dark:text-white">Pricing & capacity</h3>
+            <p class="text-xs text-neutral-400 dark:text-neutral-500">Set the value and the class size</p>
+          </div>
         </div>
-        <div class="md:col-span-2">
-          <gm-input label="Description" [(value)]="model.description" placeholder="Provide a detailed description of what the course covers..." />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Base Price</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-emerald-500">$</span>
+              <input type="number" min="0" [(ngModel)]="model.price"
+                class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl pl-9 pr-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all" />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Additional Price</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-emerald-500">$</span>
+              <input type="number" min="0" [(ngModel)]="model.additionalPrice"
+                class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl pl-9 pr-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all" />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Max Participants</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm">👥</span>
+              <input type="number" min="0" [(ngModel)]="model.maxParticipants"
+                class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl pl-10 pr-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all" />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Duration (Days)</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm">📅</span>
+              <input type="number" min="0" [(ngModel)]="model.duration"
+                class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl pl-10 pr-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all" />
+            </div>
+          </div>
         </div>
-        
-        <div class="flex flex-col gap-2">
-          <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Type</label>
-          <select [(ngModel)]="model.type" class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all appearance-none cursor-pointer">
-            <option value="Yoga">Yoga</option>
-            <option value="Cardio">Cardio</option>
-            <option value="Strength">Strength training</option>
-            <option value="Pilates">Pilates</option>
-            <option value="Stretching">Stretching</option>
-            <option value="Cross fit">Cross fit</option>
-          </select>
+      </div>
+
+      <!-- Step 3: Schedule -->
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-lg hover:shadow-blue-500/5 transition-shadow space-y-6">
+        <div class="flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+          <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-400 to-rose-500 text-white text-sm font-extrabold shadow-md shadow-rose-500/25">3</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-neutral-900 dark:text-white">Schedule</h3>
+            <p class="text-xs text-neutral-400 dark:text-neutral-500">When does the journey start and end?</p>
+          </div>
         </div>
-        
-        <div class="flex flex-col gap-2">
-          <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Category</label>
-          <select [(ngModel)]="model.category" class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all appearance-none cursor-pointer">
-            <option value="Yoga">Yoga</option>
-            <option value="Cardio">Cardio</option>
-            <option value="Strength">Strength training</option>
-            <option value="Pilates">Pilates</option>
-            <option value="Stretching">Stretching</option>
-            <option value="Cross fit">Cross fit</option>
-          </select>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Start Date</label>
+            <input type="date" [(ngModel)]="model.startDate"
+              class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl px-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all" />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">End Date</label>
+            <input type="date" [(ngModel)]="model.endDate"
+              class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl px-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all" />
+          </div>
         </div>
+
+        @if (scheduleDays > 0) {
+          <div class="flex items-center justify-between gap-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-2xl px-4 py-3">
+            <p class="text-xs font-semibold text-blue-700 dark:text-blue-300">
+              📆 Your schedule spans <span class="font-extrabold">{{ scheduleDays }}</span> day{{ scheduleDays === 1 ? '' : 's' }}
+            </p>
+            @if (model.duration !== scheduleDays) {
+              <button type="button" (click)="useScheduleLength()"
+                class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap">
+                Use as duration →
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Media note -->
+      <div class="flex items-start gap-4 bg-gradient-to-tr from-neutral-50 to-blue-50/60 dark:from-[#161618] dark:to-[#16203a] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6">
+        <div class="text-2xl">🎬</div>
+        <div>
+          <p class="text-sm font-bold text-neutral-800 dark:text-neutral-200">Images & videos come next</p>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+            After saving, open the course in <span class="font-semibold">Course Materials</span> to upload cover images and lecture videos.
+          </p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-4 pt-2">
+        <gm-button variant="ghost" routerLink="/agency/courses" class="rounded-xl px-5 py-2.5 font-semibold text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800/40">
+          CANCEL
+        </gm-button>
+        <gm-button variant="primary" [loading]="loading" (clicked)="submit()" class="bg-gradient-to-tr from-[#007AFF] to-[#5856D6] hover:from-[#007AFF]/90 hover:to-[#5856D6]/90 text-white font-bold px-8 py-2.5 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all">
+          🚀 PUBLISH COURSE
+        </gm-button>
       </div>
     </div>
 
-    <!-- Pricing & Capacity Card -->
-    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
-      <div class="border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Pricing & Capacity</h3>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <gm-input label="Base Price ($)" type="number" [(value)]="model.price" />
-        <gm-input label="Add. Price ($)" type="number" [(value)]="model.additionalPrice" />
-        <gm-input label="Max Participants" type="number" [(value)]="model.maxParticipants" />
-        <gm-input label="Duration (Days)" type="number" [(value)]="model.duration" />
-      </div>
-    </div>
+    <!-- ── Right: sticky live preview ── -->
+    <aside class="lg:sticky lg:top-24 space-y-4">
+      <p class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 px-1">Live preview</p>
 
-    <!-- Schedule Card -->
-    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
-      <div class="border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Schedule</h3>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <gm-input label="Start Date" type="date" [(value)]="model.startDate" />
-        <gm-input label="End Date" type="date" [(value)]="model.endDate" />
-      </div>
-    </div>
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl overflow-hidden shadow-lg shadow-neutral-900/5 dark:shadow-black/30">
+        <!-- cover -->
+        <div class="relative h-36 bg-gradient-to-tr {{ selectedType.gradient }} flex items-center justify-center">
+          <span class="text-6xl drop-shadow-lg">{{ selectedType.icon }}</span>
+          <span class="absolute top-3 right-3 bg-white/90 dark:bg-black/60 backdrop-blur text-[11px] font-extrabold text-neutral-800 dark:text-white px-3 py-1 rounded-full">
+            {{ model.price | number }}$
+          </span>
+        </div>
 
-    <!-- Course Media Card -->
-    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
-      <div class="border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Course Media</h3>
+        <div class="p-5 space-y-3">
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] font-bold uppercase tracking-wide bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-full">{{ model.type }}</span>
+            @if (model.category !== model.type) {
+              <span class="text-[10px] font-bold uppercase tracking-wide bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400 px-2.5 py-1 rounded-full">{{ model.category }}</span>
+            }
+          </div>
+
+          <h4 class="text-base font-extrabold text-neutral-900 dark:text-white leading-snug break-words">
+            {{ model.title || 'Your course title…' }}
+          </h4>
+
+          <p class="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-3 break-words">
+            {{ model.description || 'A short description will appear here as you type.' }}
+          </p>
+
+          <div class="grid grid-cols-3 gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-800/60">
+            <div class="text-center">
+              <p class="text-sm font-extrabold text-neutral-900 dark:text-white tabular-nums">{{ model.duration }}</p>
+              <p class="text-[10px] text-neutral-400 uppercase tracking-wide">days</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm font-extrabold text-neutral-900 dark:text-white tabular-nums">{{ model.maxParticipants }}</p>
+              <p class="text-[10px] text-neutral-400 uppercase tracking-wide">seats</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm font-extrabold text-neutral-900 dark:text-white tabular-nums">{{ model.additionalPrice | number }}$</p>
+              <p class="text-[10px] text-neutral-400 uppercase tracking-wide">add-on</p>
+            </div>
+          </div>
+
+          <p class="text-[10px] text-neutral-400 dark:text-neutral-500 pt-1">
+            {{ model.startDate }} → {{ model.endDate }}
+          </p>
+        </div>
       </div>
-      
-      <div class="border-2 border-dashed border-neutral-200 dark:border-neutral-800 hover:border-blue-500/60 dark:hover:border-blue-500/60 rounded-3xl p-8 flex flex-col items-center justify-center text-center gap-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/10 transition-all cursor-pointer">
-        <div class="text-3xl text-neutral-400">📤</div>
-        <p class="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
-          Drag and drop images or videos, or <span class="text-[#007AFF] hover:underline font-bold">browse</span>
+
+      <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-2xl px-4 py-3">
+        <p class="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+          💡 <span class="font-bold">Tip:</span> courses with a clear outcome in the title ("Run your first 10K") attract more sign-ups.
         </p>
-        <p class="text-xs text-neutral-400 dark:text-neutral-500">Recommended: 16:9 aspect ratio, max 5MB per file.</p>
       </div>
-    </div>
-
-    <!-- Form Actions -->
-    <div class="flex items-center justify-end gap-4 pt-4">
-      <gm-button variant="ghost" routerLink="/agency/courses" class="rounded-xl px-5 py-2.5 font-semibold text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800/40">
-        CANCEL
-      </gm-button>
-      <gm-button variant="primary" [loading]="loading" (clicked)="submit()" class="bg-gradient-to-tr from-[#007AFF] to-[#5856D6] hover:from-[#007AFF]/90 hover:to-[#5856D6]/90 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 transition-all">
-        SAVE COURSE
-      </gm-button>
-    </div>
-    
+    </aside>
   </div>
 </div>

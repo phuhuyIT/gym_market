@@ -6,8 +6,65 @@
       </svg>
     </div>
 
-    <h2 class="gm-title">{{ groupName }}</h2>
-    <p class="gm-subtitle">{{ members.length }} members</p>
+    <div class="gm-header">
+      <div class="gm-group-avatar-wrap">
+        <img [src]="groupAvatar || DEFAULT_GROUP_AVATAR_URL" alt="" class="gm-group-avatar">
+        @if (canManage) {
+          <button
+            type="button"
+            class="gm-avatar-edit"
+            (click)="avatarInput.click()"
+            [disabled]="uploadingAvatar"
+            aria-label="Change group photo"
+          >
+            @if (uploadingAvatar) {
+              …
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 13px; height: 13px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
+              </svg>
+            }
+          </button>
+          <input #avatarInput type="file" accept="image/*" hidden (change)="onAvatarSelected($event)">
+        }
+      </div>
+
+      <div class="gm-header-info">
+        @if (editingName) {
+          <div class="gm-name-edit">
+            <input
+              type="text"
+              class="gm-search gm-name-input"
+              [(ngModel)]="editName"
+              maxlength="100"
+              (keydown.enter)="saveName()"
+              (keydown.escape)="cancelEditName()"
+            />
+            <button class="gm-action" [disabled]="savingName || !editName.trim()" (click)="saveName()">
+              {{ savingName ? 'Saving…' : 'Save' }}
+            </button>
+            <button class="gm-action" (click)="cancelEditName()">Cancel</button>
+          </div>
+        } @else {
+          <h2 class="gm-title">
+            {{ groupName }}
+            @if (canManage) {
+              <button class="gm-rename" (click)="startEditName()" aria-label="Rename group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px;">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.862 4.487z" />
+                </svg>
+              </button>
+            }
+          </h2>
+        }
+        <p class="gm-subtitle">{{ members.length }} members</p>
+      </div>
+    </div>
+
+    @if (groupError) {
+      <p class="gm-error">{{ groupError }}</p>
+    }
 
     @if (canManage) {
       <button class="gm-add-toggle" (click)="showAdd = !showAdd">

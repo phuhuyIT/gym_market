@@ -245,24 +245,33 @@
                 <div class="rating-summary__stars">★★★★★</div>
               </div>
             </div>
-            <!-- Add Review -->
-            <gm-card class="add-review gl">
-              <h3>Add your review</h3>
-              <div class="add-review__form">
-                <gm-input label="Rating (0-5)" type="number" [(value)]="rate" />
-                <gm-input label="Your thoughts..." [(value)]="comment" />
-                <gm-button variant="secondary" (clicked)="addRating()">POST REVIEW</gm-button>
-              </div>
-            </gm-card>
+            <!-- Add Review: only students with a paid enrollment can post -->
+            @if (canReview && !hasReviewed) {
+              <gm-card class="add-review gl">
+                <h3>Add your review</h3>
+                <div class="add-review__form">
+                  <gm-input label="Rating (0-5)" type="number" [(value)]="rate" />
+                  <gm-input label="Your thoughts..." [(value)]="comment" />
+                  <gm-button variant="secondary" (clicked)="addRating()">POST REVIEW</gm-button>
+                </div>
+              </gm-card>
+            } @else if (canReview && hasReviewed) {
+              <gm-card class="add-review gl">
+                <p class="add-review__notice">You have already reviewed this course. Thanks for your feedback!</p>
+              </gm-card>
+            } @else {
+              <gm-card class="add-review gl">
+                <p class="add-review__notice">Only enrolled students can leave a review. Enroll and complete your payment to share your experience.</p>
+              </gm-card>
+            }
             <!-- Reviews List -->
             <div class="reviews-list">
               @for (r of (showAll ? ratings : ratings.slice(0, 3)); track r) {
                 <div class="review-item">
                   <div class="review-item__header">
                     <span class="review-item__rating">★ {{r.ratingValue}}</span>
-                    <span class="review-item__date">{{r.ratingDate | date}}</span>
                   </div>
-                  <p class="review-item__text">{{r.comment}}</p>
+                  <p class="review-item__text">{{r.reviewComment}}</p>
                 </div>
               }
               @if (ratings.length > 3) {
