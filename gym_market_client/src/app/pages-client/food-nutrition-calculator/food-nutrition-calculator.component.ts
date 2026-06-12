@@ -13,6 +13,7 @@ import {
 	CaloricValueDto,
 	FoodNutrition,
 	FoodNutritionUser,
+	UpdateFoodNutritionUserDto,
 } from '../../core/models/food-nutrition.model';
 import { SEARCH_DEBOUNCE_MS } from '../../utilities/defaults.const';
 import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
@@ -51,6 +52,11 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	showDelete: boolean = false;
 	foodSelectedToDelete: FoodNutritionUser | null = null;
 	showSettings: boolean = false;
+
+	showEdit: boolean = false;
+	foodSelectedToEdit: FoodNutritionUser | null = null;
+	editWeight: FormControl = new FormControl(0);
+	editMealType: string = 'Breakfast';
 
 	// Redesign Properties
 	selectedDateStr: string = '';
@@ -118,10 +124,9 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	}
 
 	private getFoodNutritionUser() {
-		const userId = this.userStore.id();
-		if (userId) {
+		if (this.userStore.id()) {
 			this.foodNutritionService
-				.getFoodNutritionUser(userId)
+				.getFoodNutritionUser()
 				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 					next: res => {
@@ -167,16 +172,20 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		return data ? JSON.parse(data) : {};
 	}
 
-	setMetadata(id: number, date: string, mealType: string) {
-		const metadata = this.getMetadata();
-		metadata[id] = { date, mealType };
-		localStorage.setItem(STORAGE_KEYS.nutritionMetadata, JSON.stringify(metadata));
-	}
-
 	deleteMetadata(id: number) {
 		const metadata = this.getMetadata();
 		delete metadata[id];
 		localStorage.setItem(STORAGE_KEYS.nutritionMetadata, JSON.stringify(metadata));
+	}
+
+	// The backend persists date/mealType on each log; entries created before
+	// that existed fall back to the localStorage metadata.
+	getLogDate(item: FoodNutritionUser, metadata = this.getMetadata()): string | undefined {
+		return item.date ? item.date.slice(0, 10) : metadata[item.id]?.date;
+	}
+
+	getLogMealType(item: FoodNutritionUser, metadata = this.getMetadata()): string {
+		return item.mealType ?? metadata[item.id]?.mealType ?? 'Breakfast';
 	}
 
 	updateFilteredLogs() {
@@ -184,9 +193,9 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		const meals = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
 		let updated = false;
 
-		// Distribute unmapped logs dynamically
+		// Distribute legacy logs with no metadata anywhere dynamically
 		this.foodNutritionUsers.forEach((item, index) => {
-			if (!metadata[item.id]) {
+			if (!item.date && !metadata[item.id]) {
 				const mealType = meals[index % meals.length];
 				metadata[item.id] = {
 					date: this.selectedDateStr,
@@ -201,17 +210,15 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		}
 
 		// Filter logs for selected date
-		this.filteredLogs = this.foodNutritionUsers.filter(item => {
-			const meta = metadata[item.id];
-			return meta && meta.date === this.selectedDateStr;
-		});
+		this.filteredLogs = this.foodNutritionUsers.filter(
+			item => this.getLogDate(item, metadata) === this.selectedDateStr
+		);
 
 		// Check dot indicators for week days
 		this.weekDays.forEach(day => {
-			day.hasLogs = this.foodNutritionUsers.some(item => {
-				const meta = metadata[item.id];
-				return meta && meta.date === day.fullDate;
-			});
+			day.hasLogs = this.foodNutritionUsers.some(
+				item => this.getLogDate(item, metadata) === day.fullDate
+			);
 		});
 
 		// Distribute logs by meal
@@ -221,7 +228,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		this.snacksLogs = [];
 
 		this.filteredLogs.forEach(item => {
-			const mealType = metadata[item.id]?.mealType || 'Breakfast';
+			const mealType = this.getLogMealType(item, metadata);
 			if (mealType === 'Breakfast') this.breakfastLogs.push(item);
 			else if (mealType === 'Lunch') this.lunchLogs.push(item);
 			else if (mealType === 'Dinner') this.dinnerLogs.push(item);
@@ -288,10 +295,11 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		if (!this.selectedFood) return;
 
 		const model: CaloricValueDto = {
-			userId: this.userStore.id(),
 			foodNutritionId: this.selectedFood.id,
 			weight: this.weight.value,
 			foodName: this.selectedFood.name,
+			date: this.selectedDateStr,
+			mealType: this.selectedMealType,
 		};
 
 		patchState(this.loader, { isShow: true });
@@ -302,9 +310,6 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 				next: res => {
 					this.showAddFood = false;
 					patchState(this.loader, { isShow: false });
-					
-					// Save local metadata
-					this.setMetadata(res.id, this.selectedDateStr, this.selectedMealType);
 
 					this.foodNutritionUsers.push(res);
 					patchState(this.notice, { isShow: true, message: 'Added successfully' });
@@ -333,13 +338,63 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		this.foodSelectedToDelete = food;
 	}
 
+	onShowEdit(flag: boolean, food: FoodNutritionUser | null) {
+		this.showEdit = flag;
+		this.foodSelectedToEdit = food;
+		if (food) {
+			this.editWeight.setValue(food.weight);
+			this.editMealType = this.getLogMealType(food);
+		}
+	}
+
+	onUpdate() {
+		if (!this.foodSelectedToEdit) return;
+
+		const item = this.foodSelectedToEdit;
+		const model: UpdateFoodNutritionUserDto = {
+			foodNutritionUserId: item.id,
+			weight: this.editWeight.value,
+			date: this.getLogDate(item) ?? this.selectedDateStr,
+			mealType: this.editMealType,
+		};
+
+		patchState(this.loader, { isShow: true });
+		this.foodNutritionService
+			.updateFoodNutritionUser(model)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					patchState(this.loader, { isShow: false });
+					this.showEdit = false;
+
+					// The backend now owns this entry's date/meal type
+					this.deleteMetadata(item.id);
+
+					this.foodNutritionUsers = this.foodNutritionUsers.map(x =>
+						x.id === res.id ? res : x
+					);
+					this.foodSelectedToEdit = null;
+					patchState(this.notice, { isShow: true, message: 'Updated successfully' });
+					this.updateFilteredLogs();
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					patchState(this.errorModal, {
+						isShow: true,
+						errors: ['An error occurred. Please try again.'],
+					});
+					patchState(this.loader, { isShow: false });
+					this.showEdit = false;
+				},
+			});
+	}
+
 	onDelete() {
 		if (!this.foodSelectedToDelete) return;
 
 		const idToDelete = this.foodSelectedToDelete.id;
 		this.foodNutritionService
 			.deleteFoodNutritionUser({
-				userId: this.userStore.id() ?? '',
 				foodNutritionUserId: idToDelete,
 			})
 			.pipe(takeUntilDestroyed(this.destroyRef))
