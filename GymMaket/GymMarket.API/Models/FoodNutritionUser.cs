@@ -23,5 +23,9 @@ namespace GymMarket.API.Models
         // (the client falls back to its localStorage metadata for them).
         public DateOnly? Date { get; set; }
         public string? MealType { get; set; }
+
+        // Source food in the master database; null for rows logged before the FK
+        // existed or whose master food was deleted (the log keeps its snapshot).
+        public int? FoodNutritionId { get; set; }
     }
 }

@@ -38,3 +38,11 @@ export interface UpdateFoodNutritionUserDto {
   date: string;
   mealType: string;
 }
+
+// Daily targets, stored server-side so they follow the user across devices.
+export interface NutritionBudget {
+  calorieBudget: number;
+  carbsBudget: number;
+  fatBudget: number;
+  proteinBudget: number;
+}

@@ -6,6 +6,7 @@ import {
 	CaloricValueDto,
 	FoodNutrition,
 	FoodNutritionUser,
+	NutritionBudget,
 	UpdateFoodNutritionUserDto,
 } from '../core/models/food-nutrition.model';
 
@@ -45,6 +46,19 @@ export class FoodNutritionService {
 		return this.http.delete<void>(
 			`${environment.baseApi}/FoodNutrition/delete-foodnutrition-user`,
 			{ body: model }
+		);
+	}
+
+	getNutritionBudget(): Observable<NutritionBudget> {
+		return this.http.get<NutritionBudget>(
+			`${environment.baseApi}/FoodNutrition/nutrition-budget`
+		);
+	}
+
+	saveNutritionBudget(model: NutritionBudget): Observable<NutritionBudget> {
+		return this.http.put<NutritionBudget>(
+			`${environment.baseApi}/FoodNutrition/nutrition-budget`,
+			model
 		);
 	}
 }

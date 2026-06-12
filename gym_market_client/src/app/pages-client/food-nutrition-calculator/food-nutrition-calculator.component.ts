@@ -13,6 +13,7 @@ import {
 	CaloricValueDto,
 	FoodNutrition,
 	FoodNutritionUser,
+	NutritionBudget,
 	UpdateFoodNutritionUserDto,
 } from '../../core/models/food-nutrition.model';
 import { SEARCH_DEBOUNCE_MS } from '../../utilities/defaults.const';
@@ -416,12 +417,60 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			});
 	}
 
-	// Budget customization methods
+	// Budget customization methods — the backend is the source of truth so targets
+	// follow the user across devices; localStorage is kept as an offline fallback.
 	loadBudgets() {
-		this.calorieBudget = Number(localStorage.getItem(STORAGE_KEYS.calorieBudget) || '2000');
-		this.carbsBudget = Number(localStorage.getItem(STORAGE_KEYS.carbsBudget) || '250');
-		this.fatBudget = Number(localStorage.getItem(STORAGE_KEYS.fatBudget) || '65');
-		this.proteinBudget = Number(localStorage.getItem(STORAGE_KEYS.proteinBudget) || '130');
+		this.applyBudgets({
+			calorieBudget: Number(localStorage.getItem(STORAGE_KEYS.calorieBudget) || '2000'),
+			carbsBudget: Number(localStorage.getItem(STORAGE_KEYS.carbsBudget) || '250'),
+			fatBudget: Number(localStorage.getItem(STORAGE_KEYS.fatBudget) || '65'),
+			proteinBudget: Number(localStorage.getItem(STORAGE_KEYS.proteinBudget) || '130'),
+		});
+
+		this.foodNutritionService
+			.getNutritionBudget()
+			.pipe(
+				catchError(() => EMPTY), // offline/error -> keep the localStorage values
+				takeUntilDestroyed(this.destroyRef)
+			)
+			.subscribe(budget => {
+				this.applyBudgets(budget);
+				this.cacheBudgets(budget);
+				this.updateFilteredLogs();
+				this.cdr.markForCheck();
+			});
+	}
+
+	saveBudgets() {
+		const budget: NutritionBudget = {
+			calorieBudget: this.calorieCtrl.value || 2000,
+			carbsBudget: this.carbsCtrl.value || 250,
+			fatBudget: this.fatCtrl.value || 65,
+			proteinBudget: this.proteinCtrl.value || 130,
+		};
+
+		this.foodNutritionService
+			.saveNutritionBudget(budget)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: saved => {
+					this.applyBudgets(saved);
+					this.cacheBudgets(saved);
+					patchState(this.notice, { isShow: true, message: 'Targets updated successfully!' });
+					this.updateFilteredLogs();
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					patchState(this.errorModal, { isShow: true, errors: ['Failed to save targets'] });
+				},
+			});
+	}
+
+	private applyBudgets(budget: NutritionBudget) {
+		this.calorieBudget = budget.calorieBudget;
+		this.carbsBudget = budget.carbsBudget;
+		this.fatBudget = budget.fatBudget;
+		this.proteinBudget = budget.proteinBudget;
 
 		this.calorieCtrl.setValue(this.calorieBudget);
 		this.carbsCtrl.setValue(this.carbsBudget);
@@ -429,19 +478,11 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		this.proteinCtrl.setValue(this.proteinBudget);
 	}
 
-	saveBudgets() {
-		this.calorieBudget = this.calorieCtrl.value || 2000;
-		this.carbsBudget = this.carbsCtrl.value || 250;
-		this.fatBudget = this.fatCtrl.value || 65;
-		this.proteinBudget = this.proteinCtrl.value || 130;
-
-		localStorage.setItem(STORAGE_KEYS.calorieBudget, this.calorieBudget.toString());
-		localStorage.setItem(STORAGE_KEYS.carbsBudget, this.carbsBudget.toString());
-		localStorage.setItem(STORAGE_KEYS.fatBudget, this.fatBudget.toString());
-		localStorage.setItem(STORAGE_KEYS.proteinBudget, this.proteinBudget.toString());
-
-		patchState(this.notice, { isShow: true, message: 'Targets updated successfully!' });
-		this.updateFilteredLogs();
+	private cacheBudgets(budget: NutritionBudget) {
+		localStorage.setItem(STORAGE_KEYS.calorieBudget, budget.calorieBudget.toString());
+		localStorage.setItem(STORAGE_KEYS.carbsBudget, budget.carbsBudget.toString());
+		localStorage.setItem(STORAGE_KEYS.fatBudget, budget.fatBudget.toString());
+		localStorage.setItem(STORAGE_KEYS.proteinBudget, budget.proteinBudget.toString());
 	}
 
 	// UI helper methods

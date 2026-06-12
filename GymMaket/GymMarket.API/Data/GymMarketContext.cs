@@ -43,6 +43,7 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
     public virtual DbSet<FileCourse> FileCourses { get; set; }
     public virtual DbSet<FoodNutrition> FoodNutritions { get; set; }
     public virtual DbSet<FoodNutritionUser> FoodNutritionUsers { get; set; }
+    public virtual DbSet<NutritionBudget> NutritionBudgets { get; set; }
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public GymMarketContext(DbContextOptions<GymMarketContext> options)
@@ -557,6 +558,20 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
         {
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Type).HasMaxLength(20).HasDefaultValue(MessageTypes.Text);
+        });
+
+        modelBuilder.Entity<FoodNutritionUser>(entity =>
+        {
+            entity.HasIndex(e => new { e.UserId, e.Date });
+            // SetNull: deleting a master food keeps the user's logged snapshot.
+            entity.HasOne<FoodNutrition>().WithMany()
+                .HasForeignKey(e => e.FoodNutritionId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<NutritionBudget>(entity =>
+        {
+            entity.HasIndex(e => e.UserId).IsUnique();
         });
 
         modelBuilder.SeedData();
