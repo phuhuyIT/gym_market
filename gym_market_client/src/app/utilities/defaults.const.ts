@@ -1,4 +1,6 @@
 export const DEFAULT_AVATAR_URL = 'https://cdn-icons-png.flaticon.com/512/236/236832.png';
+// Matches the backend group default (Defaults.AvatarUrl) so previews look like the saved result.
+export const DEFAULT_GROUP_AVATAR_URL = 'https://cdn-icons-png.flaticon.com/512/1999/1999625.png';
 
 export const TOAST_DURATION_MS = 3500;
 export const SEARCH_DEBOUNCE_MS = 500;

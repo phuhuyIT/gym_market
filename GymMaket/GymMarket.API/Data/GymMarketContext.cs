@@ -408,28 +408,23 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__8C1160B56820950B");
+            entity.HasKey(e => e.Id);
 
-            entity.Property(e => e.NotificationId)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("Notification_ID");
-            entity.Property(e => e.NotificationContent).HasColumnName("Notification_Content");
-            entity.Property(e => e.NotificationType)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("Notification_Type");
-            entity.Property(e => e.StudentId)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("Student_ID");
-            entity.Property(e => e.Timestamp)
+            entity.Property(e => e.UserId).HasMaxLength(450);
+            entity.Property(e => e.Type).HasMaxLength(50);
+            entity.Property(e => e.Title).HasMaxLength(200);
+            entity.Property(e => e.Link).HasMaxLength(500);
+            entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
 
-            entity.HasOne(d => d.Student).WithMany(p => p.Notifications)
-                .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK_Notifications_Student");
+            // The badge/unread queries always filter by (UserId, IsRead).
+            entity.HasIndex(e => new { e.UserId, e.IsRead });
+
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Notifications_AspNetUsers");
         });
 
         modelBuilder.Entity<Payment>(entity =>

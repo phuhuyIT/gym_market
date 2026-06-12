@@ -115,19 +115,37 @@ namespace GymMarket.API.Repositories
 
         public async Task<List<GetCourseDto>> GetCourseRegistrations(string studentId)
         {
-            var coursesWithFiles = await (from cr in _context.CourseRegistrations
-                                          join c in _context.Courses.Include(c => c.FileCourses) on cr.CourseId equals c.CourseId
-                                          join p in _context.Payments on c.CourseId equals p.CourseId into paymentGroup
-                                          from p in paymentGroup.DefaultIfEmpty()
-                                          where cr.StudentId == studentId
-                                          select new { Course = c, PaymentStatus = p != null ? p.PaymentStatus : null })
-                                          .ToListAsync();
+            var registrations = await _context.CourseRegistrations
+                .Where(cr => cr.StudentId == studentId)
+                .Include(cr => cr.Course!)
+                    .ThenInclude(c => c.FileCourses)
+                .ToListAsync();
 
-            var courseDtos = coursesWithFiles.Select(x => {
-                var dto = _mapper.Map<Course, GetCourseDto>(x.Course);
-                dto.StatusPayment = x.PaymentStatus;
-                return dto;
-            }).ToList();
+            // Index this student's payments by course so each registration shows ITS OWN
+            // payment status. The previous join matched payments on CourseId alone, so a
+            // student could inherit another student's payment status for the same course
+            // (and the join also duplicated course rows, one per payment).
+            var statusByCourse = (await _context.Payments
+                    .Where(p => p.StudentId == studentId && p.CourseId != null)
+                    .ToListAsync())
+                .GroupBy(p => p.CourseId!)
+                .ToDictionary(
+                    g => g.Key,
+                    // Prefer a paid record, otherwise the most recent one.
+                    g => g.OrderByDescending(p => PaymentStatus.IsPaid(p.PaymentStatus))
+                          .ThenByDescending(p => p.CreatedAt)
+                          .First().PaymentStatus);
+
+            var courseDtos = registrations
+                .Where(cr => cr.Course != null)
+                .Select(cr =>
+                {
+                    var dto = _mapper.Map<Course, GetCourseDto>(cr.Course!);
+                    statusByCourse.TryGetValue(cr.CourseId!, out var status);
+                    dto.StatusPayment = PaymentStatus.Normalize(status);
+                    return dto;
+                })
+                .ToList();
 
             return courseDtos;
         }

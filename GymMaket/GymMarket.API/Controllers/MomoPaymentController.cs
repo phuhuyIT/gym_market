@@ -1,6 +1,5 @@
 using GymMarket.API.DTOs.Momo;
 using GymMarket.API.DTOs.Payment;
-using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -37,6 +36,9 @@ namespace GymMarket.API.Controllers
             return Ok(new { payUrl = response.PayUrl });
         }
 
+        // Browser redirect (returnUrl). This is user-controllable and not guaranteed to fire,
+        // so it only acts as a best-effort fallback to the IPN below — both go through the
+        // same idempotent confirm path, so a double-fire never double-records.
         [AllowAnonymous]
         [HttpGet("PaymentCallBack")]
         public async Task<IActionResult> PaymentCallBack([FromQuery] MomoCallbackDto callback)
@@ -44,32 +46,14 @@ namespace GymMarket.API.Controllers
             if (!_momoService.VerifySignature(callback))
                 return BadRequest(new { error = "INVALID_SIGNATURE" });
 
+            await TryConfirmPaymentAsync(callback);
+
             var redirectUrl = _configuration["MomoAPI:PaymentRedirectUrl"] ?? "/client/course-registration";
-
-            if (callback.ResultCode == Defaults.MomoSuccessResultCode)
-            {
-                var extraDataJson = Encoding.UTF8.GetString(Convert.FromBase64String(callback.ExtraData));
-                var extraData = JsonConvert.DeserializeObject<dynamic>(extraDataJson);
-
-                string studentId = extraData!.StudentId;
-                string courseId = extraData!.CourseId;
-
-                await _paymentRepository.CreatePayment(new Payment
-                {
-                    PaymentId = callback.OrderId,
-                    CourseId = courseId,
-                    StudentId = studentId,
-                    PaymentAmount = decimal.Parse(callback.Amount),
-                    PaymentDate = DateTime.UtcNow,
-                    PaymentStatus = PaymentStatus.Completed,
-                    PaymentType = PaymentType.Momo,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                });
-            }
             return Redirect(redirectUrl);
         }
 
+        // Server-to-server IPN. This is the authoritative source of truth for a successful
+        // payment because, unlike the browser redirect, it fires even if the user closes the tab.
         [AllowAnonymous]
         [HttpPost("MomoNotify")]
         public async Task<IActionResult> MomoNotify([FromBody] MomoCallbackDto callback)
@@ -77,7 +61,22 @@ namespace GymMarket.API.Controllers
             if (!_momoService.VerifySignature(callback))
                 return BadRequest(new { error = "INVALID_SIGNATURE" });
 
+            await TryConfirmPaymentAsync(callback);
             return Ok();
+        }
+
+        private async Task TryConfirmPaymentAsync(MomoCallbackDto callback)
+        {
+            if (callback.ResultCode != Defaults.MomoSuccessResultCode || string.IsNullOrEmpty(callback.ExtraData))
+                return;
+
+            var extraDataJson = Encoding.UTF8.GetString(Convert.FromBase64String(callback.ExtraData));
+            var extraData = JsonConvert.DeserializeObject<MomoExtraData>(extraDataJson);
+
+            if (extraData == null || string.IsNullOrEmpty(extraData.StudentId) || string.IsNullOrEmpty(extraData.CourseId))
+                return;
+
+            await _paymentRepository.ConfirmCoursePayment(extraData.StudentId, extraData.CourseId, PaymentType.Momo);
         }
     }
 }

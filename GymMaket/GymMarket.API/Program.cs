@@ -118,6 +118,7 @@ builder.Services.AddScoped<ICourseRegistrationRepository, CourseRegistrationRepo
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<ILectureRepository, LectureRepository>();
 builder.Services.AddScoped<ILectureMaterialRepository, LectureMaterialRepository>();
 builder.Services.AddScoped<IFoodNutritionRepository, FoodNutritionRepository>();
@@ -130,6 +131,7 @@ builder.Services.AddScoped<IJwtService, JWTService>();
 builder.Services.AddScoped<IPasswordSignInService, PasswordSignInService>();
 builder.Services.AddScoped<MinIOService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICourseAccessService, CourseAccessService>();
 builder.Services.AddSingleton<IPresenceTracker, PresenceTracker>();
 
 
@@ -194,6 +196,7 @@ app.UseAuthorization();
 
 app.UseWebSockets();
 app.MapHub<ChatHub>("hubs/chat");
+app.MapHub<NotificationHub>("hubs/notifications");
 
 app.MapControllers();
 

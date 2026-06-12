@@ -3,6 +3,7 @@ export interface Conversation {
   conversationName: string;
   hasNewMessage: boolean;
   lastMessage: string;
+  lastMessageAt?: string | null;
   avatar: string;
   isGroup: boolean;
   role?: string;
@@ -38,6 +39,12 @@ export interface CreateGroupDto {
   name: string;
   avatarUrl?: string;
   memberIds: string[];
+}
+
+export interface UpdateGroupDto {
+  conversationId: number;
+  name?: string;
+  avatarUrl?: string;
 }
 
 export interface AddMembersDto {

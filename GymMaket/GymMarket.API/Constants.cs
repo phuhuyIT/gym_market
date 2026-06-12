@@ -9,6 +9,17 @@ namespace GymMarket.API
         public const string NotStarted = "Not Started";
         public const string Canceled = "Canceled";
         public const string Expired = "Expired";
+
+        // The gateway flow historically wrote successful payments as "COMPLETED" while
+        // the manual-approval flow writes "Paid". Both mean the same thing, but the client
+        // only understands Pending/Paid/Canceled. New writes always use Paid; this collapses
+        // any legacy "COMPLETED" rows so neither read path mislabels a paid student.
+        public static string? Normalize(string? status) =>
+            status == Completed ? Paid : status;
+
+        // True when the status represents a successfully paid course.
+        public static bool IsPaid(string? status) =>
+            status == Paid || status == Completed;
     }
 
     public static class PaymentType

@@ -55,6 +55,10 @@
   --warning:       #FF9500;
   --error:         #FF3B30;
 
+  /* Subtle fills (list hovers, chips, icon badges) */
+  --section-alt:   rgba(0, 0, 0, 0.04);
+  --icon-blue:     rgba(0, 122, 255, 0.12);
+
   /* Backward-compat */
   --accent:        var(--blue);
   --text-1:        var(--text);
@@ -112,6 +116,10 @@
   --success:       #30D158;
   --warning:       #FF9F0A;
   --error:         #FF453A;
+
+  /* Subtle fills (list hovers, chips, icon badges) */
+  --section-alt:   rgba(255, 255, 255, 0.06);
+  --icon-blue:     rgba(10, 132, 255, 0.18);
 
   /* Backward-compat */
   --accent:        var(--blue);

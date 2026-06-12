@@ -47,7 +47,7 @@ namespace GymMarket.API.Hubs
                 var wentOffline = _presenceTracker.UserDisconnected(userId, Context.ConnectionId);
                 if (wentOffline)
                 {
-                    var lastSeen = DateTime.Now;
+                    var lastSeen = DateTime.UtcNow;
                     await _conversationRepository.UpdateLastSeen(userId, lastSeen);
 
                     var conversationIds = await _conversationRepository.GetConversationIdsOfUser(userId);

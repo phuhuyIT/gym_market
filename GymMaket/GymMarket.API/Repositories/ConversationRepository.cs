@@ -15,12 +15,14 @@ namespace GymMarket.API.Repositories
         private readonly GymMarketContext _context;
         private readonly IHubContext<ChatHub> _hub;
         private readonly IPresenceTracker _presenceTracker;
+        private readonly INotificationRepository _notificationRepository;
 
-        public ConversationRepository(GymMarketContext context, IHubContext<ChatHub> hub, IPresenceTracker presenceTracker)
+        public ConversationRepository(GymMarketContext context, IHubContext<ChatHub> hub, IPresenceTracker presenceTracker, INotificationRepository notificationRepository)
         {
             _context = context;
             _hub = hub;
             _presenceTracker = presenceTracker;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<ApiResponse> CreateConversation(CreateConversationDto model)
@@ -119,7 +121,7 @@ namespace GymMarket.API.Repositories
                 Role = ParticipantRoles.Owner,
                 HasNewMessage = false,
                 LastMessage = "",
-                JoinedAt = DateTime.Now,
+                JoinedAt = DateTime.UtcNow,
             });
 
             foreach (var memberId in memberIds)
@@ -131,12 +133,19 @@ namespace GymMarket.API.Repositories
                     Role = ParticipantRoles.Member,
                     HasNewMessage = true,
                     LastMessage = "",
-                    JoinedAt = DateTime.Now,
+                    JoinedAt = DateTime.UtcNow,
                 });
             }
             await _context.SaveChangesAsync();
 
             await AddSystemMessage(conversation.Id, $"{creator.FullName} created the group");
+
+            await _notificationRepository.NotifyUsers(
+                memberIds,
+                NotificationTypes.Chat,
+                "Added to a group",
+                $"{creator.FullName} added you to the group \"{model.Name}\"",
+                "/chat/chat-list");
 
             return new ApiResponse { StatusCode = 200, Success = true, Message = conversation.Id.ToString() };
         }
@@ -179,7 +188,7 @@ namespace GymMarket.API.Repositories
                     Role = ParticipantRoles.Member,
                     HasNewMessage = true,
                     LastMessage = "",
-                    JoinedAt = DateTime.Now,
+                    JoinedAt = DateTime.UtcNow,
                 });
             }
             await _context.SaveChangesAsync();
@@ -188,6 +197,13 @@ namespace GymMarket.API.Repositories
             var names = string.Join(", ", newUsers.Select(u => u.FullName));
             await AddSystemMessage(model.ConversationId, $"{actorUser?.FullName} added {names}");
             await BroadcastGroupUpdated(model.ConversationId);
+
+            await _notificationRepository.NotifyUsers(
+                newUsers.Select(u => u.Id),
+                NotificationTypes.Chat,
+                "Added to a group",
+                $"{actorUser?.FullName} added you to the group \"{conversation.Name}\"",
+                "/chat/chat-list");
 
             return new ApiResponse { StatusCode = 200, Success = true, Message = "SUCCESS" };
         }
@@ -300,6 +316,59 @@ namespace GymMarket.API.Repositories
             return new ApiResponse { StatusCode = 200, Success = true, Message = "SUCCESS" };
         }
 
+        public async Task<ApiResponse> UpdateGroup(UpdateGroupDto model, string actorId)
+        {
+            var newName = model.Name?.Trim();
+            var newAvatarUrl = model.AvatarUrl?.Trim();
+            if (string.IsNullOrEmpty(newName) && string.IsNullOrEmpty(newAvatarUrl))
+            {
+                return new ApiResponse { Errors = ["NOTHING_TO_UPDATE"], StatusCode = 400, Success = false };
+            }
+
+            var conversation = await _context.Conversations.FirstOrDefaultAsync(c => c.Id == model.ConversationId && c.IsGroup);
+            if (conversation == null)
+            {
+                return new ApiResponse { Errors = ["GROUP_NOT_FOUND"], StatusCode = 404, Success = false };
+            }
+
+            var actor = await _context.ConversationParticipants
+                .FirstOrDefaultAsync(p => p.ConversationId == model.ConversationId && p.UserId == actorId);
+            if (actor == null || (actor.Role != ParticipantRoles.Owner && actor.Role != ParticipantRoles.Admin))
+            {
+                return new ApiResponse { Errors = ["FORBIDDEN"], StatusCode = 403, Success = false };
+            }
+
+            var renamed = !string.IsNullOrEmpty(newName) && newName != conversation.Name;
+            var avatarChanged = !string.IsNullOrEmpty(newAvatarUrl) && newAvatarUrl != conversation.AvatarUrl;
+            if (!renamed && !avatarChanged)
+            {
+                return new ApiResponse { StatusCode = 200, Success = true, Message = "SUCCESS" };
+            }
+
+            if (renamed)
+            {
+                conversation.Name = newName!;
+            }
+            if (avatarChanged)
+            {
+                conversation.AvatarUrl = newAvatarUrl;
+            }
+            await _context.SaveChangesAsync();
+
+            var actorUser = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == actorId);
+            if (renamed)
+            {
+                await AddSystemMessage(model.ConversationId, $"{actorUser?.FullName} renamed the group to \"{newName}\"");
+            }
+            if (avatarChanged)
+            {
+                await AddSystemMessage(model.ConversationId, $"{actorUser?.FullName} changed the group photo");
+            }
+            await BroadcastGroupUpdated(model.ConversationId);
+
+            return new ApiResponse { StatusCode = 200, Success = true, Message = "SUCCESS" };
+        }
+
         public async Task<List<GroupMemberDto>> GetGroupMembers(int conversationId)
         {
             var members = await (from p in _context.ConversationParticipants
@@ -359,6 +428,12 @@ namespace GymMarket.API.Repositories
 
             var conversationIds = myParts.Select(x => x.Id).ToList();
 
+            var lastMessageTimes = await _context.UserMessages.AsNoTracking()
+                .Where(m => conversationIds.Contains(m.ConversationId))
+                .GroupBy(m => m.ConversationId)
+                .Select(g => new { ConversationId = g.Key, At = g.Max(m => m.CreatedAt) })
+                .ToDictionaryAsync(x => x.ConversationId, x => x.At);
+
             var allParts = await (from p in _context.ConversationParticipants
                                   join u in _context.Users on p.UserId equals u.Id
                                   where conversationIds.Contains(p.ConversationId)
@@ -395,7 +470,9 @@ namespace GymMarket.API.Repositories
                     avatar = string.IsNullOrEmpty(other?.Avatar) ? Defaults.AvatarUrl : other!.Avatar!;
                     otherUserId = other?.UserId;
                     isOnline = otherUserId != null && _presenceTracker.IsOnline(otherUserId);
-                    lastSeen = other?.LastSeen;
+                    // Stored as UTC, but SQL roundtrips lose the Kind; re-stamp so the JSON
+                    // carries 'Z' and clients convert to their local time.
+                    lastSeen = other?.LastSeen == null ? null : DateTime.SpecifyKind(other.LastSeen.Value, DateTimeKind.Utc);
                 }
 
                 result.Add(new ConversationDto
@@ -404,6 +481,9 @@ namespace GymMarket.API.Repositories
                     ConversationName = name,
                     HasNewMessage = conv.HasNewMessage,
                     LastMessage = conv.LastMessage,
+                    LastMessageAt = lastMessageTimes.TryGetValue(conv.Id, out var lastAt)
+                        ? DateTime.SpecifyKind(lastAt, DateTimeKind.Utc)
+                        : null,
                     Avatar = avatar,
                     IsGroup = conv.IsGroup,
                     Role = conv.Role,
@@ -437,7 +517,7 @@ namespace GymMarket.API.Repositories
                 Content = model.Content,
                 ConversationId = model.ConversationId,
                 SenderId = model.SenderId,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
                 Type = MessageTypes.Text,
             };
 
@@ -461,6 +541,8 @@ namespace GymMarket.API.Repositories
 
             var sender = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == model.SenderId);
 
+            await NotifyMessageRecipients(model, sender, conversationParticipants);
+
             return new UserMessageDto
             {
                 Id = message.Id,
@@ -472,6 +554,33 @@ namespace GymMarket.API.Repositories
                 SentAt = message.CreatedAt,
                 Type = message.Type,
             };
+        }
+
+        // Bell notification for everyone else in the conversation. Upsert keyed on the
+        // conversation link so a burst of messages collapses into one unread entry
+        // showing the latest preview instead of one row per message.
+        private async Task NotifyMessageRecipients(SendMessageDto model, AppUser? sender, List<ConversationParticipant> participants)
+        {
+            var conversation = await _context.Conversations.AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == model.ConversationId);
+
+            var title = conversation?.IsGroup == true
+                ? $"New message in \"{conversation.Name}\""
+                : $"New message from {sender?.FullName ?? "someone"}";
+
+            var preview = model.Content.Length > 120 ? model.Content[..120] + "…" : model.Content;
+            if (conversation?.IsGroup == true)
+            {
+                preview = $"{sender?.FullName}: {preview}";
+            }
+
+            var link = $"/chat/chat-list?conversationId={model.ConversationId}";
+
+            foreach (var participant in participants.Where(p => p.UserId != model.SenderId))
+            {
+                await _notificationRepository.NotifyUserUpsert(
+                    participant.UserId, NotificationTypes.Chat, title, preview, link);
+            }
         }
 
         public async Task<List<UserMessageDto>> GetMessages(int conversationId)
@@ -492,6 +601,12 @@ namespace GymMarket.API.Repositories
                                       SentAt = m.CreatedAt,
                                       Type = m.Type,
                                   }).ToListAsync();
+            // Stored as UTC, but SQL roundtrips lose the Kind; re-stamp so the JSON
+            // carries 'Z' and clients convert to their local time.
+            foreach (var message in messages)
+            {
+                message.SentAt = DateTime.SpecifyKind(message.SentAt, DateTimeKind.Utc);
+            }
             return messages;
         }
 
@@ -517,7 +632,7 @@ namespace GymMarket.API.Repositories
                 Content = text,
                 ConversationId = conversationId,
                 SenderId = string.Empty,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
                 Type = MessageTypes.System,
             };
             _context.UserMessages.Add(message);

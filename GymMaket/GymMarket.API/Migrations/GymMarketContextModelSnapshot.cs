@@ -735,37 +735,45 @@ namespace GymMarket.API.Migrations
 
             modelBuilder.Entity("GymMarket.API.Models.Notification", b =>
                 {
-                    b.Property<string>("NotificationId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Notification_ID");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("NotificationContent")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Notification_Content");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("NotificationType")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Notification_Type");
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StudentId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Student_ID");
-
-                    b.Property<DateTime?>("Timestamp")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
-                    b.HasKey("NotificationId")
-                        .HasName("PK__Notifica__8C1160B56820950B");
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
 
-                    b.HasIndex("StudentId");
+                    b.Property<string>("Link")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "IsRead");
 
                     b.ToTable("Notifications");
                 });
@@ -1325,12 +1333,14 @@ namespace GymMarket.API.Migrations
 
             modelBuilder.Entity("GymMarket.API.Models.Notification", b =>
                 {
-                    b.HasOne("GymMarket.API.Models.Student", "Student")
-                        .WithMany("Notifications")
-                        .HasForeignKey("StudentId")
-                        .HasConstraintName("FK_Notifications_Student");
+                    b.HasOne("GymMarket.API.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Notifications_AspNetUsers");
 
-                    b.Navigation("Student");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.Payment", b =>
@@ -1496,8 +1506,6 @@ namespace GymMarket.API.Migrations
                     b.Navigation("HealthData");
 
                     b.Navigation("Messages");
-
-                    b.Navigation("Notifications");
 
                     b.Navigation("Payments");
                 });

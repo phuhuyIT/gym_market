@@ -113,22 +113,6 @@ $selected-chat-bg: #6b8afd;
       }
     }
 
-    .notif-bell-btn {
-      width: 36px;
-      height: 36px;
-      border: none;
-      background: transparent;
-      color: $primary-blue;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s ease;
-
-      &:hover {
-        transform: rotate(15deg) scale(1.08);
-      }
-    }
   }
 
   .user-display-name {
@@ -526,7 +510,16 @@ $selected-chat-bg: #6b8afd;
       display: flex;
       align-items: center;
       gap: 12px;
-      cursor: pointer;
+
+      .header-identity {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        &--clickable {
+          cursor: pointer;
+        }
+      }
 
       .back-btn {
         display: none;
@@ -1024,200 +1017,309 @@ $selected-chat-bg: #6b8afd;
   overflow: hidden;
 }
 
+// ── Dark theme ──
+// Mirrors the nesting of the light rules above so every override wins
+// specificity; covers the standalone page and the embedded (agency) variant.
 :host-context([data-theme="dark"]) {
+  .chat-page {
+    background: linear-gradient(135deg, #0d1322 0%, #1a2238 100%);
+
+    &::before {
+      background: rgba(94, 92, 230, 0.12);
+    }
+    &::after {
+      background: rgba(10, 132, 255, 0.1);
+    }
+  }
+
+  .chat-container {
+    background: rgba(24, 26, 32, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  }
+
   .chat-container-embedded {
     background: rgba(22, 22, 24, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   }
 
+  // ── Column 1: navigation sidebar ──
+  .chat-nav-sidebar {
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+
+    .profile-section .avatar-wrapper {
+      .user-avatar {
+        background: #1c1c1e;
+        border-color: #0a84ff;
+      }
+      .active-status-dot {
+        border-color: #1c1c1e;
+      }
+    }
+
+    .user-display-name {
+      color: #f5f5f7;
+    }
+
+    .nav-links .nav-item {
+      .nav-icon-box {
+        background: rgba(255, 255, 255, 0.08);
+        color: #0a84ff;
+        box-shadow: none;
+      }
+
+      .nav-item-text {
+        .nav-title {
+          color: #f5f5f7;
+        }
+        .nav-sub {
+          color: rgba(255, 255, 255, 0.45);
+        }
+      }
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      &--active .nav-icon-box {
+        background: #0a84ff;
+        color: #fff;
+      }
+    }
+
+    .nav-sidebar-footer .logout-btn {
+      color: #0a84ff;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+    }
+  }
+
+  // ── Column 2: conversations sidebar ──
   .chat-list-sidebar {
     background: rgba(22, 22, 24, 0.5);
     border-right: 1px solid rgba(255, 255, 255, 0.08);
-    
-    .sidebar-header {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    
+
     .search-box {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      
-      .search-input {
-        color: #f5f5f7;
-        &::placeholder {
-          color: rgba(255, 255, 255, 0.4);
-        }
-      }
       .search-icon {
         color: rgba(255, 255, 255, 0.4);
       }
-    }
-    
-    .filter-tab {
-      color: rgba(255, 255, 255, 0.5);
-      
-      &:hover {
-        color: #fff;
-        background: rgba(255, 255, 255, 0.05);
-      }
-      
-      &.active {
-        color: #007aff;
-        background: rgba(0, 122, 255, 0.15);
-      }
-    }
-    
-    .filter-more-btn {
-      color: rgba(255, 255, 255, 0.5);
-      &:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: #fff;
-      }
-    }
-    
-    .new-chat-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #f5f5f7;
-      
-      &:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-    }
-  }
 
-  .conversation-item {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    
-    .conv-name {
-      color: #fff;
+      .search-input {
+        background: rgba(255, 255, 255, 0.07);
+        color: #f5f5f7;
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.4);
+        }
+        &:focus {
+          background-color: rgba(255, 255, 255, 0.11);
+        }
+      }
     }
-    
-    .conv-time {
+
+    .sidebar-filters {
+      .filter-tabs {
+        .filter-tab {
+          color: rgba(255, 255, 255, 0.5);
+
+          &:hover {
+            color: #fff;
+          }
+          &.active {
+            color: #fff;
+          }
+        }
+
+        .filter-more-btn {
+          color: rgba(255, 255, 255, 0.5);
+
+          &:hover {
+            color: #fff;
+          }
+        }
+      }
+
+      .new-chat-btn {
+        color: #0a84ff;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.08);
+        }
+      }
+    }
+
+    .conversation-list {
+      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .conversation-item {
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: none;
+
+        .conv-avatar .online-dot {
+          border-color: #1c1c1e;
+        }
+
+        .conv-body {
+          .conv-top {
+            .conv-name {
+              color: #f5f5f7;
+            }
+            .conv-time {
+              color: rgba(255, 255, 255, 0.4);
+            }
+          }
+
+          .conv-bottom .conv-preview {
+            color: rgba(255, 255, 255, 0.55);
+          }
+        }
+
+        &:hover {
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        // .active keeps the brand-blue background from the light rules;
+        // its white text reads fine on both themes.
+        &.active {
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        }
+      }
+    }
+
+    .empty-conversations {
       color: rgba(255, 255, 255, 0.4);
     }
-    
-    .conv-preview {
-      color: rgba(255, 255, 255, 0.5);
-    }
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.04);
-    }
-    
-    &.active {
-      background: rgba(0, 122, 255, 0.15);
-      .conv-name {
-        color: #007aff;
-      }
-      .conv-preview {
-        color: rgba(255, 255, 255, 0.75);
-      }
-    }
   }
 
+  // ── Column 3: chat card ──
   .chat-main-panel {
-    background: rgba(18, 18, 20, 0.2);
-  }
+    .chat-main-card {
+      background: #1c1c1e;
+    }
 
-  .chat-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(22, 22, 24, 0.7);
-    
-    .header-name {
-      color: #fff;
-    }
-    
-    .header-status {
-      color: rgba(255, 255, 255, 0.5);
-    }
-    
-    .header-btn {
-      color: rgba(255, 255, 255, 0.6);
-      &:hover {
-        background: rgba(255, 255, 255, 0.06);
-        color: #fff;
+    .chat-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+      .header-left {
+        .back-btn {
+          color: rgba(255, 255, 255, 0.6);
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.06);
+          }
+        }
+
+        .header-avatar .online-dot {
+          border-color: #1c1c1e;
+        }
+
+        .header-info .header-name {
+          color: #f5f5f7;
+        }
+      }
+
+      .header-actions .header-btn {
+        color: rgba(255, 255, 255, 0.6);
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.06);
+          color: #0a84ff;
+        }
       }
     }
-    
-    .back-btn {
-      color: rgba(255, 255, 255, 0.6);
-      &:hover {
-        background: rgba(255, 255, 255, 0.06);
-        color: #fff;
+
+    .messages-area {
+      background: #1c1c1e;
+      scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
       }
-    }
-  }
 
-  .messages-area {
-    background: transparent;
-  }
+      .time-divider {
+        color: rgba(255, 255, 255, 0.35);
 
-  .message {
-    &--in {
-      .msg-bubble {
-        background: #252528;
+        .divider-line {
+          background-color: rgba(255, 255, 255, 0.08);
+        }
+      }
+
+      .message--in .msg-bubble {
+        background: #2c2c2e;
         color: #f5f5f7;
-        border: 1px solid rgba(255, 255, 255, 0.05);
       }
-      .msg-time {
+
+      .msg-meta {
         color: rgba(255, 255, 255, 0.4);
       }
-    }
-    
-    &--out {
-      .msg-bubble {
-        background: linear-gradient(135deg, #007aff 0%, #0051d6 100%);
-        color: #fff;
-      }
-      .msg-time {
+
+      .message--out .msg-meta {
         color: rgba(255, 255, 255, 0.7);
       }
-      .msg-meta {
-        color: rgba(255, 255, 255, 0.7);
+
+      .typing-indicator span {
+        background-color: rgba(255, 255, 255, 0.4);
       }
     }
+
+    .input-area {
+      background: #1c1c1e;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+      .input-pill-wrapper {
+        background: rgba(255, 255, 255, 0.07);
+
+        .input-field {
+          color: #f5f5f7;
+
+          &::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+          }
+        }
+
+        .input-actions-group {
+          .input-action-btn {
+            color: rgba(255, 255, 255, 0.5);
+
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.08);
+              color: #0a84ff;
+            }
+          }
+
+          .circle-send-btn {
+            color: rgba(255, 255, 255, 0.5);
+          }
+        }
+      }
+    }
+
+    .chat-placeholder-container {
+      background: #1c1c1e;
+    }
+
+    .chat-placeholder-card {
+      color: rgba(255, 255, 255, 0.35);
+
+      h3 {
+        color: rgba(255, 255, 255, 0.55);
+      }
+    }
+  }
+
+  .msg-sender {
+    color: #0a84ff;
   }
 
   .system-message span {
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .input-area {
-    background: rgba(22, 22, 24, 0.7);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .input-pill-wrapper {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    
-    .input-field {
-      color: #fff;
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.4);
-      }
-    }
-    
-    .input-action-btn {
-      color: rgba(255, 255, 255, 0.5);
-      &:hover {
-        color: #fff;
-        background: rgba(255, 255, 255, 0.06);
-      }
-    }
-  }
-
-  .chat-placeholder-container {
-    background: rgba(18, 18, 20, 0.2);
-    
-    .chat-placeholder-card {
-      color: rgba(255, 255, 255, 0.4);
-      h3 {
-        color: rgba(255, 255, 255, 0.6);
-      }
-    }
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.55);
   }
 }

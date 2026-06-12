@@ -46,6 +46,8 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 	comment: string = '';
 	ratings: CourseRating[] = [];
 	showAll: boolean = false;
+	canReview: boolean = false;
+	hasReviewed: boolean = false;
 
 	images: string[] = [];
 	videos: string[] = [];
@@ -88,6 +90,7 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 				this.loadCourse(this.courseId);
 				this.getCourseRating(this.courseId);
 				this.getCourseOptions();
+				this.checkCanReview();
 			},
 		});
 	}
@@ -168,6 +171,28 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: res => {
 					this.ratings = res;
+					const studentId = this.userStore.studentId();
+					this.hasReviewed = !!studentId && res.some(r => r.studentId === studentId);
+					this.cdr.markForCheck();
+				},
+			});
+	}
+
+	// Reviews are reserved for students with a paid registration for this course.
+	private checkCanReview() {
+		this.canReview = false;
+		const studentId = this.userStore.studentId();
+		if (!studentId) {
+			return;
+		}
+		this.courseRegistrationService
+			.getCourses(studentId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: courses => {
+					this.canReview = courses.some(
+						c => c.courseId === this.courseId && c.statusPayment === 'Paid'
+					);
 					this.cdr.markForCheck();
 				},
 			});
@@ -187,9 +212,8 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 
 		const ratingDto: CourseRatingCreateDto = {
 			courseId: this.courseId,
-			studentId: this.userStore.studentId() ?? '',
 			ratingValue: Number(this.rate),
-			comment: this.comment,
+			reviewComment: this.comment,
 		};
 
 		patchState(this.loader, { isShow: true });
@@ -205,8 +229,17 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 					this.toastService.show('Rating added successfully');
 					this.cdr.markForCheck();
 				},
-				error: () => {
+				error: err => {
 					patchState(this.loader, { isShow: false });
+					if (err.status === 403) {
+						this.toastService.show('Only students enrolled in this course (paid) can review it.', 'error');
+					} else if (err.status === 409) {
+						this.toastService.show('You have already reviewed this course.', 'error');
+						this.hasReviewed = true;
+					} else {
+						this.toastService.show('Failed to add rating. Please try again.', 'error');
+					}
+					this.cdr.markForCheck();
 				},
 			});
 	}

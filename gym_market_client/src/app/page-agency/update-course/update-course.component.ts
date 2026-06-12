@@ -3,18 +3,26 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
 import { patchState } from '@ngrx/signals';
 import { FormsModule } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { Course } from '../../core/models/course.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { GmInputComponent, GmButtonComponent } from '../../shared';
+import { GmButtonComponent } from '../../shared';
 import { ToastService } from '../../shared/services/toast.service';
 import { formatDateToInput } from '../../utilities/defaults.const';
 import { MAX_VIDEO_BYTES } from '../../utilities/upload.const';
 
+interface CourseTypeOption {
+	value: string;
+	label: string;
+	icon: string;
+	gradient: string;
+}
+
 @Component({
     selector: 'app-update-course',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
+    imports: [FormsModule, RouterLink, GmButtonComponent, DecimalPipe],
     templateUrl: './update-course.component.html',
     styleUrl: './update-course.component.scss'
 })
@@ -35,7 +43,19 @@ export class UpdateCourseComponent implements OnInit {
 		rating: 0,
 		getFileDtos: [],
 	};
-	
+
+	readonly descriptionLimit = 500;
+
+	// Full Tailwind class strings kept literal so the JIT compiler picks them up.
+	readonly courseTypes: CourseTypeOption[] = [
+		{ value: 'Yoga', label: 'Yoga', icon: '🧘', gradient: 'from-emerald-400 to-teal-500' },
+		{ value: 'Cardio', label: 'Cardio', icon: '🏃', gradient: 'from-orange-400 to-rose-500' },
+		{ value: 'Strength', label: 'Strength', icon: '🏋️', gradient: 'from-blue-500 to-indigo-600' },
+		{ value: 'Pilates', label: 'Pilates', icon: '🤸', gradient: 'from-fuchsia-400 to-purple-500' },
+		{ value: 'Stretching', label: 'Stretching', icon: '🙆', gradient: 'from-cyan-400 to-sky-500' },
+		{ value: 'Cross fit', label: 'Cross fit', icon: '⚡', gradient: 'from-amber-400 to-orange-600' },
+	];
+
 	courseId: string = '';
 	loading = false;
 	loaderStore = inject(LoaderModalStore);
@@ -52,6 +72,26 @@ export class UpdateCourseComponent implements OnInit {
 	dataVideos: string[] = [];
 	private videosAdd: File[] = [];
     url: string | null = null;
+
+	get selectedType(): CourseTypeOption {
+		return this.courseTypes.find(t => t.value === this.model.type) ?? this.courseTypes[0];
+	}
+
+	// Days between the chosen start and end dates (inclusive), for the schedule hint.
+	get scheduleDays(): number {
+		const start = new Date(this.model.startDate).getTime();
+		const end = new Date(this.model.endDate).getTime();
+		if (isNaN(start) || isNaN(end) || end < start) {
+			return 0;
+		}
+		return Math.floor((end - start) / 86400000) + 1;
+	}
+
+	useScheduleLength() {
+		if (this.scheduleDays > 0) {
+			this.model.duration = this.scheduleDays;
+		}
+	}
 
 	ngOnInit() {
 		this.courseId = this.route.snapshot.params['id'];

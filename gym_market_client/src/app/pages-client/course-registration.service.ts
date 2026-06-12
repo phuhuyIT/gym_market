@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CourseRegistration } from '../core/models/course-registration.model';
+import { Course } from '../core/models/course.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -17,8 +17,9 @@ export class CourseRegistrationService {
 		});
 	}
 
-	getCourses(studentId: string): Observable<CourseRegistration[]> {
-		return this.http.get<CourseRegistration[]>(
+	// The API returns the registered courses (with statusPayment), not registration rows.
+	getCourses(studentId: string): Observable<Course[]> {
+		return this.http.get<Course[]>(
 			`${environment.baseApi}/CourseRegistration/get-course-registrations/${studentId}`
 		);
 	}

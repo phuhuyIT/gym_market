@@ -5,6 +5,7 @@ import { UserStore } from '../../../stores/user.store';
 import { AccountService } from '../../../guest/account.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
+import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
 import { ROLES } from '../../../utilities/roles.const';
 import { take } from 'rxjs';
 
@@ -16,7 +17,7 @@ interface NavItem {
 @Component({
     selector: 'app-header',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLinkActive, RouterLink, CommonModule, ThemeToggleComponent],
+    imports: [RouterLinkActive, RouterLink, CommonModule, ThemeToggleComponent, NotificationBellComponent],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss'
 })

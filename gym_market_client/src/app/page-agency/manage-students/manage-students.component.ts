@@ -179,4 +179,16 @@ export class ManageStudentsComponent implements OnInit {
 	courseTitles(student: StudentSummary): string {
 		return student.enrollments.map(e => e.courseTitle).join(', ');
 	}
+
+	get activeStudents(): number {
+		return this.allStudents.filter(s => s.status === 'Active').length;
+	}
+
+	get pendingStudents(): number {
+		return this.allStudents.filter(s => s.status === 'Pending').length;
+	}
+
+	get totalRevenue(): number {
+		return this.allStudents.reduce((sum, s) => sum + s.totalPaid, 0);
+	}
 }

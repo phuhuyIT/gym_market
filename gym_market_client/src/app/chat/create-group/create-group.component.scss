@@ -11,6 +11,54 @@
   color: var(--text);
 }
 
+.cg-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.cg-avatar-btn {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.18));
+  border-radius: 50%;
+  background: var(--section-alt, rgba(255, 255, 255, 0.06));
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.7;
+  }
+}
+
+.cg-avatar-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cg-avatar-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+}
+
+.cg-avatar-hint {
+  font-size: 0.8rem;
+  color: var(--text-soft, #8a94ad);
+}
+
 .cg-label {
   display: block;
   font-size: 0.8rem;

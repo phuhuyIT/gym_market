@@ -14,7 +14,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ConversationService } from '../conversation.service';
 import { UserSearchResult } from '../../core/models/conversation.model';
-import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { DEFAULT_AVATAR_URL, DEFAULT_GROUP_AVATAR_URL } from '../../utilities/defaults.const';
 
 @Component({
 	selector: 'app-create-group',
@@ -28,8 +28,11 @@ export class CreateGroupComponent implements OnInit {
 	@Output() created = new EventEmitter<void>();
 
 	readonly DEFAULT_AVATAR_URL = DEFAULT_AVATAR_URL;
+	readonly DEFAULT_GROUP_AVATAR_URL = DEFAULT_GROUP_AVATAR_URL;
 
 	groupName = '';
+	avatarUrl = '';
+	uploadingAvatar = false;
 	searchQuery = '';
 	results: UserSearchResult[] = [];
 	selected: UserSearchResult[] = [];
@@ -75,7 +78,43 @@ export class CreateGroupComponent implements OnInit {
 	}
 
 	get canCreate(): boolean {
-		return this.groupName.trim().length > 0 && this.selected.length > 0 && !this.submitting;
+		return this.groupName.trim().length > 0 && this.selected.length > 0 && !this.submitting && !this.uploadingAvatar;
+	}
+
+	onAvatarSelected(event: Event) {
+		const input = event.target as HTMLInputElement;
+		const file = input.files?.[0];
+		input.value = '';
+		if (!file) {
+			return;
+		}
+		if (!file.type.startsWith('image/')) {
+			this.error = 'Please choose an image file.';
+			return;
+		}
+		if (file.size > 5 * 1024 * 1024) {
+			this.error = 'Image must be smaller than 5 MB.';
+			return;
+		}
+		this.uploadingAvatar = true;
+		this.error = '';
+		this.conversationService
+			.uploadGroupAvatar(file)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.uploadingAvatar = false;
+					if (res.success && res.avatarUrl) {
+						this.avatarUrl = res.avatarUrl;
+					}
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					this.uploadingAvatar = false;
+					this.error = 'Could not upload the image. Please try again.';
+					this.cdr.markForCheck();
+				},
+			});
 	}
 
 	createGroup() {
@@ -87,6 +126,7 @@ export class CreateGroupComponent implements OnInit {
 		this.conversationService
 			.createGroup({
 				name: this.groupName.trim(),
+				avatarUrl: this.avatarUrl || undefined,
 				memberIds: this.selected.map(u => u.id),
 			})
 			.pipe(takeUntilDestroyed(this.destroyRef))

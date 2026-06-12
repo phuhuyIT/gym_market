@@ -112,4 +112,28 @@ export class ManageCoursesComponent implements OnInit {
 		const cats = this.courses.map(c => c.category).filter(Boolean);
 		return Array.from(new Set(cats));
 	}
+
+	get totalSeats(): number {
+		return this.courses.reduce((sum, c) => sum + (c.maxParticipants || 0), 0);
+	}
+
+	get avgPrice(): number {
+		if (this.courses.length === 0) {
+			return 0;
+		}
+		return this.courses.reduce((sum, c) => sum + (c.price || 0), 0) / this.courses.length;
+	}
+
+	private readonly typeIcons: Record<string, string> = {
+		'Yoga': '🧘',
+		'Cardio': '🏃',
+		'Strength': '🏋️',
+		'Pilates': '🤸',
+		'Stretching': '🙆',
+		'Cross fit': '⚡',
+	};
+
+	typeIcon(type: string): string {
+		return this.typeIcons[type] ?? '🏋️';
+	}
 }
