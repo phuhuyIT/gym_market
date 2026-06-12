@@ -34,11 +34,11 @@ export class YourProfileComponent implements OnInit {
 	}
 
 	private loadProfile() {
-		const userId = this.userStore.id();
-		if (!userId) return;
+		// Stay logged-in gated, but the backend identifies the user from the JWT.
+		if (!this.userStore.id()) return;
 
 		this.studentService
-			.getStudentProfile(userId)
+			.getOwnStudentProfile()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: res => {

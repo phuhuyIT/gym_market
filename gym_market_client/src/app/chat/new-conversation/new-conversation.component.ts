@@ -73,7 +73,7 @@ export class NewConversationComponent implements OnInit {
 		this.submitting = true;
 		this.error = '';
 		this.conversationService
-			.createConversation({ senderId, recieveId: user.id })
+			.createConversation({ recieveId: user.id })
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: () => {

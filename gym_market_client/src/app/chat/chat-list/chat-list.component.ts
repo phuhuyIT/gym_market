@@ -226,10 +226,11 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 	private getConversations() {
 		patchState(this.loader, { isShow: true });
+		// Stay logged-in gated, but the backend identifies the user from the JWT.
 		const userId = this.userStore.id();
 		if (userId !== null) {
 			this.conversationService
-				.getConversations(userId)
+				.getConversations()
 				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 					next: res => {
@@ -294,11 +295,10 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 			if (senderId) {
 				patchState(this.loader, { isShow: true });
 				this.conversationService.createConversation({
-					senderId: senderId,
 					recieveId: targetUserId
 				}).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 					next: () => {
-						this.conversationService.getConversations(senderId)
+						this.conversationService.getConversations()
 							.pipe(takeUntilDestroyed(this.destroyRef))
 							.subscribe({
 								next: res => {
@@ -391,7 +391,7 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 		const userId = this.userStore.id();
 		if (userId !== null) {
 			this.messageService
-				.seenMessage(userId, item.conversationId)
+				.seenMessage(item.conversationId)
 				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 					next: () => {},

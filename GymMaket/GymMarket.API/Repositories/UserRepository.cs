@@ -37,9 +37,9 @@ namespace GymMarket.API.Repositories
             return new GetUserInfoResponse { Errors = [], StatusCode = 200, Success = true, UserInfo = userInfo };
         }
 
-        public async Task<ApiResponse> UpdateUser(UpdateUserDto model)
+        public async Task<ApiResponse> UpdateUser(string userId, UpdateUserDto model)
         {
-            var user = await _userManager.FindByIdAsync(model.Id);
+            var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
             {

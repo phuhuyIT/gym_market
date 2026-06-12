@@ -52,7 +52,7 @@ export class CourseRegistrationComponent implements OnInit {
 	private getCouresRegistrations() {
 		patchState(this.loader, { isShow: true });
 		this.courseRegistrationService
-			.getCourses(this.userStore.studentId())
+			.getCourses()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: data => {

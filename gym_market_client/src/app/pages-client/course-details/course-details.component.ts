@@ -186,7 +186,7 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 			return;
 		}
 		this.courseRegistrationService
-			.getCourses(studentId)
+			.getCourses()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: courses => {
@@ -265,7 +265,7 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 		this.courseId = courseId;
 		patchState(this.loader, { isShow: true });
 		this.courseRegistrationService
-			.registerCourse(this.courseId, this.userStore.studentId() ?? '')
+			.registerCourse(this.courseId)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: () => {

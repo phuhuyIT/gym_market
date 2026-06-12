@@ -14,12 +14,14 @@ export class StudentService {
 		return this.http.get<Student>(`${environment.baseApi}/student/${studentId}`);
 	}
 
-	getStudentInfoByUserId(userId: string): Observable<Student> {
-		return this.http.get<Student>(`${environment.baseApi}/student/by-user/${userId}`);
+	// Both endpoints only ever serve the authenticated user's own record (the
+	// backend resolves the user from the JWT), so no userId is sent.
+	getOwnStudentInfo(): Observable<Student> {
+		return this.http.get<Student>(`${environment.baseApi}/student/by-user`);
 	}
 
-	getStudentProfile(userId: string): Observable<StudentProfileResponse> {
-		return this.http.get<StudentProfileResponse>(`${environment.baseApi}/student/profile/${userId}`);
+	getOwnStudentProfile(): Observable<StudentProfileResponse> {
+		return this.http.get<StudentProfileResponse>(`${environment.baseApi}/student/profile`);
 	}
 
 	updateStudentProfile(model: UpdateStudentProfileDto, studentId: string): Observable<void> {

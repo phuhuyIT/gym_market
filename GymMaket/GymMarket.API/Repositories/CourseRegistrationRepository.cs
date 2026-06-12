@@ -21,10 +21,10 @@ namespace GymMarket.API.Repositories
         }
 
         // Registers a course for a student and initializes status as 'Pending Payment'
-        public async Task<CourseRegistration?> RegisterCourseAsync(RegisterCourseDto dto)
+        public async Task<CourseRegistration?> RegisterCourseAsync(RegisterCourseDto dto, string studentId)
         {
             var courseExists = await _context.CourseRegistrations
-                .Where(cr => cr.StudentId == dto.StudentId && cr.CourseId == dto.CourseId)
+                .Where(cr => cr.StudentId == studentId && cr.CourseId == dto.CourseId)
                 .FirstOrDefaultAsync();
 
             if(courseExists != null)
@@ -36,7 +36,7 @@ namespace GymMarket.API.Repositories
             {
                 RegistrationId = Guid.NewGuid().ToString(),
                 CourseId = dto.CourseId,
-                StudentId = dto.StudentId,
+                StudentId = studentId,
                 Status = PaymentStatus.PendingPayment,
                 PaymentStatus = PaymentStatus.NotStarted,
                 CreatedAt = DateTime.UtcNow,
@@ -48,17 +48,21 @@ namespace GymMarket.API.Repositories
 
 
             var course = await _context.Courses.Where(c => c.CourseId == dto.CourseId).FirstOrDefaultAsync();
+            if (course == null)
+            {
+                return null;
+            }
 
             var payment = new Payment()
             {
                 CourseId = dto.CourseId,
-                PaymentAmount = course!.Price + course.AdditionalPrice,
+                PaymentAmount = course.Price + course.AdditionalPrice,
                 CreatedAt = DateTime.UtcNow,
                 PaymentDate = DateTime.UtcNow,
                 PaymentId = Guid.NewGuid().ToString(),
                 PaymentStatus = PaymentStatus.Pending,
                 PaymentType = "",
-                StudentId = dto.StudentId,
+                StudentId = studentId,
                 UpdatedAt = DateTime.UtcNow,
             };
 
@@ -68,12 +72,13 @@ namespace GymMarket.API.Repositories
             return registration;
         }
 
-        // Initializes the payment, setting a timestamp for tracking the 5-minute window
-        public async Task<bool> InitializePaymentAsync(string registrationId, decimal initialPayment)
+        // Initializes the payment, setting a timestamp for tracking the 5-minute window.
+        // Only the student who owns the registration may touch it.
+        public async Task<bool> InitializePaymentAsync(string registrationId, decimal initialPayment, string studentId)
         {
             var registration = await _context.CourseRegistrations.FindAsync(registrationId);
 
-            if (registration == null || registration.PaymentStatus != PaymentStatus.NotStarted)
+            if (registration == null || registration.StudentId != studentId || registration.PaymentStatus != PaymentStatus.NotStarted)
                 return false;
 
             registration.InitialPayment = initialPayment;
@@ -87,12 +92,13 @@ namespace GymMarket.API.Repositories
             return true;
         }
 
-        // Cancels a registration if the payment is not completed within 5 minutes
-        public async Task<bool> CancelRegistrationAsync(string registrationId)
+        // Cancels a registration if the payment is not completed within 5 minutes.
+        // Only the student who owns the registration may cancel it.
+        public async Task<bool> CancelRegistrationAsync(string registrationId, string studentId)
         {
             var registration = await _context.CourseRegistrations.FindAsync(registrationId);
 
-            if (registration == null || registration.PaymentStatus != PaymentStatus.Pending)
+            if (registration == null || registration.StudentId != studentId || registration.PaymentStatus != PaymentStatus.Pending)
                 return false;
 
             // Check if more than 5 minutes have passed since payment initialization

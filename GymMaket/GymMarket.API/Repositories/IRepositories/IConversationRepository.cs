@@ -7,7 +7,7 @@ namespace GymMarket.API.Repositories.IRepositories
 {
     public interface IConversationRepository
     {
-        Task<ApiResponse> CreateConversation(CreateConversationDto model);
+        Task<ApiResponse> CreateConversation(CreateConversationDto model, string senderId);
         Task<ApiResponse> CreateGroup(CreateGroupDto model, string creatorId);
         Task<ApiResponse> AddMembers(AddMembersDto model, string actorId);
         Task<ApiResponse> RemoveMember(int conversationId, string userId, string actorId);
@@ -20,6 +20,9 @@ namespace GymMarket.API.Repositories.IRepositories
         Task SeenMessage(string userId, int conversationId);
         Task<UserMessageDto?> SendMessage(SendMessageDto model);
         Task<List<UserMessageDto>> GetMessages(int conversationId);
+        // True when the user participates in the conversation; gate for reading
+        // its messages or member list.
+        Task<bool> IsMember(int conversationId, string userId);
         Task<List<int>> GetConversationIdsOfUser(string userId);
         Task UpdateLastSeen(string userId, DateTime lastSeen);
     }

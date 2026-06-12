@@ -48,7 +48,7 @@ export class YourProfileComponent implements OnInit {
 		const userId = this.userStore.id();
 		if (userId !== null) {
 			this.userService
-				.getUserInfo(userId)
+				.getUserInfo()
 				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 					next: (res: UserInfoResponse) => {

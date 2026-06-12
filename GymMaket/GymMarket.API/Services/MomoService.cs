@@ -22,16 +22,17 @@ namespace GymMarket.API.Services
             _context = context;
         }
 
-        public async Task<MomoCreatePaymentResponseModel?> CreatePaymentAsync(CreatePaymentDto dto)
+        public async Task<MomoCreatePaymentResponseModel?> CreatePaymentAsync(string courseId, string studentId)
         {
-            var course = await _context.Courses.FindAsync(dto.CourseId);
+            var course = await _context.Courses.FindAsync(courseId);
             if (course == null) return null;
 
             string paymentId = Guid.NewGuid().ToString("N");
             double paymentAmount = (double)((course.Price ?? 0) + (course.AdditionalPrice ?? 0));
 
-            // Store studentId and courseId in extraData as JSON
-            var extraData = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { dto.StudentId, dto.CourseId })));
+            // Store studentId and courseId in extraData as JSON so the signed
+            // callback/IPN can tell which student paid for which course.
+            var extraData = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { StudentId = studentId, CourseId = courseId })));
 
             var rawData =
                 $"partnerCode={_options.Value.PartnerCode}" +

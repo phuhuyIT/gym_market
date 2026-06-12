@@ -58,7 +58,7 @@ export class UpdateProfileComponent implements OnInit {
 		const userId = this.userStore.id();
 		if (userId !== null) {
 			this.userService
-				.getUserInfo(userId)
+				.getUserInfo()
 				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 					next: (res: UserInfoResponse) => {
@@ -136,11 +136,11 @@ export class UpdateProfileComponent implements OnInit {
 	}
 
 	onUpdateUser() {
+		// The backend updates the authenticated user; no id is sent.
 		const user: UpdateUserDto = {
 			address: this.updateForm.controls['address'].value,
 			avatar: this.updateForm.controls['profilePicture'].value,
 			fullName: this.updateForm.controls['fullName'].value,
-			id: this.userStore.id(),
 			phoneNumber: this.updateForm.controls['phoneNumber'].value,
 			status: null,
 		};

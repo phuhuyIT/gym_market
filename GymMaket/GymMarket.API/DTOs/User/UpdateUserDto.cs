@@ -2,11 +2,10 @@
 
 namespace GymMarket.API.DTOs.User
 {
+    // The user being updated is always the authenticated caller (derived from the
+    // JWT in the controller), so the DTO carries no user id.
     public class UpdateUserDto
     {
-        [Required(ErrorMessage = "Id is required")]
-        public string Id { get; set; } = string.Empty;
-
         [Required(ErrorMessage = "FullName is required")]
         public string FullName { get; set; } = string.Empty;
 

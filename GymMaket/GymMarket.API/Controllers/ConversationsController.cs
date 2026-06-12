@@ -25,7 +25,8 @@ namespace GymMarket.API.Controllers
         [HttpPost("create-conversation")]
         public async Task<IActionResult> CreateConversation(CreateConversationDto model)
         {
-            var res = await _conversationRepository.CreateConversation(model);
+            // The sender is always the authenticated user — never trust a client-sent id.
+            var res = await _conversationRepository.CreateConversation(model, GetUserId());
             return StatusCode(res.StatusCode, new { res.Errors, res.Message });
         }
 
@@ -100,6 +101,12 @@ namespace GymMarket.API.Controllers
         [HttpGet("group-members/{conversationId}")]
         public async Task<IActionResult> GetGroupMembers(int conversationId)
         {
+            // Only participants may see who is in a conversation.
+            if (!await _conversationRepository.IsMember(conversationId, GetUserId()))
+            {
+                return Forbid();
+            }
+
             var members = await _conversationRepository.GetGroupMembers(conversationId);
             return Ok(members);
         }
@@ -111,24 +118,32 @@ namespace GymMarket.API.Controllers
             return Ok(users);
         }
 
-        [HttpGet("get-conversation-of-user/{userId}")]
-        public async Task<IActionResult> GetConversationOfUser(string userId)
+        // Conversations, messages and read-state always belong to the authenticated
+        // user — never trust a client-sent id.
+        [HttpGet("get-conversation-of-user")]
+        public async Task<IActionResult> GetConversationOfUser()
         {
-            var conversations = await _conversationRepository.GetConversationOfUser(userId);
+            var conversations = await _conversationRepository.GetConversationOfUser(GetUserId());
             return Ok(conversations);
         }
 
         [HttpGet("get-messages/{conversationId}")]
         public async Task<IActionResult> GetMessages(int conversationId)
         {
+            // Only participants may read a conversation's messages.
+            if (!await _conversationRepository.IsMember(conversationId, GetUserId()))
+            {
+                return Forbid();
+            }
+
             var messages = await _conversationRepository.GetMessages(conversationId);
             return Ok(messages);
         }
 
-        [HttpPost("seen-message/{userId}/{conversationId}")]
-        public async Task<IActionResult> SeenMessage(string userId, int conversationId)
+        [HttpPost("seen-message/{conversationId}")]
+        public async Task<IActionResult> SeenMessage(int conversationId)
         {
-            await _conversationRepository.SeenMessage(userId, conversationId);
+            await _conversationRepository.SeenMessage(GetUserId(), conversationId);
             return Ok();
         }
 

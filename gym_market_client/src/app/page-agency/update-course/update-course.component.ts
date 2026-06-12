@@ -183,7 +183,8 @@ export class UpdateCourseComponent implements OnInit {
 		form.append('EndDate', this.model.endDate);
 		form.append('Duration', this.model.duration.toString());
 		form.append('MaxParticipants', this.model.maxParticipants.toString());
-		form.append('TrainerId', this.model.trainerId);
+		// No TrainerId: ownership never changes on update and the backend
+		// keeps the current owner.
 
 		for (let file of this.imagesAdd) form.append('Images', file);
 		for (let file of this.videosAdd) form.append('Videos', file);
