@@ -14,6 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserInfoResponse } from '../../core/models/auth.model';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
 import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { VIETNAM_BANKS } from '../../utilities/vietnam-banks.const';
 
 @Component({
     selector: 'app-update-profile',
@@ -25,6 +26,7 @@ import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 export class UpdateProfileComponent implements OnInit {
 	userStore = inject(UserStore);
 	updateForm!: FormGroup;
+	readonly banks = VIETNAM_BANKS;
 
 	loader = inject(LoaderModalStore);
 	errorModal = inject(ErrorModalStore);
@@ -48,6 +50,9 @@ export class UpdateProfileComponent implements OnInit {
 			bio: ['', [Validators.required]],
 			experience: [0, [Validators.required, Validators.min(0)]],
 			certification: ['', [Validators.required]],
+			bankBin: [''],
+			bankAccountNo: [''],
+			bankAccountName: [''],
 		});
 
 		this.getUserInfo();
@@ -89,6 +94,9 @@ export class UpdateProfileComponent implements OnInit {
 							bio: res.bio,
 							experience: res.experience,
 							certification: res.certification,
+							bankBin: res.bankBin ?? '',
+							bankAccountNo: res.bankAccountNo ?? '',
+							bankAccountName: res.bankAccountName ?? '',
 						});
 					},
 					error: () => {
@@ -114,6 +122,9 @@ export class UpdateProfileComponent implements OnInit {
 			rating: 0,
 			updatedAt: new Date(),
 			userId: this.userStore.id() ?? '',
+			bankBin: this.updateForm.controls['bankBin'].value,
+			bankAccountNo: this.updateForm.controls['bankAccountNo'].value,
+			bankAccountName: this.updateForm.controls['bankAccountName'].value,
 		};
 
 		patchState(this.loader, { isShow: true });

@@ -64,7 +64,8 @@ namespace GymMarket.API.Repositories
                     PaymentType = p.PaymentType,
                     Note = p.Note,
                     CreatedAt = p.CreatedAt,
-                    FullName = p.Student!.Name
+                    FullName = p.Student!.Name,
+                    UserId = p.Student!.UserId
                 })
                 .ToListAsync();
 

@@ -120,6 +120,7 @@ export class PaymentsComponent implements OnInit {
 						list.push({
 							paymentId: p.paymentId,
 							studentId: p.studentId,
+							userId: p.userId,
 							studentName: p.fullName || 'Student',
 							courseId: course.courseId,
 							courseTitle: course.title,

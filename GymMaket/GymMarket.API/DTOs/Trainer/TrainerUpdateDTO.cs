@@ -34,6 +34,16 @@ namespace GymMarket.API.DTOs.Trainer
         [Url(ErrorMessage = "ProfilePicture must be a valid URL.")]
         public string? ProfilePicture { get; set; }
 
+        // Receiving bank account for course payments (VietQR).
+        [StringLength(20, ErrorMessage = "BankBin cannot exceed 20 characters.")]
+        public string? BankBin { get; set; }
+
+        [StringLength(40, ErrorMessage = "BankAccountNo cannot exceed 40 characters.")]
+        public string? BankAccountNo { get; set; }
+
+        [StringLength(100, ErrorMessage = "BankAccountName cannot exceed 100 characters.")]
+        public string? BankAccountName { get; set; }
+
         public DateTime? UpdatedAt { get; set; }
 
         [Required(ErrorMessage = "UserId is required.")]

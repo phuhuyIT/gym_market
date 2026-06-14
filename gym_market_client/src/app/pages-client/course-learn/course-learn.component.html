@@ -1,0 +1,135 @@
+<div class="course-learn">
+  <div class="container">
+
+    <!-- Header -->
+    <header class="learn-header">
+      <button class="back-link" (click)="goToDetails()">← Course details</button>
+      <h1 class="learn-header__title section-title">
+        {{ course?.title || 'Course content' }}
+      </h1>
+
+      @if (!accessDenied && lectures.length > 0) {
+        <div class="learn-progress">
+          <div class="learn-progress__meta">
+            <span>{{ completedCount }} / {{ lectures.length }} lectures completed</span>
+            <span class="learn-progress__pct">{{ progressPercent }}%</span>
+          </div>
+          <div class="learn-progress__bar">
+            <div class="learn-progress__fill" [style.width.%]="progressPercent"></div>
+          </div>
+        </div>
+      }
+    </header>
+
+    @if (accessDenied) {
+      <!-- Locked state: student has not paid for this course -->
+      <gm-card class="locked-card gl-2">
+        <div class="locked-card__icon">🔒</div>
+        <h2 class="locked-card__title">This content is locked</h2>
+        <p class="locked-card__text">
+          You need an active, paid enrolment to study this course's lectures and materials.
+        </p>
+        <gm-button variant="primary" (clicked)="goToDetails()">VIEW COURSE &amp; ENROL</gm-button>
+      </gm-card>
+    } @else if (lectures.length === 0) {
+      <gm-card class="locked-card gl-2">
+        <div class="locked-card__icon">📭</div>
+        <h2 class="locked-card__title">No lectures yet</h2>
+        <p class="locked-card__text">
+          The trainer hasn't published any lectures for this course yet. Check back soon.
+        </p>
+        <gm-button variant="ghost" (clicked)="goToDetails()">BACK TO COURSE</gm-button>
+      </gm-card>
+    } @else {
+      <div class="learn-layout">
+
+        <!-- Sidebar: lecture list -->
+        <aside class="learn-sidebar gl">
+          <h3 class="learn-sidebar__title">Lectures</h3>
+          <ul class="lecture-list">
+            @for (lecture of lectures; track lecture.lectureId) {
+              <li
+                class="lecture-item"
+                [class.lecture-item--active]="selectedLecture?.lectureId === lecture.lectureId"
+                (click)="selectLecture(lecture)"
+              >
+                <span
+                  class="lecture-item__check"
+                  [class.lecture-item__check--done]="isCompleted(lecture.lectureId)"
+                  (click)="$event.stopPropagation(); toggleCompleted(lecture)"
+                  [title]="isCompleted(lecture.lectureId) ? 'Mark as not done' : 'Mark as done'"
+                >
+                  {{ isCompleted(lecture.lectureId) ? '✓' : '' }}
+                </span>
+                <span class="lecture-item__order">{{ lecture.order }}</span>
+                <span class="lecture-item__body">
+                  <span class="lecture-item__title">{{ lecture.title }}</span>
+                  @if (lecture.duration) {
+                    <span class="lecture-item__duration">⏱️ {{ lecture.duration }} min</span>
+                  }
+                </span>
+              </li>
+            }
+          </ul>
+        </aside>
+
+        <!-- Main panel: materials of the selected lecture -->
+        <section class="learn-content">
+          @if (selectedLecture) {
+            <div class="learn-content__head">
+              <h2 class="learn-content__title">{{ selectedLecture.title }}</h2>
+              <gm-button
+                [variant]="isCompleted(selectedLecture.lectureId) ? 'secondary' : 'primary'"
+                (clicked)="toggleCompleted(selectedLecture)"
+              >
+                {{ isCompleted(selectedLecture.lectureId) ? 'COMPLETED ✓' : 'MARK AS COMPLETE' }}
+              </gm-button>
+            </div>
+
+            @if (materials.length === 0) {
+              <p class="learn-content__empty">No materials in this lecture yet.</p>
+            } @else {
+              <div class="material-list">
+                @for (material of materials; track material.materialId) {
+                  <gm-card class="material-card gl">
+                    <span class="material-card__type">{{ materialType(material) }}</span>
+                    @switch (materialType(material)) {
+                      @case ('VIDEO') {
+                        <video class="material-card__video" controls [src]="material.materialContent"></video>
+                      }
+                      @case ('IMAGE') {
+                        <img class="material-card__image" [src]="material.materialContent" alt="Lecture material" />
+                      }
+                      @case ('PDF') {
+                        <a class="material-card__link" [href]="material.materialContent" target="_blank" rel="noopener noreferrer">
+                          📄 Open PDF
+                        </a>
+                      }
+                      @case ('LINK') {
+                        <a class="material-card__link" [href]="material.materialContent" target="_blank" rel="noopener noreferrer">
+                          🔗 Open link
+                        </a>
+                      }
+                      @case ('TEXT') {
+                        <p class="material-card__text">{{ material.materialContent }}</p>
+                      }
+                      @default {
+                        <a class="material-card__link" [href]="material.materialContent" target="_blank" rel="noopener noreferrer">
+                          Open material
+                        </a>
+                      }
+                    }
+                  </gm-card>
+                }
+              </div>
+            }
+          } @else {
+            <p class="learn-content__empty">Select a lecture to start learning.</p>
+          }
+        </section>
+
+      </div>
+    }
+
+  </div>
+</div>

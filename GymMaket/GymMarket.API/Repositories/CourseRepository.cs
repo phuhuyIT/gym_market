@@ -106,6 +106,26 @@ namespace GymMarket.API.Repositories
 
                 _context.Courses.Update(mapEntity);
 
+                // Keep open (unpaid) payments in step with the new price, so a student who
+                // registered earlier but hasn't paid yet owes the current amount. Paid
+                // payments are never touched — a settled amount must not change when the
+                // price changes. This mirrors the lazy re-sync in
+                // CourseRegistrationRepository.GetCoursePaymentInfo.
+                var newPrice = (mapEntity.Price ?? 0) + (mapEntity.AdditionalPrice ?? 0);
+                var openPayments = await _context.Payments
+                    .Where(p => p.CourseId == courseUpdateDTO.CourseId
+                             && (p.PaymentStatus == PaymentStatus.Pending
+                              || p.PaymentStatus == PaymentStatus.NotStarted))
+                    .ToListAsync();
+                foreach (var payment in openPayments)
+                {
+                    if (payment.PaymentAmount != newPrice)
+                    {
+                        payment.PaymentAmount = newPrice;
+                        payment.UpdatedAt = DateTime.UtcNow;
+                    }
+                }
+
                 var r = await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 

@@ -49,7 +49,13 @@
                   <span class="stat-item__value">Up to {{course.maxParticipants}}</span>
                 </div>
               </div>
-              <gm-button variant="primary" (clicked)="addToCard(course.courseId)">ENROLL NOW</gm-button>
+              @if (hasPaidAccess) {
+                <gm-button variant="primary" (clicked)="goToContent()">GO TO COURSE CONTENT</gm-button>
+              } @else if (isPendingPayment) {
+                <gm-button variant="primary" (clicked)="goToPayment()">COMPLETE PAYMENT</gm-button>
+              } @else {
+                <gm-button variant="primary" (clicked)="addToCard(course.courseId)">ENROLL NOW</gm-button>
+              }
               <p class="enroll-card__guarantee">✓ 30-Day Results Guarantee</p>
             </gm-card>
           </div>

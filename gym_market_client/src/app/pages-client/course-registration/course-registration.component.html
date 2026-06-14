@@ -80,11 +80,21 @@
                         <span class="progress-percentage">{{ getCourseProgress(item.courseId) }}%</span>
                       </div>
                       <div class="progress-bar-bg">
-                        <div 
-                          class="progress-bar-fill" 
+                        <div
+                          class="progress-bar-fill"
                           [style.width.%]="getCourseProgress(item.courseId)"
                         ></div>
                       </div>
+                    </div>
+
+                    <div class="card-actions" (click)="$event.stopPropagation()">
+                      @if (item.statusPayment === 'Paid') {
+                        <span class="pay-badge pay-badge--paid">Paid</span>
+                        <gm-button variant="primary" [routerLink]="['/client/course-learn', item.courseId]">START LEARNING</gm-button>
+                      } @else {
+                        <span class="pay-badge pay-badge--pending">{{ item.statusPayment || 'Pending' }}</span>
+                        <gm-button variant="secondary" [routerLink]="['/client/course-payment', item.courseId]">COMPLETE PAYMENT</gm-button>
+                      }
                     </div>
                   </div>
                 }

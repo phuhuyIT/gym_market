@@ -6,6 +6,8 @@ import { TrainerListComponent } from './trainer-list/trainer-list.component';
 import { TrainerDetailsComponent } from './trainer-details/trainer-details.component';
 import { CourseSearchComponent } from './course-search/course-search.component';
 import { CourseDetailsComponent } from './course-details/course-details.component';
+import { CourseLearnComponent } from './course-learn/course-learn.component';
+import { CoursePaymentComponent } from './course-payment/course-payment.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { CourseRegistrationComponent } from './course-registration/course-registration.component';
 import { FoodNutritionCalculatorComponent } from './food-nutrition-calculator/food-nutrition-calculator.component';
@@ -25,6 +27,8 @@ export const routes: Routes = [
 			{ path: 'trainer-details/:id', component: TrainerDetailsComponent, title: 'Trainer details' },
 			{ path: 'course-search', component: CourseSearchComponent, title: 'Course search' },
 			{ path: 'course-details/:id', component: CourseDetailsComponent, title: 'Course details' },
+			{ path: 'course-learn/:courseId', component: CourseLearnComponent, title: 'Course content' },
+			{ path: 'course-payment/:courseId', component: CoursePaymentComponent, title: 'Course payment' },
 			{ path: 'course-registration', component: CourseRegistrationComponent, title: 'Course Registration' },
 			{ path: 'food-nutrition-calculator', component: FoodNutritionCalculatorComponent, title: 'Food Nutrition Calculator' },
 		],
