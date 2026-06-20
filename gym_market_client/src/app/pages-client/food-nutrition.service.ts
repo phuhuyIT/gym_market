@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
 	CaloricValueDto,
+	CustomFoodNutritionDto,
 	FoodNutrition,
 	FoodNutritionUser,
 	NutritionBudget,
@@ -31,6 +32,13 @@ export class FoodNutritionService {
 	calCaloricValue(model: CaloricValueDto): Observable<FoodNutritionUser> {
 		return this.http.post<FoodNutritionUser>(
 			`${environment.baseApi}/FoodNutrition/cal-caloric-value`,
+			model
+		);
+	}
+
+	createCustomFoodNutritionUser(model: CustomFoodNutritionDto): Observable<FoodNutritionUser> {
+		return this.http.post<FoodNutritionUser>(
+			`${environment.baseApi}/FoodNutrition/custom-foodnutrition-user`,
 			model
 		);
 	}

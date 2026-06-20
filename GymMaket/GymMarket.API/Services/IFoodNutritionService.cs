@@ -10,6 +10,7 @@ namespace GymMarket.API.Services
 
         // User food log
         Task<FoodNutritionUser?> LogFood(AddFoodNutritionUser model, string userId);
+        Task<FoodNutritionUser?> LogCustomFood(AddCustomFoodNutritionUser model, string userId);
         Task<List<FoodNutritionUser>> GetUserLog(string userId, DateOnly? date, int page, int? pageSize);
         Task<FoodNutritionUser?> UpdateLoggedFood(UpdateFoodNutritionUserDto model, string userId);
         Task<bool> DeleteLoggedFood(DeleteFoodNutritionUserDto model, string userId);

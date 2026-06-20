@@ -50,6 +50,17 @@ namespace GymMarket.API.Controllers
             return Ok(result);
         }
 
+        [HttpPost("custom-foodnutrition-user")]
+        public async Task<IActionResult> CreateCustomFoodNutritionUser(AddCustomFoodNutritionUser model)
+        {
+            var result = await _foodNutritionService.LogCustomFood(model, CurrentUserId());
+            if (result == null)
+            {
+                return BadRequest(new { error = "INVALID_CUSTOM_FOOD" });
+            }
+            return Ok(result);
+        }
+
         [HttpPut("update-foodnutrition-user")]
         public async Task<IActionResult> UpdateFoodNutritionUser(UpdateFoodNutritionUserDto model)
         {

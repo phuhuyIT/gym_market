@@ -48,6 +48,32 @@ namespace GymMarket.API.Services
             return await _repository.AddFoodNutritionUserEntry(entry);
         }
 
+        public async Task<FoodNutritionUser?> LogCustomFood(AddCustomFoodNutritionUser model, string userId)
+        {
+            var foodName = model.FoodName.Trim();
+            if (string.IsNullOrWhiteSpace(foodName))
+            {
+                return null;
+            }
+
+            var entry = new FoodNutritionUser
+            {
+                FoodName = foodName,
+                Weight = model.Weight,
+                UserId = userId,
+                CaloricValue = model.CaloricValue,
+                Carbs = model.Carbs,
+                Fat = model.Fat,
+                Sugars = model.Sugars,
+                Protein = model.Protein,
+                Date = model.Date ?? DateOnly.FromDateTime(DateTime.Today),
+                MealType = model.MealType,
+                FoodNutritionId = null,
+            };
+
+            return await _repository.AddFoodNutritionUserEntry(entry);
+        }
+
         public async Task<List<FoodNutritionUser>> GetUserLog(string userId, DateOnly? date, int page, int? pageSize)
         {
             // No pageSize means the caller wants the full log (the calculator's

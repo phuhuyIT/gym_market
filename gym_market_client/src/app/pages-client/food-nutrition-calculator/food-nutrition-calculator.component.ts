@@ -11,6 +11,7 @@ import { FoodNutritionService } from '../../pages-client/food-nutrition.service'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
 	CaloricValueDto,
+	CustomFoodNutritionDto,
 	FoodNutrition,
 	FoodNutritionUser,
 	NutritionBudget,
@@ -35,6 +36,13 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	foods: FoodNutrition[] = [];
 	selectedFood: FoodNutrition | null = null;
 	isManualSelection = false;
+	isCustomFoodMode = false;
+	customFoodName = new FormControl('');
+	customCalories = new FormControl(0);
+	customCarbs = new FormControl(0);
+	customFat = new FormControl(0);
+	customSugars = new FormControl(0);
+	customProtein = new FormControl(0);
 
 	userStore = inject(UserStore);
 	notice = inject(NoticeModalStore);
@@ -298,6 +306,11 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	}
 
 	onCal() {
+		if (this.isCustomFoodMode) {
+			this.onCreateCustomFood();
+			return;
+		}
+
 		if (!this.selectedFood) return;
 
 		const model: CaloricValueDto = {
@@ -333,10 +346,71 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			});
 	}
 
+	onCreateCustomFood() {
+		const foodName = (this.customFoodName.value || this.searchInput.value || '').trim();
+		const model: CustomFoodNutritionDto = {
+			foodName,
+			weight: Number(this.weight.value || 0),
+			caloricValue: Number(this.customCalories.value || 0),
+			carbs: Number(this.customCarbs.value || 0),
+			fat: Number(this.customFat.value || 0),
+			sugars: Number(this.customSugars.value || 0),
+			protein: Number(this.customProtein.value || 0),
+			date: this.selectedDateStr,
+			mealType: this.selectedMealType,
+		};
+
+		if (!model.foodName || model.weight <= 0) {
+			patchState(this.errorModal, {
+				isShow: true,
+				errors: ['Food name and weight are required.'],
+			});
+			return;
+		}
+
+		patchState(this.loader, { isShow: true });
+		this.foodNutritionService
+			.createCustomFoodNutritionUser(model)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.showAddFood = false;
+					patchState(this.loader, { isShow: false });
+					this.foodNutritionUsers.push(res);
+					patchState(this.notice, { isShow: true, message: 'Custom food added successfully' });
+					this.updateFilteredLogs();
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					patchState(this.errorModal, {
+						isShow: true,
+						errors: ['An error occurred. Please try again.'],
+					});
+					patchState(this.loader, { isShow: false });
+				},
+			});
+	}
+
 	resetSearchInput() {
 		this.selectedFood = null;
+		this.isCustomFoodMode = false;
 		this.searchInput.setValue('');
 		this.weight.setValue(0);
+		this.customFoodName.setValue('');
+		this.customCalories.setValue(0);
+		this.customCarbs.setValue(0);
+		this.customFat.setValue(0);
+		this.customSugars.setValue(0);
+		this.customProtein.setValue(0);
+	}
+
+	onToggleCustomFoodMode(flag: boolean) {
+		this.isCustomFoodMode = flag;
+		this.selectedFood = null;
+		this.foods = [];
+		if (flag) {
+			this.customFoodName.setValue(this.searchInput.value || '');
+		}
 	}
 
 	onShowDelete(flag: boolean, food: FoodNutritionUser | null) {

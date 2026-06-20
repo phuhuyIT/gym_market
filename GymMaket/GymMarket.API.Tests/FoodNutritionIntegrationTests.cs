@@ -91,6 +91,43 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
     }
 
     [Fact]
+    public async Task CreateCustomFoodNutritionUser_PersistsSnapshotWithoutMasterFood()
+    {
+        // Arrange
+        await AuthenticateAsync();
+        var model = new AddCustomFoodNutritionUser
+        {
+            FoodName = "Homemade Chicken Wrap",
+            Weight = 250,
+            CaloricValue = 430,
+            Carbs = 38,
+            Fat = 14,
+            Sugars = 5,
+            Protein = 32,
+            Date = new DateOnly(2026, 6, 14),
+            MealType = "Lunch"
+        };
+
+        // Act
+        var response = await Client.PostAsJsonAsync("/api/FoodNutrition/custom-foodnutrition-user", model);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var created = await response.Content.ReadFromJsonAsync<FoodNutritionUser>();
+        Assert.NotNull(created);
+        Assert.Equal("Homemade Chicken Wrap", created!.FoodName);
+        Assert.Null(created.FoodNutritionId);
+        Assert.Equal(430, created.CaloricValue);
+        Assert.Equal(38, created.Carbs);
+        Assert.Equal(14, created.Fat);
+        Assert.Equal(5, created.Sugars);
+        Assert.Equal(32, created.Protein);
+        Assert.Equal(new DateOnly(2026, 6, 14), created.Date);
+        Assert.Equal("Lunch", created.MealType);
+        Assert.Equal(GetTokenClaim("nameid"), created.UserId);
+    }
+
+    [Fact]
     public async Task UpdateFoodNutritionUser_RescalesMacrosAndUpdatesMealType()
     {
         // Arrange

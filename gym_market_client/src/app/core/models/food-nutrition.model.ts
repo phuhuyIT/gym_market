@@ -34,6 +34,18 @@ export interface CaloricValueDto {
   mealType: string;
 }
 
+export interface CustomFoodNutritionDto {
+  foodName: string;
+  weight: number;
+  caloricValue: number;
+  carbs: number;
+  fat: number;
+  sugars: number;
+  protein: number;
+  date: string;
+  mealType: string;
+}
+
 export interface UpdateFoodNutritionUserDto {
   foodNutritionUserId: number;
   weight: number;
