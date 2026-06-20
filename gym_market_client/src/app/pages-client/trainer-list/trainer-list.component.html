@@ -53,7 +53,8 @@
             <div class="trainer-avatar-container">
               <div class="trainer-avatar-ring">
                 <img
-                  [src]="item.profilePicture || '/assets/fitness_logo.jpg'"
+                  [src]="item.profilePicture || DEFAULT_AVATAR_IMAGE_URL"
+                  [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL"
                   alt="Trainer profile picture"
                   class="trainer-avatar-img"
                 />
@@ -98,4 +99,3 @@
     }
   </main>
 </div>
-

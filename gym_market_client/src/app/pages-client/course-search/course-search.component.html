@@ -52,7 +52,8 @@
 
             <div class="course-image-container">
               <img
-                [src]="(item.getFileDtos && item.getFileDtos.length > 0) ? item.getFileDtos[0].url : '/assets/fitness_logo.jpg'"
+                [src]="getCourseThumbnail(item)"
+                [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL"
                 alt="Course cover"
                 class="course-cover-img"
               />

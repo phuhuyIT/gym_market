@@ -13,13 +13,14 @@ import { NoticeModalStore } from '../../stores/notice.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserInfoResponse } from '../../core/models/auth.model';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
-import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { DEFAULT_AVATAR_IMAGE_URL, DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 import { VIETNAM_BANKS } from '../../utilities/vietnam-banks.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-update-profile',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ReactiveFormsModule, GmButtonComponent],
+    imports: [ReactiveFormsModule, GmButtonComponent, FallbackSrcDirective],
     templateUrl: './update-profile.component.html',
     styleUrl: './update-profile.component.scss'
 })
@@ -27,6 +28,7 @@ export class UpdateProfileComponent implements OnInit {
 	userStore = inject(UserStore);
 	updateForm!: FormGroup;
 	readonly banks = VIETNAM_BANKS;
+	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
 
 	loader = inject(LoaderModalStore);
 	errorModal = inject(ErrorModalStore);

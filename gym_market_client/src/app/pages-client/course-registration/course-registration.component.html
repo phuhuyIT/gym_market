@@ -18,12 +18,6 @@
       </button>
       <button 
         class="tab-link" 
-        routerLink="/client/your-profile"
-      >
-        Profile
-      </button>
-      <button 
-        class="tab-link" 
         [class.active]="activeTab === 'completed'" 
         (click)="setActiveTab('completed')"
       >
@@ -64,7 +58,8 @@
                       <h3 class="course-card-title">{{ item.title }}</h3>
                       <div class="course-card-icon-wrap">
                         <img 
-                          [src]="item.getFileDtos && item.getFileDtos.length > 0 ? item.getFileDtos[0].url : '/assets/gym_logo.png'" 
+                          [src]="getCourseThumbnail(item)"
+                          [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL"
                           alt="Icon" 
                         />
                       </div>
@@ -116,7 +111,8 @@
                 <div class="recommended-card" [routerLink]="['/client/course-details', item.courseId]">
                   <div class="recommended-card-img-wrap">
                     <img 
-                      [src]="item.getFileDtos && item.getFileDtos.length > 0 ? item.getFileDtos[0].url : '/assets/gym_logo.png'" 
+                      [src]="getCourseThumbnail(item)"
+                      [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL"
                       alt="Recommended cover" 
                     />
                     <div class="duration-badge">

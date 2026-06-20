@@ -11,11 +11,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
 import { ACTIVITY_DAYS, RECOMMENDED_COURSES_FALLBACK } from '../../utilities/mock-data.const';
+import { DEFAULT_COURSE_THUMBNAIL_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-course-registration',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, FormsModule, CommonModule, GmButtonComponent],
+    imports: [RouterLink, FormsModule, CommonModule, GmButtonComponent, FallbackSrcDirective],
     templateUrl: './course-registration.component.html',
     styleUrl: './course-registration.component.scss'
 })
@@ -25,6 +27,7 @@ export class CourseRegistrationComponent implements OnInit {
 	courseSearchs: Course[] = [];
 	recommendedCourses: Course[] = [];
 	activeTab: string = 'overview';
+	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
 
 	// Activity widget properties
 	selectedActivityDay: string = 'Th';
@@ -173,6 +176,10 @@ export class CourseRegistrationComponent implements OnInit {
 		return 5 + (sum % 40); // 5 to 45
 	}
 
+	getCourseThumbnail(course: Course): string {
+		return course.getFileDtos?.find(file => file.typeFile === 'IMAGE')?.url || DEFAULT_COURSE_THUMBNAIL_URL;
+	}
+
 	getUpcomingEvents(): { title: string; time: string }[] {
 		if (this.courses.length === 0) {
 			return [
@@ -190,4 +197,3 @@ export class CourseRegistrationComponent implements OnInit {
 		});
 	}
 }
-

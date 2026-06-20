@@ -15,11 +15,11 @@
             <!-- Trainer Card -->
             <div class="trainer-brief">
               <div class="trainer-brief__avatar">
-                @if (trainerInfo?.profilePicture) {
-                  <img [src]="trainerInfo?.profilePicture" alt="{{trainerInfo?.name}}">
-                } @else {
-                  <span>👤</span>
-                }
+                <img
+                  [src]="trainerInfo?.profilePicture || DEFAULT_AVATAR_IMAGE_URL"
+                  [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL"
+                  alt="{{trainerInfo?.name || 'Trainer'}}"
+                >
               </div>
               <div class="trainer-brief__info">
                 <span class="trainer-brief__name">{{trainerInfo?.name || 'Trainer Name'}}</span>
@@ -99,7 +99,7 @@
 
               <!-- Media Visual Area -->
               <div class="exercise-media">
-                <img [src]="activeExercise.image" [alt]="activeExercise.name" class="media-image">
+                <img [src]="activeExercise.image || DEFAULT_IMAGE_URL" [fallbackSrc]="DEFAULT_IMAGE_URL" [alt]="activeExercise.name" class="media-image">
                 
                 <!-- Circular Timer/Control Overlay -->
                 <div class="media-overlay-play">
@@ -197,7 +197,7 @@
                 <div class="media-gallery__filmstrip">
                   @for (img of images; track img) {
                     <div class="media-gallery__item" (click)="showImage(img)">
-                      <img [src]="img" alt="Course image">
+                      <img [src]="img || DEFAULT_COURSE_THUMBNAIL_URL" [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL" alt="Course image">
                     </div>
                   }
                 </div>
@@ -298,7 +298,7 @@
               @for (ex of getActiveDayExercises(); track ex.id) {
                 <div class="ex-check-item" [class.active]="activeExercise?.id === ex.id" (click)="selectExercise(ex)">
                   <div class="ex-check-thumb">
-                    <img [src]="ex.image" alt="">
+                    <img [src]="ex.image || DEFAULT_IMAGE_URL" [fallbackSrc]="DEFAULT_IMAGE_URL" alt="">
                   </div>
                   <div class="ex-check-info">
                     <span class="ex-check-name">{{ex.name}}</span>
@@ -348,7 +348,7 @@
               <div class="friends-avatars">
                 @for (friend of mockFriends; track friend.name) {
                   <div class="friend-avatar-wrapper" [title]="friend.name">
-                    <img [src]="friend.avatar" alt="">
+                    <img [src]="friend.avatar || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="">
                   </div>
                 }
                 <div class="friend-avatar-more">
@@ -370,7 +370,6 @@
 @if (url) {
   <div class="image-modal" (click)="showImage(null)">
     <div class="image-modal__close">✕</div>
-    <img [src]="url" alt="Fullscreen preview" (click)="$event.stopPropagation()">
+    <img [src]="url" [fallbackSrc]="DEFAULT_IMAGE_URL" alt="Fullscreen preview" (click)="$event.stopPropagation()">
   </div>
 }
-

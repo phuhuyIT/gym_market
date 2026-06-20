@@ -29,7 +29,7 @@
 
         <div class="banner-avatar-side">
           <div class="banner-avatar-container">
-            <img [src]="trainerInfo.profilePicture" alt="{{trainerInfo.name}}">
+            <img [src]="trainerInfo.profilePicture || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="{{trainerInfo.name}}">
             <div class="banner-avatar-glow"></div>
           </div>
         </div>
@@ -87,7 +87,7 @@
             @for (course of coursesOfTrainer; track course.courseId) {
               <div class="mock-course-card" [routerLink]="['/client/course-details', course.courseId]">
                 <div class="course-image-container">
-                  <img [src]="course.getFileDtos && course.getFileDtos.length > 0 ? course.getFileDtos[0].url : '/assets/gym_logo.png'" alt="{{course.title}}">
+                  <img [src]="getCourseThumbnail(course)" [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL" alt="{{course.title}}">
                   
                   <button class="heart-bookmark-btn" 
                           [class.active]="isCourseBookmarked(course.courseId)" 
@@ -101,7 +101,7 @@
                   <h3 class="course-card-title">{{course.title}}</h3>
                   <div class="course-card-footer">
                     <div class="mentor-info">
-                      <img [src]="trainerInfo.profilePicture" alt="{{trainerInfo.name}}" class="mentor-avatar">
+                      <img [src]="trainerInfo.profilePicture || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="{{trainerInfo.name}}" class="mentor-avatar">
                       <div class="mentor-meta">
                         <span class="mentor-name">{{trainerInfo.name}}</span>
                         <span class="mentor-title">Trainer</span>
@@ -199,7 +199,7 @@
                         stroke-dasharray="263.89" stroke-dashoffset="179.4" stroke-linecap="round" />
               </svg>
               <div class="radial-avatar-wrapper">
-                <img [src]="userStore.avatar() || '/assets/fitness_logo.jpg'" alt="{{userStore.fullName() || 'Student'}}">
+                <img [src]="userStore.avatar() || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="{{userStore.fullName() || 'Student'}}">
               </div>
               <div class="radial-percentage">32%</div>
             </div>
@@ -248,7 +248,7 @@
             @for (mentor of otherTrainers; track mentor.trainerId) {
               <div class="expert-item" [routerLink]="['/client/trainer-details', mentor.trainerId]">
                 <div class="expert-avatar-box">
-                  <img [src]="mentor.profilePicture || '/assets/fitness_logo.jpg'" alt="{{mentor.name}}">
+                  <img [src]="mentor.profilePicture || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="{{mentor.name}}">
                 </div>
                 <div class="expert-info">
                   <span class="expert-name">{{mentor.name}}</span>

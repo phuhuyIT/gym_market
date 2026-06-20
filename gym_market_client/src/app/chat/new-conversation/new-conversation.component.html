@@ -20,7 +20,7 @@
     <div class="cg-results">
       @for (user of results; track user.id) {
         <button class="cg-result-item" [disabled]="submitting" (click)="startConversation(user)">
-          <img [src]="user.avatar || DEFAULT_AVATAR_URL" alt="" class="cg-result-avatar">
+          <img [src]="user.avatar || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="" class="cg-result-avatar">
           <div class="cg-result-info">
             <span class="cg-result-name">{{ user.fullName }}</span>
             <span class="cg-result-email">{{ user.email }}</span>

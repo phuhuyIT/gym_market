@@ -7,17 +7,18 @@ import { StudentProfile } from '../../core/models/student.model';
 import { CommonModule } from '@angular/common';
 import { GmButtonComponent } from '../../shared';
 import { patchState } from '@ngrx/signals';
-import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { DEFAULT_AVATAR_IMAGE_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-your-profile',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, CommonModule, GmButtonComponent],
+    imports: [RouterLink, CommonModule, GmButtonComponent, FallbackSrcDirective],
     templateUrl: './your-profile.component.html',
     styleUrl: './your-profile.component.scss'
 })
 export class YourProfileComponent implements OnInit {
-	readonly DEFAULT_AVATAR_URL = DEFAULT_AVATAR_URL;
+	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
 	userStore = inject(UserStore);
 	private destroyRef = inject(DestroyRef);
 	private cdr = inject(ChangeDetectorRef);

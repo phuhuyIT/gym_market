@@ -3,7 +3,8 @@
     <div class="profile-card">
       <div class="avatar-preview">
         <img
-          [src]="updateForm.controls['profilePicture'].value || '/assets/fitness_logo.jpg'"
+          [src]="updateForm.controls['profilePicture'].value || DEFAULT_AVATAR_IMAGE_URL"
+          [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL"
           alt="Avatar preview"
         />
       </div>

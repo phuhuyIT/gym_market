@@ -9,8 +9,9 @@ import { Course } from '../../core/models/course.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GmButtonComponent } from '../../shared';
 import { ToastService } from '../../shared/services/toast.service';
-import { formatDateToInput } from '../../utilities/defaults.const';
+import { DEFAULT_COURSE_THUMBNAIL_URL, DEFAULT_IMAGE_URL, formatDateToInput } from '../../utilities/defaults.const';
 import { MAX_VIDEO_BYTES } from '../../utilities/upload.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 interface CourseTypeOption {
 	value: string;
@@ -22,7 +23,7 @@ interface CourseTypeOption {
 @Component({
     selector: 'app-update-course',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FormsModule, RouterLink, GmButtonComponent, DecimalPipe],
+    imports: [FormsModule, RouterLink, GmButtonComponent, DecimalPipe, FallbackSrcDirective],
     templateUrl: './update-course.component.html',
     styleUrl: './update-course.component.scss'
 })
@@ -45,6 +46,8 @@ export class UpdateCourseComponent implements OnInit {
 	};
 
 	readonly descriptionLimit = 500;
+	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
+	readonly DEFAULT_IMAGE_URL = DEFAULT_IMAGE_URL;
 
 	// Full Tailwind class strings kept literal so the JIT compiler picks them up.
 	readonly courseTypes: CourseTypeOption[] = [

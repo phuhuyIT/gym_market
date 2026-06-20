@@ -15,12 +15,13 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ConversationService } from '../conversation.service';
 import { UserSearchResult } from '../../core/models/conversation.model';
 import { UserStore } from '../../stores/user.store';
-import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { DEFAULT_AVATAR_IMAGE_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
 	selector: 'app-new-conversation',
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [FormsModule],
+	imports: [FormsModule, FallbackSrcDirective],
 	templateUrl: './new-conversation.component.html',
 	styleUrl: './new-conversation.component.scss',
 })
@@ -28,7 +29,7 @@ export class NewConversationComponent implements OnInit {
 	@Output() close = new EventEmitter<void>();
 	@Output() created = new EventEmitter<void>();
 
-	readonly DEFAULT_AVATAR_URL = DEFAULT_AVATAR_URL;
+	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
 
 	searchQuery = '';
 	results: UserSearchResult[] = [];
