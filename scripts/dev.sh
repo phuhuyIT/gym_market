@@ -51,6 +51,27 @@ python_bin() {
   fi
 }
 
+run_migrations() {
+  local max_attempts="${1:-12}"
+
+  printf 'Applying EF migrations'
+  for attempt in $(seq 1 "$max_attempts"); do
+    printf '.'
+    if (cd "$ROOT_DIR/GymMaket/GymMarket.API" && dotnet ef database update); then
+      printf '\n'
+      return 0
+    fi
+
+    if [ "$attempt" -lt "$max_attempts" ]; then
+      printf ' retrying in 5s'
+      sleep 5
+    fi
+  done
+
+  printf '\nEF migrations failed after %s attempts.\n' "$max_attempts" >&2
+  return 1
+}
+
 printf 'Starting Docker infrastructure...\n'
 (cd "$ROOT_DIR/MinIO" && compose up -d)
 
@@ -58,8 +79,7 @@ wait_for_port 127.0.0.1 1433 "SQL Server" 90
 wait_for_port 127.0.0.1 9000 "MinIO" 60
 
 if [ "${SKIP_MIGRATIONS:-0}" != "1" ]; then
-  printf 'Applying EF migrations...\n'
-  (cd "$ROOT_DIR/GymMaket/GymMarket.API" && dotnet ef database update)
+  run_migrations
 else
   printf 'Skipping EF migrations because SKIP_MIGRATIONS=1.\n'
 fi
@@ -75,7 +95,7 @@ PIDS+=("$!")
 wait_for_port 127.0.0.1 5284 ".NET API" 90
 
 printf 'Starting Angular client...\n'
-(cd "$ROOT_DIR/gym_market_client" && npm start) &
+(cd "$ROOT_DIR/gym_market_client" && npm start -- --host 0.0.0.0 --port 4200) &
 PIDS+=("$!")
 
 printf '\nGymMarket is starting:\n'

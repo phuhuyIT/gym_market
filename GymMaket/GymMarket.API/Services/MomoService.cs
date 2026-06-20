@@ -13,10 +13,10 @@ namespace GymMarket.API.Services
 {
     public class MomoService
     {
-        private readonly IOptions<MomoOptionModel> _options;
+        private readonly IOptions<Models.MomoOptionModel> _options;
         private readonly GymMarketContext _context;
 
-        public MomoService(IOptions<MomoOptionModel> options, GymMarketContext context)
+        public MomoService(IOptions<Models.MomoOptionModel> options, GymMarketContext context)
         {
             _options = options;
             _context = context;

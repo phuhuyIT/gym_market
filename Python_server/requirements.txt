@@ -10,5 +10,5 @@ joblib
 uvicorn 
 pydantic 
 pillow 
-opencv-python
+opencv-python-headless
 python-multipart
