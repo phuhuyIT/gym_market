@@ -22,11 +22,13 @@ import {
 } from '../../core/models/course.model';
 import { MOCK_FRIENDS } from '../../utilities/mock-data.const';
 import { generateWorkoutPlans } from '../../utilities/workout-plans.const';
+import { DEFAULT_AVATAR_IMAGE_URL, DEFAULT_COURSE_THUMBNAIL_URL, DEFAULT_IMAGE_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-course-details',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, FormsModule, DatePipe, DecimalPipe, GmCardComponent, GmButtonComponent, GmInputComponent],
+    imports: [CommonModule, FormsModule, DatePipe, DecimalPipe, GmCardComponent, GmButtonComponent, GmInputComponent, FallbackSrcDirective],
     templateUrl: './course-details.component.html',
     styleUrl: './course-details.component.scss'
 })
@@ -48,6 +50,11 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 	showAll: boolean = false;
 	canReview: boolean = false;
 	hasReviewed: boolean = false;
+	// True once the student has a paid registration for this course; gates the
+	// "go to course content" entry point.
+	hasPaidAccess: boolean = false;
+	// True when registered but not yet paid; surfaces a "complete payment" entry point.
+	isPendingPayment: boolean = false;
 
 	images: string[] = [];
 	videos: string[] = [];
@@ -70,6 +77,9 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 	isMuted: boolean = false;
 
 	readonly mockFriends = MOCK_FRIENDS;
+	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
+	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
+	readonly DEFAULT_IMAGE_URL = DEFAULT_IMAGE_URL;
 
 	dayPlans: any[] = [];
 
@@ -181,6 +191,8 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 	// Reviews are reserved for students with a paid registration for this course.
 	private checkCanReview() {
 		this.canReview = false;
+		this.hasPaidAccess = false;
+		this.isPendingPayment = false;
 		const studentId = this.userStore.studentId();
 		if (!studentId) {
 			return;
@@ -190,12 +202,23 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: courses => {
-					this.canReview = courses.some(
-						c => c.courseId === this.courseId && c.statusPayment === 'Paid'
-					);
+					const registration = courses.find(c => c.courseId === this.courseId);
+					const paid = registration?.statusPayment === 'Paid';
+					this.canReview = paid;
+					this.hasPaidAccess = paid;
+					// Registered but not paid → still owes payment.
+					this.isPendingPayment = !!registration && !paid;
 					this.cdr.markForCheck();
 				},
 			});
+	}
+
+	goToContent() {
+		this.router.navigate(['/client/course-learn', this.courseId]);
+	}
+
+	goToPayment() {
+		this.router.navigate(['/client/course-payment', this.courseId]);
 	}
 
 	preventInvalidInput(event: KeyboardEvent): void {
@@ -269,9 +292,9 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: () => {
-					this.router.navigateByUrl('/client/course-registration');
 					patchState(this.loader, { isShow: false });
-					this.toastService.show('Enrolled successfully!');
+					this.toastService.show('Registration created — complete payment to unlock the course.');
+					this.router.navigate(['/client/course-payment', this.courseId]);
 				},
 				error: () => {
 					patchState(this.loader, { isShow: false });
@@ -382,4 +405,3 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 		return this.getActiveDayExercises().length;
 	}
 }
-

@@ -12,21 +12,22 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe, CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Conversation, Message } from '../../core/models/conversation.model';
-import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { DEFAULT_AVATAR_IMAGE_URL } from '../../utilities/defaults.const';
 import { CreateGroupComponent } from '../create-group/create-group.component';
 import { GroupMembersComponent } from '../group-members/group-members.component';
 import { NewConversationComponent } from '../new-conversation/new-conversation.component';
 import { NotificationBellComponent } from '../../shared/components/notification-bell/notification-bell.component';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-chat-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FormsModule, DatePipe, CommonModule, CreateGroupComponent, GroupMembersComponent, NewConversationComponent, NotificationBellComponent],
+    imports: [FormsModule, DatePipe, CommonModule, CreateGroupComponent, GroupMembersComponent, NewConversationComponent, NotificationBellComponent, FallbackSrcDirective],
     templateUrl: './chat-list.component.html',
     styleUrl: './chat-list.component.scss'
 })
 export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
-	readonly DEFAULT_AVATAR_URL = DEFAULT_AVATAR_URL;
+	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
 	chats: Conversation[] = [];
 	messages: Message[] = [];
 	searchQuery = '';

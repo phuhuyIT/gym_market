@@ -1,0 +1,270 @@
+.course-learn {
+  min-height: 100vh;
+  color: var(--text);
+  background: var(--bg);
+  padding: 120px 0 60px;
+}
+
+// Header
+.learn-header {
+  margin-bottom: 2rem;
+
+  &__title {
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    margin: 0.5rem 0 1.25rem;
+    line-height: 1.2;
+  }
+}
+
+.back-link {
+  background: none;
+  border: none;
+  color: var(--blue);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.learn-progress {
+  max-width: 480px;
+
+  &__meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-muted, #888);
+    margin-bottom: 0.5rem;
+  }
+
+  &__pct {
+    font-weight: 700;
+    color: var(--blue);
+  }
+
+  &__bar {
+    height: 8px;
+    border-radius: 99px;
+    background: var(--glass-border);
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--blue);
+    transition: width 0.4s ease;
+  }
+}
+
+// Locked / empty states
+.locked-card {
+  text-align: center;
+  padding: 3rem 2rem;
+  max-width: 520px;
+  margin: 2rem auto;
+
+  &__icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__text {
+    color: var(--text-muted, #888);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+}
+
+// Two-pane layout
+.learn-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  align-items: start;
+
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Sidebar
+.learn-sidebar {
+  padding: 1.25rem;
+  position: sticky;
+  top: 100px;
+
+  @media (max-width: 968px) {
+    position: static;
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted, #888);
+    margin-bottom: 1rem;
+  }
+}
+
+.lecture-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lecture-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm, 10px);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border: 1px solid transparent;
+
+  &:hover {
+    background: var(--glass-fill, rgba(127, 127, 127, 0.08));
+  }
+
+  &--active {
+    background: rgba(0, 122, 255, 0.08);
+    border-color: rgba(0, 122, 255, 0.2);
+  }
+
+  &__check {
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    transition: all 0.2s ease;
+
+    &--done {
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+  }
+
+  &__order {
+    flex: 0 0 auto;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-muted, #888);
+    min-width: 1ch;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+
+  &__duration {
+    font-size: 0.75rem;
+    color: var(--text-muted, #888);
+  }
+}
+
+// Content panel
+.learn-content {
+  min-width: 0;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  &__empty {
+    color: var(--text-muted, #888);
+    padding: 2rem 0;
+  }
+}
+
+.material-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.material-card {
+  padding: 1.25rem;
+
+  &__type {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--blue);
+    background: rgba(0, 122, 255, 0.08);
+    border: 1px solid rgba(0, 122, 255, 0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  &__video {
+    width: 100%;
+    border-radius: var(--radius-sm, 10px);
+    background: #000;
+    display: block;
+  }
+
+  &__image {
+    width: 100%;
+    border-radius: var(--radius-sm, 10px);
+    display: block;
+  }
+
+  &__link {
+    display: inline-block;
+    color: var(--blue);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__text {
+    line-height: 1.6;
+    white-space: pre-wrap;
+    margin: 0;
+  }
+}

@@ -1,5 +1,4 @@
 using GymMarket.API.Data;
-using GymMarket.API.DTOs.FoodNutritionUser;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -16,113 +15,86 @@ namespace GymMarket.API.Repositories
             _context = context;
         }
 
-        private const int MaxSearchResults = 20;
-
-        public async Task<List<FoodNutrition>> SearchFoodNutrition(string search)
+        public async Task<List<FoodNutrition>> SearchFoodNutrition(string search, int skip, int take)
         {
             var list = await _context.FoodNutritions.AsNoTrackingWithIdentityResolution()
                 .Where(f => f.Name!.ToLower().Contains(search.ToLower()))
                 .OrderBy(f => f.Name)
-                .Take(MaxSearchResults)
+                .Skip(skip)
+                .Take(take)
                 .ToListAsync();
 
             return list;
         }
 
-        public async Task<FoodNutritionUser?> CalculateCaloric(AddFoodNutritionUser model, string userId)
+        public async Task<FoodNutrition?> GetFoodNutrition(int id)
         {
-            var foodNutrition = await _context.FoodNutritions
-                .AsNoTrackingWithIdentityResolution()
-                .Where(f => f.Id == model.FoodNutritionId)
-                .FirstOrDefaultAsync();
-
-            if (foodNutrition == null)
-            {
-                return null;
-            }
-
-            double calo = (double)model.Weight / 100.0 * foodNutrition.CaloricValue;
-            double fat = (double)model.Weight / 100.0 * foodNutrition.Fat;
-            double protein = (double)model.Weight / 100.0 * foodNutrition.Protein;
-            double sugars = (double)model.Weight / 100.0 * foodNutrition.Sugars;
-
-            var newFoodNutritionUser = new FoodNutritionUser()
-            {
-                CaloricValue = calo,
-                FoodName = model.FoodName,
-                Weight = model.Weight,
-                Fat = fat,
-                Protein = protein,
-                Sugars = sugars,
-                UserId = userId,
-                Date = model.Date ?? DateOnly.FromDateTime(DateTime.Today),
-                MealType = model.MealType,
-            };
-            _context.FoodNutritionUsers.Add(newFoodNutritionUser);
-            var r = await _context.SaveChangesAsync();
-            if (r > 0)
-            {
-                return newFoodNutritionUser;
-            }
-            return null;
+            return await _context.FoodNutritions.FirstOrDefaultAsync(f => f.Id == id);
         }
 
-        public async Task<List<FoodNutritionUser>> GetFoodNutritionUser(string userId)
+        public async Task<bool> FoodNutritionNameExists(string name, int? excludeId = null)
         {
-            var list = await _context.FoodNutritionUsers.AsNoTrackingWithIdentityResolution()
-              .Where(f => f.UserId == userId)
-              .ToListAsync();
-
-            return list;
+            return await _context.FoodNutritions
+                .AnyAsync(f => f.Name!.ToLower() == name.ToLower() && (excludeId == null || f.Id != excludeId));
         }
 
-        public async Task<bool> DeleteFoodNutritionUser(DeleteFoodNutritionUserDto model, string userId)
+        public async Task<FoodNutrition> AddFoodNutrition(FoodNutrition food)
         {
-            var nutrition = await _context.FoodNutritionUsers
-                .Where(f => f.UserId == userId && f.Id == model.FoodNutritionUserId)
-                .FirstOrDefaultAsync();
-
-            if(nutrition == null)
-            {
-                return false;
-            }
-
-            _context.FoodNutritionUsers.Remove(nutrition);
-            var r = await _context.SaveChangesAsync();
-            return r > 0;
-        }
-
-        public async Task<FoodNutritionUser?> UpdateFoodNutritionUser(UpdateFoodNutritionUserDto model, string userId)
-        {
-            var nutrition = await _context.FoodNutritionUsers
-                .Where(f => f.UserId == userId && f.Id == model.FoodNutritionUserId)
-                .FirstOrDefaultAsync();
-
-            if (nutrition == null || nutrition.Weight <= 0)
-            {
-                return null;
-            }
-
-            // The stored macros scale linearly with weight, so rescale them instead of
-            // re-reading FoodNutritions (the log doesn't keep the source food's id).
-            var factor = model.Weight / nutrition.Weight;
-            nutrition.CaloricValue *= factor;
-            nutrition.Fat *= factor;
-            nutrition.Sugars *= factor;
-            nutrition.Protein *= factor;
-            nutrition.Weight = model.Weight;
-
-            if (model.Date.HasValue)
-            {
-                nutrition.Date = model.Date;
-            }
-            if (!string.IsNullOrWhiteSpace(model.MealType))
-            {
-                nutrition.MealType = model.MealType;
-            }
-
+            _context.FoodNutritions.Add(food);
             await _context.SaveChangesAsync();
-            return nutrition;
+            return food;
+        }
+
+        public async Task RemoveFoodNutrition(FoodNutrition food)
+        {
+            _context.FoodNutritions.Remove(food);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<FoodNutritionUser>> GetFoodNutritionUser(string userId, DateOnly? date, int skip, int take)
+        {
+            return await _context.FoodNutritionUsers.AsNoTrackingWithIdentityResolution()
+                .Where(f => f.UserId == userId && (date == null || f.Date == date))
+                .OrderBy(f => f.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+        }
+
+        public async Task<FoodNutritionUser?> GetFoodNutritionUserEntry(int id, string userId)
+        {
+            return await _context.FoodNutritionUsers
+                .FirstOrDefaultAsync(f => f.UserId == userId && f.Id == id);
+        }
+
+        public async Task<FoodNutritionUser> AddFoodNutritionUserEntry(FoodNutritionUser entry)
+        {
+            _context.FoodNutritionUsers.Add(entry);
+            await _context.SaveChangesAsync();
+            return entry;
+        }
+
+        public async Task RemoveFoodNutritionUserEntry(FoodNutritionUser entry)
+        {
+            _context.FoodNutritionUsers.Remove(entry);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<NutritionBudget?> GetNutritionBudget(string userId)
+        {
+            return await _context.NutritionBudgets.FirstOrDefaultAsync(b => b.UserId == userId);
+        }
+
+        public async Task<NutritionBudget> AddNutritionBudget(NutritionBudget budget)
+        {
+            _context.NutritionBudgets.Add(budget);
+            await _context.SaveChangesAsync();
+            return budget;
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

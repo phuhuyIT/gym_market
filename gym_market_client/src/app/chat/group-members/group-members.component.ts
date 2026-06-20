@@ -16,12 +16,13 @@ import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operato
 import { ConversationService } from '../conversation.service';
 import { GroupMember, UserSearchResult } from '../../core/models/conversation.model';
 import { UserStore } from '../../stores/user.store';
-import { DEFAULT_AVATAR_URL, DEFAULT_GROUP_AVATAR_URL } from '../../utilities/defaults.const';
+import { DEFAULT_AVATAR_IMAGE_URL, DEFAULT_GROUP_AVATAR_IMAGE_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
 	selector: 'app-group-members',
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [FormsModule],
+	imports: [FormsModule, FallbackSrcDirective],
 	templateUrl: './group-members.component.html',
 	styleUrl: './group-members.component.scss',
 })
@@ -34,8 +35,8 @@ export class GroupMembersComponent implements OnInit {
 	@Output() left = new EventEmitter<void>();
 	@Output() changed = new EventEmitter<void>();
 
-	readonly DEFAULT_AVATAR_URL = DEFAULT_AVATAR_URL;
-	readonly DEFAULT_GROUP_AVATAR_URL = DEFAULT_GROUP_AVATAR_URL;
+	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
+	readonly DEFAULT_GROUP_AVATAR_IMAGE_URL = DEFAULT_GROUP_AVATAR_IMAGE_URL;
 
 	members: GroupMember[] = [];
 	myRole = 'Member';

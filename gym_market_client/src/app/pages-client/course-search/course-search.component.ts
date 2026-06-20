@@ -9,11 +9,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
 import { GmCardComponent } from '../../shared';
 import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
+import { DEFAULT_COURSE_THUMBNAIL_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-course-search',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, FormsModule, CommonModule, GmCardComponent],
+    imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, FallbackSrcDirective],
     templateUrl: './course-search.component.html',
     styleUrl: './course-search.component.scss'
 })
@@ -26,6 +28,7 @@ export class CourseSearchComponent implements OnInit {
 	pageSize: number = 10;
 	searchString: string = '';
 	category: string = 'All';
+	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
 
 	categories = [
 		'All',
@@ -94,6 +97,10 @@ export class CourseSearchComponent implements OnInit {
 		if (cat.includes('stretch')) return '🙆';
 		if (cat.includes('cross fit') || cat.includes('crossfit') || cat.includes('hiit')) return '🏋️';
 		return '💪';
+	}
+
+	getCourseThumbnail(course: Course): string {
+		return course.getFileDtos?.find(file => file.typeFile === 'IMAGE')?.url || DEFAULT_COURSE_THUMBNAIL_URL;
 	}
 
 	private getCourses() {

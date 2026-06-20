@@ -13,10 +13,6 @@ namespace GymMarket.API.DTOs.FoodNutritionUser
         [Range(0.1, double.MaxValue, ErrorMessage = "Weight must be greater than 0.")]
         public double Weight { get; set; }
 
-        public double Fat { get; set; }
-        public double Sugars { get; set; }
-        public double Protein { get; set; }
-
         public DateOnly? Date { get; set; }
         public string? MealType { get; set; }
     }

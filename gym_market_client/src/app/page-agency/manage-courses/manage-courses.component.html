@@ -94,11 +94,12 @@
               <td class="py-4 px-6">
                 <div class="flex items-center gap-3">
                   <div class="h-11 w-11 rounded-2xl bg-gradient-to-tr from-[#007AFF]/15 to-[#5856D6]/15 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform">
-                    @if (course.getFileDtos && course.getFileDtos.length > 0) {
-                      <img [src]="course.getFileDtos[0].url" alt="Course thumb" class="w-full h-full object-cover">
-                    } @else {
-                      {{ typeIcon(course.type) }}
-                    }
+                    <img
+                      [src]="getCourseThumbnail(course)"
+                      [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL"
+                      alt="Course thumb"
+                      class="w-full h-full object-cover"
+                    >
                   </div>
                   <div>
                     <h4 class="font-bold text-sm text-neutral-800 dark:text-neutral-200 line-clamp-1 max-w-[220px]">{{ course.title }}</h4>

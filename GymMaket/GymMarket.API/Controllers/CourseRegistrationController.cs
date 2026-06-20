@@ -69,6 +69,45 @@ namespace GymMarket.API.Controllers
             return Ok(list);
         }
 
+        // Bank-transfer payment details for a course the caller has registered for.
+        [HttpGet("payment-info/{courseId}")]
+        public async Task<IActionResult> GetPaymentInfo(string courseId)
+        {
+            var studentId = CurrentStudentId();
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { Message = "NOT_A_STUDENT" });
+            }
+
+            var info = await _courseRegistrationRepository.GetCoursePaymentInfo(studentId, courseId);
+            if (info == null)
+            {
+                return NotFound(new { Message = "REGISTRATION_NOT_FOUND" });
+            }
+            return Ok(info);
+        }
+
+        // The student taps "I've paid" on the payment screen. This notifies the trainer
+        // to verify the bank transfer; it does NOT mark the payment paid (the trainer
+        // approves it). Returns the current payment info so the client can react if the
+        // trainer has already confirmed.
+        [HttpPost("confirm-payment/{courseId}")]
+        public async Task<IActionResult> ConfirmPayment(string courseId)
+        {
+            var studentId = CurrentStudentId();
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { Message = "NOT_A_STUDENT" });
+            }
+
+            var info = await _courseRegistrationRepository.ConfirmPaymentByStudent(studentId, courseId);
+            if (info == null)
+            {
+                return NotFound(new { Message = "REGISTRATION_NOT_FOUND" });
+            }
+            return Ok(info);
+        }
+
         // Registrations belong to the authenticated student only — never trust a
         // client-sent id. The claim is an empty string for non-student users.
         private string CurrentStudentId()

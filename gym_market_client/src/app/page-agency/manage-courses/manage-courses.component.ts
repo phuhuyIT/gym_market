@@ -9,12 +9,14 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { UserStore } from '../../stores/user.store';
 import { ToastService } from '../../shared/services/toast.service';
 import { Course } from '../../core/models/course.model';
+import { DEFAULT_COURSE_THUMBNAIL_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-manage-courses',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, RouterLink, FormsModule, DecimalPipe],
+    imports: [CommonModule, RouterLink, FormsModule, DecimalPipe, FallbackSrcDirective],
     templateUrl: './manage-courses.component.html'
 })
 export class ManageCoursesComponent implements OnInit {
@@ -23,6 +25,7 @@ export class ManageCoursesComponent implements OnInit {
 	
 	searchString = '';
 	selectedCategory = '';
+	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
 	
 	isShowDeleteModal = false;
 	courseIdToDelete = '';
@@ -78,6 +81,10 @@ export class ManageCoursesComponent implements OnInit {
 	onCategoryChange(cat: string) {
 		this.selectedCategory = cat;
 		this.applyFilters();
+	}
+
+	getCourseThumbnail(course: Course): string {
+		return course.getFileDtos?.find(file => file.typeFile === 'IMAGE')?.url || DEFAULT_COURSE_THUMBNAIL_URL;
 	}
 
 	onShowDeleteModel(flag: boolean, id: string) {

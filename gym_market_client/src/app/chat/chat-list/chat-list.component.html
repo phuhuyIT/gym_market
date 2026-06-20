@@ -7,7 +7,7 @@
       <aside class="chat-nav-sidebar">
         <div class="profile-section">
           <div class="avatar-wrapper">
-            <img [src]="userStore.avatar() || DEFAULT_AVATAR_URL" alt="User Avatar" class="user-avatar">
+            <img [src]="userStore.avatar() || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="User Avatar" class="user-avatar">
             <span class="active-status-dot"></span>
           </div>
           <app-notification-bell align="left"></app-notification-bell>
@@ -136,7 +136,7 @@
             [class.active]="item.conversationId === conversationId"
           >
             <div class="conv-avatar">
-              <img [src]="item.avatar || DEFAULT_AVATAR_URL" alt="Avatar">
+              <img [src]="item.avatar || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="Avatar">
               @if (item.isOnline) {
                 <span class="online-dot"></span>
               }
@@ -181,7 +181,7 @@
               </button>
               <div class="header-identity" [class.header-identity--clickable]="activeIsGroup" (click)="openMembers()">
                 <div class="header-avatar">
-                  <img [src]="conversationUrl || DEFAULT_AVATAR_URL" alt="Avatar">
+                  <img [src]="conversationUrl || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="Avatar">
                   @if (activeIsOnline) {
                     <span class="online-dot"></span>
                   }
@@ -246,7 +246,7 @@
                   >
                     @if (msg.senderId !== userStore.id()) {
                       <div class="msg-avatar">
-                        <img [src]="msg.avatar || conversationUrl || DEFAULT_AVATAR_URL" alt="">
+                        <img [src]="msg.avatar || conversationUrl || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="">
                       </div>
                     }
                     <div class="msg-bubble">

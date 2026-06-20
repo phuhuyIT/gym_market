@@ -249,6 +249,33 @@
   transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.card-actions {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pay-badge {
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+
+  &--paid {
+    color: #1a7f37;
+    background: rgba(26, 127, 55, 0.12);
+  }
+
+  &--pending {
+    color: #ff9500;
+    background: rgba(255, 149, 0, 0.12);
+  }
+}
+
 /* Recommended Section Styles */
 .section-recommended {
   display: flex;

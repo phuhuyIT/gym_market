@@ -10,6 +10,9 @@ export interface Trainer {
   rating: number;
   createdAt: string;
   updatedAt: string;
+  bankBin?: string;
+  bankAccountNo?: string;
+  bankAccountName?: string;
 }
 
 export interface UpdateTrainerProfileDto {
@@ -23,4 +26,7 @@ export interface UpdateTrainerProfileDto {
   profilePicture: string;
   updatedAt: string | Date;
   userId: string;
+  bankBin?: string;
+  bankAccountNo?: string;
+  bankAccountName?: string;
 }

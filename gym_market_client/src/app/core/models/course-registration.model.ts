@@ -13,3 +13,19 @@ export interface RegisterCourseDto {
   courseId: string;
   studentId: string;
 }
+
+// Bank-transfer payment details for one registered course (see backend
+// CoursePaymentInfoDto). Used by the course-payment screen to build a VietQR.
+export interface CoursePaymentInfo {
+  paymentId?: string;
+  courseId: string;
+  courseTitle?: string;
+  amount: number;
+  status?: string;
+  reference?: string;
+  bankBin?: string;
+  bankAccountNo?: string;
+  bankAccountName?: string;
+  trainerName?: string;
+  bankConfigured: boolean;
+}

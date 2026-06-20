@@ -14,5 +14,9 @@ namespace GymMarket.API.DTOs.Payment
 
         // Flattened from the related Student so the client can show the student's name.
         public string? FullName { get; set; }
+
+        // The student's AppUser id (distinct from StudentId). The trainer uses this to
+        // open a 1:1 chat with the student — chat conversations key off AppUser ids.
+        public string? UserId { get; set; }
     }
 }

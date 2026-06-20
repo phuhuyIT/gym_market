@@ -12,6 +12,7 @@ export const STORAGE_KEYS = {
 	theme: 'gymmarket-theme',
 	bookmarkedTrainers: 'gym_bookmarked_trainers',
 	bookmarkedCourses: 'gym_bookmarked_courses',
+	completedLectures: 'gym_market_completed_lectures',
 	nutritionMetadata: 'gym_market_nutrition_metadata',
 	calorieBudget: 'gym_market_calorie_budget',
 	carbsBudget: 'gym_market_carbs_budget',

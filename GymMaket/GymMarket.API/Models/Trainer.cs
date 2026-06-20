@@ -29,6 +29,14 @@ public partial class Trainer
     [Column("Desciption")]
     public string Description { get; set; } = string.Empty;
 
+    // Receiving bank account for course payments. Students pay via a VietQR built
+    // from these, and the trainer reconciles transfers against their own bank.
+    public string? BankBin { get; set; }
+
+    public string? BankAccountNo { get; set; }
+
+    public string? BankAccountName { get; set; }
+
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }

@@ -19,6 +19,11 @@ export class NotificationService {
 	readonly notifications = signal<AppNotification[]>([]);
 	readonly unreadCount = computed(() => this.notifications().filter(n => !n.isRead).length);
 
+	// Unread count for a single category — drives the cue on the Payments nav item.
+	readonly unreadPaymentCount = computed(
+		() => this.notifications().filter(n => !n.isRead && n.type === 'payment').length
+	);
+
 	constructor() {
 		// Logout (token cleared) tears the hub down and empties the panel so the
 		// next user on this browser doesn't see stale notifications.
@@ -95,5 +100,16 @@ export class NotificationService {
 		}
 		this.notifications.update(list => list.map(n => ({ ...n, isRead: true })));
 		this.http.post<void>(`${this.base}/mark-all-read`, {}).subscribe();
+	}
+
+	// Marks every unread notification of one category as read. Used when the trainer
+	// opens the Payments page — seeing the list clears its nav cue.
+	markTypeRead(type: string) {
+		const unread = this.notifications().filter(n => !n.isRead && n.type === type);
+		if (unread.length === 0) {
+			return;
+		}
+		this.notifications.update(list => list.map(n => (n.type === type ? { ...n, isRead: true } : n)));
+		unread.forEach(n => this.http.post<void>(`${this.base}/mark-read/${n.id}`, {}).subscribe());
 	}
 }

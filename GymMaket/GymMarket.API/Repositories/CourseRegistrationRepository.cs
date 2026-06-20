@@ -13,11 +13,13 @@ namespace GymMarket.API.Repositories
     {
         private readonly GymMarketContext _context;
         private readonly IMapper _mapper;
+        private readonly INotificationRepository _notificationRepository;
 
-        public CourseRegistrationRepository(GymMarketContext context, IMapper mapper) : base(context, mapper)
+        public CourseRegistrationRepository(GymMarketContext context, IMapper mapper, INotificationRepository notificationRepository) : base(context, mapper)
         {
             _context = context;
             _mapper = mapper;
+            _notificationRepository = notificationRepository;
         }
 
         // Registers a course for a student and initializes status as 'Pending Payment'
@@ -53,15 +55,19 @@ namespace GymMarket.API.Repositories
                 return null;
             }
 
+            var paymentId = Guid.NewGuid().ToString();
             var payment = new Payment()
             {
                 CourseId = dto.CourseId,
                 PaymentAmount = course.Price + course.AdditionalPrice,
                 CreatedAt = DateTime.UtcNow,
                 PaymentDate = DateTime.UtcNow,
-                PaymentId = Guid.NewGuid().ToString(),
+                PaymentId = paymentId,
                 PaymentStatus = PaymentStatus.Pending,
                 PaymentType = "",
+                // Short transfer reference the student puts in their bank transfer memo
+                // and the trainer matches against in the payments list (shown as Note).
+                Note = BuildTransferReference(paymentId),
                 StudentId = studentId,
                 UpdatedAt = DateTime.UtcNow,
             };
@@ -154,6 +160,150 @@ namespace GymMarket.API.Repositories
                 .ToList();
 
             return courseDtos;
+        }
+
+        // Payment details for ONE course the student has registered for. Returns null
+        // when the student has no registration for the course (so the controller 404s)
+        // — a student can never read payment info for a course they didn't register for.
+        public async Task<CoursePaymentInfoDto?> GetCoursePaymentInfo(string studentId, string courseId)
+        {
+            var registration = await _context.CourseRegistrations
+                .FirstOrDefaultAsync(cr => cr.StudentId == studentId && cr.CourseId == courseId);
+
+            if (registration == null)
+                return null;
+
+            var course = await _context.Courses
+                .Include(c => c.Trainer)
+                .FirstOrDefaultAsync(c => c.CourseId == courseId);
+
+            if (course == null)
+                return null;
+
+            // Prefer a paid payment, else the most recent, mirroring GetCourseRegistrations.
+            var payment = (await _context.Payments
+                    .Where(p => p.StudentId == studentId && p.CourseId == courseId)
+                    .ToListAsync())
+                .OrderByDescending(p => PaymentStatus.IsPaid(p.PaymentStatus))
+                .ThenByDescending(p => p.CreatedAt)
+                .FirstOrDefault();
+
+            var trainer = course.Trainer;
+            var bankConfigured = trainer != null
+                && !string.IsNullOrWhiteSpace(trainer.BankBin)
+                && !string.IsNullOrWhiteSpace(trainer.BankAccountNo);
+
+            // The course price the student should pay right now.
+            var currentPrice = (course.Price ?? 0) + (course.AdditionalPrice ?? 0);
+
+            // The amount snapshot is locked once the student has paid (they owe exactly
+            // what they paid). While the payment is still open, keep it in sync with the
+            // live course price so a trainer who changes the price before the student pays
+            // is reflected in the QR amount — and the trainer's payments list agrees.
+            decimal amount;
+            if (payment == null)
+            {
+                amount = currentPrice;
+            }
+            else if (PaymentStatus.IsPaid(payment.PaymentStatus))
+            {
+                amount = payment.PaymentAmount ?? currentPrice;
+            }
+            else if (payment.PaymentStatus == PaymentStatus.Pending
+                  || payment.PaymentStatus == PaymentStatus.NotStarted)
+            {
+                amount = currentPrice;
+                if (payment.PaymentAmount != currentPrice)
+                {
+                    payment.PaymentAmount = currentPrice;
+                    payment.UpdatedAt = DateTime.UtcNow;
+                    _context.Payments.Update(payment);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                // Canceled / expired: show the recorded amount, untouched.
+                amount = payment.PaymentAmount ?? currentPrice;
+            }
+
+            return new CoursePaymentInfoDto
+            {
+                PaymentId = payment?.PaymentId,
+                CourseId = courseId,
+                CourseTitle = course.Title,
+                Amount = amount,
+                Status = PaymentStatus.Normalize(payment?.PaymentStatus),
+                Reference = payment?.Note,
+                BankBin = trainer?.BankBin,
+                BankAccountNo = trainer?.BankAccountNo,
+                BankAccountName = trainer?.BankAccountName,
+                TrainerName = trainer?.Name,
+                BankConfigured = bankConfigured,
+            };
+        }
+
+        // The student tapped "I've paid" on the payment screen. We deliberately do NOT
+        // mark the payment paid here — the trainer still verifies the bank transfer and
+        // approves it (PaymentRepository.OkPayment). All this does is ping the trainer so
+        // they know a transfer is waiting, and echo back the current payment info. Returns
+        // null when the caller has no registration for the course (controller 404s).
+        public async Task<CoursePaymentInfoDto?> ConfirmPaymentByStudent(string studentId, string courseId)
+        {
+            var registration = await _context.CourseRegistrations
+                .FirstOrDefaultAsync(cr => cr.StudentId == studentId && cr.CourseId == courseId);
+
+            if (registration == null)
+                return null;
+
+            var course = await _context.Courses
+                .Include(c => c.Trainer)
+                .FirstOrDefaultAsync(c => c.CourseId == courseId);
+
+            if (course == null)
+                return null;
+
+            var payment = (await _context.Payments
+                    .Where(p => p.StudentId == studentId && p.CourseId == courseId)
+                    .ToListAsync())
+                .OrderByDescending(p => PaymentStatus.IsPaid(p.PaymentStatus))
+                .ThenByDescending(p => p.CreatedAt)
+                .FirstOrDefault();
+
+            // Only nudge the trainer while the payment is still open — no point asking
+            // them to confirm something already paid or canceled.
+            var isOpen = payment != null
+                && (payment.PaymentStatus == PaymentStatus.Pending
+                 || payment.PaymentStatus == PaymentStatus.NotStarted);
+
+            var trainerUserId = course.Trainer?.UserId;
+            if (isOpen && !string.IsNullOrEmpty(trainerUserId))
+            {
+                var studentName = await _context.Students
+                    .Where(s => s.StudentId == studentId)
+                    .Select(s => s.Name)
+                    .FirstOrDefaultAsync();
+
+                // Upsert keyed on the per-student link: repeated taps refresh one notice
+                // instead of stacking, and opening it filters the payments page to this
+                // student so the trainer can verify and approve in one step.
+                await _notificationRepository.NotifyUserUpsert(
+                    trainerUserId,
+                    NotificationTypes.Payment,
+                    "Payment awaiting confirmation",
+                    $"{studentName ?? "A student"} marked their payment for \"{course.Title ?? "a course"}\" as paid. Please verify the transfer and confirm.",
+                    $"/agency/payments?studentId={studentId}");
+            }
+
+            return await GetCoursePaymentInfo(studentId, courseId);
+        }
+
+        // Short, bank-memo-friendly transfer reference (alphanumeric, uppercase).
+        private static string BuildTransferReference(string paymentId)
+        {
+            var compact = paymentId.Replace("-", "");
+            var suffix = compact.Length >= 8 ? compact.Substring(0, 8) : compact;
+            return $"GYM{suffix.ToUpperInvariant()}";
         }
 
     }

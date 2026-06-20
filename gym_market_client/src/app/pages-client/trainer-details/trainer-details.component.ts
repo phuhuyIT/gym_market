@@ -10,12 +10,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Trainer } from '../../core/models/trainer.model';
 import { Course } from '../../core/models/course.model';
 import { CommonModule } from '@angular/common';
-import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { DEFAULT_AVATAR_IMAGE_URL, DEFAULT_COURSE_THUMBNAIL_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-trainer-details',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, CommonModule],
+    imports: [RouterLink, CommonModule, FallbackSrcDirective],
     templateUrl: './trainer-details.component.html',
     styleUrl: './trainer-details.component.scss'
 })
@@ -29,6 +30,8 @@ export class TrainerDetailsComponent implements OnInit {
 	otherTrainers: Trainer[] = [];
 	followedTrainersMap: { [id: string]: boolean } = {};
 	bookmarkedCoursesMap: { [id: string]: boolean } = {};
+	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
+	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
 
 	userStore = inject(UserStore);
 
@@ -101,9 +104,6 @@ export class TrainerDetailsComponent implements OnInit {
 			.subscribe({
 				next: res => {
 					this.trainerInfo = res;
-					if (!this.trainerInfo.profilePicture) {
-						this.trainerInfo.profilePicture = DEFAULT_AVATAR_URL;
-					}
 					patchState(this.loader, { isShow: false });
 					this.cdr.markForCheck();
 				},
@@ -123,6 +123,10 @@ export class TrainerDetailsComponent implements OnInit {
 					this.cdr.markForCheck();
 				},
 			});
+	}
+
+	getCourseThumbnail(course: Course): string {
+		return course.getFileDtos?.find(file => file.typeFile === 'IMAGE')?.url || DEFAULT_COURSE_THUMBNAIL_URL;
 	}
 
 	onSendMessage() {

@@ -1,4 +1,12 @@
 {
+  "scripts": {
+    "dev": "bash scripts/dev.sh",
+    "infra": "bash scripts/infra.sh",
+    "api": "cd GymMaket/GymMarket.API && dotnet run --launch-profile http",
+    "python": "cd Python_server && python -m uvicorn app:app --reload",
+    "client": "cd gym_market_client && npm start",
+    "migrate": "cd GymMaket/GymMarket.API && dotnet ef database update"
+  },
   "dependencies": {
     "puppeteer": "^25.0.4"
   }

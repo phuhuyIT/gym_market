@@ -11,8 +11,10 @@ import { FoodNutritionService } from '../../pages-client/food-nutrition.service'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
 	CaloricValueDto,
+	CustomFoodNutritionDto,
 	FoodNutrition,
 	FoodNutritionUser,
+	NutritionBudget,
 	UpdateFoodNutritionUserDto,
 } from '../../core/models/food-nutrition.model';
 import { SEARCH_DEBOUNCE_MS } from '../../utilities/defaults.const';
@@ -34,6 +36,13 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	foods: FoodNutrition[] = [];
 	selectedFood: FoodNutrition | null = null;
 	isManualSelection = false;
+	isCustomFoodMode = false;
+	customFoodName = new FormControl('');
+	customCalories = new FormControl(0);
+	customCarbs = new FormControl(0);
+	customFat = new FormControl(0);
+	customSugars = new FormControl(0);
+	customProtein = new FormControl(0);
 
 	userStore = inject(UserStore);
 	notice = inject(NoticeModalStore);
@@ -45,6 +54,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	foodNutritionUsers: FoodNutritionUser[] = [];
 
 	totalCaloricValue: number = 0;
+	totalCarbs: number = 0;
 	totalFat: number = 0;
 	totalSugar: number = 0;
 	totalProtein: number = 0;
@@ -260,6 +270,10 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			(sum, food) => sum + (food.caloricValue ?? 0),
 			0
 		);
+		this.totalCarbs = this.filteredLogs.reduce(
+			(sum, food) => sum + this.getCarbs(food),
+			0
+		);
 		this.totalFat = this.filteredLogs.reduce(
 			(sum, food) => sum + (food.fat ?? 0),
 			0
@@ -292,6 +306,11 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	}
 
 	onCal() {
+		if (this.isCustomFoodMode) {
+			this.onCreateCustomFood();
+			return;
+		}
+
 		if (!this.selectedFood) return;
 
 		const model: CaloricValueDto = {
@@ -327,10 +346,71 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			});
 	}
 
+	onCreateCustomFood() {
+		const foodName = (this.customFoodName.value || this.searchInput.value || '').trim();
+		const model: CustomFoodNutritionDto = {
+			foodName,
+			weight: Number(this.weight.value || 0),
+			caloricValue: Number(this.customCalories.value || 0),
+			carbs: Number(this.customCarbs.value || 0),
+			fat: Number(this.customFat.value || 0),
+			sugars: Number(this.customSugars.value || 0),
+			protein: Number(this.customProtein.value || 0),
+			date: this.selectedDateStr,
+			mealType: this.selectedMealType,
+		};
+
+		if (!model.foodName || model.weight <= 0) {
+			patchState(this.errorModal, {
+				isShow: true,
+				errors: ['Food name and weight are required.'],
+			});
+			return;
+		}
+
+		patchState(this.loader, { isShow: true });
+		this.foodNutritionService
+			.createCustomFoodNutritionUser(model)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.showAddFood = false;
+					patchState(this.loader, { isShow: false });
+					this.foodNutritionUsers.push(res);
+					patchState(this.notice, { isShow: true, message: 'Custom food added successfully' });
+					this.updateFilteredLogs();
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					patchState(this.errorModal, {
+						isShow: true,
+						errors: ['An error occurred. Please try again.'],
+					});
+					patchState(this.loader, { isShow: false });
+				},
+			});
+	}
+
 	resetSearchInput() {
 		this.selectedFood = null;
+		this.isCustomFoodMode = false;
 		this.searchInput.setValue('');
 		this.weight.setValue(0);
+		this.customFoodName.setValue('');
+		this.customCalories.setValue(0);
+		this.customCarbs.setValue(0);
+		this.customFat.setValue(0);
+		this.customSugars.setValue(0);
+		this.customProtein.setValue(0);
+	}
+
+	onToggleCustomFoodMode(flag: boolean) {
+		this.isCustomFoodMode = flag;
+		this.selectedFood = null;
+		this.foods = [];
+		if (flag) {
+			this.customFoodName.setValue(this.searchInput.value || '');
+		}
 	}
 
 	onShowDelete(flag: boolean, food: FoodNutritionUser | null) {
@@ -416,12 +496,60 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			});
 	}
 
-	// Budget customization methods
+	// Budget customization methods — the backend is the source of truth so targets
+	// follow the user across devices; localStorage is kept as an offline fallback.
 	loadBudgets() {
-		this.calorieBudget = Number(localStorage.getItem(STORAGE_KEYS.calorieBudget) || '2000');
-		this.carbsBudget = Number(localStorage.getItem(STORAGE_KEYS.carbsBudget) || '250');
-		this.fatBudget = Number(localStorage.getItem(STORAGE_KEYS.fatBudget) || '65');
-		this.proteinBudget = Number(localStorage.getItem(STORAGE_KEYS.proteinBudget) || '130');
+		this.applyBudgets({
+			calorieBudget: Number(localStorage.getItem(STORAGE_KEYS.calorieBudget) || '2000'),
+			carbsBudget: Number(localStorage.getItem(STORAGE_KEYS.carbsBudget) || '250'),
+			fatBudget: Number(localStorage.getItem(STORAGE_KEYS.fatBudget) || '65'),
+			proteinBudget: Number(localStorage.getItem(STORAGE_KEYS.proteinBudget) || '130'),
+		});
+
+		this.foodNutritionService
+			.getNutritionBudget()
+			.pipe(
+				catchError(() => EMPTY), // offline/error -> keep the localStorage values
+				takeUntilDestroyed(this.destroyRef)
+			)
+			.subscribe(budget => {
+				this.applyBudgets(budget);
+				this.cacheBudgets(budget);
+				this.updateFilteredLogs();
+				this.cdr.markForCheck();
+			});
+	}
+
+	saveBudgets() {
+		const budget: NutritionBudget = {
+			calorieBudget: this.calorieCtrl.value || 2000,
+			carbsBudget: this.carbsCtrl.value || 250,
+			fatBudget: this.fatCtrl.value || 65,
+			proteinBudget: this.proteinCtrl.value || 130,
+		};
+
+		this.foodNutritionService
+			.saveNutritionBudget(budget)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: saved => {
+					this.applyBudgets(saved);
+					this.cacheBudgets(saved);
+					patchState(this.notice, { isShow: true, message: 'Targets updated successfully!' });
+					this.updateFilteredLogs();
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					patchState(this.errorModal, { isShow: true, errors: ['Failed to save targets'] });
+				},
+			});
+	}
+
+	private applyBudgets(budget: NutritionBudget) {
+		this.calorieBudget = budget.calorieBudget;
+		this.carbsBudget = budget.carbsBudget;
+		this.fatBudget = budget.fatBudget;
+		this.proteinBudget = budget.proteinBudget;
 
 		this.calorieCtrl.setValue(this.calorieBudget);
 		this.carbsCtrl.setValue(this.carbsBudget);
@@ -429,19 +557,11 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		this.proteinCtrl.setValue(this.proteinBudget);
 	}
 
-	saveBudgets() {
-		this.calorieBudget = this.calorieCtrl.value || 2000;
-		this.carbsBudget = this.carbsCtrl.value || 250;
-		this.fatBudget = this.fatCtrl.value || 65;
-		this.proteinBudget = this.proteinCtrl.value || 130;
-
-		localStorage.setItem(STORAGE_KEYS.calorieBudget, this.calorieBudget.toString());
-		localStorage.setItem(STORAGE_KEYS.carbsBudget, this.carbsBudget.toString());
-		localStorage.setItem(STORAGE_KEYS.fatBudget, this.fatBudget.toString());
-		localStorage.setItem(STORAGE_KEYS.proteinBudget, this.proteinBudget.toString());
-
-		patchState(this.notice, { isShow: true, message: 'Targets updated successfully!' });
-		this.updateFilteredLogs();
+	private cacheBudgets(budget: NutritionBudget) {
+		localStorage.setItem(STORAGE_KEYS.calorieBudget, budget.calorieBudget.toString());
+		localStorage.setItem(STORAGE_KEYS.carbsBudget, budget.carbsBudget.toString());
+		localStorage.setItem(STORAGE_KEYS.fatBudget, budget.fatBudget.toString());
+		localStorage.setItem(STORAGE_KEYS.proteinBudget, budget.proteinBudget.toString());
 	}
 
 	// UI helper methods
@@ -456,6 +576,10 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	}
 
 	readonly getFoodImage = getFoodImage;
+
+	getCarbs(item: FoodNutritionUser): number {
+		return item.carbs ?? item.sugars ?? 0;
+	}
 
 	getFoodTag(item: FoodNutritionUser): string {
 		if (item.protein > 15) return 'High Protein';
@@ -472,7 +596,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			return `Heart-healthy, low-fat option with only ${item.fat.toFixed(0)}g of fat per serving.`;
 		}
 		if (item.sugars > 12) {
-			return `Sweet indulgence with ${item.sugars.toFixed(0)}g carbs. Recommended to consume in moderation.`;
+			return `Sweet indulgence with ${item.sugars.toFixed(0)}g sugar. Recommended to consume in moderation.`;
 		}
 		return `A balanced, nutritious choice with ${item.caloricValue.toFixed(0)} calories to keep you energized.`;
 	}

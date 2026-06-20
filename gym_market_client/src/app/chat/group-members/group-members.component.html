@@ -8,7 +8,7 @@
 
     <div class="gm-header">
       <div class="gm-group-avatar-wrap">
-        <img [src]="groupAvatar || DEFAULT_GROUP_AVATAR_URL" alt="" class="gm-group-avatar">
+        <img [src]="groupAvatar || DEFAULT_GROUP_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_GROUP_AVATAR_IMAGE_URL" alt="" class="gm-group-avatar">
         @if (canManage) {
           <button
             type="button"
@@ -82,7 +82,7 @@
         <div class="gm-search-results">
           @for (user of results; track user.id) {
             <button class="gm-result" (click)="addMember(user)">
-              <img [src]="user.avatar || DEFAULT_AVATAR_URL" alt="">
+              <img [src]="user.avatar || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="">
               <span class="gm-result-name">{{ user.fullName }}</span>
               <span class="gm-add-icon">+</span>
             </button>
@@ -97,7 +97,7 @@
     <div class="gm-list">
       @for (member of members; track member.userId) {
         <div class="gm-member">
-          <img [src]="member.avatar || DEFAULT_AVATAR_URL" alt="" class="gm-avatar">
+          <img [src]="member.avatar || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="" class="gm-avatar">
           <div class="gm-member-info">
             <span class="gm-name">
               {{ member.fullName }}

@@ -473,6 +473,9 @@ namespace GymMarket.API.Migrations
                     b.Property<long>("CaloricValue")
                         .HasColumnType("bigint");
 
+                    b.Property<double>("Carbs")
+                        .HasColumnType("float");
+
                     b.Property<double>("Fat")
                         .HasColumnType("float");
 
@@ -495,6 +498,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 1,
                             CaloricValue = 52L,
+                            Carbs = 13.800000000000001,
                             Fat = 0.20000000000000001,
                             Name = "Apple",
                             Protein = 0.29999999999999999,
@@ -504,6 +508,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 2,
                             CaloricValue = 89L,
+                            Carbs = 22.800000000000001,
                             Fat = 0.29999999999999999,
                             Name = "Banana",
                             Protein = 1.1000000000000001,
@@ -513,6 +518,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 3,
                             CaloricValue = 47L,
+                            Carbs = 11.800000000000001,
                             Fat = 0.10000000000000001,
                             Name = "Orange",
                             Protein = 0.90000000000000002,
@@ -522,6 +528,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 4,
                             CaloricValue = 32L,
+                            Carbs = 7.7000000000000002,
                             Fat = 0.29999999999999999,
                             Name = "Strawberries",
                             Protein = 0.69999999999999996,
@@ -531,6 +538,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 5,
                             CaloricValue = 160L,
+                            Carbs = 8.5,
                             Fat = 14.699999999999999,
                             Name = "Avocado",
                             Protein = 2.0,
@@ -540,6 +548,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 6,
                             CaloricValue = 165L,
+                            Carbs = 0.0,
                             Fat = 3.6000000000000001,
                             Name = "Grilled Chicken Breast",
                             Protein = 31.0,
@@ -549,6 +558,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 7,
                             CaloricValue = 250L,
+                            Carbs = 0.0,
                             Fat = 15.0,
                             Name = "Lean Beef Steak",
                             Protein = 26.0,
@@ -558,6 +568,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 8,
                             CaloricValue = 208L,
+                            Carbs = 0.0,
                             Fat = 13.0,
                             Name = "Baked Salmon",
                             Protein = 20.0,
@@ -567,6 +578,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 9,
                             CaloricValue = 116L,
+                            Carbs = 0.0,
                             Fat = 0.80000000000000004,
                             Name = "Canned Tuna (in Water)",
                             Protein = 25.5,
@@ -576,6 +588,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 10,
                             CaloricValue = 99L,
+                            Carbs = 0.20000000000000001,
                             Fat = 0.29999999999999999,
                             Name = "Cooked Shrimp",
                             Protein = 24.0,
@@ -585,6 +598,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 11,
                             CaloricValue = 155L,
+                            Carbs = 1.1000000000000001,
                             Fat = 11.0,
                             Name = "Boiled Egg",
                             Protein = 13.0,
@@ -594,6 +608,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 12,
                             CaloricValue = 59L,
+                            Carbs = 3.6000000000000001,
                             Fat = 0.40000000000000002,
                             Name = "Plain Greek Yogurt",
                             Protein = 10.0,
@@ -603,6 +618,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 13,
                             CaloricValue = 61L,
+                            Carbs = 4.7999999999999998,
                             Fat = 3.2999999999999998,
                             Name = "Whole Milk",
                             Protein = 3.2000000000000002,
@@ -612,6 +628,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 14,
                             CaloricValue = 403L,
+                            Carbs = 1.3,
                             Fat = 33.0,
                             Name = "Cheddar Cheese",
                             Protein = 25.0,
@@ -621,6 +638,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 15,
                             CaloricValue = 130L,
+                            Carbs = 28.199999999999999,
                             Fat = 0.29999999999999999,
                             Name = "White Rice (Cooked)",
                             Protein = 2.7000000000000002,
@@ -630,6 +648,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 16,
                             CaloricValue = 111L,
+                            Carbs = 23.0,
                             Fat = 0.90000000000000002,
                             Name = "Brown Rice (Cooked)",
                             Protein = 2.6000000000000001,
@@ -639,6 +658,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 17,
                             CaloricValue = 71L,
+                            Carbs = 12.0,
                             Fat = 1.5,
                             Name = "Oatmeal (Cooked)",
                             Protein = 2.5,
@@ -648,6 +668,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 18,
                             CaloricValue = 247L,
+                            Carbs = 41.0,
                             Fat = 3.3999999999999999,
                             Name = "Whole Wheat Bread",
                             Protein = 13.0,
@@ -657,6 +678,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 19,
                             CaloricValue = 131L,
+                            Carbs = 25.0,
                             Fat = 1.1000000000000001,
                             Name = "Pasta (Cooked)",
                             Protein = 5.0,
@@ -666,6 +688,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 20,
                             CaloricValue = 90L,
+                            Carbs = 20.699999999999999,
                             Fat = 0.20000000000000001,
                             Name = "Baked Sweet Potato",
                             Protein = 2.0,
@@ -675,6 +698,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 21,
                             CaloricValue = 87L,
+                            Carbs = 20.100000000000001,
                             Fat = 0.10000000000000001,
                             Name = "Boiled Potato",
                             Protein = 1.8999999999999999,
@@ -684,6 +708,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 22,
                             CaloricValue = 120L,
+                            Carbs = 21.300000000000001,
                             Fat = 1.8999999999999999,
                             Name = "Quinoa (Cooked)",
                             Protein = 4.4000000000000004,
@@ -693,6 +718,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 23,
                             CaloricValue = 34L,
+                            Carbs = 6.5999999999999996,
                             Fat = 0.40000000000000002,
                             Name = "Broccoli",
                             Protein = 2.7999999999999998,
@@ -702,6 +728,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 24,
                             CaloricValue = 23L,
+                            Carbs = 3.6000000000000001,
                             Fat = 0.40000000000000002,
                             Name = "Spinach",
                             Protein = 2.8999999999999999,
@@ -711,6 +738,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 25,
                             CaloricValue = 41L,
+                            Carbs = 9.5999999999999996,
                             Fat = 0.20000000000000001,
                             Name = "Carrot",
                             Protein = 0.90000000000000002,
@@ -720,6 +748,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 26,
                             CaloricValue = 579L,
+                            Carbs = 21.600000000000001,
                             Fat = 49.899999999999999,
                             Name = "Almonds",
                             Protein = 21.199999999999999,
@@ -729,6 +758,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 27,
                             CaloricValue = 588L,
+                            Carbs = 20.0,
                             Fat = 50.0,
                             Name = "Peanut Butter",
                             Protein = 25.0,
@@ -738,6 +768,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 28,
                             CaloricValue = 116L,
+                            Carbs = 20.100000000000001,
                             Fat = 0.40000000000000002,
                             Name = "Lentils (Cooked)",
                             Protein = 9.0,
@@ -747,6 +778,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 29,
                             CaloricValue = 132L,
+                            Carbs = 23.699999999999999,
                             Fat = 0.5,
                             Name = "Black Beans (Cooked)",
                             Protein = 8.9000000000000004,
@@ -756,6 +788,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 30,
                             CaloricValue = 76L,
+                            Carbs = 1.8999999999999999,
                             Fat = 4.7999999999999998,
                             Name = "Tofu",
                             Protein = 8.0,
@@ -765,6 +798,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 31,
                             CaloricValue = 412L,
+                            Carbs = 7.0,
                             Fat = 7.0,
                             Name = "Whey Protein Powder",
                             Protein = 71.0,
@@ -774,6 +808,7 @@ namespace GymMarket.API.Migrations
                         {
                             Id = 32,
                             CaloricValue = 546L,
+                            Carbs = 61.0,
                             Fat = 31.0,
                             Name = "Dark Chocolate (70%)",
                             Protein = 7.9000000000000004,
@@ -792,6 +827,9 @@ namespace GymMarket.API.Migrations
                     b.Property<double>("CaloricValue")
                         .HasColumnType("float");
 
+                    b.Property<double>("Carbs")
+                        .HasColumnType("float");
+
                     b.Property<DateOnly?>("Date")
                         .HasColumnType("date");
 
@@ -801,6 +839,9 @@ namespace GymMarket.API.Migrations
                     b.Property<string>("FoodName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FoodNutritionId")
+                        .HasColumnType("int");
 
                     b.Property<string>("MealType")
                         .HasColumnType("nvarchar(max)");
@@ -813,12 +854,16 @@ namespace GymMarket.API.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("Weight")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FoodNutritionId");
+
+                    b.HasIndex("UserId", "Date");
 
                     b.ToTable("FoodNutritionUsers");
                 });
@@ -1074,6 +1119,38 @@ namespace GymMarket.API.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("GymMarket.API.Models.NutritionBudget", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("CalorieBudget")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CarbsBudget")
+                        .HasColumnType("float");
+
+                    b.Property<double>("FatBudget")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ProteinBudget")
+                        .HasColumnType("float");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("NutritionBudgets");
+                });
+
             modelBuilder.Entity("GymMarket.API.Models.Payment", b =>
                 {
                     b.Property<string>("PaymentId")
@@ -1234,6 +1311,15 @@ namespace GymMarket.API.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Trainer_ID");
+
+                    b.Property<string>("BankAccountName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankAccountNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankBin")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Bio")
                         .HasColumnType("nvarchar(max)");
@@ -1554,6 +1640,14 @@ namespace GymMarket.API.Migrations
                         .HasConstraintName("FK_FileCourses_Course");
 
                     b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("GymMarket.API.Models.FoodNutritionUser", b =>
+                {
+                    b.HasOne("GymMarket.API.Models.FoodNutrition", null)
+                        .WithMany()
+                        .HasForeignKey("FoodNutritionId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.HealthDatum", b =>

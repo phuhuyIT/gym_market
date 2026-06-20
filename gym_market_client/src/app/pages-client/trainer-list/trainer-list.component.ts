@@ -9,11 +9,13 @@ import { Trainer } from '../../core/models/trainer.model';
 import { FormsModule } from '@angular/forms';
 import { GmCardComponent } from '../../shared/components/gm-card/gm-card.component';
 import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
+import { DEFAULT_AVATAR_IMAGE_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-trainer-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, FormsModule, GmCardComponent],
+    imports: [RouterLink, FormsModule, GmCardComponent, FallbackSrcDirective],
     templateUrl: './trainer-list.component.html',
     styleUrl: './trainer-list.component.scss'
 })
@@ -23,6 +25,7 @@ export class TrainerListComponent implements OnInit {
 	selectedCategory: string = 'All';
 	categories: string[] = ['All', 'Yoga', 'Cardio', 'Strength', 'Crossfit', 'Elite'];
 	bookmarkedTrainers: Set<string> = new Set();
+	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
 
 	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
@@ -126,4 +129,3 @@ export class TrainerListComponent implements OnInit {
 		this.cdr.markForCheck();
 	}
 }
-
