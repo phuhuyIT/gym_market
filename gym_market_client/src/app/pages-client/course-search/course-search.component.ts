@@ -7,14 +7,15 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
-import { GmCardComponent, GmInputComponent, GmButtonComponent } from '../../shared';
-
-import { RevealDirective } from '../../shared/directives/reveal.directive';
+import { GmCardComponent } from '../../shared';
+import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
+import { DEFAULT_COURSE_THUMBNAIL_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-course-search',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, RevealDirective],
+    imports: [RouterLink, FormsModule, CommonModule, GmCardComponent, FallbackSrcDirective],
     templateUrl: './course-search.component.html',
     styleUrl: './course-search.component.scss'
 })
@@ -27,6 +28,7 @@ export class CourseSearchComponent implements OnInit {
 	pageSize: number = 10;
 	searchString: string = '';
 	category: string = 'All';
+	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
 
 	categories = [
 		'All',
@@ -38,6 +40,8 @@ export class CourseSearchComponent implements OnInit {
 		'Cross fit',
 	];
 
+	bookmarkedCourses: Set<string> = new Set();
+
 	constructor(
 		private courseService: CourseAgencyService,
 		private activatedRoute: ActivatedRoute,
@@ -45,6 +49,7 @@ export class CourseSearchComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
+		this.loadBookmarks();
 		this.activatedRoute.queryParams
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(params => {
@@ -54,6 +59,48 @@ export class CourseSearchComponent implements OnInit {
 				this.category = params['category'] || 'All';
 				this.getCourses();
 			});
+	}
+
+	private loadBookmarks() {
+		const saved = localStorage.getItem(STORAGE_KEYS.bookmarkedCourses);
+		if (saved) {
+			try {
+				this.bookmarkedCourses = new Set(JSON.parse(saved));
+			} catch {
+				localStorage.removeItem(STORAGE_KEYS.bookmarkedCourses);
+			}
+		}
+	}
+
+	toggleBookmark(courseId: string, event: Event) {
+		event.preventDefault();
+		event.stopPropagation();
+		if (this.bookmarkedCourses.has(courseId)) {
+			this.bookmarkedCourses.delete(courseId);
+		} else {
+			this.bookmarkedCourses.add(courseId);
+		}
+		localStorage.setItem(STORAGE_KEYS.bookmarkedCourses, JSON.stringify(Array.from(this.bookmarkedCourses)));
+		this.cdr.markForCheck();
+	}
+
+	isBookmarked(courseId: string): boolean {
+		return this.bookmarkedCourses.has(courseId);
+	}
+
+	getSpecialtyEmoji(category: string): string {
+		const cat = (category || '').toLowerCase();
+		if (cat.includes('yoga')) return '🧘';
+		if (cat.includes('cardio') || cat.includes('run')) return '🏃';
+		if (cat.includes('strength') || cat.includes('weight') || cat.includes('power')) return '💪';
+		if (cat.includes('pilates')) return '🤸';
+		if (cat.includes('stretch')) return '🙆';
+		if (cat.includes('cross fit') || cat.includes('crossfit') || cat.includes('hiit')) return '🏋️';
+		return '💪';
+	}
+
+	getCourseThumbnail(course: Course): string {
+		return course.getFileDtos?.find(file => file.typeFile === 'IMAGE')?.url || DEFAULT_COURSE_THUMBNAIL_URL;
 	}
 
 	private getCourses() {

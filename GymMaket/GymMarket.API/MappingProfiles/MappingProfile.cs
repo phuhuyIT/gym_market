@@ -4,6 +4,8 @@ using GymMarket.API.DTOs.CourseOption;
 using GymMarket.API.DTOs.CourseRating;
 using GymMarket.API.DTOs.CourseRegistration;
 using GymMarket.API.DTOs.FileMinIO;
+using GymMarket.API.DTOs.FoodNutrition;
+using GymMarket.API.DTOs.FoodNutritionUser;
 using GymMarket.API.DTOs.Lecture;
 using GymMarket.API.DTOs.LectureMaterial;
 using GymMarket.API.DTOs.Student;
@@ -69,6 +71,13 @@ namespace GymMarket.API.MappingProfiles
             CreateMap<LectureMaterialCreateDTO, LectureMaterial>().ReverseMap();
             CreateMap<LectureMaterialUpdateDTO, LectureMaterial>().ReverseMap();
             CreateMap<LectureMaterial, GetLectureMaterialDto>().ReverseMap();
+
+            // FoodNutrition mappings (macros on the log entry are computed by
+            // FoodNutritionService, not mapped from the request)
+            CreateMap<CreateFoodNutritionDto, FoodNutrition>();
+            CreateMap<UpdateFoodNutritionDto, FoodNutrition>();
+            CreateMap<AddFoodNutritionUser, FoodNutritionUser>();
+            CreateMap<NutritionBudgetDto, NutritionBudget>().ReverseMap();
         }
     }
 }

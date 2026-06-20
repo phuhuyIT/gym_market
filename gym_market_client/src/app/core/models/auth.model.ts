@@ -1,6 +1,7 @@
 export interface LoginResponse {
   success: boolean;
   token: string;
+  refreshToken: string;
   message: string;
   errors: string[];
 }
@@ -16,7 +17,7 @@ export interface UserTokenPayload {
   nameid: string;
   unique_name: string;
   email: string;
-  role: string;
+  role: string | string[];
   exp: number;
   homePhone?: string;
   trainerId?: string;
@@ -50,4 +51,19 @@ export interface ApiResponse {
   success: boolean;
   message: string;
   errors?: string[];
+}
+
+export interface Enable2FAResponse extends ApiResponse {
+  sharedKey: string;
+  qrCodeUri: string;
+}
+
+export interface LockoutStatusResponse extends ApiResponse {
+  isLockedOut: boolean;
+  lockoutEnd: string | null;
+  accessFailedCount: number;
+}
+
+export interface AvatarUploadResponse extends ApiResponse {
+  avatarUrl: string;
 }

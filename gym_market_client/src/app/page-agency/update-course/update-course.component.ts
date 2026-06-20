@@ -1,19 +1,29 @@
-import { ChangeDetectorRef, Component, DestroyRef, ElementRef, inject, OnInit, Renderer2, ViewChild , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, Renderer2, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseAgencyService } from '../course-agency.service';
 import { patchState } from '@ngrx/signals';
 import { FormsModule } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { Course } from '../../core/models/course.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { GmInputComponent, GmButtonComponent } from '../../shared';
+import { GmButtonComponent } from '../../shared';
 import { ToastService } from '../../shared/services/toast.service';
-import { formatDateToInput } from '../../utilities/defaults.const';
+import { DEFAULT_COURSE_THUMBNAIL_URL, DEFAULT_IMAGE_URL, formatDateToInput } from '../../utilities/defaults.const';
+import { MAX_VIDEO_BYTES } from '../../utilities/upload.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
+
+interface CourseTypeOption {
+	value: string;
+	label: string;
+	icon: string;
+	gradient: string;
+}
 
 @Component({
     selector: 'app-update-course',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FormsModule, RouterLink, GmInputComponent, GmButtonComponent],
+    imports: [FormsModule, RouterLink, GmButtonComponent, DecimalPipe, FallbackSrcDirective],
     templateUrl: './update-course.component.html',
     styleUrl: './update-course.component.scss'
 })
@@ -34,7 +44,21 @@ export class UpdateCourseComponent implements OnInit {
 		rating: 0,
 		getFileDtos: [],
 	};
-	
+
+	readonly descriptionLimit = 500;
+	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
+	readonly DEFAULT_IMAGE_URL = DEFAULT_IMAGE_URL;
+
+	// Full Tailwind class strings kept literal so the JIT compiler picks them up.
+	readonly courseTypes: CourseTypeOption[] = [
+		{ value: 'Yoga', label: 'Yoga', icon: '🧘', gradient: 'from-emerald-400 to-teal-500' },
+		{ value: 'Cardio', label: 'Cardio', icon: '🏃', gradient: 'from-orange-400 to-rose-500' },
+		{ value: 'Strength', label: 'Strength', icon: '🏋️', gradient: 'from-blue-500 to-indigo-600' },
+		{ value: 'Pilates', label: 'Pilates', icon: '🤸', gradient: 'from-fuchsia-400 to-purple-500' },
+		{ value: 'Stretching', label: 'Stretching', icon: '🙆', gradient: 'from-cyan-400 to-sky-500' },
+		{ value: 'Cross fit', label: 'Cross fit', icon: '⚡', gradient: 'from-amber-400 to-orange-600' },
+	];
+
 	courseId: string = '';
 	loading = false;
 	loaderStore = inject(LoaderModalStore);
@@ -51,6 +75,26 @@ export class UpdateCourseComponent implements OnInit {
 	dataVideos: string[] = [];
 	private videosAdd: File[] = [];
     url: string | null = null;
+
+	get selectedType(): CourseTypeOption {
+		return this.courseTypes.find(t => t.value === this.model.type) ?? this.courseTypes[0];
+	}
+
+	// Days between the chosen start and end dates (inclusive), for the schedule hint.
+	get scheduleDays(): number {
+		const start = new Date(this.model.startDate).getTime();
+		const end = new Date(this.model.endDate).getTime();
+		if (isNaN(start) || isNaN(end) || end < start) {
+			return 0;
+		}
+		return Math.floor((end - start) / 86400000) + 1;
+	}
+
+	useScheduleLength() {
+		if (this.scheduleDays > 0) {
+			this.model.duration = this.scheduleDays;
+		}
+	}
 
 	ngOnInit() {
 		this.courseId = this.route.snapshot.params['id'];
@@ -76,7 +120,7 @@ export class UpdateCourseComponent implements OnInit {
 			error: () => {
 				patchState(this.loaderStore, { isShow: false });
 				this.toastService.show('Course not found', 'error');
-				this.router.navigateByUrl('/agency/course-list');
+				this.router.navigateByUrl('/agency/courses');
 			},
 		});
 	}
@@ -114,10 +158,18 @@ export class UpdateCourseComponent implements OnInit {
 		if (input.files && input.files.length > 0) {
 			for (let i = 0; i < input.files.length; i++) {
 				const file = input.files[i];
+				if (file.size > MAX_VIDEO_BYTES) {
+					this.toastService.show(
+						`"${file.name}" is too large (max ${MAX_VIDEO_BYTES / 1024 / 1024} MB)`,
+						'error'
+					);
+					continue;
+				}
 				this.videosAdd.push(file);
 				const videoUrl = URL.createObjectURL(file);
 				this.dataVideos.push(videoUrl);
 			}
+			input.value = '';
 		}
 	}
 
@@ -134,7 +186,8 @@ export class UpdateCourseComponent implements OnInit {
 		form.append('EndDate', this.model.endDate);
 		form.append('Duration', this.model.duration.toString());
 		form.append('MaxParticipants', this.model.maxParticipants.toString());
-		form.append('TrainerId', this.model.trainerId);
+		// No TrainerId: ownership never changes on update and the backend
+		// keeps the current owner.
 
 		for (let file of this.imagesAdd) form.append('Images', file);
 		for (let file of this.videosAdd) form.append('Videos', file);
@@ -147,12 +200,16 @@ export class UpdateCourseComponent implements OnInit {
 				this.loading = false;
 				patchState(this.loaderStore, { isShow: false });
 				this.toastService.show('Course updated successfully');
-				this.router.navigateByUrl('/agency/course-list');
+				this.router.navigateByUrl('/agency/courses');
 			},
-			error: () => {
+			error: err => {
 				this.loading = false;
 				patchState(this.loaderStore, { isShow: false });
-				this.toastService.show('Failed to update course', 'error');
+				const message =
+					err?.status === 413
+						? 'Upload too large. Please use smaller video/image files.'
+						: 'Failed to update course';
+				this.toastService.show(message, 'error');
 			},
 		});
 	}

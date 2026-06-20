@@ -12,158 +12,36 @@ namespace GymMarket.API.Services
         private readonly IMinioClient _minioClient;
         private readonly IConfiguration _configuration;
         private readonly GymMarketContext _context;
+        private readonly ILogger<MinIOService> _logger;
 
         public static readonly string IMAGE_COURSES = "imagecourses";
         public static readonly string VIDEO_COURSES = "videocourses";
+        public static readonly string AVATARS = "avatars";
         public static readonly string IMAGE_TYPE = "IMAGE";
         public static readonly string VIDEO_TYPE = "VIDEO";
 
-        public MinIOService(IMinioClient minioClient, 
-            IConfiguration configuration, 
-            GymMarketContext context)
+        public MinIOService(IMinioClient minioClient,
+            IConfiguration configuration,
+            GymMarketContext context,
+            ILogger<MinIOService> logger)
         {
             _minioClient = minioClient;
             _configuration = configuration;
             _context = context;
+            _logger = logger;
         }
 
         public async Task<ApiResponse> UploadFiles(FileAdd fileAdd)
         {
             List<FileCourse> fileAdds = [];
 
-            foreach (var file in fileAdd.Images)
-            {
-                if (file == null || file.Length == 0)
-                {
-                    return new ApiResponse
-                    {
-                        StatusCode = 400,
-                        Errors = ["PLEASE_SELECT_AT_LEAST_ONE_FILE"]
-                    };
-                }
+            var imageResult = await UploadFilesToBucket(fileAdd.Images, IMAGE_COURSES, IMAGE_TYPE, fileAdd.CourseId);
+            if (imageResult.error != null) return imageResult.error;
+            fileAdds.AddRange(imageResult.files);
 
-                BucketExistsArgs bucketExistsArgs = new BucketExistsArgs();
-                bucketExistsArgs.WithBucket(IMAGE_COURSES);
-
-                bool isExist = await _minioClient.BucketExistsAsync(bucketExistsArgs);
-                if (!isExist)
-                {
-                    MakeBucketArgs makeBucketArgs = new MakeBucketArgs();
-                    makeBucketArgs.WithBucket(IMAGE_COURSES);
-                    await _minioClient.MakeBucketAsync(makeBucketArgs);
-
-                    string publicPolicy = $@"
-                                    {{
-                                        ""Version"": ""2012-10-17"",
-                                        ""Statement"": [
-                                            {{
-                                                ""Effect"": ""Allow"",
-                                                ""Principal"": ""*"",
-                                                ""Action"": [
-                                                    ""s3:GetObject""
-                                                ],
-                                                ""Resource"": [
-                                                    ""arn:aws:s3:::{IMAGE_COURSES}/*""
-                                                ]
-                                            }}
-                                        ]
-                                    }}";
-
-                    await _minioClient.SetPolicyAsync(new SetPolicyArgs()
-                        .WithBucket(IMAGE_COURSES)
-                        .WithPolicy(publicPolicy));
-                }
-
-                string objectName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-
-                using (var stream = file.OpenReadStream())
-                {
-                    PutObjectArgs putObjectArgs = new PutObjectArgs();
-                    putObjectArgs
-                        .WithStreamData(stream)
-                        .WithBucket(IMAGE_COURSES)
-                        .WithObjectSize(file.Length)
-                        .WithObject(objectName)
-                        .WithContentType(file.ContentType);
-                    await _minioClient.PutObjectAsync(putObjectArgs);
-
-                    var fileResult = new FileCourse
-                    {
-                        TypeFile = IMAGE_TYPE,
-                        ObjectId = objectName,
-                        Url = $"{_configuration.GetSection("MinIO")["Protocol"]}://{_configuration.GetSection("MinIO")["Endpoint"]}/{IMAGE_COURSES}/{objectName}",
-                        CourseId = fileAdd.CourseId,
-                    };
-                    fileAdds.Add(fileResult);
-                }
-            }
-
-            foreach (var file in fileAdd.Videos)
-            {
-                if (file == null || file.Length == 0)
-                {
-                    return new ApiResponse
-                    {
-                        StatusCode = 400,
-                        Errors = ["PLEASE_SELECT_AT_LEAST_ONE_FILE"]
-                    };
-                }
-
-                BucketExistsArgs bucketExistsArgs = new BucketExistsArgs();
-                bucketExistsArgs.WithBucket(VIDEO_COURSES);
-
-                bool isExist = await _minioClient.BucketExistsAsync(bucketExistsArgs);
-                if (!isExist)
-                {
-                    MakeBucketArgs makeBucketArgs = new MakeBucketArgs();
-                    makeBucketArgs.WithBucket(VIDEO_COURSES);
-                    await _minioClient.MakeBucketAsync(makeBucketArgs);
-
-                    string publicPolicy = $@"
-                                    {{
-                                        ""Version"": ""2012-10-17"",
-                                        ""Statement"": [
-                                            {{
-                                                ""Effect"": ""Allow"",
-                                                ""Principal"": ""*"",
-                                                ""Action"": [
-                                                    ""s3:GetObject""
-                                                ],
-                                                ""Resource"": [
-                                                    ""arn:aws:s3:::{VIDEO_COURSES}/*""
-                                                ]
-                                            }}
-                                        ]
-                                    }}";
-
-                    await _minioClient.SetPolicyAsync(new SetPolicyArgs()
-                        .WithBucket(VIDEO_COURSES)
-                        .WithPolicy(publicPolicy));
-                }
-
-                string objectName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-
-                using (var stream = file.OpenReadStream())
-                {
-                    PutObjectArgs putObjectArgs = new PutObjectArgs();
-                    putObjectArgs
-                        .WithStreamData(stream)
-                        .WithBucket(VIDEO_COURSES)
-                        .WithObjectSize(file.Length)
-                        .WithObject(objectName)
-                        .WithContentType(file.ContentType);
-                    await _minioClient.PutObjectAsync(putObjectArgs);
-
-                    var fileResult = new FileCourse
-                    {
-                        TypeFile = VIDEO_TYPE,
-                        ObjectId = objectName,
-                        Url = $"{_configuration.GetSection("MinIO")["Protocol"]}://{_configuration.GetSection("MinIO")["Endpoint"]}/{VIDEO_COURSES}/{objectName}",
-                        CourseId = fileAdd.CourseId,
-                    };
-                    fileAdds.Add(fileResult);
-                }
-            }
+            var videoResult = await UploadFilesToBucket(fileAdd.Videos, VIDEO_COURSES, VIDEO_TYPE, fileAdd.CourseId);
+            if (videoResult.error != null) return videoResult.error;
+            fileAdds.AddRange(videoResult.files);
 
             _context.FileCourses.AddRange(fileAdds);
             var r = await _context.SaveChangesAsync();
@@ -181,6 +59,108 @@ namespace GymMarket.API.Services
                 StatusCode = 400,
                 Errors = ["UPLOAD_FAILED"],
             };
+        }
+
+        private async Task<(List<FileCourse> files, ApiResponse? error)> UploadFilesToBucket(
+            List<IFormFile> files, string bucketName, string fileType, string courseId)
+        {
+            var results = new List<FileCourse>();
+
+            foreach (var file in files)
+            {
+                if (file == null || file.Length == 0)
+                {
+                    return (results, new ApiResponse
+                    {
+                        StatusCode = 400,
+                        Errors = ["PLEASE_SELECT_AT_LEAST_ONE_FILE"]
+                    });
+                }
+
+                await EnsureBucketExists(bucketName);
+
+                string objectName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+                using (var stream = file.OpenReadStream())
+                {
+                    var putObjectArgs = new PutObjectArgs()
+                        .WithStreamData(stream)
+                        .WithBucket(bucketName)
+                        .WithObjectSize(file.Length)
+                        .WithObject(objectName)
+                        .WithContentType(file.ContentType);
+                    await _minioClient.PutObjectAsync(putObjectArgs);
+
+                    results.Add(new FileCourse
+                    {
+                        TypeFile = fileType,
+                        ObjectId = objectName,
+                        Url = BuildPublicUrl(bucketName, objectName),
+                        CourseId = courseId,
+                    });
+                }
+            }
+
+            return (results, null);
+        }
+
+        private async Task EnsureBucketExists(string bucketName)
+        {
+            bool isExist = await _minioClient.BucketExistsAsync(new BucketExistsArgs().WithBucket(bucketName));
+            if (isExist) return;
+
+            await _minioClient.MakeBucketAsync(new MakeBucketArgs().WithBucket(bucketName));
+
+            string publicPolicy = $$"""
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": "*",
+                            "Action": ["s3:GetObject"],
+                            "Resource": ["arn:aws:s3:::{{bucketName}}/*"]
+                        }
+                    ]
+                }
+                """;
+
+            await _minioClient.SetPolicyAsync(new SetPolicyArgs()
+                .WithBucket(bucketName)
+                .WithPolicy(publicPolicy));
+        }
+
+        public async Task<string> UploadSingleFileAsync(IFormFile file, string bucketName)
+        {
+            await EnsureBucketExists(bucketName);
+            string objectName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            using var stream = file.OpenReadStream();
+            var putObjectArgs = new PutObjectArgs()
+                .WithStreamData(stream)
+                .WithBucket(bucketName)
+                .WithObjectSize(file.Length)
+                .WithObject(objectName)
+                .WithContentType(file.ContentType);
+            await _minioClient.PutObjectAsync(putObjectArgs);
+
+            return BuildPublicUrl(bucketName, objectName);
+        }
+
+        // Builds the URL used by the browser to fetch an uploaded object.
+        // When MinIO:PublicBaseUrl is set (e.g. a CDN or public MinIO host in production),
+        // it is used as the absolute base. Otherwise a relative path is returned so the
+        // object is fetched through the app's own origin (the dev-server proxy forwards
+        // /{bucket}/* to MinIO), which works in local dev and forwarded environments alike.
+        private string BuildPublicUrl(string bucketName, string objectName)
+        {
+            var publicBaseUrl = _configuration.GetSection("MinIO")["PublicBaseUrl"];
+            if (!string.IsNullOrWhiteSpace(publicBaseUrl))
+            {
+                return $"{publicBaseUrl.TrimEnd('/')}/{bucketName}/{objectName}";
+            }
+
+            return $"/{bucketName}/{objectName}";
         }
 
         public async Task<ApiResponse> DeleteFile(DeleteFile deleteFile)
@@ -208,8 +188,9 @@ namespace GymMarket.API.Services
                 await _minioClient.RemoveObjectAsync(removeObjectArgs);
                 return new ApiResponse { Message = "FILE_DELETED_SUCCESSFULLY", StatusCode = 200 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to delete file {ObjectName} from bucket {BucketName}", deleteFile.ObjectName, deleteFile.BucketName);
                 return new ApiResponse { Errors = ["DELETE_FAILED"], StatusCode = 400 };
             }
         }

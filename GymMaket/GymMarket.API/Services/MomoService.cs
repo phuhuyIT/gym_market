@@ -1,7 +1,7 @@
+using GymMarket.API.Data;
 using GymMarket.API.DTOs.Momo;
 using GymMarket.API.DTOs.Payment;
 using GymMarket.API.Models;
-using GymMarket.API.Data;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RestSharp;
@@ -22,16 +22,17 @@ namespace GymMarket.API.Services
             _context = context;
         }
 
-        public async Task<MomoCreatePaymentResponseModel> CreatePaymentAsync(CreatePaymentDto dto)
+        public async Task<MomoCreatePaymentResponseModel?> CreatePaymentAsync(string courseId, string studentId)
         {
-            var course = await _context.Courses.FindAsync(dto.CourseId);
-            if (course == null) return null!;
+            var course = await _context.Courses.FindAsync(courseId);
+            if (course == null) return null;
 
-            string paymentId = DateTime.UtcNow.Ticks.ToString();
+            string paymentId = Guid.NewGuid().ToString("N");
             double paymentAmount = (double)((course.Price ?? 0) + (course.AdditionalPrice ?? 0));
 
-            // Store studentId and courseId in extraData as JSON
-            var extraData = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { dto.StudentId, dto.CourseId })));
+            // Store studentId and courseId in extraData as JSON so the signed
+            // callback/IPN can tell which student paid for which course.
+            var extraData = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { StudentId = studentId, CourseId = courseId })));
 
             var rawData =
                 $"partnerCode={_options.Value.PartnerCode}" +
@@ -69,6 +70,27 @@ namespace GymMarket.API.Services
             var response = await client.ExecuteAsync(request);
             var momoResponse = JsonConvert.DeserializeObject<MomoCreatePaymentResponseModel>(response.Content!);
             return momoResponse!;
+        }
+
+        public bool VerifySignature(MomoCallbackDto callback)
+        {
+            var rawData =
+                $"accessKey={_options.Value.AccessKey}" +
+                $"&amount={callback.Amount}" +
+                $"&extraData={callback.ExtraData}" +
+                $"&message={callback.Message}" +
+                $"&orderId={callback.OrderId}" +
+                $"&orderInfo={callback.OrderInfo}" +
+                $"&orderType={callback.OrderType}" +
+                $"&partnerCode={callback.PartnerCode}" +
+                $"&payType={callback.PayType}" +
+                $"&requestId={callback.RequestId}" +
+                $"&responseTime={callback.ResponseTime}" +
+                $"&resultCode={callback.ResultCode}" +
+                $"&transId={callback.TransId}";
+
+            var expectedSignature = ComputeHmacSha256(rawData, _options.Value.SecretKey);
+            return string.Equals(expectedSignature, callback.Signature, StringComparison.OrdinalIgnoreCase);
         }
 
         public MomoExecuteResponseModel PaymentExecuteAsync(IQueryCollection collection)

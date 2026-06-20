@@ -208,7 +208,9 @@ public class AccountServiceTests
             repository,
             jwtService ?? new RecordingJwtService(),
             signInService ?? new RecordingPasswordSignInService(),
-            new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build());
+            new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build(),
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<AccountService>.Instance,
+            null!);
     }
 
     private sealed class RecordingAccountRepository : IAccountRepository
@@ -264,6 +266,28 @@ public class AccountServiceTests
             CreateTrainerCallCount++;
             return Task.CompletedTask;
         }
+
+        public Task<AppUser?> FindByIdAsync(string userId) => Task.FromResult(ExistingUser);
+        public Task<IdentityResult> UpdateUserAsync(AppUser user) => Task.FromResult(IdentityResult.Success);
+        public Task<IdentityResult> ChangePasswordAsync(AppUser user, string currentPassword, string newPassword) => Task.FromResult(IdentityResult.Success);
+        public Task<bool> HasPasswordAsync(AppUser user) => Task.FromResult(true);
+        public Task<string> GenerateEmailConfirmationTokenAsync(AppUser user) => Task.FromResult("token");
+        public Task<IdentityResult> ConfirmEmailAsync(AppUser user, string token) => Task.FromResult(IdentityResult.Success);
+        public Task<bool> IsEmailConfirmedAsync(AppUser user) => Task.FromResult(false);
+        public Task<string?> GetAuthenticatorKeyAsync(AppUser user) => Task.FromResult<string?>("key");
+        public Task ResetAuthenticatorKeyAsync(AppUser user) => Task.CompletedTask;
+        public Task<bool> SetTwoFactorEnabledAsync(AppUser user, bool enabled) => Task.FromResult(true);
+        public Task<bool> VerifyTwoFactorTokenAsync(AppUser user, string code) => Task.FromResult(true);
+        public Task<bool> GetTwoFactorEnabledAsync(AppUser user) => Task.FromResult(false);
+        public Task<bool> IsLockedOutAsync(AppUser user) => Task.FromResult(false);
+        public Task<DateTimeOffset?> GetLockoutEndDateAsync(AppUser user) => Task.FromResult<DateTimeOffset?>(null);
+        public Task<int> GetAccessFailedCountAsync(AppUser user) => Task.FromResult(0);
+        public Task ResetAccessFailedCountAsync(AppUser user) => Task.CompletedTask;
+        public Task SetLockoutEndDateAsync(AppUser user, DateTimeOffset? lockoutEnd) => Task.CompletedTask;
+        public Task SaveRefreshTokenAsync(RefreshToken refreshToken) => Task.CompletedTask;
+        public Task<RefreshToken?> GetRefreshTokenAsync(string token) => Task.FromResult<RefreshToken?>(null);
+        public Task RevokeRefreshTokenAsync(RefreshToken refreshToken) => Task.CompletedTask;
+        public Task RevokeAllUserRefreshTokensAsync(string userId) => Task.CompletedTask;
     }
 
     private sealed class RecordingPasswordSignInService : IPasswordSignInService
@@ -292,5 +316,7 @@ public class AccountServiceTests
             User = user;
             return Task.FromResult(Token);
         }
+
+        public string GenerateRefreshToken() => "refresh-token";
     }
 }

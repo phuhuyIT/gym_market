@@ -1,0 +1,26 @@
+{
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+    "ConnectionStrings": {
+        "DefaultConnectionString": "Server=127.0.0.1,1433;Database=GymMarket;User Id=<YOUR_DB_USER>;Password=<YOUR_DB_PASSWORD>;TrustServerCertificate=True;Encrypt=False"
+    },
+    "JWT": {
+        "Key": "<YOUR_JWT_SIGNING_KEY_MIN_64_CHARS>",
+        "Issuer": "http://localhost:5284/"
+    },
+    "Google": {
+        "ClientId": "<YOUR_GOOGLE_OAUTH_CLIENT_ID>"
+    },
+    "MinIO": {
+        "AccessKey": "<YOUR_MINIO_ACCESS_KEY>",
+        "SecretKey": "<YOUR_MINIO_SECRET_KEY>"
+    },
+    "MomoAPI": {
+        "SecretKey": "<YOUR_MOMO_SECRET_KEY>",
+        "AccessKey": "<YOUR_MOMO_ACCESS_KEY>"
+    }
+}

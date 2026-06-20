@@ -24,20 +24,17 @@ export interface CourseFile {
 }
 
 export interface CourseRating {
-  courseRatingId: number;
+  ratingId: string;
   courseId: string;
   studentId: string;
   ratingValue: number;
-  comment: string;
-  ratingDate: string;
-  studentName?: string;
+  reviewComment: string;
 }
 
 export interface CourseRatingCreateDto {
   courseId: string;
-  studentId: string;
   ratingValue: number;
-  comment: string;
+  reviewComment: string;
 }
 
 export interface CourseOption {

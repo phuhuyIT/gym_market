@@ -1,125 +1,358 @@
-<div class="course-form">
-  <div class="container container--narrow">
-    <header class="course-form__header">
-      <div class="back-link" routerLink="/agency/course-list">← Back to Dashboard</div>
-      <h1 class="course-form__title">Update Course</h1>
-      <p class="course-form__subtitle">Modify your course details, pricing, or schedule.</p>
-    </header>
+<div class="max-w-6xl mx-auto animate-fade-in pb-12">
 
-    <div class="course-form__content">
-      <!-- General Information -->
-      <section class="form-section">
-        <h3 class="form-section__title">GENERAL INFORMATION</h3>
-        <div class="form-grid">
-          <div class="full-width">
-            <gm-input label="COURSE TITLE" [(value)]="model.title" />
-          </div>
-          <div class="full-width">
-            <gm-input label="DESCRIPTION" [(value)]="model.description" />
-          </div>
-          <div class="custom-select">
-            <label>TYPE</label>
-            <select [(ngModel)]="model.type">
-              <option value="Yoga">Yoga</option>
-              <option value="Cardio">Cardio</option>
-              <option value="Strength">Strength training</option>
-              <option value="Pilates">Pilates</option>
-              <option value="Stretching">Stretching</option>
-              <option value="Cross fit">Cross fit</option>
-            </select>
-          </div>
-          <div class="custom-select">
-            <label>CATEGORY</label>
-            <select [(ngModel)]="model.category">
-              <option value="Yoga">Yoga</option>
-              <option value="Cardio">Cardio</option>
-              <option value="Strength">Strength training</option>
-              <option value="Pilates">Pilates</option>
-              <option value="Stretching">Stretching</option>
-              <option value="Cross fit">Cross fit</option>
-            </select>
+  <!-- ── Hero header ── -->
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-tr from-[#007AFF] via-[#4F46E5] to-[#5856D6] p-8 md:p-10 mb-8 shadow-xl shadow-blue-500/20">
+    <!-- decorative blobs -->
+    <div class="pointer-events-none absolute -top-24 -right-16 w-72 h-72 rounded-full bg-white/15 blur-2xl"></div>
+    <div class="pointer-events-none absolute -bottom-28 left-1/3 w-80 h-80 rounded-full bg-white/10 blur-3xl"></div>
+
+    <div class="relative">
+      <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white/70 cursor-pointer hover:text-white transition-colors" routerLink="/agency/courses">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Back to Dashboard
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white mt-3">
+        Update course ✏️
+      </h1>
+      <p class="text-sm md:text-base text-white/80 mt-2 max-w-xl">
+        Polish the details — the live preview on the right shows exactly how students will see it.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+    <!-- ── Left: form sections ── -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <!-- Step 1: Basics -->
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-lg hover:shadow-blue-500/5 transition-shadow space-y-6">
+        <div class="flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+          <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-[#007AFF] to-[#5856D6] text-white text-sm font-extrabold shadow-md shadow-blue-500/25">1</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-neutral-900 dark:text-white">The basics</h3>
+            <p class="text-xs text-neutral-400 dark:text-neutral-500">Name, description and style</p>
           </div>
         </div>
-      </section>
 
-      <!-- Pricing & Capacity -->
-      <section class="form-section">
-        <h3 class="form-section__title">PRICING & CAPACITY</h3>
-        <div class="form-grid">
-          <gm-input label="BASE PRICE ($)" type="number" [(value)]="model.price" />
-          <gm-input label="ADDITIONAL PRICE ($)" type="number" [(value)]="model.additionalPrice" />
-          <gm-input label="MAX PARTICIPANTS" type="number" [(value)]="model.maxParticipants" />
-          <gm-input label="DURATION (DAYS)" type="number" [(value)]="model.duration" />
+        <div class="space-y-5">
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Course Title</label>
+            <input
+              type="text"
+              [(ngModel)]="model.title"
+              maxlength="120"
+              placeholder="e.g. Master Power Yoga & Meditation"
+              class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 border-none rounded-2xl px-4 py-3.5 text-base font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <div class="flex items-baseline justify-between">
+              <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Description</label>
+              <span class="text-[11px] font-semibold tabular-nums"
+                    [class.text-neutral-400]="model.description.length < descriptionLimit"
+                    [class.text-rose-500]="model.description.length >= descriptionLimit">
+                {{ model.description.length }}/{{ descriptionLimit }}
+              </span>
+            </div>
+            <textarea
+              [(ngModel)]="model.description"
+              [maxlength]="descriptionLimit"
+              rows="4"
+              placeholder="What will students learn? What makes this course special?"
+              class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 border-none rounded-2xl px-4 py-3.5 text-sm font-medium leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all resize-y"
+            ></textarea>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Type</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              @for (option of courseTypes; track option.value) {
+                <button
+                  type="button"
+                  (click)="model.type = option.value"
+                  class="flex items-center gap-2.5 px-3.5 py-3 rounded-2xl border text-sm font-semibold transition-all"
+                  [class]="model.type === option.value
+                    ? 'bg-gradient-to-tr ' + option.gradient + ' text-white border-transparent shadow-md scale-[1.02]'
+                    : 'bg-[#F7F6F3] dark:bg-[#252528] text-neutral-600 dark:text-neutral-300 border-transparent hover:border-blue-400/40 hover:scale-[1.01]'"
+                >
+                  <span class="text-lg leading-none">{{ option.icon }}</span>
+                  {{ option.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Category</label>
+            <div class="flex flex-wrap gap-2">
+              @for (option of courseTypes; track option.value) {
+                <button
+                  type="button"
+                  (click)="model.category = option.value"
+                  class="px-4 py-2 rounded-full text-xs font-bold transition-all"
+                  [class]="model.category === option.value
+                    ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-md'
+                    : 'bg-[#F7F6F3] dark:bg-[#252528] text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'"
+                >
+                  {{ option.label }}
+                </button>
+              }
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
 
-      <!-- Schedule -->
-      <section class="form-section">
-        <h3 class="form-section__title">SCHEDULE</h3>
-        <div class="form-grid">
-          <gm-input label="START DATE" type="date" [(value)]="model.startDate" />
-          <gm-input label="END DATE" type="date" [(value)]="model.endDate" />
+      <!-- Step 2: Pricing & capacity -->
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-lg hover:shadow-blue-500/5 transition-shadow space-y-6">
+        <div class="flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+          <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-400 to-teal-500 text-white text-sm font-extrabold shadow-md shadow-emerald-500/25">2</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-neutral-900 dark:text-white">Pricing & capacity</h3>
+            <p class="text-xs text-neutral-400 dark:text-neutral-500">Set the value and the class size</p>
+          </div>
         </div>
-      </section>
 
-      <!-- Media Upload -->
-      <section class="form-section">
-        <h3 class="form-section__title">COURSE MEDIA</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Base Price</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-emerald-500">$</span>
+              <input type="number" min="0" [(ngModel)]="model.price"
+                class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl pl-9 pr-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all" />
+            </div>
+          </div>
 
-        <div class="media-row">
-          <div class="media-col">
-            <label class="media-label">IMAGES</label>
-            <div class="upload-zone upload-zone--small" (click)="imageInput.click()">
-              <div class="upload-zone__icon">🖼️</div>
-              <p class="upload-zone__text">Add Images</p>
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Additional Price</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-emerald-500">$</span>
+              <input type="number" min="0" [(ngModel)]="model.additionalPrice"
+                class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl pl-9 pr-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all" />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Max Participants</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm">👥</span>
+              <input type="number" min="0" [(ngModel)]="model.maxParticipants"
+                class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl pl-10 pr-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all" />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Duration (Days)</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm">📅</span>
+              <input type="number" min="0" [(ngModel)]="model.duration"
+                class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl pl-10 pr-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Schedule -->
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-lg hover:shadow-blue-500/5 transition-shadow space-y-6">
+        <div class="flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+          <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-400 to-rose-500 text-white text-sm font-extrabold shadow-md shadow-rose-500/25">3</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-neutral-900 dark:text-white">Schedule</h3>
+            <p class="text-xs text-neutral-400 dark:text-neutral-500">When does the journey start and end?</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Start Date</label>
+            <input type="date" [(ngModel)]="model.startDate"
+              class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl px-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all" />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">End Date</label>
+            <input type="date" [(ngModel)]="model.endDate"
+              class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl px-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all" />
+          </div>
+        </div>
+
+        @if (scheduleDays > 0) {
+          <div class="flex items-center justify-between gap-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-2xl px-4 py-3">
+            <p class="text-xs font-semibold text-blue-700 dark:text-blue-300">
+              📆 Your schedule spans <span class="font-extrabold">{{ scheduleDays }}</span> day{{ scheduleDays === 1 ? '' : 's' }}
+            </p>
+            @if (model.duration !== scheduleDays) {
+              <button type="button" (click)="useScheduleLength()"
+                class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap">
+                Use as duration →
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Step 4: Course media -->
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-lg hover:shadow-blue-500/5 transition-shadow space-y-6">
+        <div class="flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-800/60 pb-4">
+          <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-fuchsia-400 to-purple-500 text-white text-sm font-extrabold shadow-md shadow-purple-500/25">4</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-neutral-900 dark:text-white">Course media</h3>
+            <p class="text-xs text-neutral-400 dark:text-neutral-500">The first image becomes the course cover</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+          <!-- Image Upload Zone -->
+          <div class="space-y-4">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Images</label>
+            <div class="border-2 border-dashed border-neutral-200 dark:border-neutral-800 hover:border-blue-500/60 dark:hover:border-blue-500/60 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-800/10 transition-all cursor-pointer h-40" (click)="imageInput.click()">
+              <div class="text-2xl text-neutral-400">🖼️</div>
+              <p class="text-xs font-bold text-neutral-800 dark:text-neutral-200">Add Images</p>
+              <p class="text-[10px] text-neutral-400">Click to browse</p>
               <input type="file" #imageInput hidden multiple (change)="onSlectImage($event)" accept="image/*">
             </div>
-            <div class="media-previews">
+
+            <!-- Image Previews -->
+            <div class="grid grid-cols-3 gap-3">
               @for (img of dataImages; track img) {
-                <div class="media-preview" (click)="showImage(img)">
-                  <img [src]="img" alt="Course image">
+                <div class="group relative aspect-video rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 cursor-pointer" (click)="showImage(img)">
+                  <img [src]="img || DEFAULT_COURSE_THUMBNAIL_URL" [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL" alt="Course image" class="h-full w-full object-cover transition-transform group-hover:scale-105">
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                    <span class="text-white text-xs font-bold">Preview</span>
+                  </div>
                 </div>
               }
             </div>
+
             @if (dataImages.length > 0) {
-              <gm-button variant="ghost" (clicked)="onClearImages(imageInput)">CLEAR ALL</gm-button>
+              <gm-button variant="ghost" (clicked)="onClearImages(imageInput)" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 text-xs font-bold px-3 py-1.5 rounded-lg">
+                CLEAR ALL IMAGES
+              </gm-button>
             }
           </div>
 
-          <div class="media-col">
-            <label class="media-label">VIDEOS</label>
-            <div class="upload-zone upload-zone--small" (click)="videoInput.click()">
-              <div class="upload-zone__icon">🎥</div>
-              <p class="upload-zone__text">Add Videos</p>
+          <!-- Video Upload Zone -->
+          <div class="space-y-4">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Videos</label>
+            <div class="border-2 border-dashed border-neutral-200 dark:border-neutral-800 hover:border-blue-500/60 dark:hover:border-blue-500/60 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-800/10 transition-all cursor-pointer h-40" (click)="videoInput.click()">
+              <div class="text-2xl text-neutral-400">🎥</div>
+              <p class="text-xs font-bold text-neutral-800 dark:text-neutral-200">Add Videos</p>
+              <p class="text-[10px] text-neutral-400">Click to browse</p>
               <input type="file" #videoInput hidden multiple (change)="onSlectVideo($event)" accept="video/*">
             </div>
-            <div class="media-previews">
+
+            <!-- Video Previews -->
+            <div class="grid grid-cols-3 gap-3">
               @for (vid of dataVideos; track vid) {
-                <div class="media-preview media-preview--video">
-                  <video [src]="vid"></video>
+                <div class="relative aspect-video rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-900">
+                  <video [src]="vid" class="h-full w-full object-cover"></video>
                 </div>
               }
             </div>
+
             @if (dataVideos.length > 0) {
-              <gm-button variant="ghost" (clicked)="onClearVideo(videoInput)">CLEAR ALL</gm-button>
+              <gm-button variant="ghost" (clicked)="onClearVideo(videoInput)" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 text-xs font-bold px-3 py-1.5 rounded-lg">
+                CLEAR ALL VIDEOS
+              </gm-button>
             }
           </div>
-        </div>
-      </section>
 
-      <!-- Form Actions -->
-      <div class="form-actions">
-        <gm-button variant="ghost" routerLink="/agency/course-list">CANCEL</gm-button>
-        <gm-button variant="primary" [loading]="loading" (clicked)="submit()">UPDATE COURSE</gm-button>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-4 pt-2">
+        <gm-button variant="ghost" routerLink="/agency/courses" class="rounded-xl px-5 py-2.5 font-semibold text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800/40">
+          CANCEL
+        </gm-button>
+        <gm-button variant="primary" [loading]="loading" (clicked)="submit()" class="bg-gradient-to-tr from-[#007AFF] to-[#5856D6] hover:from-[#007AFF]/90 hover:to-[#5856D6]/90 text-white font-bold px-8 py-2.5 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all">
+          💾 SAVE CHANGES
+        </gm-button>
       </div>
     </div>
+
+    <!-- ── Right: sticky live preview ── -->
+    <aside class="lg:sticky lg:top-24 space-y-4">
+      <p class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 px-1">Live preview</p>
+
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl overflow-hidden shadow-lg shadow-neutral-900/5 dark:shadow-black/30">
+        <!-- cover: first real image when available, otherwise the type gradient -->
+        @if (dataImages.length > 0) {
+          <div class="relative h-36">
+            <img [src]="dataImages[0] || DEFAULT_COURSE_THUMBNAIL_URL" [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL" alt="Course cover" class="h-full w-full object-cover">
+            <span class="absolute top-3 right-3 bg-white/90 dark:bg-black/60 backdrop-blur text-[11px] font-extrabold text-neutral-800 dark:text-white px-3 py-1 rounded-full">
+              {{ model.price | number }}$
+            </span>
+          </div>
+        } @else {
+          <div class="relative h-36 bg-gradient-to-tr {{ selectedType.gradient }} flex items-center justify-center">
+            <span class="text-6xl drop-shadow-lg">{{ selectedType.icon }}</span>
+            <span class="absolute top-3 right-3 bg-white/90 dark:bg-black/60 backdrop-blur text-[11px] font-extrabold text-neutral-800 dark:text-white px-3 py-1 rounded-full">
+              {{ model.price | number }}$
+            </span>
+          </div>
+        }
+
+        <div class="p-5 space-y-3">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-[10px] font-bold uppercase tracking-wide bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-full">{{ model.type }}</span>
+            @if (model.category !== model.type) {
+              <span class="text-[10px] font-bold uppercase tracking-wide bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400 px-2.5 py-1 rounded-full">{{ model.category }}</span>
+            }
+            @if (model.rating > 0) {
+              <span class="ml-auto text-[11px] font-extrabold text-amber-500">★ {{ model.rating | number:'1.1-1' }}</span>
+            }
+          </div>
+
+          <h4 class="text-base font-extrabold text-neutral-900 dark:text-white leading-snug break-words">
+            {{ model.title || 'Your course title…' }}
+          </h4>
+
+          <p class="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-3 break-words">
+            {{ model.description || 'A short description will appear here as you type.' }}
+          </p>
+
+          <div class="grid grid-cols-3 gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-800/60">
+            <div class="text-center">
+              <p class="text-sm font-extrabold text-neutral-900 dark:text-white tabular-nums">{{ model.duration }}</p>
+              <p class="text-[10px] text-neutral-400 uppercase tracking-wide">days</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm font-extrabold text-neutral-900 dark:text-white tabular-nums">{{ model.maxParticipants }}</p>
+              <p class="text-[10px] text-neutral-400 uppercase tracking-wide">seats</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm font-extrabold text-neutral-900 dark:text-white tabular-nums">{{ model.additionalPrice | number }}$</p>
+              <p class="text-[10px] text-neutral-400 uppercase tracking-wide">add-on</p>
+            </div>
+          </div>
+
+          <p class="text-[10px] text-neutral-400 dark:text-neutral-500 pt-1">
+            {{ model.startDate }} → {{ model.endDate }}
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-2xl px-4 py-3">
+        <p class="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+          💡 <span class="font-bold">Tip:</span> a real cover photo can double click-through — add at least one image below.
+        </p>
+      </div>
+    </aside>
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Fullscreen Image Modal Preview -->
 @if (url) {
-  <div class="image-modal" (click)="showImage(null)">
-    <div class="image-modal__close">✕</div>
-    <img [src]="url" alt="Fullscreen preview" (click)="$event.stopPropagation()">
+  <div class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300" (click)="showImage(null)">
+    <button class="absolute top-6 right-6 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors" (click)="showImage(null)">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <img [src]="url" [fallbackSrc]="DEFAULT_IMAGE_URL" alt="Fullscreen preview" class="max-w-full max-h-full object-contain rounded-2xl shadow-2xl" (click)="$event.stopPropagation()">
   </div>
 }

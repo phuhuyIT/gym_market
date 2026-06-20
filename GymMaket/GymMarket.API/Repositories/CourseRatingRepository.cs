@@ -1,4 +1,3 @@
-using AutoMapper;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.CourseRating;
 using GymMarket.API.DTOs.Response;
@@ -11,40 +10,51 @@ namespace GymMarket.API.Repositories
     public class CourseRatingRepository : ICourseRatingRepository
     {
         private readonly GymMarketContext _context;
-        private readonly IMapper _mapper;
+        private readonly IPaymentRepository _paymentRepository;
 
-        public CourseRatingRepository(GymMarketContext context, IMapper mapper)
+        public CourseRatingRepository(GymMarketContext context, IPaymentRepository paymentRepository)
         {
             _context = context;
-            _mapper = mapper;
+            _paymentRepository = paymentRepository;
         }
 
-        public async Task<ApiResponse> AddRating(CourseRatingCreateDto courseRatingCreateDTO)
+        public async Task<ApiResponse> AddRating(CourseRatingCreateDto courseRatingCreateDTO, string studentId)
         {
+            // Only students with a successful payment for this course may review it.
+            if (!await _paymentRepository.HasPaidForCourse(studentId, courseRatingCreateDTO.CourseId!))
+            {
+                return new ApiResponse { Message = "NOT_ENROLLED", Errors = ["NOT_ENROLLED"], StatusCode = 403, Success = false };
+            }
+
+            var alreadyReviewed = await _context.CourseRatings
+                .AnyAsync(c => c.CourseId == courseRatingCreateDTO.CourseId && c.StudentId == studentId);
+            if (alreadyReviewed)
+            {
+                return new ApiResponse { Message = "ALREADY_REVIEWED", Errors = ["ALREADY_REVIEWED"], StatusCode = 409, Success = false };
+            }
+
             var courseRating = new CourseRating
             {
                 CourseId = courseRatingCreateDTO.CourseId,
-                RatingId = courseRatingCreateDTO.RatingId,
+                RatingId = Guid.NewGuid().ToString(),
                 RatingValue = courseRatingCreateDTO.RatingValue,
                 ReviewComment = courseRatingCreateDTO.ReviewComment,
-                StudentId = courseRatingCreateDTO.StudentId,
+                StudentId = studentId,
             };
 
-            var ratings = await _context.CourseRatings
-                   .AsNoTrackingWithIdentityResolution().Where(c => c.CourseId == courseRating.CourseId)
-                   .Select(c => c.RatingValue)
-                   .ToListAsync();
-
-            var averageRating = (ratings.Sum() + courseRating.RatingValue) / (ratings.Count() + 1);
+            var existingSum = await _context.CourseRatings
+                   .Where(c => c.CourseId == courseRating.CourseId)
+                   .SumAsync(c => c.RatingValue) ?? 0;
+            var existingCount = await _context.CourseRatings
+                   .CountAsync(c => c.CourseId == courseRating.CourseId);
+            var averageRating = (existingSum + courseRating.RatingValue) / (existingCount + 1);
 
             var course = await _context.Courses
-                .AsNoTrackingWithIdentityResolution()
                 .Where(c => c.CourseId == courseRating.CourseId)
                 .FirstOrDefaultAsync();
             if (course != null)
             {
                 course.Rating = averageRating;
-                _context.Courses.Update(course);
             }
             _context.CourseRatings.Add(courseRating);
             var r = await _context.SaveChangesAsync();

@@ -1,5 +1,4 @@
 ﻿using GymMarket.API.Data;
-using GymMarket.API.DTOs.Momo;
 using GymMarket.API.Hubs;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories;
@@ -14,7 +13,14 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// Allow large file uploads (e.g. course videos). Without this, Kestrel's
+// default ~28.6 MiB request-body limit rejects bigger files with 413.
+const long MaxUploadBytes = 100 * 1024 * 1024; // 100 MB
+builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = MaxUploadBytes);
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = MaxUploadBytes;
+});
 
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(Program));
@@ -49,30 +55,18 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Password settings
-    options.Password.RequireDigit = false; // Do not require numbers
-    options.Password.RequireLowercase = false; // Do not require lowercase
-    options.Password.RequireNonAlphanumeric = false; // Do not require special characters
-    options.Password.RequireUppercase = false; // Do not require uppercase
-    options.Password.RequiredLength = 8; // Minimum password length
-    options.Password.RequiredUniqueChars = 1; // Number of unique characters
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequiredUniqueChars = 1;
 
-    // Lockout settings - lock user
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Lock for 5 minutes
-    options.Lockout.MaxFailedAccessAttempts = 5; // Lock after 5 failed attempts
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 
-    //// User settings. 
-    //options.User.AllowedUserNameCharacters = // allowed characters for username
-    //"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-    options.User.RequireUniqueEmail = true; // Email must be unique
-
-    // Sign-in settings. 
-    //options.SignIn.RequireConfirmedEmail = true; // Require confirmed email
-    //options.SignIn.RequireConfirmedPhoneNumber = false; // Require confirmed phone number
-    //                                                    // default is false
-    //                                                    // if true => does not allow login and redirects to RegisterConfirmation.cshtml
-    //options.SignIn.RequireConfirmedAccount = false;
+    options.User.RequireUniqueEmail = true;
 });
 
 // authenticate user using jwt
@@ -84,18 +78,15 @@ builder.Services.AddAuthentication(options =>
 }).AddJwtBearer(options =>
 {
     options.SaveToken = true;
-    options.RequireHttpsMetadata = true;
+    options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         // validate the issuer (who ever is issuing the JWT)
         ValidateIssuer = true,
         ValidateIssuerSigningKey = true, // validate token based on the key we have provided in appsetting.json
 
-        // don't validate audience (angular side)
-        ValidateAudience = false,
-
-        //ValidAudience = builder.Configuration.GetSection("JWT:ValidAudience").Value,
-        // the issuer which in here is the api project url
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration.GetSection("JWT:Audience").Value,
         ValidIssuer = builder.Configuration.GetSection("JWT:Issuer").Value,
 
         // the issuer signin key based on JWT:Key
@@ -127,25 +118,34 @@ builder.Services.AddScoped<ICourseRegistrationRepository, CourseRegistrationRepo
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<ILectureRepository, LectureRepository>();
 builder.Services.AddScoped<ILectureMaterialRepository, LectureMaterialRepository>();
-builder.Services.AddScoped<FoodNutritionRepository>();
+builder.Services.AddScoped<IFoodNutritionRepository, FoodNutritionRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
 // service
 builder.Services.AddScoped<IJwtService, JWTService>();
 builder.Services.AddScoped<IPasswordSignInService, PasswordSignInService>();
 builder.Services.AddScoped<MinIOService>();
-builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICourseAccessService, CourseAccessService>();
+builder.Services.AddScoped<IFoodNutritionService, FoodNutritionService>();
+builder.Services.AddSingleton<IPresenceTracker, PresenceTracker>();
 
 
 
 
-// enable cors
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(c =>
 {
-    c.AddPolicy("AllowOrigin", option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+    c.AddPolicy("AllowOrigin", policy => policy
+        .WithOrigins(allowedOrigins)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
 });
 
 builder.Services.AddSignalR();
@@ -168,12 +168,15 @@ app.UseExceptionHandler(appError =>
 {
     appError.Run(async context =>
     {
+        var exceptionFeature = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+        var error = exceptionFeature?.Error;
         context.Response.StatusCode = 500;
         context.Response.ContentType = "application/json";
         await context.Response.WriteAsJsonAsync(new
         {
             statusCode = 500,
-            message = "An unexpected error occurred. Please try again later."
+            message = "An unexpected error occurred. Please try again later.",
+            detail = app.Environment.IsDevelopment() ? error?.ToString() : null
         });
     });
 });
@@ -185,20 +188,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// enable cors
-app.UseCors(x => x
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .AllowCredentials()
-    .SetIsOriginAllowed(origin => true));
+app.UseCors("AllowOrigin");
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseWebSockets();
 app.MapHub<ChatHub>("hubs/chat");
+app.MapHub<NotificationHub>("hubs/notifications");
 
 app.MapControllers();
 

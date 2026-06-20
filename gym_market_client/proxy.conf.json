@@ -3,5 +3,26 @@
     "target": "http://localhost:5284",
     "secure": false,
     "changeOrigin": true
+  },
+  "/hubs": {
+    "target": "http://localhost:5284",
+    "secure": false,
+    "changeOrigin": true,
+    "ws": true
+  },
+  "/avatars": {
+    "target": "http://localhost:9000",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/imagecourses": {
+    "target": "http://localhost:9000",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/videocourses": {
+    "target": "http://localhost:9000",
+    "secure": false,
+    "changeOrigin": true
   }
 }

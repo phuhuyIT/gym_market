@@ -1,49 +1,101 @@
 <div class="trainer-list-page">
-  <header class="search-header">
-    <div class="search-header__bar gl">
-      <div class="form-group flex-1">
+  <header class="page-header container">
+    <h1 class="page-title">Trending Fitness Experts</h1>
+    
+    <div class="search-filter-row">
+      <div class="categories-tabs">
+        @for (cat of categories; track cat) {
+          <button 
+            type="button"
+            class="category-tab-btn" 
+            [class.active]="selectedCategory === cat"
+            (click)="selectCategory(cat)">
+            {{ cat }}
+          </button>
+        }
+      </div>
+
+      <div class="search-bar-container gl">
         <input
-          (keydown.enter)="onSubmit()"
-          class="form-input"
+          (ngModelChange)="onSubmit()"
+          class="search-input-field"
           type="text"
-          placeholder="SEARCH ELITE TRAINERS..."
+          placeholder="Search trainers, certifications..."
           [(ngModel)]="searchString"
         />
+        <button class="search-btn" (click)="onSubmit()" type="button" aria-label="Search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
       </div>
-      <gm-button variant="primary" (clicked)="onSubmit()">SEARCH</gm-button>
     </div>
   </header>
 
   <main class="container">
-    <div class="trainer-grid">
-      @for (item of trainers; track item.trainerId) {
-      <gm-card class="trainer-card" [routerLink]="['/client/trainer-details', item.trainerId]">
-        <div class="trainer-card__image-wrap">
-          <img
-            [src]="item.profilePicture || '/assets/fitness_logo.jpg'"
-            alt="Trainer profile"
-          />
-        </div>
-        
-        <div class="trainer-card__content">
-          <h3 class="trainer-card__name">{{ item.name }}</h3>
+    @if (filteredTrainers.length === 0) {
+      <div class="empty-state gl">
+        <div class="empty-state__icon">🔍</div>
+        <h3>No Trainers Found</h3>
+        <p>We couldn't find any trainers matching your current search or category filter. Try adjusting your settings.</p>
+      </div>
+    } @else {
+      <div class="trainer-grid">
+        @for (item of filteredTrainers; track item.trainerId) {
+          <gm-card class="trainer-card" [routerLink]="['/client/trainer-details', item.trainerId]">
+            <button 
+              class="bookmark-btn" 
+              (click)="toggleBookmark(item.trainerId, $event)" 
+              [class.active]="isBookmarked(item.trainerId)"
+              type="button"
+              aria-label="Bookmark trainer">
+              <i class="fa-bookmark" [class.fa-solid]="isBookmarked(item.trainerId)" [class.fa-regular]="!isBookmarked(item.trainerId)"></i>
+            </button>
 
-          <div class="trainer-card__info-section">
-            <h4>Certifications</h4>
-            <p class="trainer-card__cert">{{ item.certification || 'Elite Fitness Professional' }}</p>
-          </div>
+            <div class="trainer-avatar-container">
+              <div class="trainer-avatar-ring">
+                <img
+                  [src]="item.profilePicture || DEFAULT_AVATAR_IMAGE_URL"
+                  [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL"
+                  alt="Trainer profile picture"
+                  class="trainer-avatar-img"
+                />
+              </div>
+            </div>
+            
+            <div class="trainer-card-body">
+              <h3 class="trainer-card-name">{{ item.name }}</h3>
+              <p class="trainer-card-subtitle">{{ item.certification || 'Elite Fitness Professional' }}</p>
+              <p class="trainer-card-bio">{{ item.bio || 'Professional personal trainer dedicated to helping you achieve your fitness and wellness goals.' }}</p>
+              <div class="trainer-card-extra">
+                <span class="extra-stat">
+                  <i class="fa-solid fa-briefcase"></i> {{ item.experience }}+ Years Exp
+                </span>
+                <span class="extra-divider">•</span>
+                <span class="extra-email" [title]="item.email">
+                  <i class="fa-solid fa-envelope"></i> {{ item.email }}
+                </span>
+              </div>
+            </div>
 
-          <div class="trainer-card__info-section">
-            <h4>Bio</h4>
-            <p class="trainer-card__bio">{{ item.bio }}</p>
-          </div>
-
-          <div class="trainer-card__footer">
-            <gm-button variant="ghost" class="w-full">VIEW PROFILE</gm-button>
-          </div>
-        </div>
-      </gm-card>
-      }
-    </div>
+            <div class="trainer-card-footer">
+              <div class="trainer-stats-col">
+                <span class="stat-icon"><i class="fa-solid fa-star"></i></span>
+                <span class="stat-value">{{ item.rating ? item.rating.toFixed(1) : '4.8' }}</span>
+              </div>
+              <div class="trainer-stats-col">
+                <span class="stat-icon"><i class="fa-solid fa-comments"></i></span>
+                <span class="stat-value">{{ getReviewsCount(item) }}</span>
+              </div>
+              <div class="trainer-stats-col">
+                <span class="stat-icon"><i class="fa-solid fa-user-group"></i></span>
+                <span class="stat-value">{{ getClientsCount(item) }}</span>
+              </div>
+              <div class="trainer-specialty-badge" [title]="selectedCategory">
+                {{ getSpecialtyEmoji(item) }}
+              </div>
+            </div>
+          </gm-card>
+        }
+      </div>
+    }
   </main>
 </div>

@@ -1,0 +1,94 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal create-group-modal" (click)="$event.stopPropagation()">
+    <div class="modal__close" (click)="onClose()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </div>
+
+    <h2 class="cg-title">New group</h2>
+
+    <div class="cg-avatar-row">
+      <button
+        type="button"
+        class="cg-avatar-btn"
+        (click)="avatarInput.click()"
+        [disabled]="uploadingAvatar"
+        aria-label="Choose group photo"
+      >
+        <img [src]="avatarUrl || DEFAULT_GROUP_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_GROUP_AVATAR_IMAGE_URL" alt="" class="cg-avatar-preview">
+        <span class="cg-avatar-overlay">
+          @if (uploadingAvatar) {
+            …
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
+            </svg>
+          }
+        </span>
+      </button>
+      <input #avatarInput type="file" accept="image/*" hidden (change)="onAvatarSelected($event)">
+      <span class="cg-avatar-hint">{{ uploadingAvatar ? 'Uploading photo…' : 'Group photo (optional)' }}</span>
+    </div>
+
+    <label class="cg-label">Group name</label>
+    <input
+      type="text"
+      class="cg-input"
+      placeholder="e.g. Morning Workout Squad"
+      [(ngModel)]="groupName"
+      maxlength="100"
+    />
+
+    @if (selected.length > 0) {
+      <div class="cg-chips">
+        @for (member of selected; track member.id) {
+          <span class="cg-chip">
+            <img [src]="member.avatar || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="">
+            {{ member.fullName }}
+            <button class="cg-chip-remove" (click)="toggleMember(member)" aria-label="Remove">×</button>
+          </span>
+        }
+      </div>
+    }
+
+    <label class="cg-label">Add members</label>
+    <input
+      type="text"
+      class="cg-input"
+      placeholder="Search by name or email"
+      [ngModel]="searchQuery"
+      (ngModelChange)="onSearchChange($event)"
+    />
+
+    <div class="cg-results">
+      @for (user of results; track user.id) {
+        <button class="cg-result-item" [class.selected]="isSelected(user)" (click)="toggleMember(user)">
+          <img [src]="user.avatar || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="" class="cg-result-avatar">
+          <div class="cg-result-info">
+            <span class="cg-result-name">{{ user.fullName }}</span>
+            <span class="cg-result-email">{{ user.email }}</span>
+          </div>
+          @if (isSelected(user)) {
+            <span class="cg-check">✓</span>
+          }
+        </button>
+      }
+      @if (results.length === 0 && searchQuery) {
+        <p class="cg-empty">No users found</p>
+      }
+    </div>
+
+    @if (error) {
+      <p class="cg-error">{{ error }}</p>
+    }
+
+    <div class="cg-actions">
+      <button class="cg-btn cg-btn--ghost" (click)="onClose()">Cancel</button>
+      <button class="cg-btn cg-btn--primary" [disabled]="!canCreate" (click)="createGroup()">
+        {{ submitting ? 'Creating…' : 'Create group' }}
+      </button>
+    </div>
+  </div>
+</div>

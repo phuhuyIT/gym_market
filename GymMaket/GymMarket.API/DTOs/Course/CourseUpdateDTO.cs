@@ -2,11 +2,11 @@
 
 namespace GymMarket.API.DTOs.Course
 {
+    // No TrainerId here: a course never changes owner on update, and the owner is
+    // never taken from the client (see CourseRepository.UpdateCourse).
     public class CourseUpdateDTO
     {
         public string CourseId { get; set; } = string.Empty;
-
-        public string TrainerId { get; set; } = string.Empty;
 
         [StringLength(200)]
         public string? Title { get; set; }

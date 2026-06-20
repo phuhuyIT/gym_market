@@ -1,21 +1,24 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { Message } from './models/message.dto';
+import { Message } from '../core/models/conversation.model';
 import { environment } from '../../environments/environment.development';
+import { AccountService } from '../guest/account.service';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ChatHupService {
 	private hubConnection: signalR.HubConnection | undefined;
-
-	constructor() {}
+	private accountService = inject(AccountService);
 
 	startConnection() {
 		const hubUrl = environment.baseApi.replace('/api', '/hubs/chat');
 
 		this.hubConnection = new signalR.HubConnectionBuilder()
-			.withUrl(hubUrl)
+			.withUrl(hubUrl, {
+				accessTokenFactory: () => this.accountService.token ?? '',
+			})
+			.withAutomaticReconnect()
 			.build();
 
 		this.hubConnection.start().catch(err => console.error('SignalR connection failed:', err));
@@ -32,6 +35,24 @@ export class ChatHupService {
 	onMessageReceived(callback: (message: Message) => void) {
 		if (this.hubConnection) {
 			this.hubConnection.on('ReceiveMessage', callback);
+		}
+	}
+
+	onGroupUpdated(callback: (conversationId: number) => void) {
+		if (this.hubConnection) {
+			this.hubConnection.on('GroupUpdated', callback);
+		}
+	}
+
+	onUserOnline(callback: (userId: string) => void) {
+		if (this.hubConnection) {
+			this.hubConnection.on('UserOnline', callback);
+		}
+	}
+
+	onUserOffline(callback: (userId: string, lastSeen: string) => void) {
+		if (this.hubConnection) {
+			this.hubConnection.on('UserOffline', callback);
 		}
 	}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace GymMarket.API.Models;
 
@@ -11,6 +12,7 @@ public partial class Student
 
     public string? Email { get; set; }
 
+    [JsonIgnore]
     public string? Password { get; set; }
 
     public string? HealthStatus { get; set; }
@@ -30,8 +32,6 @@ public partial class Student
     public virtual ICollection<HealthDatum> HealthData { get; set; } = new List<HealthDatum>();
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
-
-    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 

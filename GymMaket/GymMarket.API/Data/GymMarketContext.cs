@@ -43,6 +43,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
     public virtual DbSet<FileCourse> FileCourses { get; set; }
     public virtual DbSet<FoodNutrition> FoodNutritions { get; set; }
     public virtual DbSet<FoodNutritionUser> FoodNutritionUsers { get; set; }
+    public virtual DbSet<NutritionBudget> NutritionBudgets { get; set; }
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public GymMarketContext(DbContextOptions<GymMarketContext> options)
         : base(options)
@@ -407,28 +409,23 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__8C1160B56820950B");
+            entity.HasKey(e => e.Id);
 
-            entity.Property(e => e.NotificationId)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("Notification_ID");
-            entity.Property(e => e.NotificationContent).HasColumnName("Notification_Content");
-            entity.Property(e => e.NotificationType)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("Notification_Type");
-            entity.Property(e => e.StudentId)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("Student_ID");
-            entity.Property(e => e.Timestamp)
+            entity.Property(e => e.UserId).HasMaxLength(450);
+            entity.Property(e => e.Type).HasMaxLength(50);
+            entity.Property(e => e.Title).HasMaxLength(200);
+            entity.Property(e => e.Link).HasMaxLength(500);
+            entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
 
-            entity.HasOne(d => d.Student).WithMany(p => p.Notifications)
-                .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK_Notifications_Student");
+            // The badge/unread queries always filter by (UserId, IsRead).
+            entity.HasIndex(e => new { e.UserId, e.IsRead });
+
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Notifications_AspNetUsers");
         });
 
         modelBuilder.Entity<Payment>(entity =>
@@ -535,6 +532,46 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasOne(d => d.AppUser).WithOne(p => p.Trainer)
                 .HasForeignKey<Trainer>(d => d.UserId)
                 .HasConstraintName("FK_Trainer_AppUser");
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasIndex(e => e.Token).IsUnique();
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Conversation>(entity =>
+        {
+            entity.Property(e => e.IsGroup).HasDefaultValue(false);
+        });
+
+        modelBuilder.Entity<ConversationParticipant>(entity =>
+        {
+            entity.Property(e => e.Role).HasMaxLength(20).HasDefaultValue(ParticipantRoles.Member);
+            entity.Property(e => e.JoinedAt).HasDefaultValueSql("(getdate())");
+        });
+
+        modelBuilder.Entity<UserMessage>(entity =>
+        {
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Type).HasMaxLength(20).HasDefaultValue(MessageTypes.Text);
+        });
+
+        modelBuilder.Entity<FoodNutritionUser>(entity =>
+        {
+            entity.HasIndex(e => new { e.UserId, e.Date });
+            // SetNull: deleting a master food keeps the user's logged snapshot.
+            entity.HasOne<FoodNutrition>().WithMany()
+                .HasForeignKey(e => e.FoodNutritionId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<NutritionBudget>(entity =>
+        {
+            entity.HasIndex(e => e.UserId).IsUnique();
         });
 
         modelBuilder.SeedData();

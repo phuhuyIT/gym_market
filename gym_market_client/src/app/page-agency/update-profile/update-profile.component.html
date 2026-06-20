@@ -3,7 +3,8 @@
     <div class="profile-card">
       <div class="avatar-preview">
         <img
-          [src]="updateForm.controls['profilePicture'].value || '/assets/fitness_logo.jpg'"
+          [src]="updateForm.controls['profilePicture'].value || DEFAULT_AVATAR_IMAGE_URL"
+          [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL"
           alt="Avatar preview"
         />
       </div>
@@ -120,6 +121,45 @@
           @if(updateForm.controls['certification'].invalid && updateForm.controls['certification'].touched) {
             <small class="error-msg">Certification details are required</small>
           }
+        </div>
+
+        <!-- Receiving bank account (for course payments) -->
+        <div class="form-section-title mb-4">Payment account (for receiving course payments)</div>
+
+        <div class="form-grid">
+          <!-- Bank -->
+          <div class="form-group">
+            <label class="form-label">Bank</label>
+            <select formControlName="bankBin" class="form-input">
+              <option value="">— Select bank —</option>
+              @for (bank of banks; track bank.bin) {
+                <option [value]="bank.bin">{{ bank.shortName }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Account number -->
+          <div class="form-group">
+            <label class="form-label">Account number</label>
+            <input
+              formControlName="bankAccountNo"
+              type="text"
+              class="form-input"
+              placeholder="e.g. 0123456789"
+            />
+          </div>
+        </div>
+
+        <!-- Account holder name -->
+        <div class="form-group mb-8">
+          <label class="form-label">Account holder name</label>
+          <input
+            formControlName="bankAccountName"
+            type="text"
+            class="form-input"
+            placeholder="e.g. NGUYEN VAN A"
+          />
+          <small class="hint-msg">Students pay by scanning a QR built from these details. Leave blank to disable payments for your courses.</small>
         </div>
 
         <div class="form-actions">

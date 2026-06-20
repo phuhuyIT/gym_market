@@ -1,8 +1,11 @@
-﻿namespace GymMarket.API.DTOs.Payment
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GymMarket.API.DTOs.Payment
 {
     public class CancelPayment
     {
+        [Required(ErrorMessage = "PaymentId is required.")]
         public string PaymentId { get; set; } = string.Empty;
-        public string Note { get; set;} = string.Empty;
+        public string Note { get; set; } = string.Empty;
     }
 }

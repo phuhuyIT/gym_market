@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject , ChangeDetectionStrategy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserStore } from '../../../stores/user.store';
 import { AccountService } from '../../../guest/account.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
+import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
 import { ROLES } from '../../../utilities/roles.const';
+import { take } from 'rxjs';
 
 interface NavItem {
 	link: string;
@@ -15,7 +18,7 @@ interface NavItem {
 @Component({
     selector: 'app-header',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLinkActive, RouterLink, CommonModule, ThemeToggleComponent],
+    imports: [RouterLinkActive, RouterLink, CommonModule, FormsModule, ThemeToggleComponent, NotificationBellComponent],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss'
 })
@@ -23,6 +26,7 @@ export class HeaderComponent {
 	readonly ROLES = ROLES;
 	showAccountOption = false;
 	showAIDropdownMenu = false;
+	courseSearchTerm = '';
 	userStore = inject(UserStore);
 	themeService = inject(ThemeService);
 
@@ -81,6 +85,21 @@ export class HeaderComponent {
 		}
 	}
 
+	// Launches the course search page with the typed term. The course-search page
+	// reads searchString/category/page from the query params, so navigating there
+	// runs the search. Guests are bounced to login by the client guard (their query
+	// is preserved via returnUrl).
+	searchCourses() {
+		this.router.navigate(['/client/course-search'], {
+			queryParams: {
+				searchString: this.courseSearchTerm.trim(),
+				pageIndex: 1,
+				pageSize: 10,
+				category: 'All',
+			},
+		});
+	}
+
 	onShowAccountOption() {
 		this.showAccountOption = true;
 	}
@@ -90,6 +109,7 @@ export class HeaderComponent {
 	}
 
 	logout() {
+		this.accountService.apiLogout().pipe(take(1)).subscribe();
 		this.accountService.logout();
 		this.router.navigateByUrl('');
 	}

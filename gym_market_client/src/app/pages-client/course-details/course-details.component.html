@@ -3,57 +3,227 @@
     <!-- Hero Section -->
     <header class="course-hero">
       <div class="container" appReveal>
-        <div class="course-hero__content">
-          <div class="course-hero__meta">
-            <span class="category-badge">{{course.category}}</span>
-            <span class="rating-badge">★ {{course.rating || '4.5'}}</span>
-          </div>
-          <h1 class="course-hero__title section-title">{{course.title}}</h1>
-          <div class="trainer-brief">
-            <div class="trainer-brief__avatar">👤</div>
-            <div class="trainer-brief__info">
-              <span class="trainer-brief__name">Trainer Name</span>
-              <span class="trainer-brief__role">Professional {{course.category}} Coach</span>
+        <div class="course-hero__grid">
+          <!-- Hero Title & Trainer -->
+          <div class="course-hero__left">
+            <div class="course-hero__meta">
+              <span class="category-badge">{{course.category}}</span>
+              <span class="rating-badge">★ {{course.rating || '4.5'}}</span>
             </div>
+            <h1 class="course-hero__title section-title">{{course.title}}</h1>
+            
+            <!-- Trainer Card -->
+            <div class="trainer-brief">
+              <div class="trainer-brief__avatar">
+                <img
+                  [src]="trainerInfo?.profilePicture || DEFAULT_AVATAR_IMAGE_URL"
+                  [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL"
+                  alt="{{trainerInfo?.name || 'Trainer'}}"
+                >
+              </div>
+              <div class="trainer-brief__info">
+                <span class="trainer-brief__name">{{trainerInfo?.name || 'Trainer Name'}}</span>
+                <span class="trainer-brief__role">{{trainerInfo?.certification || 'Professional Coach'}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Enroll Actions Card -->
+          <div class="course-hero__right">
+            <gm-card class="enroll-card gl-2">
+              <div class="enroll-card__price">
+                <span class="currency">$</span>
+                <span class="amount">{{course.price | number:'1.0-0'}}</span>
+              </div>
+              <div class="enroll-card__stats">
+                <div class="stat-item">
+                  <span class="stat-item__label">DURATION</span>
+                  <span class="stat-item__value">{{course.duration}} Days</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-item__label">START DATE</span>
+                  <span class="stat-item__value">{{course.startDate | date}}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-item__label">PARTICIPANTS</span>
+                  <span class="stat-item__value">Up to {{course.maxParticipants}}</span>
+                </div>
+              </div>
+              @if (hasPaidAccess) {
+                <gm-button variant="primary" (clicked)="goToContent()">GO TO COURSE CONTENT</gm-button>
+              } @else if (isPendingPayment) {
+                <gm-button variant="primary" (clicked)="goToPayment()">COMPLETE PAYMENT</gm-button>
+              } @else {
+                <gm-button variant="primary" (clicked)="addToCard(course.courseId)">ENROLL NOW</gm-button>
+              }
+              <p class="enroll-card__guarantee">✓ 30-Day Results Guarantee</p>
+            </gm-card>
           </div>
         </div>
       </div>
     </header>
+
     <main class="course-main container">
+      <!-- 2-Column Grid (Video Player & Info / Sidebar Tasks) -->
       <div class="course-grid">
-        <!-- Left Column: Content -->
+        <!-- Left Column: Video Player & Tabs -->
         <div class="course-content">
-          <!-- Media Gallery -->
-          <section class="course-section" appReveal>
-            <h2 class="section-title">GALLERY</h2>
-            <div class="media-gallery">
-              <div class="media-gallery__filmstrip">
-                @for (img of images; track img) {
-                  <div class="media-gallery__item" (click)="showImage(img)">
-                    <img [src]="img" alt="Course image">
-                  </div>
+          <!-- Day Selector Tab Bar -->
+          <div class="day-tabs">
+            @for (plan of dayPlans; track plan.dayNumber) {
+              <button 
+                class="day-tab-btn" 
+                [class.active]="selectedDay === plan.dayNumber"
+                (click)="selectDay(plan.dayNumber)">
+                Day {{plan.dayNumber}}
+                @if (plan.dayNumber === 1) {
+                  <span class="day-emoji">👶</span>
                 }
+              </button>
+            }
+          </div>
+
+          <!-- Active Exercise Player Card -->
+          @if (activeExercise) {
+            <gm-card class="exercise-player gl">
+              <div class="exercise-player__header">
+                <div class="exercise-player__title-group">
+                  <span class="exercise-count">Exercise {{getActiveExerciseIndex()}}/{{getActiveDayExercisesCount()}}</span>
+                  <h3 class="exercise-name">{{activeExercise.type}}</h3>
+                </div>
+                <!-- Heart / Favorite Button -->
+                <button class="fav-btn" [class.active]="isFavorited" (click)="toggleFavorite()">
+                  <i class="fa-solid fa-heart"></i>
+                </button>
               </div>
-              @if (videos.length > 0) {
-                <div class="media-gallery__videos">
-                  @for (vid of videos; track vid) {
-                    <div class="video-wrapper">
-                      <video controls>
-                        <source [src]="vid" type="video/mp4">
-                      </video>
+
+              <!-- Media Visual Area -->
+              <div class="exercise-media">
+                <img [src]="activeExercise.image || DEFAULT_IMAGE_URL" [fallbackSrc]="DEFAULT_IMAGE_URL" [alt]="activeExercise.name" class="media-image">
+                
+                <!-- Circular Timer/Control Overlay -->
+                <div class="media-overlay-play">
+                  <div class="timer-ring-wrapper" (click)="togglePlay()">
+                    <svg class="timer-ring" width="100" height="100">
+                      <!-- Background circle -->
+                      <circle class="timer-ring__circle-bg" stroke="rgba(255,255,255,0.2)" stroke-width="6" fill="transparent" r="42" cx="50" cy="50"/>
+                      <!-- Active progress circle -->
+                      <circle class="timer-ring__circle" 
+                              stroke="var(--warning)" 
+                              stroke-width="6" 
+                              fill="transparent" 
+                              r="42" cx="50" cy="50"
+                              [style.strokeDashoffset]="263.89 - (263.89 * getProgressPercent() / 100)"
+                              stroke-dasharray="263.89"
+                              stroke-linecap="round"/>
+                    </svg>
+                    <button class="play-btn-inner">
+                      <i class="fa-solid" [class.fa-play]="!isPlaying" [class.fa-pause]="isPlaying"></i>
+                    </button>
+                  </div>
+                  <div class="timer-text">{{timerValue}}s</div>
+                </div>
+
+                <!-- Slider & Sound Controls on the Right -->
+                <div class="media-controls-right">
+                  <div class="slider-container">
+                    <input type="range" min="0" max="100" [value]="volumeLevel" (input)="adjustVolume($event)" class="vertical-slider">
+                  </div>
+                  <button class="sound-btn" (click)="toggleMute()">
+                    <i class="fa-solid" [class.fa-volume-high]="!isMuted && volumeLevel > 0" [class.fa-volume-xmark]="isMuted || volumeLevel === 0"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Stats Boxes -->
+              <div class="exercise-stats">
+                <!-- Stat 1: Exercise -->
+                <div class="ex-stat-card bg-yellow">
+                  <div class="ex-stat-icon"><i class="fa-solid fa-person-running"></i></div>
+                  <div class="ex-stat-content">
+                    <span class="ex-stat-val">{{activeExercise.name}}</span>
+                    <span class="ex-stat-lbl">EXERCISE</span>
+                  </div>
+                </div>
+
+                <!-- Stat 2: Difficulty -->
+                <div class="ex-stat-card bg-purple">
+                  <div class="ex-stat-icon"><i class="fa-solid fa-star"></i></div>
+                  <div class="ex-stat-content">
+                    <span class="ex-stat-val">{{activeExercise.difficulty}} Difficult</span>
+                    <span class="ex-stat-lbl">DIFFICULT</span>
+                  </div>
+                </div>
+
+                <!-- Stat 3: Total Time -->
+                <div class="ex-stat-card bg-green">
+                  <div class="ex-stat-icon"><i class="fa-solid fa-clock"></i></div>
+                  <div class="ex-stat-content">
+                    <span class="ex-stat-val">{{activeExercise.totalTime}}</span>
+                    <span class="ex-stat-lbl">TOTAL TIME</span>
+                  </div>
+                </div>
+
+                <!-- Stat 4: Real Time -->
+                <div class="ex-stat-card bg-pink">
+                  <div class="ex-stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                  <div class="ex-stat-content">
+                    <span class="ex-stat-val">{{activeExercise.realTime}}</span>
+                    <span class="ex-stat-lbl">REAL TIME</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="exercise-description">
+                <h4>DESCRIPTION</h4>
+                <div class="desc-steps">
+                  @for (step of activeExercise.steps; track step; let idx = $index) {
+                    <div class="desc-step-item">
+                      <span class="step-num">{{idx + 1}}</span>
+                      <p class="step-text">{{step}}</p>
                     </div>
                   }
                 </div>
-              }
-            </div>
-          </section>
-          <!-- Description -->
+              </div>
+            </gm-card>
+          }
+
+          <!-- Media Gallery -->
+          @if (images.length > 0 || videos.length > 0) {
+            <section class="course-section mt-12" appReveal>
+              <h2 class="section-title">COURSE GALLERY</h2>
+              <div class="media-gallery">
+                <div class="media-gallery__filmstrip">
+                  @for (img of images; track img) {
+                    <div class="media-gallery__item" (click)="showImage(img)">
+                      <img [src]="img || DEFAULT_COURSE_THUMBNAIL_URL" [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL" alt="Course image">
+                    </div>
+                  }
+                </div>
+                @if (videos.length > 0) {
+                  <div class="media-gallery__videos">
+                    @for (vid of videos; track vid) {
+                      <div class="video-wrapper">
+                        <video controls>
+                          <source [src]="vid" type="video/mp4">
+                        </video>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </section>
+          }
+
+          <!-- General Description -->
           <section class="course-section" appReveal>
             <h2 class="section-title">ABOUT THIS COURSE</h2>
             <div class="course-description">
               <p>{{course.description}}</p>
             </div>
           </section>
+
           <!-- Course Options -->
           @if (courseOptions.length > 0) {
             <section class="course-section" appReveal>
@@ -71,33 +241,43 @@
               </div>
             </section>
           }
-          <!-- Reviews -->
+
+          <!-- Reviews Section -->
           <section class="course-section">
             <div class="section-header">
-              <h2 class="section-title">REVIEWS</h2>
+              <h2 class="section-title">STUDENT REVIEWS</h2>
               <div class="rating-summary">
                 <span class="rating-summary__value">{{course.rating || '4.5'}}</span>
                 <div class="rating-summary__stars">★★★★★</div>
               </div>
             </div>
-            <!-- Add Review -->
-            <gm-card class="add-review">
-              <h3>Add your review</h3>
-              <div class="add-review__form">
-                <gm-input label="Rating (0-5)" type="number" [(value)]="rate" />
-                <gm-input label="Your thoughts..." [(value)]="comment" />
-                <gm-button variant="secondary" (clicked)="addRating()">POST REVIEW</gm-button>
-              </div>
-            </gm-card>
+            <!-- Add Review: only students with a paid enrollment can post -->
+            @if (canReview && !hasReviewed) {
+              <gm-card class="add-review gl">
+                <h3>Add your review</h3>
+                <div class="add-review__form">
+                  <gm-input label="Rating (0-5)" type="number" [(value)]="rate" />
+                  <gm-input label="Your thoughts..." [(value)]="comment" />
+                  <gm-button variant="secondary" (clicked)="addRating()">POST REVIEW</gm-button>
+                </div>
+              </gm-card>
+            } @else if (canReview && hasReviewed) {
+              <gm-card class="add-review gl">
+                <p class="add-review__notice">You have already reviewed this course. Thanks for your feedback!</p>
+              </gm-card>
+            } @else {
+              <gm-card class="add-review gl">
+                <p class="add-review__notice">Only enrolled students can leave a review. Enroll and complete your payment to share your experience.</p>
+              </gm-card>
+            }
             <!-- Reviews List -->
             <div class="reviews-list">
               @for (r of (showAll ? ratings : ratings.slice(0, 3)); track r) {
                 <div class="review-item">
                   <div class="review-item__header">
                     <span class="review-item__rating">★ {{r.ratingValue}}</span>
-                    <span class="review-item__date">{{r.ratingDate | date}}</span>
                   </div>
-                  <p class="review-item__text">{{r.comment}}</p>
+                  <p class="review-item__text">{{r.reviewComment}}</p>
                 </div>
               }
               @if (ratings.length > 3) {
@@ -108,29 +288,77 @@
             </div>
           </section>
         </div>
-        <!-- Right Column: Sidebar -->
+
+        <!-- Right Column: Sidebar (Task List, Level, Friends) -->
         <aside class="course-sidebar">
-          <gm-card class="enroll-card gl-2">
-            <div class="enroll-card__price">
-              <span class="currency">$</span>
-              <span class="amount">{{course.price | number:'1.0-0'}}</span>
+          <!-- Exercises Checklist -->
+          <gm-card class="sidebar-card gl-2">
+            <h4 class="sidebar-title">EXERCISES</h4>
+            <div class="exercise-checklist">
+              @for (ex of getActiveDayExercises(); track ex.id) {
+                <div class="ex-check-item" [class.active]="activeExercise?.id === ex.id" (click)="selectExercise(ex)">
+                  <div class="ex-check-thumb">
+                    <img [src]="ex.image || DEFAULT_IMAGE_URL" [fallbackSrc]="DEFAULT_IMAGE_URL" alt="">
+                  </div>
+                  <div class="ex-check-info">
+                    <span class="ex-check-name">{{ex.name}}</span>
+                    <div class="ex-check-meta">
+                      <span><i class="fa-solid fa-clock"></i> {{ex.duration}}</span>
+                      <span><i class="fa-solid fa-fire"></i> {{ex.calories}}</span>
+                    </div>
+                  </div>
+                  <!-- Status Indicator -->
+                  <div class="ex-check-status">
+                    @if (ex.status === 'done') {
+                      <span class="status-icon success-icon"><i class="fa-solid fa-circle-check"></i></span>
+                    } @else if (ex.status === 'active') {
+                      <span class="status-icon active-icon"><i class="fa-solid fa-circle-play"></i></span>
+                    } @else if (ex.status === 'failed') {
+                      <span class="status-icon error-icon"><i class="fa-solid fa-circle-xmark"></i></span>
+                    } @else {
+                      <span class="status-icon todo-icon"><i class="fa-regular fa-circle"></i></span>
+                    }
+                  </div>
+                </div>
+              }
             </div>
-            <div class="enroll-card__stats">
-              <div class="stat-item">
-                <span class="stat-item__label">DURATION</span>
-                <span class="stat-item__value">{{course.duration}} Days</span>
+          </gm-card>
+
+          <!-- Level Widget -->
+          <gm-card class="sidebar-card level-card gl-2">
+            <div class="level-card__content">
+              <div class="level-card__icon">
+                <span class="emoji-level">👶</span>
               </div>
-              <div class="stat-item">
-                <span class="stat-item__label">START DATE</span>
-                <span class="stat-item__value">{{course.startDate | date}}</span>
+              <div class="level-card__details">
+                <span class="level-title">BEGINNER</span>
+                <span class="level-sub">YOUR LEVEL</span>
               </div>
-              <div class="stat-item">
-                <span class="stat-item__label">PARTICIPANTS</span>
-                <span class="stat-item__value">Up to {{course.maxParticipants}}</span>
+              <div class="level-score">
+                <i class="fa-solid fa-dumbbell"></i>
+                <span class="score-val">1021</span>
               </div>
             </div>
-            <gm-button variant="primary" (clicked)="addToCard(course.courseId)">ENROLL NOW</gm-button>
-            <p class="enroll-card__guarantee">✓ 30-Day Results Guarantee</p>
+          </gm-card>
+
+          <!-- Friends Widget -->
+          <gm-card class="sidebar-card friends-card gl-2">
+            <h4 class="sidebar-title">MY FRIENDS</h4>
+            <div class="friends-container">
+              <div class="friends-avatars">
+                @for (friend of mockFriends; track friend.name) {
+                  <div class="friend-avatar-wrapper" [title]="friend.name">
+                    <img [src]="friend.avatar || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="">
+                  </div>
+                }
+                <div class="friend-avatar-more">
+                  <span>+10</span>
+                </div>
+              </div>
+              <button class="add-friend-btn">
+                <i class="fa-solid fa-user-plus"></i>
+              </button>
+            </div>
           </gm-card>
         </aside>
       </div>
@@ -142,6 +370,6 @@
 @if (url) {
   <div class="image-modal" (click)="showImage(null)">
     <div class="image-modal__close">✕</div>
-    <img [src]="url" alt="Fullscreen preview" (click)="$event.stopPropagation()">
+    <img [src]="url" [fallbackSrc]="DEFAULT_IMAGE_URL" alt="Fullscreen preview" (click)="$event.stopPropagation()">
   </div>
 }

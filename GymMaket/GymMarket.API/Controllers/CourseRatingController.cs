@@ -1,14 +1,14 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
 using GymMarket.API.DTOs.CourseRating;
-using GymMarket.API.Models;
-using GymMarket.API.Repositories;
 using GymMarket.API.Repositories.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymMarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CourseRatingController: ControllerBase
     {
         private readonly ICourseRatingRepository _courseRatingRepository;
@@ -22,8 +22,16 @@ namespace GymMarket.API.Controllers
         [HttpPost("add-course-rating")]
         public async Task<IActionResult> AddCourseRating(CourseRatingCreateDto courseRatingCreateDTO)
         {
-            var resposen = await _courseRatingRepository.AddRating(courseRatingCreateDTO);
-            return StatusCode(resposen.StatusCode, resposen.Message);
+            // The reviewer is always the authenticated student; never trust an id from the body.
+            var studentId = User.FindFirstValue("studentId");
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "NOT_ENROLLED");
+            }
+
+            var response = await _courseRatingRepository.AddRating(courseRatingCreateDTO, studentId);
+
+            return StatusCode(response.StatusCode, response.Message);
         }
 
         [HttpGet("get-course-rating/{courseId}")]

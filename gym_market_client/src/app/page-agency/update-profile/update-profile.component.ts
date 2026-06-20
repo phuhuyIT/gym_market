@@ -13,18 +13,22 @@ import { NoticeModalStore } from '../../stores/notice.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserInfoResponse } from '../../core/models/auth.model';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
-import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { DEFAULT_AVATAR_IMAGE_URL, DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
+import { VIETNAM_BANKS } from '../../utilities/vietnam-banks.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-update-profile',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ReactiveFormsModule, GmButtonComponent],
+    imports: [ReactiveFormsModule, GmButtonComponent, FallbackSrcDirective],
     templateUrl: './update-profile.component.html',
     styleUrl: './update-profile.component.scss'
 })
 export class UpdateProfileComponent implements OnInit {
 	userStore = inject(UserStore);
 	updateForm!: FormGroup;
+	readonly banks = VIETNAM_BANKS;
+	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
 
 	loader = inject(LoaderModalStore);
 	errorModal = inject(ErrorModalStore);
@@ -48,6 +52,9 @@ export class UpdateProfileComponent implements OnInit {
 			bio: ['', [Validators.required]],
 			experience: [0, [Validators.required, Validators.min(0)]],
 			certification: ['', [Validators.required]],
+			bankBin: [''],
+			bankAccountNo: [''],
+			bankAccountName: [''],
 		});
 
 		this.getUserInfo();
@@ -58,7 +65,7 @@ export class UpdateProfileComponent implements OnInit {
 		const userId = this.userStore.id();
 		if (userId !== null) {
 			this.userService
-				.getUserInfo(userId)
+				.getUserInfo()
 				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 					next: (res: UserInfoResponse) => {
@@ -89,6 +96,9 @@ export class UpdateProfileComponent implements OnInit {
 							bio: res.bio,
 							experience: res.experience,
 							certification: res.certification,
+							bankBin: res.bankBin ?? '',
+							bankAccountNo: res.bankAccountNo ?? '',
+							bankAccountName: res.bankAccountName ?? '',
 						});
 					},
 					error: () => {
@@ -114,6 +124,9 @@ export class UpdateProfileComponent implements OnInit {
 			rating: 0,
 			updatedAt: new Date(),
 			userId: this.userStore.id() ?? '',
+			bankBin: this.updateForm.controls['bankBin'].value,
+			bankAccountNo: this.updateForm.controls['bankAccountNo'].value,
+			bankAccountName: this.updateForm.controls['bankAccountName'].value,
 		};
 
 		patchState(this.loader, { isShow: true });
@@ -136,11 +149,11 @@ export class UpdateProfileComponent implements OnInit {
 	}
 
 	onUpdateUser() {
+		// The backend updates the authenticated user; no id is sent.
 		const user: UpdateUserDto = {
 			address: this.updateForm.controls['address'].value,
 			avatar: this.updateForm.controls['profilePicture'].value,
 			fullName: this.updateForm.controls['fullName'].value,
-			id: this.userStore.id(),
 			phoneNumber: this.updateForm.controls['phoneNumber'].value,
 			status: null,
 		};

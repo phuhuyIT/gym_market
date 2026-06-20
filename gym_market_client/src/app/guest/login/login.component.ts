@@ -86,7 +86,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 				next: (res: LoginResponse) => {
 					this.loading = false;
 					patchState(this.loader, { isShow: false });
-					this.accountService.saveToken(res.token);
+					this.accountService.saveToken(res.token, res.refreshToken);
 					this.accountService.checkLogin();
 					this.navigateAfterLogin();
 				},
@@ -115,7 +115,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 				next: (res: LoginResponse) => {
 					this.loading = false;
 					patchState(this.loader, { isShow: false });
-					this.accountService.saveToken(res.token);
+					this.accountService.saveToken(res.token, res.refreshToken);
 					this.accountService.checkLogin();
 					this.navigateAfterLogin();
 				},

@@ -11,9 +11,11 @@ import { UserInfoResponse } from '../core/models/auth.model';
 export class UserService {
 	constructor(private http: HttpClient) {}
 
-	getUserInfo(userId: string | null): Observable<UserInfoResponse> {
+	// Returns the authenticated caller's own profile; the backend resolves the
+	// user from the JWT, so no id is sent.
+	getUserInfo(): Observable<UserInfoResponse> {
 		return this.http.get<UserInfoResponse>(
-			`${environment.baseApi}/users/get-user-info/${userId}`
+			`${environment.baseApi}/users/get-user-info`
 		);
 	}
 

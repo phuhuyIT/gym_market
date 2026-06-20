@@ -16,9 +16,11 @@ export class MessageService {
 		);
 	}
 
-	seenMessage(userId: string | null, conversationId: number): Observable<void> {
-		return this.http.get<void>(
-			`${environment.baseApi}/Conversations/seen-message/${userId}/${conversationId}`
+	// The backend resolves the user from the JWT.
+	seenMessage(conversationId: number): Observable<void> {
+		return this.http.post<void>(
+			`${environment.baseApi}/Conversations/seen-message/${conversationId}`,
+			{}
 		);
 	}
 }

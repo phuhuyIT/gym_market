@@ -24,7 +24,13 @@ For a complete and detailed list of all system endpoints, backend API controller
 
 ## 🚀 Quick Start Guide
 
-To run GymMarket locally, follow the instructions in the **[Project Startup Guide](file:///workspaces/gym_market/RUN_GUIDE.md)**:
+To run GymMarket locally:
+
+```bash
+npm run dev
+```
+
+This starts infrastructure, migrations, backend services, and the Angular client. For individual service commands and troubleshooting, see the **[Project Startup Guide](file:///workspaces/gym_market/RUN_GUIDE.md)**.
 
 1. **Infrastructure (MinIO & MSSQL):**
    ```bash

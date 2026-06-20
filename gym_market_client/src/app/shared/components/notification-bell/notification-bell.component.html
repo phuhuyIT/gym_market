@@ -1,0 +1,51 @@
+<div class="notif-wrap" (click)="$event.stopPropagation()">
+  <button class="notif-btn" (click)="togglePanel($event)" aria-label="Notifications">
+    <svg viewBox="0 0 24 24" width="20" height="20">
+      <path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+    </svg>
+    @if (notificationService.unreadCount() > 0) {
+      <span class="notif-badge">{{ notificationService.unreadCount() > 99 ? '99+' : notificationService.unreadCount() }}</span>
+    }
+  </button>
+
+  @if (showPanel) {
+    <div
+      class="notif-panel"
+      [class.notif-panel--left]="align === 'left'"
+      [ngStyle]="mode === 'fixed' ? panelStyle : null"
+    >
+      <div class="notif-panel-header">
+        <h4>Notifications</h4>
+        @if (notificationService.unreadCount() > 0) {
+          <button class="notif-mark-all" (click)="markAllRead($event)">Mark all as read</button>
+        }
+      </div>
+
+      <div class="notif-list">
+        @for (item of notificationService.notifications(); track item.id) {
+          <button class="notif-item" [class.notif-item--unread]="!item.isRead" (click)="onNotificationClick(item)">
+            <div class="notif-item-body">
+              <span class="notif-item-title">{{ item.title }}</span>
+              @if (item.content) {
+                <p class="notif-item-content">{{ item.content }}</p>
+              }
+              <span class="notif-item-time">{{ timeAgo(item.createdAt) }}</span>
+            </div>
+            @if (!item.isRead) {
+              <span class="notif-unread-dot"></span>
+            }
+          </button>
+        }
+
+        @if (notificationService.notifications().length === 0) {
+          <div class="notif-empty">
+            <svg viewBox="0 0 24 24" width="32" height="32">
+              <path fill="currentColor" opacity="0.3" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+            <p>No notifications yet</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

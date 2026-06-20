@@ -57,55 +57,100 @@ namespace GymMarket.API.Repositories
 
         public async Task<ApiResponse> UpdateCourse(CourseUpdateDTO courseUpdateDTO)
         {
-            // map TUpdateDto to TEntity
-            var mapEntity = _mapper.Map<CourseUpdateDTO, Course>(courseUpdateDTO);
+            // The DTO carries no TrainerId; keep the current owner so the full-entity
+            // Update below can't clear (or transfer) course ownership.
+            var currentTrainerId = await _context.Courses
+                .AsNoTracking()
+                .Where(c => c.CourseId == courseUpdateDTO.CourseId)
+                .Select(c => c.TrainerId)
+                .FirstOrDefaultAsync();
 
-
-
-            if (courseUpdateDTO.Images.Count > 0)
-            {
-                var oldFiles = await _context.FileCourses.AsNoTrackingWithIdentityResolution()
-                          .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == "IMAGE")
-                          .ToListAsync();
-                _context.FileCourses.RemoveRange(oldFiles);
-                await _context.SaveChangesAsync();
-            }
-
-            if (courseUpdateDTO.Videos.Count > 0)
-            {
-                var oldFiles = await _context.FileCourses.AsNoTrackingWithIdentityResolution()
-                          .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == "VIDEO")
-                          .ToListAsync();
-                _context.FileCourses.RemoveRange(oldFiles);
-                await _context.SaveChangesAsync();
-            }
-
-            var rAddFile = await _minioService.UploadFiles(new DTOs.FileMinIO.FileAdd
-            {
-                CourseId = courseUpdateDTO.CourseId,
-                Images = courseUpdateDTO.Images,
-                Videos = courseUpdateDTO.Videos,
-            });
-
-            _context.Courses.Update(mapEntity);
-
-            var r = await _context.SaveChangesAsync();
-            if (r > 0)
+            if (currentTrainerId == null)
             {
                 return new ApiResponse
                 {
-                    Errors = [],
-                    Message = "SUCCESS",
-                    StatusCode = 200,
-                    Success = true
+                    Errors = ["COURSE_NOT_FOUND"],
+                    StatusCode = 404,
+                    Success = false
                 };
             }
-            return new ApiResponse
+
+            var mapEntity = _mapper.Map<CourseUpdateDTO, Course>(courseUpdateDTO);
+            mapEntity.TrainerId = currentTrainerId;
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                Errors = ["COURSE_UPDATE_FAILED"],
-                StatusCode = 400,
-                Success = false
-            };
+                if (courseUpdateDTO.Images.Count > 0)
+                {
+                    var oldImageFiles = await _context.FileCourses
+                              .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == FileType.Image)
+                              .ToListAsync();
+                    _context.FileCourses.RemoveRange(oldImageFiles);
+                }
+
+                if (courseUpdateDTO.Videos.Count > 0)
+                {
+                    var oldVideoFiles = await _context.FileCourses
+                              .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == FileType.Video)
+                              .ToListAsync();
+                    _context.FileCourses.RemoveRange(oldVideoFiles);
+                }
+
+                await _minioService.UploadFiles(new DTOs.FileMinIO.FileAdd
+                {
+                    CourseId = courseUpdateDTO.CourseId,
+                    Images = courseUpdateDTO.Images,
+                    Videos = courseUpdateDTO.Videos,
+                });
+
+                _context.Courses.Update(mapEntity);
+
+                // Keep open (unpaid) payments in step with the new price, so a student who
+                // registered earlier but hasn't paid yet owes the current amount. Paid
+                // payments are never touched — a settled amount must not change when the
+                // price changes. This mirrors the lazy re-sync in
+                // CourseRegistrationRepository.GetCoursePaymentInfo.
+                var newPrice = (mapEntity.Price ?? 0) + (mapEntity.AdditionalPrice ?? 0);
+                var openPayments = await _context.Payments
+                    .Where(p => p.CourseId == courseUpdateDTO.CourseId
+                             && (p.PaymentStatus == PaymentStatus.Pending
+                              || p.PaymentStatus == PaymentStatus.NotStarted))
+                    .ToListAsync();
+                foreach (var payment in openPayments)
+                {
+                    if (payment.PaymentAmount != newPrice)
+                    {
+                        payment.PaymentAmount = newPrice;
+                        payment.UpdatedAt = DateTime.UtcNow;
+                    }
+                }
+
+                var r = await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                if (r > 0)
+                {
+                    return new ApiResponse
+                    {
+                        Errors = [],
+                        Message = "SUCCESS",
+                        StatusCode = 200,
+                        Success = true
+                    };
+                }
+                return new ApiResponse
+                {
+                    Errors = ["COURSE_UPDATE_FAILED"],
+                    StatusCode = 400,
+                    Success = false
+                };
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<GetCourseDto?> GetCourse(string courseId)
@@ -124,7 +169,7 @@ namespace GymMarket.API.Repositories
             return _mapper.Map<Course, GetCourseDto>(course);
         }
 
-        public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = 15, string? searchString = null, string? category = null)
+        public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = Defaults.PageSize, string? searchString = null, string? category = null)
         {
             var courses = await _context.Courses
                 .AsNoTrackingWithIdentityResolution()

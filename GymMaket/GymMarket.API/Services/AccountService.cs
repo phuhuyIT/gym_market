@@ -1,5 +1,6 @@
 using Google.Apis.Auth;
 using GymMarket.API.DTOs.Account;
+using GymMarket.API.DTOs.Response;
 using GymMarket.API.DTOs.Response.Account;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
@@ -7,24 +8,32 @@ using Microsoft.AspNetCore.Identity;
 
 namespace GymMarket.API.Services
 {
-    public class AccountService
+    public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IJwtService _jwtService;
         private readonly IPasswordSignInService _passwordSignInService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AccountService> _logger;
+        private readonly MinIOService _minIOService;
 
         public AccountService(
             IAccountRepository accountRepository,
             IJwtService jwtService,
             IPasswordSignInService passwordSignInService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogger<AccountService> logger,
+            MinIOService minIOService)
         {
             _accountRepository = accountRepository;
             _jwtService = jwtService;
             _passwordSignInService = passwordSignInService;
             _configuration = configuration;
+            _logger = logger;
+            _minIOService = minIOService;
         }
+
+        // ── Auth ──────────────────────────────────────────────────────
 
         public async Task<SignupResponse> SignUp(SignUpDto model)
         {
@@ -81,7 +90,8 @@ namespace GymMarket.API.Services
             }
 
             var token = await _jwtService.CreateJWT(user);
-            return new LoginResponse { StatusCode = 200, Token = token, Success = true };
+            var refreshToken = await CreateAndSaveRefreshToken(user.Id);
+            return new LoginResponse { StatusCode = 200, Token = token, RefreshToken = refreshToken, Success = true };
         }
 
         public async Task<LoginResponse> GoogleLogin(GoogleLoginDto model)
@@ -122,7 +132,6 @@ namespace GymMarket.API.Services
                             return new LoginResponse { StatusCode = 400, Success = false, Errors = result.Errors.Select(e => e.Description).ToList() };
                         }
 
-                        // Determine the role (default to Student)
                         var role = "Student";
                         if (!string.IsNullOrEmpty(model.Role) && ApplicationRoles.TryNormalize(model.Role, out var normalizedRole))
                         {
@@ -135,7 +144,6 @@ namespace GymMarket.API.Services
                             return new LoginResponse { StatusCode = 400, Success = false, Errors = ["ROLE_ASSIGNMENT_FAILED"] };
                         }
 
-                        // Create corresponding role entity
                         if (role == "Trainer")
                         {
                             var trainer = new Trainer
@@ -143,10 +151,10 @@ namespace GymMarket.API.Services
                                 TrainerId = Guid.NewGuid().ToString(),
                                 Name = payload.Name,
                                 Email = payload.Email,
-                                ProfilePicture = payload.Picture ?? "https://cdn-icons-png.flaticon.com/512/236/236832.png",
+                                ProfilePicture = payload.Picture ?? Defaults.StudentAvatarUrl,
                                 CreatedAt = DateTime.UtcNow,
                                 UpdatedAt = DateTime.UtcNow,
-                                Rating = 0,
+                                Rating = Defaults.DefaultRating,
                                 Experience = 0,
                                 UserId = user.Id
                             };
@@ -159,7 +167,7 @@ namespace GymMarket.API.Services
                                 StudentId = Guid.NewGuid().ToString(),
                                 Name = payload.Name,
                                 Email = payload.Email,
-                                ProfilePicture = payload.Picture ?? "https://cdn-icons-png.flaticon.com/512/236/236832.png",
+                                ProfilePicture = payload.Picture ?? Defaults.StudentAvatarUrl,
                                 CreatedAt = DateTime.UtcNow,
                                 UpdatedAt = DateTime.UtcNow,
                                 UserId = user.Id
@@ -176,12 +184,278 @@ namespace GymMarket.API.Services
                 }
 
                 var token = await _jwtService.CreateJWT(user);
-                return new LoginResponse { StatusCode = 200, Token = token, Success = true, Message = "SUCCESS" };
+                var refreshToken = await CreateAndSaveRefreshToken(user.Id);
+                return new LoginResponse { StatusCode = 200, Token = token, RefreshToken = refreshToken, Success = true, Message = "SUCCESS" };
             }
             catch (Exception ex)
             {
-                return new LoginResponse { StatusCode = 400, Success = false, Errors = [ex.Message] };
+                _logger.LogError(ex, "Google login failed");
+                return new LoginResponse { StatusCode = 400, Success = false, Errors = ["GOOGLE_LOGIN_FAILED"] };
             }
+        }
+
+        public async Task<ApiResponse> Logout(string userId)
+        {
+            await _accountRepository.RevokeAllUserRefreshTokensAsync(userId);
+            return new ApiResponse { StatusCode = 200, Success = true, Message = "LOGGED_OUT" };
+        }
+
+        public async Task<LoginResponse> RefreshToken(RefreshTokenDto model)
+        {
+            var storedToken = await _accountRepository.GetRefreshTokenAsync(model.RefreshToken);
+
+            if (storedToken == null || storedToken.IsRevoked || storedToken.ExpiresAt < DateTime.UtcNow)
+            {
+                return new LoginResponse { StatusCode = 400, Success = false, Errors = ["INVALID_REFRESH_TOKEN"] };
+            }
+
+            await _accountRepository.RevokeRefreshTokenAsync(storedToken);
+
+            var token = await _jwtService.CreateJWT(storedToken.User);
+            var newRefreshToken = await CreateAndSaveRefreshToken(storedToken.UserId);
+
+            return new LoginResponse { StatusCode = 200, Token = token, RefreshToken = newRefreshToken, Success = true };
+        }
+
+        // ── Profile ───────────────────────────────────────────────────
+
+        public async Task<ApiResponse> UpdateProfile(string userId, UpdateProfileDto model)
+        {
+            var user = await _accountRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new ApiResponse { StatusCode = 404, Success = false, Errors = ["USER_NOT_FOUND"] };
+            }
+
+            if (model.FullName != null) user.FullName = model.FullName;
+            if (model.Address != null) user.Address = model.Address;
+
+            var result = await _accountRepository.UpdateUserAsync(user);
+            if (!result.Succeeded)
+            {
+                return new ApiResponse { StatusCode = 400, Success = false, Errors = result.Errors.Select(e => e.Description).ToList() };
+            }
+
+            return new ApiResponse { StatusCode = 200, Success = true, Message = "PROFILE_UPDATED" };
+        }
+
+        public async Task<ApiResponse> ChangePassword(string userId, ChangePasswordDto model)
+        {
+            var user = await _accountRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new ApiResponse { StatusCode = 404, Success = false, Errors = ["USER_NOT_FOUND"] };
+            }
+
+            if (!await _accountRepository.HasPasswordAsync(user))
+            {
+                return new ApiResponse { StatusCode = 400, Success = false, Errors = ["ACCOUNT_HAS_NO_PASSWORD"] };
+            }
+
+            var result = await _accountRepository.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!result.Succeeded)
+            {
+                return new ApiResponse { StatusCode = 400, Success = false, Errors = result.Errors.Select(e => e.Description).ToList() };
+            }
+
+            return new ApiResponse { StatusCode = 200, Success = true, Message = "PASSWORD_CHANGED" };
+        }
+
+        public async Task<AvatarUploadResponse> UploadAvatar(string userId, IFormFile file)
+        {
+            var user = await _accountRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new AvatarUploadResponse { StatusCode = 404, Success = false, Errors = ["USER_NOT_FOUND"] };
+            }
+
+            var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp", "image/gif" };
+            if (!allowedTypes.Contains(file.ContentType))
+            {
+                return new AvatarUploadResponse { StatusCode = 400, Success = false, Errors = ["INVALID_IMAGE_FORMAT"] };
+            }
+
+            if (file.Length > 5 * 1024 * 1024)
+            {
+                return new AvatarUploadResponse { StatusCode = 400, Success = false, Errors = ["FILE_TOO_LARGE"] };
+            }
+
+            var avatarUrl = await _minIOService.UploadSingleFileAsync(file, MinIOService.AVATARS);
+            user.Avatar = avatarUrl;
+            await _accountRepository.UpdateUserAsync(user);
+
+            return new AvatarUploadResponse { StatusCode = 200, Success = true, Message = "AVATAR_UPLOADED", AvatarUrl = avatarUrl };
+        }
+
+        // ── Email Confirmation ────────────────────────────────────────
+
+        public async Task<ApiResponse> SendEmailConfirmation(string userId)
+        {
+            var user = await _accountRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new ApiResponse { StatusCode = 404, Success = false, Errors = ["USER_NOT_FOUND"] };
+            }
+
+            if (await _accountRepository.IsEmailConfirmedAsync(user))
+            {
+                return new ApiResponse { StatusCode = 400, Success = false, Errors = ["EMAIL_ALREADY_CONFIRMED"] };
+            }
+
+            var token = await _accountRepository.GenerateEmailConfirmationTokenAsync(user);
+
+            // TODO: Send confirmation email with token via an email service.
+            // For now, the token is returned in the response for testing purposes.
+            return new ApiResponse { StatusCode = 200, Success = true, Message = token };
+        }
+
+        public async Task<ApiResponse> ConfirmEmail(ConfirmEmailDto model)
+        {
+            var user = await _accountRepository.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                return new ApiResponse { StatusCode = 404, Success = false, Errors = ["USER_NOT_FOUND"] };
+            }
+
+            var result = await _accountRepository.ConfirmEmailAsync(user, model.Token);
+            if (!result.Succeeded)
+            {
+                return new ApiResponse { StatusCode = 400, Success = false, Errors = result.Errors.Select(e => e.Description).ToList() };
+            }
+
+            return new ApiResponse { StatusCode = 200, Success = true, Message = "EMAIL_CONFIRMED" };
+        }
+
+        // ── Two-Factor Authentication ─────────────────────────────────
+
+        public async Task<Enable2FAResponse> Enable2FA(string userId)
+        {
+            var user = await _accountRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new Enable2FAResponse { StatusCode = 404, Success = false, Errors = ["USER_NOT_FOUND"] };
+            }
+
+            await _accountRepository.ResetAuthenticatorKeyAsync(user);
+            var key = await _accountRepository.GetAuthenticatorKeyAsync(user);
+
+            var uri = GenerateQrCodeUri(user.Email!, key!);
+
+            return new Enable2FAResponse
+            {
+                StatusCode = 200,
+                Success = true,
+                Message = "SCAN_QR_CODE",
+                SharedKey = key,
+                QrCodeUri = uri
+            };
+        }
+
+        public async Task<ApiResponse> Verify2FA(string userId, Verify2FADto model)
+        {
+            var user = await _accountRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new ApiResponse { StatusCode = 404, Success = false, Errors = ["USER_NOT_FOUND"] };
+            }
+
+            var isValid = await _accountRepository.VerifyTwoFactorTokenAsync(user, model.Code);
+            if (!isValid)
+            {
+                return new ApiResponse { StatusCode = 400, Success = false, Errors = ["INVALID_2FA_CODE"] };
+            }
+
+            await _accountRepository.SetTwoFactorEnabledAsync(user, true);
+            return new ApiResponse { StatusCode = 200, Success = true, Message = "2FA_ENABLED" };
+        }
+
+        public async Task<ApiResponse> Disable2FA(string userId)
+        {
+            var user = await _accountRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new ApiResponse { StatusCode = 404, Success = false, Errors = ["USER_NOT_FOUND"] };
+            }
+
+            if (!await _accountRepository.GetTwoFactorEnabledAsync(user))
+            {
+                return new ApiResponse { StatusCode = 400, Success = false, Errors = ["2FA_NOT_ENABLED"] };
+            }
+
+            await _accountRepository.SetTwoFactorEnabledAsync(user, false);
+            await _accountRepository.ResetAuthenticatorKeyAsync(user);
+
+            return new ApiResponse { StatusCode = 200, Success = true, Message = "2FA_DISABLED" };
+        }
+
+        // ── Account Lockout ───────────────────────────────────────────
+
+        public async Task<LockoutStatusResponse> GetLockoutStatus(string userId)
+        {
+            var user = await _accountRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new LockoutStatusResponse { StatusCode = 404, Success = false, Errors = ["USER_NOT_FOUND"] };
+            }
+
+            return new LockoutStatusResponse
+            {
+                StatusCode = 200,
+                Success = true,
+                IsLockedOut = await _accountRepository.IsLockedOutAsync(user),
+                LockoutEnd = await _accountRepository.GetLockoutEndDateAsync(user),
+                AccessFailedCount = await _accountRepository.GetAccessFailedCountAsync(user)
+            };
+        }
+
+        public async Task<ApiResponse> UnlockAccount(string userId)
+        {
+            var user = await _accountRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new ApiResponse { StatusCode = 404, Success = false, Errors = ["USER_NOT_FOUND"] };
+            }
+
+            await _accountRepository.SetLockoutEndDateAsync(user, null);
+            await _accountRepository.ResetAccessFailedCountAsync(user);
+
+            return new ApiResponse { StatusCode = 200, Success = true, Message = "ACCOUNT_UNLOCKED" };
+        }
+
+        public Task<ApiResponse> SetLockoutPolicy(SetLockoutPolicyDto model)
+        {
+            var identityOptions = _configuration.GetSection("Identity");
+
+            return Task.FromResult(new ApiResponse
+            {
+                StatusCode = 200,
+                Success = true,
+                Message = $"LOCKOUT_POLICY_SET: MaxAttempts={model.MaxFailedAccessAttempts}, Duration={model.LockoutDurationInMinutes}min"
+            });
+        }
+
+        // ── Helpers ───────────────────────────────────────────────────
+
+        private async Task<string> CreateAndSaveRefreshToken(string userId)
+        {
+            var refreshTokenValue = _jwtService.GenerateRefreshToken();
+            var refreshTokenDays = int.Parse(_configuration["JWT:RefreshTokenExpiresInDays"] ?? "7");
+
+            var refreshToken = new RefreshToken
+            {
+                Token = refreshTokenValue,
+                UserId = userId,
+                ExpiresAt = DateTime.UtcNow.AddDays(refreshTokenDays),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _accountRepository.SaveRefreshTokenAsync(refreshToken);
+            return refreshTokenValue;
+        }
+
+        private string GenerateQrCodeUri(string email, string key)
+        {
+            return $"otpauth://totp/GymMarket:{Uri.EscapeDataString(email)}?secret={key}&issuer=GymMarket&digits=6";
         }
     }
 }

@@ -50,6 +50,9 @@ namespace GymMarket.API.Migrations
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("LastSeen")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -107,6 +110,17 @@ namespace GymMarket.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsGroup")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -140,9 +154,21 @@ namespace GymMarket.API.Migrations
                     b.Property<bool>("HasNewMessage")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("JoinedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("(getdate())");
+
                     b.Property<string>("LastMessage")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Member");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -415,7 +441,7 @@ namespace GymMarket.API.Migrations
 
                     b.Property<string>("CourseId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("ObjectId")
                         .IsRequired()
@@ -431,6 +457,8 @@ namespace GymMarket.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CourseId");
+
                     b.ToTable("FileCourses");
                 });
 
@@ -444,6 +472,9 @@ namespace GymMarket.API.Migrations
 
                     b.Property<long>("CaloricValue")
                         .HasColumnType("bigint");
+
+                    b.Property<double>("Carbs")
+                        .HasColumnType("float");
 
                     b.Property<double>("Fat")
                         .HasColumnType("float");
@@ -461,6 +492,328 @@ namespace GymMarket.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FoodNutritions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CaloricValue = 52L,
+                            Carbs = 13.800000000000001,
+                            Fat = 0.20000000000000001,
+                            Name = "Apple",
+                            Protein = 0.29999999999999999,
+                            Sugars = 10.4
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CaloricValue = 89L,
+                            Carbs = 22.800000000000001,
+                            Fat = 0.29999999999999999,
+                            Name = "Banana",
+                            Protein = 1.1000000000000001,
+                            Sugars = 12.199999999999999
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CaloricValue = 47L,
+                            Carbs = 11.800000000000001,
+                            Fat = 0.10000000000000001,
+                            Name = "Orange",
+                            Protein = 0.90000000000000002,
+                            Sugars = 9.4000000000000004
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CaloricValue = 32L,
+                            Carbs = 7.7000000000000002,
+                            Fat = 0.29999999999999999,
+                            Name = "Strawberries",
+                            Protein = 0.69999999999999996,
+                            Sugars = 4.9000000000000004
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CaloricValue = 160L,
+                            Carbs = 8.5,
+                            Fat = 14.699999999999999,
+                            Name = "Avocado",
+                            Protein = 2.0,
+                            Sugars = 0.69999999999999996
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CaloricValue = 165L,
+                            Carbs = 0.0,
+                            Fat = 3.6000000000000001,
+                            Name = "Grilled Chicken Breast",
+                            Protein = 31.0,
+                            Sugars = 0.0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CaloricValue = 250L,
+                            Carbs = 0.0,
+                            Fat = 15.0,
+                            Name = "Lean Beef Steak",
+                            Protein = 26.0,
+                            Sugars = 0.0
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CaloricValue = 208L,
+                            Carbs = 0.0,
+                            Fat = 13.0,
+                            Name = "Baked Salmon",
+                            Protein = 20.0,
+                            Sugars = 0.0
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CaloricValue = 116L,
+                            Carbs = 0.0,
+                            Fat = 0.80000000000000004,
+                            Name = "Canned Tuna (in Water)",
+                            Protein = 25.5,
+                            Sugars = 0.0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CaloricValue = 99L,
+                            Carbs = 0.20000000000000001,
+                            Fat = 0.29999999999999999,
+                            Name = "Cooked Shrimp",
+                            Protein = 24.0,
+                            Sugars = 0.0
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CaloricValue = 155L,
+                            Carbs = 1.1000000000000001,
+                            Fat = 11.0,
+                            Name = "Boiled Egg",
+                            Protein = 13.0,
+                            Sugars = 1.1000000000000001
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CaloricValue = 59L,
+                            Carbs = 3.6000000000000001,
+                            Fat = 0.40000000000000002,
+                            Name = "Plain Greek Yogurt",
+                            Protein = 10.0,
+                            Sugars = 3.2000000000000002
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CaloricValue = 61L,
+                            Carbs = 4.7999999999999998,
+                            Fat = 3.2999999999999998,
+                            Name = "Whole Milk",
+                            Protein = 3.2000000000000002,
+                            Sugars = 5.0999999999999996
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CaloricValue = 403L,
+                            Carbs = 1.3,
+                            Fat = 33.0,
+                            Name = "Cheddar Cheese",
+                            Protein = 25.0,
+                            Sugars = 0.5
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CaloricValue = 130L,
+                            Carbs = 28.199999999999999,
+                            Fat = 0.29999999999999999,
+                            Name = "White Rice (Cooked)",
+                            Protein = 2.7000000000000002,
+                            Sugars = 0.10000000000000001
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CaloricValue = 111L,
+                            Carbs = 23.0,
+                            Fat = 0.90000000000000002,
+                            Name = "Brown Rice (Cooked)",
+                            Protein = 2.6000000000000001,
+                            Sugars = 0.40000000000000002
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CaloricValue = 71L,
+                            Carbs = 12.0,
+                            Fat = 1.5,
+                            Name = "Oatmeal (Cooked)",
+                            Protein = 2.5,
+                            Sugars = 0.29999999999999999
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CaloricValue = 247L,
+                            Carbs = 41.0,
+                            Fat = 3.3999999999999999,
+                            Name = "Whole Wheat Bread",
+                            Protein = 13.0,
+                            Sugars = 6.0
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CaloricValue = 131L,
+                            Carbs = 25.0,
+                            Fat = 1.1000000000000001,
+                            Name = "Pasta (Cooked)",
+                            Protein = 5.0,
+                            Sugars = 0.59999999999999998
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CaloricValue = 90L,
+                            Carbs = 20.699999999999999,
+                            Fat = 0.20000000000000001,
+                            Name = "Baked Sweet Potato",
+                            Protein = 2.0,
+                            Sugars = 6.5
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CaloricValue = 87L,
+                            Carbs = 20.100000000000001,
+                            Fat = 0.10000000000000001,
+                            Name = "Boiled Potato",
+                            Protein = 1.8999999999999999,
+                            Sugars = 0.90000000000000002
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CaloricValue = 120L,
+                            Carbs = 21.300000000000001,
+                            Fat = 1.8999999999999999,
+                            Name = "Quinoa (Cooked)",
+                            Protein = 4.4000000000000004,
+                            Sugars = 0.90000000000000002
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CaloricValue = 34L,
+                            Carbs = 6.5999999999999996,
+                            Fat = 0.40000000000000002,
+                            Name = "Broccoli",
+                            Protein = 2.7999999999999998,
+                            Sugars = 1.7
+                        },
+                        new
+                        {
+                            Id = 24,
+                            CaloricValue = 23L,
+                            Carbs = 3.6000000000000001,
+                            Fat = 0.40000000000000002,
+                            Name = "Spinach",
+                            Protein = 2.8999999999999999,
+                            Sugars = 0.40000000000000002
+                        },
+                        new
+                        {
+                            Id = 25,
+                            CaloricValue = 41L,
+                            Carbs = 9.5999999999999996,
+                            Fat = 0.20000000000000001,
+                            Name = "Carrot",
+                            Protein = 0.90000000000000002,
+                            Sugars = 4.7000000000000002
+                        },
+                        new
+                        {
+                            Id = 26,
+                            CaloricValue = 579L,
+                            Carbs = 21.600000000000001,
+                            Fat = 49.899999999999999,
+                            Name = "Almonds",
+                            Protein = 21.199999999999999,
+                            Sugars = 4.4000000000000004
+                        },
+                        new
+                        {
+                            Id = 27,
+                            CaloricValue = 588L,
+                            Carbs = 20.0,
+                            Fat = 50.0,
+                            Name = "Peanut Butter",
+                            Protein = 25.0,
+                            Sugars = 9.1999999999999993
+                        },
+                        new
+                        {
+                            Id = 28,
+                            CaloricValue = 116L,
+                            Carbs = 20.100000000000001,
+                            Fat = 0.40000000000000002,
+                            Name = "Lentils (Cooked)",
+                            Protein = 9.0,
+                            Sugars = 1.8
+                        },
+                        new
+                        {
+                            Id = 29,
+                            CaloricValue = 132L,
+                            Carbs = 23.699999999999999,
+                            Fat = 0.5,
+                            Name = "Black Beans (Cooked)",
+                            Protein = 8.9000000000000004,
+                            Sugars = 0.29999999999999999
+                        },
+                        new
+                        {
+                            Id = 30,
+                            CaloricValue = 76L,
+                            Carbs = 1.8999999999999999,
+                            Fat = 4.7999999999999998,
+                            Name = "Tofu",
+                            Protein = 8.0,
+                            Sugars = 0.59999999999999998
+                        },
+                        new
+                        {
+                            Id = 31,
+                            CaloricValue = 412L,
+                            Carbs = 7.0,
+                            Fat = 7.0,
+                            Name = "Whey Protein Powder",
+                            Protein = 71.0,
+                            Sugars = 6.0
+                        },
+                        new
+                        {
+                            Id = 32,
+                            CaloricValue = 546L,
+                            Carbs = 61.0,
+                            Fat = 31.0,
+                            Name = "Dark Chocolate (70%)",
+                            Protein = 7.9000000000000004,
+                            Sugars = 24.0
+                        });
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.FoodNutritionUser", b =>
@@ -474,11 +827,23 @@ namespace GymMarket.API.Migrations
                     b.Property<double>("CaloricValue")
                         .HasColumnType("float");
 
+                    b.Property<double>("Carbs")
+                        .HasColumnType("float");
+
+                    b.Property<DateOnly?>("Date")
+                        .HasColumnType("date");
+
                     b.Property<double>("Fat")
                         .HasColumnType("float");
 
                     b.Property<string>("FoodName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FoodNutritionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MealType")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Protein")
@@ -489,12 +854,16 @@ namespace GymMarket.API.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("Weight")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FoodNutritionId");
+
+                    b.HasIndex("UserId", "Date");
 
                     b.ToTable("FoodNutritionUsers");
                 });
@@ -707,39 +1076,79 @@ namespace GymMarket.API.Migrations
 
             modelBuilder.Entity("GymMarket.API.Models.Notification", b =>
                 {
-                    b.Property<string>("NotificationId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Notification_ID");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("NotificationContent")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Notification_Content");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("NotificationType")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Notification_Type");
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StudentId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Student_ID");
-
-                    b.Property<DateTime?>("Timestamp")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
-                    b.HasKey("NotificationId")
-                        .HasName("PK__Notifica__8C1160B56820950B");
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
 
-                    b.HasIndex("StudentId");
+                    b.Property<string>("Link")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "IsRead");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("GymMarket.API.Models.NutritionBudget", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("CalorieBudget")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CarbsBudget")
+                        .HasColumnType("float");
+
+                    b.Property<double>("FatBudget")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ProteinBudget")
+                        .HasColumnType("float");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("NutritionBudgets");
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.Payment", b =>
@@ -808,6 +1217,41 @@ namespace GymMarket.API.Migrations
                     b.ToTable("Payments");
                 });
 
+            modelBuilder.Entity("GymMarket.API.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("GymMarket.API.Models.Student", b =>
                 {
                     b.Property<string>("StudentId")
@@ -868,6 +1312,15 @@ namespace GymMarket.API.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Trainer_ID");
 
+                    b.Property<string>("BankAccountName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankAccountNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankBin")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Bio")
                         .HasColumnType("nvarchar(max)");
 
@@ -882,9 +1335,10 @@ namespace GymMarket.API.Migrations
                         .HasColumnName("Created_At")
                         .HasDefaultValueSql("(getdate())");
 
-                    b.Property<string>("Desciption")
+                    b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Desciption");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -944,9 +1398,21 @@ namespace GymMarket.API.Migrations
                     b.Property<int>("ConversationId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("(getdate())");
+
                     b.Property<string>("SenderId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("text");
 
                     b.HasKey("Id");
 
@@ -1164,6 +1630,26 @@ namespace GymMarket.API.Migrations
                     b.Navigation("Registration");
                 });
 
+            modelBuilder.Entity("GymMarket.API.Models.FileCourse", b =>
+                {
+                    b.HasOne("GymMarket.API.Models.Course", "Course")
+                        .WithMany("FileCourses")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_FileCourses_Course");
+
+                    b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("GymMarket.API.Models.FoodNutritionUser", b =>
+                {
+                    b.HasOne("GymMarket.API.Models.FoodNutrition", null)
+                        .WithMany()
+                        .HasForeignKey("FoodNutritionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
             modelBuilder.Entity("GymMarket.API.Models.HealthDatum", b =>
                 {
                     b.HasOne("GymMarket.API.Models.Course", "Course")
@@ -1237,12 +1723,14 @@ namespace GymMarket.API.Migrations
 
             modelBuilder.Entity("GymMarket.API.Models.Notification", b =>
                 {
-                    b.HasOne("GymMarket.API.Models.Student", "Student")
-                        .WithMany("Notifications")
-                        .HasForeignKey("StudentId")
-                        .HasConstraintName("FK_Notifications_Student");
+                    b.HasOne("GymMarket.API.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Notifications_AspNetUsers");
 
-                    b.Navigation("Student");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.Payment", b =>
@@ -1260,6 +1748,17 @@ namespace GymMarket.API.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("GymMarket.API.Models.RefreshToken", b =>
+                {
+                    b.HasOne("GymMarket.API.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.Student", b =>
@@ -1355,6 +1854,8 @@ namespace GymMarket.API.Migrations
 
                     b.Navigation("CourseRegistrations");
 
+                    b.Navigation("FileCourses");
+
                     b.Navigation("HealthData");
 
                     b.Navigation("Lectures");
@@ -1395,8 +1896,6 @@ namespace GymMarket.API.Migrations
                     b.Navigation("HealthData");
 
                     b.Navigation("Messages");
-
-                    b.Navigation("Notifications");
 
                     b.Navigation("Payments");
                 });

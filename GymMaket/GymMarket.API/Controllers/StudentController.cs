@@ -4,6 +4,7 @@ using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GymMarket.API.Controllers
 {
@@ -12,10 +13,25 @@ namespace GymMarket.API.Controllers
     public class StudentController : GenericController<StudentCreateDTO, StudentUpdateDTO, Student, string>
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IStudentRepository _studentRepository;
 
-        public StudentController(IGenericRepository<Student, string> repository, IMapper mapper, UserManager<AppUser> userManager) : base(repository, mapper)
+        public StudentController(IStudentRepository repository, IMapper mapper, UserManager<AppUser> userManager) : base(repository, mapper)
         {
             _userManager = userManager;
+            _studentRepository = repository;
+        }
+
+        // A profile contains PII (email, phone, address, health status), so these
+        // endpoints only ever serve the authenticated user's own record — the user
+        // id comes from the JWT, never from the client.
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var result = await _studentRepository.GetStudentProfileByUserId(userId);
+            if (!result.Success)
+                return StatusCode(result.StatusCode, result);
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
@@ -62,9 +78,10 @@ namespace GymMarket.API.Controllers
             return NoContent();
         }
 
-        [HttpGet("by-user/{userId}")]
-        public async Task<IActionResult> GetByUserId(string userId)
+        [HttpGet("by-user")]
+        public async Task<IActionResult> GetByUserId()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var students = await _repository.FindAsync(s => s.UserId == userId);
             var student = students.FirstOrDefault();
             if (student == null)

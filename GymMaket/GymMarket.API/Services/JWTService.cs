@@ -54,12 +54,12 @@ namespace GymMarket.API.Services
                             Email = user.Email,
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow,
-                            ProfilePicture = "https://cdn-icons-png.flaticon.com/512/1999/1999625.png",
+                            ProfilePicture = Defaults.AvatarUrl,
                             Certification = "General Fitness Trainer",
                             Bio = "Professional fitness instructor.",
                             Experience = 0,
-                            Rating = 5,
-                            Desciption = ""
+                            Rating = Defaults.DefaultRating,
+                            Description = ""
                         };
                         await _context.Trainers.AddAsync(trainer);
                         await _context.SaveChangesAsync();
@@ -90,7 +90,7 @@ namespace GymMarket.API.Services
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow,
                             HealthStatus = "Good",
-                            ProfilePicture = "https://cdn-icons-png.flaticon.com/512/236/236832.png"
+                            ProfilePicture = Defaults.StudentAvatarUrl
                         };
                         await _context.Students.AddAsync(student);
                         await _context.SaveChangesAsync();
@@ -109,10 +109,10 @@ namespace GymMarket.API.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.Name, user.FullName!),
-                new Claim(ClaimTypes.HomePhone, string.IsNullOrEmpty(user.PhoneNumber) == false ? user.PhoneNumber : ""),
+                new Claim("homePhone", string.IsNullOrEmpty(user.PhoneNumber) == false ? user.PhoneNumber : ""),
                 new Claim("trainerId", string.IsNullOrEmpty(trainerId) == false ? trainerId : ""),
                 new Claim("studentId", string.IsNullOrEmpty(studentId) == false ? studentId : ""),
-                new Claim("avatar", string.IsNullOrEmpty(user.Avatar) == false ? user.Avatar : "https://cdn-icons-png.flaticon.com/512/1999/1999625.png"),
+                new Claim("avatar", string.IsNullOrEmpty(user.Avatar) == false ? user.Avatar : Defaults.AvatarUrl),
             };
 
             foreach (var role in userRoles)
@@ -121,20 +121,29 @@ namespace GymMarket.API.Services
             }
 
             // Signing credentials
-            var creadentials = new SigningCredentials(_jwtKey, SecurityAlgorithms.HmacSha512Signature);
+            var credentials = new SigningCredentials(_jwtKey, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(userClaims),
                 Expires = DateTime.UtcNow.AddDays(int.Parse(_configuration["JWT:ExpiresInDays"]!)),
-                SigningCredentials = creadentials,
-                Issuer = _configuration["JWT:Issuer"]
+                SigningCredentials = credentials,
+                Issuer = _configuration["JWT:Issuer"],
+                Audience = _configuration["JWT:Audience"]
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwt = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(jwt);
+        }
+
+        public string GenerateRefreshToken()
+        {
+            var randomBytes = new byte[64];
+            using var rng = System.Security.Cryptography.RandomNumberGenerator.Create();
+            rng.GetBytes(randomBytes);
+            return Convert.ToBase64String(randomBytes);
         }
     }
 }

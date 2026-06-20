@@ -1,0 +1,102 @@
+<div class="course-payment">
+  <div class="container">
+
+    <header class="pay-header">
+      <button class="back-link" (click)="goToDetails()">← Course details</button>
+      <h1 class="pay-header__title section-title">Complete your payment</h1>
+      @if (info?.courseTitle) {
+        <p class="pay-header__sub">{{ info?.courseTitle }}</p>
+      }
+    </header>
+
+    @if (info) {
+      @if (isPaid) {
+        <!-- Already paid -->
+        <gm-card class="state-card gl-2">
+          <div class="state-card__icon">✅</div>
+          <h2 class="state-card__title">Payment confirmed</h2>
+          <p class="state-card__text">You have full access to this course.</p>
+          <gm-button variant="primary" (clicked)="goToContent()">GO TO COURSE CONTENT</gm-button>
+        </gm-card>
+      } @else if (isCanceled) {
+        <!-- Canceled -->
+        <gm-card class="state-card gl-2">
+          <div class="state-card__icon">⚠️</div>
+          <h2 class="state-card__title">Payment canceled</h2>
+          <p class="state-card__text">
+            This payment was canceled. Please contact your trainer or enrol again to retry.
+          </p>
+          <gm-button variant="ghost" (clicked)="goToDetails()">BACK TO COURSE</gm-button>
+        </gm-card>
+      } @else if (!info.bankConfigured) {
+        <!-- Trainer hasn't set up a bank account -->
+        <gm-card class="state-card gl-2">
+          <div class="state-card__icon">🏦</div>
+          <h2 class="state-card__title">Payment not available yet</h2>
+          <p class="state-card__text">
+            {{ info.trainerName || 'This trainer' }} hasn't set up a payment account yet.
+            Please check back later or contact them.
+          </p>
+          <gm-button variant="ghost" (clicked)="goToDetails()">BACK TO COURSE</gm-button>
+        </gm-card>
+      } @else {
+        <!-- Pending: show the bank QR -->
+        <div class="pay-layout">
+
+          <gm-card class="qr-card gl-2">
+            <h3 class="qr-card__title">Scan to pay</h3>
+            <div class="qr-card__img">
+              <img [src]="qrUrl" alt="Bank transfer QR code" />
+            </div>
+            <p class="qr-card__hint">
+              Open your banking app, scan this code, and confirm the transfer.
+            </p>
+          </gm-card>
+
+          <gm-card class="details-card gl">
+            <h3 class="details-card__title">Or transfer manually</h3>
+            <ul class="bank-details">
+              <li>
+                <span class="bank-details__label">Amount</span>
+                <span class="bank-details__value">
+                  {{ info.amount | number:'1.0-0' }} VND
+                  <button class="copy-btn" (click)="copy(info.amount)">Copy</button>
+                </span>
+              </li>
+              <li>
+                <span class="bank-details__label">Account name</span>
+                <span class="bank-details__value">{{ info.bankAccountName || '—' }}</span>
+              </li>
+              <li>
+                <span class="bank-details__label">Account number</span>
+                <span class="bank-details__value">
+                  {{ info.bankAccountNo }}
+                  <button class="copy-btn" (click)="copy(info.bankAccountNo)">Copy</button>
+                </span>
+              </li>
+              <li class="bank-details--highlight">
+                <span class="bank-details__label">Transfer note</span>
+                <span class="bank-details__value">
+                  <strong>{{ info.reference }}</strong>
+                  <button class="copy-btn" (click)="copy(info.reference)">Copy</button>
+                </span>
+              </li>
+            </ul>
+            <p class="details-card__warning">
+              ⚠️ Include the transfer note exactly so your trainer can match your payment.
+            </p>
+
+            <div class="details-card__actions">
+              <gm-button variant="primary" (clicked)="confirmPayment()">I'VE PAID — NOTIFY TRAINER</gm-button>
+              <p class="details-card__pending">
+                Status: <strong>Pending</strong>. Your trainer verifies the transfer and confirms it manually.
+              </p>
+            </div>
+          </gm-card>
+
+        </div>
+      }
+    }
+
+  </div>
+</div>

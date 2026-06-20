@@ -7,19 +7,26 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Trainer } from '../../core/models/trainer.model';
 
 import { FormsModule } from '@angular/forms';
-import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
 import { GmCardComponent } from '../../shared/components/gm-card/gm-card.component';
+import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
+import { DEFAULT_AVATAR_IMAGE_URL } from '../../utilities/defaults.const';
+import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 
 @Component({
     selector: 'app-trainer-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterLink, FormsModule, GmButtonComponent, GmCardComponent],
+    imports: [RouterLink, FormsModule, GmCardComponent, FallbackSrcDirective],
     templateUrl: './trainer-list.component.html',
     styleUrl: './trainer-list.component.scss'
 })
 export class TrainerListComponent implements OnInit {
 	trainers: Trainer[] = [];
 	searchString: string = '';
+	selectedCategory: string = 'All';
+	categories: string[] = ['All', 'Yoga', 'Cardio', 'Strength', 'Crossfit', 'Elite'];
+	bookmarkedTrainers: Set<string> = new Set();
+	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
+
 	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
 	private cdr = inject(ChangeDetectorRef);
@@ -28,6 +35,18 @@ export class TrainerListComponent implements OnInit {
 
 	ngOnInit() {
 		this.getAllTrainers();
+		this.loadBookmarks();
+	}
+
+	private loadBookmarks() {
+		const saved = localStorage.getItem(STORAGE_KEYS.bookmarkedTrainers);
+		if (saved) {
+			try {
+				this.bookmarkedTrainers = new Set(JSON.parse(saved));
+			} catch {
+				localStorage.removeItem(STORAGE_KEYS.bookmarkedTrainers);
+			}
+		}
 	}
 
 	private getAllTrainers() {
@@ -47,7 +66,66 @@ export class TrainerListComponent implements OnInit {
 			});
 	}
 
+	get filteredTrainers(): Trainer[] {
+		return this.trainers.filter(trainer => {
+			const matchesSearch = !this.searchString ||
+				trainer.name.toLowerCase().includes(this.searchString.toLowerCase()) ||
+				(trainer.certification && trainer.certification.toLowerCase().includes(this.searchString.toLowerCase())) ||
+				(trainer.bio && trainer.bio.toLowerCase().includes(this.searchString.toLowerCase()));
+
+			const matchesCategory = this.selectedCategory === 'All' ||
+				(this.selectedCategory === 'Elite' && trainer.experience >= 8) ||
+				(trainer.certification && trainer.certification.toLowerCase().includes(this.selectedCategory.toLowerCase())) ||
+				(trainer.bio && trainer.bio.toLowerCase().includes(this.selectedCategory.toLowerCase()));
+
+			return matchesSearch && matchesCategory;
+		});
+	}
+
+	selectCategory(category: string) {
+		this.selectedCategory = category;
+		this.cdr.markForCheck();
+	}
+
+	toggleBookmark(trainerId: string, event: Event) {
+		event.preventDefault();
+		event.stopPropagation();
+		if (this.bookmarkedTrainers.has(trainerId)) {
+			this.bookmarkedTrainers.delete(trainerId);
+		} else {
+			this.bookmarkedTrainers.add(trainerId);
+		}
+		localStorage.setItem(STORAGE_KEYS.bookmarkedTrainers, JSON.stringify(Array.from(this.bookmarkedTrainers)));
+		this.cdr.markForCheck();
+	}
+
+	isBookmarked(trainerId: string): boolean {
+		return this.bookmarkedTrainers.has(trainerId);
+	}
+
+	getReviewsCount(trainer: Trainer): number {
+		const hash = trainer.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+		return (hash % 120) + 15;
+	}
+
+	getClientsCount(trainer: Trainer): number {
+		const hash = trainer.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+		return (hash % 35) + 5;
+	}
+
+	getSpecialtyEmoji(trainer: Trainer): string {
+		const cert = (trainer.certification || '').toLowerCase();
+		const bio = (trainer.bio || '').toLowerCase();
+		if (cert.includes('yoga') || bio.includes('yoga') || bio.includes('wellness')) return '🧘';
+		if (cert.includes('cardio') || cert.includes('run') || bio.includes('cardio') || bio.includes('run') || bio.includes('cycling')) return '🏃';
+		if (cert.includes('strength') || cert.includes('weight') || bio.includes('strength') || bio.includes('weight') || bio.includes('muscle')) return '💪';
+		if (cert.includes('crossfit') || cert.includes('lift') || bio.includes('crossfit') || bio.includes('lift') || bio.includes('power')) return '🏋️';
+		if (cert.includes('boxing') || cert.includes('fight') || bio.includes('boxing') || bio.includes('fight')) return '🥊';
+		if (cert.includes('hiit') || cert.includes('interval') || bio.includes('hiit') || bio.includes('interval')) return '⚡';
+		return '💪';
+	}
+
 	onSubmit() {
-		// Cleanup: removed debug log
+		this.cdr.markForCheck();
 	}
 }
