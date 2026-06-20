@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, effect, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,7 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { CourseAgencyService } from '../course-agency.service';
 import { PaymentService } from '../payment.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { UserStore } from '../../stores/user.store';
@@ -47,10 +48,23 @@ export class PaymentsComponent implements OnInit {
 	private destroyRef = inject(DestroyRef);
 	private cdr = inject(ChangeDetectorRef);
 	private paymentService = inject(PaymentService);
+	private notificationService = inject(NotificationService);
 	private activatedRoute = inject(ActivatedRoute);
 	private router = inject(Router);
 
-	constructor(private courseAgencyService: CourseAgencyService) {}
+	// Opening the Payments page counts as seeing the payment alerts: clear their nav
+	// cue once notifications have loaded. Guarded so it only clears the batch present
+	// on arrival, not every alert that streams in while the trainer stays on the page.
+	private paymentsCueCleared = false;
+
+	constructor(private courseAgencyService: CourseAgencyService) {
+		effect(() => {
+			if (this.notificationService.unreadPaymentCount() > 0 && !this.paymentsCueCleared) {
+				this.paymentsCueCleared = true;
+				this.notificationService.markTypeRead('payment');
+			}
+		});
+	}
 
 	ngOnInit() {
 		this.activatedRoute.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {

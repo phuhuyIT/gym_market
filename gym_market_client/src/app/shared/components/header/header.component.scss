@@ -31,6 +31,51 @@ nav {
   span { color: var(--blue); }
 }
 
+// Course search — sits between the logo and the nav links inside the pill.
+.nav-search {
+  display: flex; align-items: center; gap: 8px;
+  flex: 1 1 220px;
+  min-width: 0;
+  max-width: 340px;
+  margin: 0 12px;
+  padding: 7px 16px;
+  border-radius: 100px;
+  background: rgba(120, 120, 128, 0.12);
+  border: 1px solid var(--glass-border);
+  transition: border-color 0.2s, background 0.2s;
+  z-index: 3;
+
+  [data-theme="dark"] & { background: rgba(255, 255, 255, 0.06); }
+
+  &:focus-within {
+    border-color: var(--blue);
+    background: rgba(0, 122, 255, 0.06);
+  }
+
+  &__btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    border: none; background: transparent; padding: 0; cursor: pointer;
+    color: var(--text-soft);
+    transition: color 0.2s;
+    &:hover { color: var(--blue); }
+  }
+
+  &__icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+  &__input {
+    border: none; background: transparent; outline: none;
+    width: 100%; min-width: 0;
+    color: var(--text);
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 0.02em;
+    &::placeholder { color: var(--text-soft); }
+    &::-webkit-search-cancel-button { cursor: pointer; }
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-search { display: none; }
+}
+
 .nav-links {
   display: flex; align-items: center; gap: 2px; list-style: none;
   position: relative; z-index: 3;
