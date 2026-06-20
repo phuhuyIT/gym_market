@@ -46,6 +46,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	foodNutritionUsers: FoodNutritionUser[] = [];
 
 	totalCaloricValue: number = 0;
+	totalCarbs: number = 0;
 	totalFat: number = 0;
 	totalSugar: number = 0;
 	totalProtein: number = 0;
@@ -259,6 +260,10 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	calStatistics() {
 		this.totalCaloricValue = this.filteredLogs.reduce(
 			(sum, food) => sum + (food.caloricValue ?? 0),
+			0
+		);
+		this.totalCarbs = this.filteredLogs.reduce(
+			(sum, food) => sum + this.getCarbs(food),
 			0
 		);
 		this.totalFat = this.filteredLogs.reduce(
@@ -498,6 +503,10 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 
 	readonly getFoodImage = getFoodImage;
 
+	getCarbs(item: FoodNutritionUser): number {
+		return item.carbs ?? item.sugars ?? 0;
+	}
+
 	getFoodTag(item: FoodNutritionUser): string {
 		if (item.protein > 15) return 'High Protein';
 		if (item.fat < 3) return 'Low Fat';
@@ -513,7 +522,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			return `Heart-healthy, low-fat option with only ${item.fat.toFixed(0)}g of fat per serving.`;
 		}
 		if (item.sugars > 12) {
-			return `Sweet indulgence with ${item.sugars.toFixed(0)}g carbs. Recommended to consume in moderation.`;
+			return `Sweet indulgence with ${item.sugars.toFixed(0)}g sugar. Recommended to consume in moderation.`;
 		}
 		return `A balanced, nutritious choice with ${item.caloricValue.toFixed(0)} calories to keep you energized.`;
 	}

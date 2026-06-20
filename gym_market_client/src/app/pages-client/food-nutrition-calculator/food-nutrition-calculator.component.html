@@ -191,12 +191,12 @@
                     <circle cx="32" cy="32" r="26" stroke="currentColor" stroke-width="3.5" fill="transparent" class="text-gray-100 dark:text-zinc-800" />
                     <circle cx="32" cy="32" r="26" stroke="#FF7A00" stroke-width="4.5" fill="transparent" stroke-linecap="round"
                             [style.strokeDasharray]="163.4"
-                            [style.strokeDashoffset]="getCircleStrokeOffset(totalSugar, carbsBudget)" class="transition-all duration-500" />
+                            [style.strokeDashoffset]="getCircleStrokeOffset(totalCarbs, carbsBudget)" class="transition-all duration-500" />
                   </svg>
                   <i class="fa-solid fa-wheat-awn absolute text-sm text-orange-500"></i>
                 </div>
                 <span class="text-[10px] text-gray-400 dark:text-zinc-550 font-black uppercase tracking-wider mb-0.5">Carbs</span>
-                <span class="text-xs text-gray-550 dark:text-zinc-400 font-extrabold mt-0.5">{{ totalSugar.toFixed(0) }}g / {{ carbsBudget.toFixed(0) }}g</span>
+                <span class="text-xs text-gray-550 dark:text-zinc-400 font-extrabold mt-0.5">{{ totalCarbs.toFixed(0) }}g / {{ carbsBudget.toFixed(0) }}g</span>
               </div>
 
               <!-- Fat Ring -->
@@ -294,7 +294,7 @@
                           </div>
                         </div>
                         <p class="text-[11px] md:text-xs text-gray-400 dark:text-zinc-500 font-bold">
-                          {{ item.weight.toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
+                          {{ item.weight.toFixed(0) }}g • C: {{ getCarbs(item).toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
                         </p>
                       </div>
                       <div class="flex flex-wrap items-center gap-2 pt-2.5 border-t border-gray-100/50 dark:border-zinc-800/40">
@@ -362,7 +362,7 @@
                           </div>
                         </div>
                         <p class="text-[11px] md:text-xs text-gray-400 dark:text-zinc-500 font-bold">
-                          {{ item.weight.toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
+                          {{ item.weight.toFixed(0) }}g • C: {{ getCarbs(item).toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
                         </p>
                       </div>
                       <div class="flex flex-wrap items-center gap-2 pt-2.5 border-t border-gray-100/50 dark:border-zinc-800/40">
@@ -430,7 +430,7 @@
                           </div>
                         </div>
                         <p class="text-[11px] md:text-xs text-gray-400 dark:text-zinc-500 font-bold">
-                          {{ item.weight.toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
+                          {{ item.weight.toFixed(0) }}g • C: {{ getCarbs(item).toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
                         </p>
                       </div>
                       <div class="flex flex-wrap items-center gap-2 pt-2.5 border-t border-gray-100/50 dark:border-zinc-800/40">
@@ -498,7 +498,7 @@
                           </div>
                         </div>
                         <p class="text-[11px] md:text-xs text-gray-400 dark:text-zinc-500 font-bold">
-                          {{ item.weight.toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
+                          {{ item.weight.toFixed(0) }}g • C: {{ getCarbs(item).toFixed(0) }}g • F: {{ item.fat.toFixed(0) }}g • P: {{ item.protein.toFixed(0) }}g
                         </p>
                       </div>
                       <div class="flex flex-wrap items-center gap-2 pt-2.5 border-t border-gray-100/50 dark:border-zinc-800/40">

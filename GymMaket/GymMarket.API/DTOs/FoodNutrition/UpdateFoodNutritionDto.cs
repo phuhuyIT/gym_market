@@ -12,6 +12,9 @@ namespace GymMarket.API.DTOs.FoodNutrition
         [Range(0, long.MaxValue, ErrorMessage = "CaloricValue must not be negative.")]
         public long CaloricValue { get; set; }
 
+        [Range(0, double.MaxValue, ErrorMessage = "Carbs must not be negative.")]
+        public double Carbs { get; set; }
+
         [Range(0, double.MaxValue, ErrorMessage = "Fat must not be negative.")]
         public double Fat { get; set; }
 

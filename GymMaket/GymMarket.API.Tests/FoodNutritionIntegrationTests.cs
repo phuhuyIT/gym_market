@@ -86,6 +86,7 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
         Assert.Equal(new DateOnly(2026, 6, 12), created!.Date);
         Assert.Equal("Lunch", created.MealType);
         Assert.Equal(104, created.CaloricValue); // 52 kcal/100g * 200g
+        Assert.Equal(27.6, created.Carbs, 5);    // 13.8 g/100g * 200g
         Assert.Equal(GetTokenClaim("nameid"), created.UserId); // owner comes from the JWT
     }
 
@@ -120,6 +121,7 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
         Assert.NotNull(updated);
         Assert.Equal(300, updated!.Weight);
         Assert.Equal(156, updated.CaloricValue); // 52 kcal/100g * 300g
+        Assert.Equal(41.4, updated.Carbs, 5);    // 13.8 g/100g * 300g
         Assert.Equal(0.9, updated.Protein, 5);   // 0.3 g/100g * 300g
         Assert.Equal(new DateOnly(2026, 6, 13), updated.Date);
         Assert.Equal("Dinner", updated.MealType);
@@ -274,6 +276,7 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var updated = await response.Content.ReadFromJsonAsync<FoodNutritionUser>();
         Assert.Equal(104, updated!.CaloricValue); // 52 kcal/100g * 200g
+        Assert.Equal(27.6, updated.Carbs, 5);      // 13.8 g/100g * 200g
     }
 
     [Fact]
@@ -329,6 +332,7 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
         {
             Name = "Quinoa (Cooked)",
             CaloricValue = 120,
+            Carbs = 21.3,
             Fat = 1.9,
             Sugars = 0.9,
             Protein = 4.4
@@ -385,6 +389,7 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
         {
             Name = "Green Apple",
             CaloricValue = 58,
+            Carbs = 14.0,
             Fat = 0.2,
             Sugars = 9.6,
             Protein = 0.4
@@ -399,6 +404,7 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
         Assert.NotNull(updated);
         Assert.Equal("Green Apple", updated!.Name);
         Assert.Equal(58, updated.CaloricValue);
+        Assert.Equal(14.0, updated.Carbs, 5);
         Assert.Equal(9.6, updated.Sugars, 5);
     }
 
@@ -453,7 +459,7 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
     {
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
-        var food = new FoodNutrition { Name = "Apple", CaloricValue = 52, Fat = 0.2, Sugars = 10.4, Protein = 0.3 };
+        var food = new FoodNutrition { Name = "Apple", CaloricValue = 52, Carbs = 13.8, Fat = 0.2, Sugars = 10.4, Protein = 0.3 };
         context.FoodNutritions.Add(food);
         await context.SaveChangesAsync();
         return food.Id;

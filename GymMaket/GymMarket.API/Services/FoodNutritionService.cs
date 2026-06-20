@@ -83,6 +83,7 @@ namespace GymMarket.API.Services
                 // linearly with weight, so rescale the snapshot instead.
                 var factor = model.Weight / entry.Weight;
                 entry.CaloricValue *= factor;
+                entry.Carbs *= factor;
                 entry.Fat *= factor;
                 entry.Sugars *= factor;
                 entry.Protein *= factor;
@@ -205,6 +206,7 @@ namespace GymMarket.API.Services
         {
             entry.Weight = weight;
             entry.CaloricValue = weight / 100.0 * food.CaloricValue;
+            entry.Carbs = weight / 100.0 * food.Carbs;
             entry.Fat = weight / 100.0 * food.Fat;
             entry.Sugars = weight / 100.0 * food.Sugars;
             entry.Protein = weight / 100.0 * food.Protein;

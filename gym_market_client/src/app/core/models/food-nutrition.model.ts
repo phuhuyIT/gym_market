@@ -2,6 +2,7 @@ export interface FoodNutrition {
   id: number;
   name: string;
   caloricValue: number;
+  carbs?: number | null;
   fat: number;
   sugars: number;
   protein: number;
@@ -13,6 +14,7 @@ export interface FoodNutritionUser {
   foodName: string;
   weight: number;
   caloricValue: number;
+  carbs?: number | null;
   fat: number;
   sugars: number;
   protein: number;
