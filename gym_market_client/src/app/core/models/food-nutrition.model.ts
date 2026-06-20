@@ -11,6 +11,7 @@ export interface FoodNutrition {
 export interface FoodNutritionUser {
   id: number;
   userId: string;
+  foodNutritionId?: number | null;
   foodName: string;
   weight: number;
   caloricValue: number;
@@ -49,6 +50,11 @@ export interface CustomFoodNutritionDto {
 export interface UpdateFoodNutritionUserDto {
   foodNutritionUserId: number;
   weight: number;
+  caloricValue?: number;
+  carbs?: number;
+  fat?: number;
+  sugars?: number;
+  protein?: number;
   date: string;
   mealType: string;
 }
@@ -59,4 +65,23 @@ export interface NutritionBudget {
   carbsBudget: number;
   fatBudget: number;
   proteinBudget: number;
+}
+
+export interface NutritionSummary {
+  date: string;
+  caloricValue: number;
+  carbs: number;
+  fat: number;
+  sugars: number;
+  protein: number;
+  entryCount: number;
+}
+
+export interface FoodNutritionUpsertDto {
+  name: string;
+  caloricValue: number;
+  carbs: number;
+  fat: number;
+  sugars: number;
+  protein: number;
 }

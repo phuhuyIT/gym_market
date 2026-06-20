@@ -17,7 +17,7 @@
 
       <div class="search-bar-container gl">
         <input
-          (ngModelChange)="onSubmit()"
+          (ngModelChange)="onSearchInputChange($event)"
           class="search-input-field"
           type="text"
           placeholder="Search courses, focus areas..."
@@ -98,8 +98,8 @@
       <!-- Pagination -->
       <div class="pagination">
         <button class="category-tab-btn" (click)="prevPage()" [disabled]="pageIndex === 1">Previous</button>
-        <span style="font-family: var(--font-display); font-weight: 700; color: var(--text-soft); font-size: 0.95rem;">Page {{ pageIndex }}</span>
-        <button class="category-tab-btn" (click)="nexPage()">Next</button>
+        <span style="font-family: var(--font-display); font-weight: 700; color: var(--text-soft); font-size: 0.95rem;">Page {{ pageIndex }} / {{ totalPages || 1 }} · {{ totalCount }} courses</span>
+        <button class="category-tab-btn" (click)="nexPage()" [disabled]="!hasNextPage">Next</button>
       </div>
     }
   </main>

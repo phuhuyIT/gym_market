@@ -122,9 +122,9 @@ namespace GymMarket.API.Controllers
         {
             var courses = await _courseRepository.GetCourses(pageIndex, pageSize, searchString, category);
 
-            if (courses == null)
+            if (courses.Items.Count == 0 && courses.TotalCount == 0)
             {
-                return BadRequest(new { errors = new string[] { "COURSES_NOT_FOUND" } });
+                return Ok(courses);
             }
             return Ok(courses);
         }

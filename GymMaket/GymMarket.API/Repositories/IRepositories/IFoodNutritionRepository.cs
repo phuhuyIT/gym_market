@@ -7,7 +7,7 @@ namespace GymMarket.API.Repositories.IRepositories
     public interface IFoodNutritionRepository
     {
         // Master food database
-        Task<List<FoodNutrition>> SearchFoodNutrition(string search, int skip, int take);
+        Task<List<FoodNutrition>> SearchFoodNutrition(string? search, int skip, int take);
         Task<FoodNutrition?> GetFoodNutrition(int id);
         Task<bool> FoodNutritionNameExists(string name, int? excludeId = null);
         Task<FoodNutrition> AddFoodNutrition(FoodNutrition food);
@@ -15,6 +15,7 @@ namespace GymMarket.API.Repositories.IRepositories
 
         // User food log
         Task<List<FoodNutritionUser>> GetFoodNutritionUser(string userId, DateOnly? date, int skip, int take);
+        Task<List<FoodNutritionUser>> GetFoodNutritionUserRange(string userId, DateOnly from, DateOnly to);
         Task<FoodNutritionUser?> GetFoodNutritionUserEntry(int id, string userId);
         Task<FoodNutritionUser> AddFoodNutritionUserEntry(FoodNutritionUser entry);
         Task RemoveFoodNutritionUserEntry(FoodNutritionUser entry);

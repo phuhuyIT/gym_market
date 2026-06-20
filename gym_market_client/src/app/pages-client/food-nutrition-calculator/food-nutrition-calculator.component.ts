@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { debounceTime, distinctUntilChanged, switchMap, catchError, EMPTY } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, catchError, EMPTY, forkJoin, of } from 'rxjs';
 import { UserStore } from '../../stores/user.store';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { patchState } from '@ngrx/signals';
@@ -63,10 +63,15 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	foodSelectedToDelete: FoodNutritionUser | null = null;
 	showSettings: boolean = false;
 
-	showEdit: boolean = false;
-	foodSelectedToEdit: FoodNutritionUser | null = null;
-	editWeight: FormControl = new FormControl(0);
-	editMealType: string = 'Breakfast';
+		showEdit: boolean = false;
+		foodSelectedToEdit: FoodNutritionUser | null = null;
+		editWeight: FormControl = new FormControl(0);
+		editCalories: FormControl = new FormControl(0);
+		editCarbs: FormControl = new FormControl(0);
+		editFat: FormControl = new FormControl(0);
+		editSugars: FormControl = new FormControl(0);
+		editProtein: FormControl = new FormControl(0);
+		editMealType: string = 'Breakfast';
 
 	// Redesign Properties
 	selectedDateStr: string = '';
@@ -90,7 +95,8 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 	lunchLogs: FoodNutritionUser[] = [];
 	dinnerLogs: FoodNutritionUser[] = [];
 	snacksLogs: FoodNutritionUser[] = [];
-	filteredLogs: FoodNutritionUser[] = [];
+		filteredLogs: FoodNutritionUser[] = [];
+		nutritionSummaries: Record<string, number> = {};
 
 	readonly recipesList = RECIPES_LIST;
 
@@ -100,30 +106,36 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		this.loadBudgets();
 		
 		const today = new Date();
-		this.selectedDateStr = this.formatDate(today);
-		this.generateWeekForDate(today);
+			this.selectedDateStr = this.formatDate(today);
+			this.generateWeekForDate(today);
 
-		this.getFoodNutritionUser();
+			this.loadCurrentWeekData();
 
 		this.searchInput.valueChanges
 			.pipe(
 				debounceTime(SEARCH_DEBOUNCE_MS),
 				distinctUntilChanged(),
-				switchMap(value => {
-					patchState(this.loader, { isShow: true });
-					if (this.isManualSelection) {
-						this.isManualSelection = false;
-						this.foods = [];
-						patchState(this.loader, { isShow: false });
-						return EMPTY;
-					}
-					return this.foodNutritionService.search(value).pipe(
-						catchError(() => {
-							patchState(this.loader, { isShow: false });
+					switchMap(value => {
+						if (this.isManualSelection) {
+							this.isManualSelection = false;
+							this.foods = [];
 							return EMPTY;
-						})
-					);
-				}),
+						}
+						const query = String(value || '').trim();
+						if (query.length < 2) {
+							this.foods = [];
+							this.cdr.markForCheck();
+							return of([]);
+						}
+
+						patchState(this.loader, { isShow: true });
+						return this.foodNutritionService.search(query).pipe(
+							catchError(() => {
+								patchState(this.loader, { isShow: false });
+								return of([]);
+							})
+						);
+					}),
 				takeUntilDestroyed(this.destroyRef)
 			)
 			.subscribe(res => {
@@ -133,8 +145,8 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			});
 	}
 
-	private getFoodNutritionUser() {
-		if (this.userStore.id()) {
+		private getFoodNutritionUser() {
+			if (this.userStore.id()) {
 			this.foodNutritionService
 				.getFoodNutritionUser()
 				.pipe(takeUntilDestroyed(this.destroyRef))
@@ -145,8 +157,41 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 						this.cdr.markForCheck();
 					},
 				});
+			}
 		}
-	}
+
+		private loadCurrentWeekData() {
+			if (!this.userStore.id() || this.weekDays.length === 0) return;
+
+			const from = this.weekDays[0].fullDate;
+			const to = this.weekDays[this.weekDays.length - 1].fullDate;
+			patchState(this.loader, { isShow: true });
+
+			forkJoin({
+				logs: this.foodNutritionService.getFoodNutritionUserRange(from, to),
+				summaries: this.foodNutritionService.getNutritionSummary(from, to).pipe(catchError(() => of([]))),
+			})
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: ({ logs, summaries }) => {
+						this.foodNutritionUsers = logs;
+						this.nutritionSummaries = summaries.reduce<Record<string, number>>((acc, item) => {
+							acc[item.date.slice(0, 10)] = item.entryCount;
+							return acc;
+						}, {});
+						this.updateFilteredLogs();
+						patchState(this.loader, { isShow: false });
+						this.cdr.markForCheck();
+					},
+					error: () => {
+						patchState(this.loader, { isShow: false });
+						patchState(this.errorModal, {
+							isShow: true,
+							errors: ['Failed to load nutrition logs.'],
+						});
+					},
+				});
+		}
 
 	// REDESIGN METHODS
 	generateWeekForDate(targetDate: Date) {
@@ -225,11 +270,10 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		);
 
 		// Check dot indicators for week days
-		this.weekDays.forEach(day => {
-			day.hasLogs = this.foodNutritionUsers.some(
-				item => this.getLogDate(item, metadata) === day.fullDate
-			);
-		});
+			this.weekDays.forEach(day => {
+				day.hasLogs = (this.nutritionSummaries[day.fullDate] ?? 0) > 0
+					|| this.foodNutritionUsers.some(item => this.getLogDate(item, metadata) === day.fullDate);
+			});
 
 		// Distribute logs by meal
 		this.breakfastLogs = [];
@@ -259,11 +303,11 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			this.selectedDateStr = value;
 			const parts = value.split('-');
 			const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-			this.generateWeekForDate(d);
-			this.updateFilteredLogs();
-			this.cdr.markForCheck();
+				this.generateWeekForDate(d);
+				this.loadCurrentWeekData();
+				this.cdr.markForCheck();
+			}
 		}
-	}
 
 	calStatistics() {
 		this.totalCaloricValue = this.filteredLogs.reduce(
@@ -311,11 +355,17 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			return;
 		}
 
-		if (!this.selectedFood) return;
+			if (!this.selectedFood || Number(this.weight.value || 0) <= 0) {
+				patchState(this.errorModal, {
+					isShow: true,
+					errors: ['Choose a food and enter a weight greater than 0.'],
+				});
+				return;
+			}
 
 		const model: CaloricValueDto = {
 			foodNutritionId: this.selectedFood.id,
-			weight: this.weight.value,
+				weight: Number(this.weight.value || 0),
 			foodName: this.selectedFood.name,
 			date: this.selectedDateStr,
 			mealType: this.selectedMealType,
@@ -360,13 +410,21 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			mealType: this.selectedMealType,
 		};
 
-		if (!model.foodName || model.weight <= 0) {
-			patchState(this.errorModal, {
-				isShow: true,
-				errors: ['Food name and weight are required.'],
-			});
-			return;
-		}
+			if (!model.foodName || model.weight <= 0) {
+				patchState(this.errorModal, {
+					isShow: true,
+					errors: ['Food name and weight are required.'],
+				});
+				return;
+			}
+
+			if ([model.caloricValue, model.carbs, model.fat, model.sugars, model.protein].some(value => value < 0)) {
+				patchState(this.errorModal, {
+					isShow: true,
+					errors: ['Nutrition values cannot be negative.'],
+				});
+				return;
+			}
 
 		patchState(this.loader, { isShow: true });
 		this.foodNutritionService
@@ -418,25 +476,54 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 		this.foodSelectedToDelete = food;
 	}
 
-	onShowEdit(flag: boolean, food: FoodNutritionUser | null) {
-		this.showEdit = flag;
-		this.foodSelectedToEdit = food;
-		if (food) {
-			this.editWeight.setValue(food.weight);
-			this.editMealType = this.getLogMealType(food);
+		onShowEdit(flag: boolean, food: FoodNutritionUser | null) {
+			this.showEdit = flag;
+			this.foodSelectedToEdit = food;
+			if (food) {
+				this.editWeight.setValue(food.weight);
+				this.editCalories.setValue(food.caloricValue);
+				this.editCarbs.setValue(this.getCarbs(food));
+				this.editFat.setValue(food.fat);
+				this.editSugars.setValue(food.sugars);
+				this.editProtein.setValue(food.protein);
+				this.editMealType = this.getLogMealType(food);
+			}
 		}
-	}
 
 	onUpdate() {
 		if (!this.foodSelectedToEdit) return;
 
 		const item = this.foodSelectedToEdit;
-		const model: UpdateFoodNutritionUserDto = {
-			foodNutritionUserId: item.id,
-			weight: this.editWeight.value,
-			date: this.getLogDate(item) ?? this.selectedDateStr,
-			mealType: this.editMealType,
-		};
+			const model: UpdateFoodNutritionUserDto = {
+				foodNutritionUserId: item.id,
+				weight: Number(this.editWeight.value || 0),
+				date: this.getLogDate(item) ?? this.selectedDateStr,
+				mealType: this.editMealType,
+			};
+
+			if (model.weight <= 0) {
+				patchState(this.errorModal, {
+					isShow: true,
+					errors: ['Weight must be greater than 0.'],
+				});
+				return;
+			}
+
+			if (this.isCustomLog(item)) {
+				model.caloricValue = Number(this.editCalories.value || 0);
+				model.carbs = Number(this.editCarbs.value || 0);
+				model.fat = Number(this.editFat.value || 0);
+				model.sugars = Number(this.editSugars.value || 0);
+				model.protein = Number(this.editProtein.value || 0);
+
+				if ([model.caloricValue, model.carbs, model.fat, model.sugars, model.protein].some(value => (value ?? 0) < 0)) {
+					patchState(this.errorModal, {
+						isShow: true,
+						errors: ['Nutrition values cannot be negative.'],
+					});
+					return;
+				}
+			}
 
 		patchState(this.loader, { isShow: true });
 		this.foodNutritionService
@@ -520,7 +607,7 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			});
 	}
 
-	saveBudgets() {
+		saveBudgets() {
 		const budget: NutritionBudget = {
 			calorieBudget: this.calorieCtrl.value || 2000,
 			carbsBudget: this.carbsCtrl.value || 250,
@@ -528,14 +615,15 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 			proteinBudget: this.proteinCtrl.value || 130,
 		};
 
-		this.foodNutritionService
-			.saveNutritionBudget(budget)
+			this.foodNutritionService
+				.saveNutritionBudget(budget)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: saved => {
-					this.applyBudgets(saved);
-					this.cacheBudgets(saved);
-					patchState(this.notice, { isShow: true, message: 'Targets updated successfully!' });
+					next: saved => {
+						this.applyBudgets(saved);
+						this.cacheBudgets(saved);
+						this.showSettings = false;
+						patchState(this.notice, { isShow: true, message: 'Targets updated successfully!' });
 					this.updateFilteredLogs();
 					this.cdr.markForCheck();
 				},
@@ -577,9 +665,30 @@ export class FoodNutritionCalculatorComponent implements OnInit {
 
 	readonly getFoodImage = getFoodImage;
 
-	getCarbs(item: FoodNutritionUser): number {
-		return item.carbs ?? item.sugars ?? 0;
-	}
+		getCarbs(item: FoodNutritionUser): number {
+			return item.carbs ?? item.sugars ?? 0;
+		}
+
+		isCustomLog(item: FoodNutritionUser | null): boolean {
+			return !!item && item.foodNutritionId == null;
+		}
+
+		onQuickAddRecipe(recipe: { title: string; calories: number; carbs: number; fat: number; protein: number }) {
+			this.selectedMealType = 'Breakfast';
+			this.isCustomFoodMode = true;
+			this.showAddFood = true;
+			this.selectedFood = null;
+			this.foods = [];
+			this.searchInput.setValue(recipe.title, { emitEvent: false });
+			this.customFoodName.setValue(recipe.title);
+			this.weight.setValue(1);
+			this.customCalories.setValue(recipe.calories);
+			this.customCarbs.setValue(recipe.carbs);
+			this.customFat.setValue(recipe.fat);
+			this.customSugars.setValue(0);
+			this.customProtein.setValue(recipe.protein);
+			this.cdr.markForCheck();
+		}
 
 	getFoodTag(item: FoodNutritionUser): string {
 		if (item.protein > 15) return 'High Protein';

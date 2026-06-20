@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { Course } from '../core/models/course.model';
+import { PagedResult } from '../core/models/paged-result.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -22,7 +23,18 @@ export class CourseAgencyService {
 		searchString: string | null,
 		category: string | null
 	): Observable<Course[]> {
-		return this.http.get<Course[]>(`${environment.baseApi}/course/get-courses`, {
+		return this.getCoursesPaged(pageIndex, pageSize, searchString, category).pipe(
+			map(result => result.items)
+		);
+	}
+
+	getCoursesPaged(
+		pageIndex: number,
+		pageSize: number,
+		searchString: string | null,
+		category: string | null
+	): Observable<PagedResult<Course>> {
+		return this.http.get<PagedResult<Course>>(`${environment.baseApi}/course/get-courses`, {
 			params: {
 				pageIndex: pageIndex.toString(),
 				pageSize: pageSize.toString(),

@@ -13,6 +13,7 @@ import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.c
 import { ACTIVITY_DAYS, RECOMMENDED_COURSES_FALLBACK } from '../../utilities/mock-data.const';
 import { DEFAULT_COURSE_THUMBNAIL_URL } from '../../utilities/defaults.const';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
+import { matchesSearch } from '../../shared/utils/search.util';
 
 @Component({
     selector: 'app-course-registration',
@@ -101,9 +102,7 @@ export class CourseRegistrationComponent implements OnInit {
 			this.courseSearchs = this.courses;
 			return;
 		}
-		this.courseSearchs = this.courses.filter((c: Course) =>
-			c.title.toLowerCase().includes(this.searchString!.toLowerCase())
-		);
+		this.courseSearchs = this.courses.filter((c: Course) => matchesSearch(this.searchString, [c.title]));
 	}
 
 	// Active tab change handler

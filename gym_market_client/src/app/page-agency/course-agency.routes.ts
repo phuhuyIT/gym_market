@@ -12,6 +12,7 @@ import { ChatListComponent } from '../chat/chat-list/chat-list.component';
 import { ManageCoursesComponent } from './manage-courses/manage-courses.component';
 import { ManageStudentsComponent } from './manage-students/manage-students.component';
 import { PaymentsComponent } from './payments/payments.component';
+import { ManageNutritionComponent } from './manage-nutrition/manage-nutrition.component';
 
 export const routes: Routes = [
 	{
@@ -21,9 +22,10 @@ export const routes: Routes = [
 			{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 			{ path: 'dashboard', component: DashboardComponent, title: 'Tổng quan' },
 			{ path: 'courses', component: ManageCoursesComponent, title: 'Quản lý khóa học' },
-			{ path: 'students', component: ManageStudentsComponent, title: 'Quản lý học viên' },
-			{ path: 'payments', component: PaymentsComponent, title: 'Payments' },
-			{ path: 'add-course', component: AddCourseComponent, title: 'Thêm course' },
+				{ path: 'students', component: ManageStudentsComponent, title: 'Quản lý học viên' },
+				{ path: 'payments', component: PaymentsComponent, title: 'Payments' },
+				{ path: 'nutrition', component: ManageNutritionComponent, title: 'Food Database' },
+				{ path: 'add-course', component: AddCourseComponent, title: 'Thêm course' },
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Cập nhật course' },
 			{ path: 'course-materials/:courseId', component: CourseMaterialComponent, title: 'Tài liệu khóa học' },
 			{ path: 'course-option-list', component: CourseOptionListComponent, title: 'Danh sách option của course' },

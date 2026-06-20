@@ -18,6 +18,7 @@ import { GroupMembersComponent } from '../group-members/group-members.component'
 import { NewConversationComponent } from '../new-conversation/new-conversation.component';
 import { NotificationBellComponent } from '../../shared/components/notification-bell/notification-bell.component';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
+import { matchesSearch } from '../../shared/utils/search.util';
 
 @Component({
     selector: 'app-chat-list',
@@ -75,8 +76,7 @@ export class ChatListComponent implements OnInit, OnDestroy, AfterViewChecked {
 			result = result.filter(c => c.hasNewMessage);
 		}
 		if (this.searchQuery.trim()) {
-			const q = this.searchQuery.toLowerCase();
-			result = result.filter(c => c.conversationName.toLowerCase().includes(q));
+			result = result.filter(c => matchesSearch(this.searchQuery, [c.conversationName]));
 		}
 		return result;
 	}

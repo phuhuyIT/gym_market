@@ -29,6 +29,23 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
     }
 
     [Fact]
+    public async Task SearchFoodNutrition_WithoutSearch_ReturnsOk()
+    {
+        // Arrange
+        await AuthenticateAsync();
+        await SeedFoodAsync();
+
+        // Act
+        var response = await Client.GetAsync("/api/FoodNutrition/search-nutrition");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var foods = await response.Content.ReadFromJsonAsync<List<FoodNutrition>>();
+        Assert.NotNull(foods);
+        Assert.NotEmpty(foods!);
+    }
+
+    [Fact]
     public async Task GetFoodNutritionUser_ReturnsOk()
     {
         // Arrange
@@ -125,6 +142,51 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
         Assert.Equal(new DateOnly(2026, 6, 14), created.Date);
         Assert.Equal("Lunch", created.MealType);
         Assert.Equal(GetTokenClaim("nameid"), created.UserId);
+    }
+
+    [Fact]
+    public async Task UpdateFoodNutritionUser_CustomFood_UpdatesSnapshotMacros()
+    {
+        // Arrange
+        await AuthenticateAsync();
+        var createResponse = await Client.PostAsJsonAsync("/api/FoodNutrition/custom-foodnutrition-user", new AddCustomFoodNutritionUser
+        {
+            FoodName = "Protein Bowl",
+            Weight = 1,
+            CaloricValue = 400,
+            Carbs = 30,
+            Fat = 12,
+            Sugars = 4,
+            Protein = 35,
+            Date = new DateOnly(2026, 6, 14),
+            MealType = "Lunch"
+        });
+        var created = await createResponse.Content.ReadFromJsonAsync<FoodNutritionUser>();
+
+        // Act
+        var response = await Client.PutAsJsonAsync("/api/FoodNutrition/update-foodnutrition-user", new UpdateFoodNutritionUserDto
+        {
+            FoodNutritionUserId = created!.Id,
+            Weight = 1,
+            CaloricValue = 450,
+            Carbs = 36,
+            Fat = 14,
+            Sugars = 6,
+            Protein = 38,
+            Date = new DateOnly(2026, 6, 14),
+            MealType = "Dinner"
+        });
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var updated = await response.Content.ReadFromJsonAsync<FoodNutritionUser>();
+        Assert.NotNull(updated);
+        Assert.Equal(450, updated!.CaloricValue);
+        Assert.Equal(36, updated.Carbs);
+        Assert.Equal(14, updated.Fat);
+        Assert.Equal(6, updated.Sugars);
+        Assert.Equal(38, updated.Protein);
+        Assert.Equal("Dinner", updated.MealType);
     }
 
     [Fact]
@@ -248,6 +310,40 @@ public class FoodNutritionIntegrationTests : BaseIntegrationTests
         Assert.NotNull(logs);
         Assert.Single(logs!);
         Assert.Equal(new DateOnly(2026, 6, 13), logs![0].Date);
+    }
+
+    [Fact]
+    public async Task GetNutritionSummary_ReturnsDateRangeTotals()
+    {
+        // Arrange
+        await AuthenticateAsync();
+        var foodId = await SeedFoodAsync();
+        await Client.PostAsJsonAsync("/api/FoodNutrition/cal-caloric-value", new AddFoodNutritionUser
+        {
+            FoodNutritionId = foodId,
+            FoodName = "Apple",
+            Weight = 100,
+            Date = new DateOnly(2026, 6, 12)
+        });
+        await Client.PostAsJsonAsync("/api/FoodNutrition/cal-caloric-value", new AddFoodNutritionUser
+        {
+            FoodNutritionId = foodId,
+            FoodName = "Apple",
+            Weight = 200,
+            Date = new DateOnly(2026, 6, 12)
+        });
+
+        // Act
+        var response = await Client.GetAsync("/api/FoodNutrition/nutrition-summary?from=2026-06-10&to=2026-06-16");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var summaries = await response.Content.ReadFromJsonAsync<List<NutritionSummaryDto>>();
+        Assert.NotNull(summaries);
+        var day = Assert.Single(summaries!);
+        Assert.Equal(new DateOnly(2026, 6, 12), day.Date);
+        Assert.Equal(156, day.CaloricValue);
+        Assert.Equal(2, day.EntryCount);
     }
 
     [Fact]

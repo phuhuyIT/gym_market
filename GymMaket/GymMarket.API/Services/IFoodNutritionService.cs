@@ -6,12 +6,14 @@ namespace GymMarket.API.Services
 {
     public interface IFoodNutritionService
     {
-        Task<List<FoodNutrition>> SearchFoodNutrition(string search, int page, int pageSize);
+        Task<List<FoodNutrition>> SearchFoodNutrition(string? search, int page, int pageSize);
 
         // User food log
         Task<FoodNutritionUser?> LogFood(AddFoodNutritionUser model, string userId);
         Task<FoodNutritionUser?> LogCustomFood(AddCustomFoodNutritionUser model, string userId);
         Task<List<FoodNutritionUser>> GetUserLog(string userId, DateOnly? date, int page, int? pageSize);
+        Task<List<FoodNutritionUser>> GetUserLogRange(string userId, DateOnly from, DateOnly to);
+        Task<List<NutritionSummaryDto>> GetNutritionSummary(string userId, DateOnly from, DateOnly to);
         Task<FoodNutritionUser?> UpdateLoggedFood(UpdateFoodNutritionUserDto model, string userId);
         Task<bool> DeleteLoggedFood(DeleteFoodNutritionUserDto model, string userId);
 

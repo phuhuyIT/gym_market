@@ -137,7 +137,7 @@
                   <span class="text-indigo-500">F: {{ recipe.fat }}g</span>
                   <span class="text-teal-500">P: {{ recipe.protein }}g</span>
                 </div>
-                <button (click)="onShowAddForMeal('Breakfast'); searchInput.setValue(recipe.title); onShowAddFoodNutrition(true)" 
+                <button (click)="onQuickAddRecipe(recipe)" 
                         class="text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg uppercase tracking-wider transition-colors shadow-sm">
                   Log Item
                 </button>
@@ -628,6 +628,31 @@
       />
     </div>
 
+    @if (isCustomLog(foodSelectedToEdit)) {
+    <div class="grid grid-cols-2 gap-3 mb-7">
+      <div>
+        <label class="block text-[11px] font-black text-gray-400 dark:text-zinc-555 uppercase tracking-wider mb-1.5">Calories</label>
+        <input [formControl]="editCalories" type="number" class="form-input !py-3" placeholder="0" />
+      </div>
+      <div>
+        <label class="block text-[11px] font-black text-gray-400 dark:text-zinc-555 uppercase tracking-wider mb-1.5">Carbs (g)</label>
+        <input [formControl]="editCarbs" type="number" class="form-input !py-3" placeholder="0" />
+      </div>
+      <div>
+        <label class="block text-[11px] font-black text-gray-400 dark:text-zinc-555 uppercase tracking-wider mb-1.5">Fat (g)</label>
+        <input [formControl]="editFat" type="number" class="form-input !py-3" placeholder="0" />
+      </div>
+      <div>
+        <label class="block text-[11px] font-black text-gray-400 dark:text-zinc-555 uppercase tracking-wider mb-1.5">Sugar (g)</label>
+        <input [formControl]="editSugars" type="number" class="form-input !py-3" placeholder="0" />
+      </div>
+      <div class="col-span-2">
+        <label class="block text-[11px] font-black text-gray-400 dark:text-zinc-555 uppercase tracking-wider mb-1.5">Protein (g)</label>
+        <input [formControl]="editProtein" type="number" class="form-input !py-3" placeholder="0" />
+      </div>
+    </div>
+    }
+
     @if (isCustomFoodMode) {
     <div class="grid grid-cols-2 gap-3 mb-7">
       <div>
@@ -780,7 +805,7 @@
     </div>
 
     <div class="flex gap-3">
-      <button (click)="saveBudgets(); showSettings = false" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-sm py-3.5 rounded-2xl transition-all shadow-md uppercase tracking-wider">
+      <button (click)="saveBudgets()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-sm py-3.5 rounded-2xl transition-all shadow-md uppercase tracking-wider">
         Save Goals
       </button>
       <button (click)="showSettings = false" class="flex-1 bg-gray-50 dark:bg-zinc-800/80 hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400 font-extrabold text-sm py-3.5 rounded-2xl transition-all border border-gray-100 dark:border-zinc-700/50 uppercase tracking-wider">

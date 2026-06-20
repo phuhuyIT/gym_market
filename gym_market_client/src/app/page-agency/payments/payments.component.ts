@@ -15,6 +15,7 @@ import { UserStore } from '../../stores/user.store';
 import { ToastService } from '../../shared/services/toast.service';
 import { Course } from '../../core/models/course.model';
 import { CancelPaymentDto } from '../../core/models/payment.model';
+import { matchesSearch } from '../../shared/utils/search.util';
 
 @Component({
     selector: 'app-payments',
@@ -173,11 +174,7 @@ export class PaymentsComponent implements OnInit {
 		}
 
 		if (this.searchString.trim()) {
-			const q = this.searchString.toLowerCase();
-			result = result.filter(p =>
-				p.studentName.toLowerCase().includes(q) ||
-				p.courseTitle.toLowerCase().includes(q)
-			);
+			result = result.filter(p => matchesSearch(this.searchString, [p.studentName, p.courseTitle]));
 		}
 
 		if (this.statusFilter) {

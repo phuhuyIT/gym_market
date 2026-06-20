@@ -11,6 +11,7 @@ import { GmCardComponent } from '../../shared/components/gm-card/gm-card.compone
 import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
 import { DEFAULT_AVATAR_IMAGE_URL } from '../../utilities/defaults.const';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
+import { matchesSearch, normalizeSearch } from '../../shared/utils/search.util';
 
 @Component({
     selector: 'app-trainer-list',
@@ -67,18 +68,16 @@ export class TrainerListComponent implements OnInit {
 	}
 
 	get filteredTrainers(): Trainer[] {
+		const selectedCategory = normalizeSearch(this.selectedCategory);
 		return this.trainers.filter(trainer => {
-			const matchesSearch = !this.searchString ||
-				trainer.name.toLowerCase().includes(this.searchString.toLowerCase()) ||
-				(trainer.certification && trainer.certification.toLowerCase().includes(this.searchString.toLowerCase())) ||
-				(trainer.bio && trainer.bio.toLowerCase().includes(this.searchString.toLowerCase()));
+			const matchesText = matchesSearch(this.searchString, [trainer.name, trainer.certification, trainer.bio]);
 
 			const matchesCategory = this.selectedCategory === 'All' ||
 				(this.selectedCategory === 'Elite' && trainer.experience >= 8) ||
-				(trainer.certification && trainer.certification.toLowerCase().includes(this.selectedCategory.toLowerCase())) ||
-				(trainer.bio && trainer.bio.toLowerCase().includes(this.selectedCategory.toLowerCase()));
+				normalizeSearch(trainer.certification).includes(selectedCategory) ||
+				normalizeSearch(trainer.bio).includes(selectedCategory);
 
-			return matchesSearch && matchesCategory;
+			return matchesText && matchesCategory;
 		});
 	}
 

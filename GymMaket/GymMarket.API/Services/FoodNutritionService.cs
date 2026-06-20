@@ -26,7 +26,7 @@ namespace GymMarket.API.Services
             _mapper = mapper;
         }
 
-        public async Task<List<FoodNutrition>> SearchFoodNutrition(string search, int page, int pageSize)
+        public async Task<List<FoodNutrition>> SearchFoodNutrition(string? search, int page, int pageSize)
         {
             var (skip, take) = Page(page, pageSize, DefaultSearchPageSize);
             return await _repository.SearchFoodNutrition(search, skip, take);
@@ -87,6 +87,37 @@ namespace GymMarket.API.Services
             return await _repository.GetFoodNutritionUser(userId, date, skip, take);
         }
 
+        public async Task<List<FoodNutritionUser>> GetUserLogRange(string userId, DateOnly from, DateOnly to)
+        {
+            if (to < from)
+            {
+                (from, to) = (to, from);
+            }
+
+            return await _repository.GetFoodNutritionUserRange(userId, from, to);
+        }
+
+        public async Task<List<NutritionSummaryDto>> GetNutritionSummary(string userId, DateOnly from, DateOnly to)
+        {
+            var logs = await GetUserLogRange(userId, from, to);
+
+            return logs
+                .Where(log => log.Date.HasValue)
+                .GroupBy(log => log.Date!.Value)
+                .OrderBy(group => group.Key)
+                .Select(group => new NutritionSummaryDto
+                {
+                    Date = group.Key,
+                    CaloricValue = group.Sum(x => x.CaloricValue),
+                    Carbs = group.Sum(x => x.Carbs),
+                    Fat = group.Sum(x => x.Fat),
+                    Sugars = group.Sum(x => x.Sugars),
+                    Protein = group.Sum(x => x.Protein),
+                    EntryCount = group.Count(),
+                })
+                .ToList();
+        }
+
         public async Task<FoodNutritionUser?> UpdateLoggedFood(UpdateFoodNutritionUserDto model, string userId)
         {
             var entry = await _repository.GetFoodNutritionUserEntry(model.FoodNutritionUserId, userId);
@@ -105,14 +136,25 @@ namespace GymMarket.API.Services
             }
             else if (entry.Weight > 0)
             {
-                // Legacy rows have no source food id; their stored macros scale
-                // linearly with weight, so rescale the snapshot instead.
-                var factor = model.Weight / entry.Weight;
-                entry.CaloricValue *= factor;
-                entry.Carbs *= factor;
-                entry.Fat *= factor;
-                entry.Sugars *= factor;
-                entry.Protein *= factor;
+                if (HasCustomMacroUpdate(model))
+                {
+                    entry.CaloricValue = model.CaloricValue ?? entry.CaloricValue;
+                    entry.Carbs = model.Carbs ?? entry.Carbs;
+                    entry.Fat = model.Fat ?? entry.Fat;
+                    entry.Sugars = model.Sugars ?? entry.Sugars;
+                    entry.Protein = model.Protein ?? entry.Protein;
+                }
+                else
+                {
+                    // Legacy rows have no source food id; their stored macros scale
+                    // linearly with weight, so rescale the snapshot instead.
+                    var factor = model.Weight / entry.Weight;
+                    entry.CaloricValue *= factor;
+                    entry.Carbs *= factor;
+                    entry.Fat *= factor;
+                    entry.Sugars *= factor;
+                    entry.Protein *= factor;
+                }
                 entry.Weight = model.Weight;
             }
             else
@@ -244,6 +286,15 @@ namespace GymMarket.API.Services
             if (pageSize < 1) pageSize = defaultPageSize;
             if (pageSize > MaxPageSize) pageSize = MaxPageSize;
             return ((page - 1) * pageSize, pageSize);
+        }
+
+        private static bool HasCustomMacroUpdate(UpdateFoodNutritionUserDto model)
+        {
+            return model.CaloricValue.HasValue
+                || model.Carbs.HasValue
+                || model.Fat.HasValue
+                || model.Sugars.HasValue
+                || model.Protein.HasValue;
         }
     }
 }

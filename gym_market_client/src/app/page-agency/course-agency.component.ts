@@ -10,6 +10,7 @@ import { NotificationService } from '../core/services/notification.service';
 import { CourseAgencyService } from './course-agency.service';
 import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs';
+import { ROLES } from '../utilities/roles.const';
 
 @Component({
     selector: 'app-course-agency',
@@ -39,6 +40,10 @@ export class CourseAgencyComponent {
 		return false;
 	}
 
+	get isAdmin(): boolean {
+		return this.accountService.getRole() === ROLES.ADMIN;
+	}
+
 	get pageTitle(): string {
 		const url = this.router.url;
 		if (url.includes('/dashboard') || url === '/agency') return 'Overview';
@@ -49,6 +54,7 @@ export class CourseAgencyComponent {
 		if (url.includes('/courses')) return 'Manage Courses';
 		if (url.includes('/students')) return 'Manage Students';
 		if (url.includes('/payments')) return 'Payments';
+		if (url.includes('/nutrition')) return 'Food Database';
 		if (url.includes('/your-profile')) return 'Profile Details';
 		if (url.includes('/edit-profile')) return 'Edit Profile';
 		if (url.includes('/account-settings')) return 'Account Settings';
@@ -74,4 +80,3 @@ export class CourseAgencyComponent {
 		this.router.navigateByUrl('');
 	}
 }
-

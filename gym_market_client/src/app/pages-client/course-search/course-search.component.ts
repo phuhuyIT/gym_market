@@ -11,6 +11,8 @@ import { GmCardComponent } from '../../shared';
 import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
 import { DEFAULT_COURSE_THUMBNAIL_URL } from '../../utilities/defaults.const';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { SEARCH_DEBOUNCE_MS } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-course-search',
@@ -26,6 +28,9 @@ export class CourseSearchComponent implements OnInit {
 	private cdr = inject(ChangeDetectorRef);
 	pageIndex: number = 1;
 	pageSize: number = 10;
+	totalCount: number = 0;
+	totalPages: number = 0;
+	hasNextPage: boolean = false;
 	searchString: string = '';
 	category: string = 'All';
 	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
@@ -41,6 +46,7 @@ export class CourseSearchComponent implements OnInit {
 	];
 
 	bookmarkedCourses: Set<string> = new Set();
+	private searchChanges = new Subject<string>();
 
 	constructor(
 		private courseService: CourseAgencyService,
@@ -56,8 +62,19 @@ export class CourseSearchComponent implements OnInit {
 				this.pageIndex = Number(params['pageIndex']) || 1;
 				this.pageSize = Number(params['pageSize']) || 10;
 				this.searchString = params['searchString'] || '';
-				this.category = params['category'] || 'All';
-				this.getCourses();
+					this.category = params['category'] || 'All';
+					this.getCourses();
+				});
+
+		this.searchChanges
+			.pipe(
+				debounceTime(SEARCH_DEBOUNCE_MS),
+				distinctUntilChanged(),
+				takeUntilDestroyed(this.destroyRef)
+			)
+			.subscribe(() => {
+				this.pageIndex = 1;
+				this.onSubmit();
 			});
 	}
 
@@ -107,11 +124,14 @@ export class CourseSearchComponent implements OnInit {
 		const category = this.category === 'All' ? '' : this.category;
 		patchState(this.loader, { isShow: true });
 		this.courseService
-			.getCourses(this.pageIndex, this.pageSize, this.searchString, category)
+			.getCoursesPaged(this.pageIndex, this.pageSize, this.searchString, category)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: res => {
-					this.courses = res;
+					this.courses = res.items;
+					this.totalCount = res.totalCount;
+					this.totalPages = res.totalPages;
+					this.hasNextPage = res.hasNextPage;
 					patchState(this.loader, { isShow: false });
 					this.cdr.markForCheck();
 				},
@@ -122,6 +142,7 @@ export class CourseSearchComponent implements OnInit {
 	}
 
 	nexPage() {
+		if (!this.hasNextPage) return;
 		this.pageIndex++;
 		this.onSubmit();
 	}
@@ -137,6 +158,11 @@ export class CourseSearchComponent implements OnInit {
 		this.category = category;
 		this.pageIndex = 1; // Reset to first page on category change
 		this.onSubmit();
+	}
+
+	onSearchInputChange(value: string) {
+		this.searchString = value;
+		this.searchChanges.next(value.trim());
 	}
 
 	onSubmit() {

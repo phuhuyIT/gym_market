@@ -15,6 +15,7 @@ import { CourseOptionService } from '../course-option.service';
 import { CourseOption } from '../../core/models/course.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
+import { matchesSearch } from '../../shared/utils/search.util';
 
 @Component({
     selector: 'app-course-option-list',
@@ -119,9 +120,7 @@ export class CourseOptionListComponent implements OnInit {
 			this.courseOptionTemps = this.courseOptions;
 			return;
 		}
-		this.courseOptionTemps = this.courseOptions.filter((c) =>
-			c.optionName.toLowerCase().includes(this.searchString.toLowerCase())
-		);
+		this.courseOptionTemps = this.courseOptions.filter((c) => matchesSearch(this.searchString, [c.optionName]));
 	}
 
 	onShowAddModal(flag: boolean) {

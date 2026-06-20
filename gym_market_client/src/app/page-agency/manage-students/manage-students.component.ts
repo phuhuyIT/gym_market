@@ -12,6 +12,7 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { UserStore } from '../../stores/user.store';
 import { ToastService } from '../../shared/services/toast.service';
 import { Course } from '../../core/models/course.model';
+import { matchesSearch } from '../../shared/utils/search.util';
 
 interface StudentEnrollment {
 	courseId: string;
@@ -155,8 +156,7 @@ export class ManageStudentsComponent implements OnInit {
 		let result = this.allStudents;
 
 		if (this.searchString.trim()) {
-			const q = this.searchString.toLowerCase();
-			result = result.filter(s => s.studentName.toLowerCase().includes(q));
+			result = result.filter(s => matchesSearch(this.searchString, [s.studentName]));
 		}
 
 		if (this.statusFilter) {

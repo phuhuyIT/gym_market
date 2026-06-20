@@ -58,6 +58,16 @@
                 }
               </a>
             </li>
+            @if (isAdmin) {
+              <li>
+                <a routerLink="/agency/nutrition" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 3.75v16.5m0-16.5c-3.314 0-6 2.015-6 4.5 0 1.49.967 2.811 2.454 3.63m3.546-8.13c3.314 0 6 2.015 6 4.5 0 1.49-.967 2.811-2.454 3.63M11.25 20.25c-3.314 0-6-2.015-6-4.5 0-1.49.967-2.811 2.454-3.63m3.546 8.13c3.314 0 6-2.015 6-4.5 0-1.49-.967-2.811-2.454-3.63" />
+                  </svg>
+                  <span>Food Database</span>
+                </a>
+              </li>
+            }
             <li>
               <a routerLink="/agency/add-course" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
@@ -215,6 +225,16 @@
                 }
               </a>
             </li>
+            @if (isAdmin) {
+              <li>
+                <a routerLink="/agency/nutrition" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 3.75v16.5m0-16.5c-3.314 0-6 2.015-6 4.5 0 1.49.967 2.811 2.454 3.63m3.546-8.13c3.314 0 6 2.015 6 4.5 0 1.49-.967 2.811-2.454 3.63M11.25 20.25c-3.314 0-6-2.015-6-4.5 0-1.49.967-2.811 2.454-3.63m3.546 8.13c3.314 0 6-2.015 6-4.5 0-1.49-.967-2.811-2.454-3.63" />
+                  </svg>
+                  <span>Food Database</span>
+                </a>
+              </li>
+            }
             <li>
               <a routerLink="/agency/add-course" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70">
@@ -344,4 +364,3 @@
     
   </div>
 </div>
-

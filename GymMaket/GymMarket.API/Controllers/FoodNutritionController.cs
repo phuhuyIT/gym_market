@@ -26,7 +26,7 @@ namespace GymMarket.API.Controllers
         }
 
         [HttpGet("search-nutrition")]
-        public async Task<IActionResult> SearchFoodNutrition([FromQuery] string search, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        public async Task<IActionResult> SearchFoodNutrition([FromQuery] string? search = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
             var list = await _foodNutritionService.SearchFoodNutrition(search, page, pageSize);
             return Ok(list);
@@ -37,6 +37,20 @@ namespace GymMarket.API.Controllers
         {
             var list = await _foodNutritionService.GetUserLog(CurrentUserId(), date, page, pageSize);
             return Ok(list);
+        }
+
+        [HttpGet("get-nutrition-user-range")]
+        public async Task<IActionResult> GetFoodNutritionUserRange([FromQuery] DateOnly from, [FromQuery] DateOnly to)
+        {
+            var list = await _foodNutritionService.GetUserLogRange(CurrentUserId(), from, to);
+            return Ok(list);
+        }
+
+        [HttpGet("nutrition-summary")]
+        public async Task<IActionResult> GetNutritionSummary([FromQuery] DateOnly from, [FromQuery] DateOnly to)
+        {
+            var summary = await _foodNutritionService.GetNutritionSummary(CurrentUserId(), from, to);
+            return Ok(summary);
         }
 
         [HttpPost("cal-caloric-value")]

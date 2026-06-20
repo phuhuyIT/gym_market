@@ -11,6 +11,7 @@ import { ToastService } from '../../shared/services/toast.service';
 import { Course } from '../../core/models/course.model';
 import { DEFAULT_COURSE_THUMBNAIL_URL } from '../../utilities/defaults.const';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
+import { matchesSearch } from '../../shared/utils/search.util';
 
 @Component({
     selector: 'app-manage-courses',
@@ -64,8 +65,7 @@ export class ManageCoursesComponent implements OnInit {
 	applyFilters() {
 		let result = this.courses;
 		if (this.searchString.trim()) {
-			const q = this.searchString.toLowerCase();
-			result = result.filter(c => c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q));
+			result = result.filter(c => matchesSearch(this.searchString, [c.title, c.description]));
 		}
 		if (this.selectedCategory) {
 			result = result.filter(c => c.category === this.selectedCategory);

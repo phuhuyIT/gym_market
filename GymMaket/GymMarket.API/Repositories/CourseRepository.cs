@@ -169,20 +169,47 @@ namespace GymMarket.API.Repositories
             return _mapper.Map<Course, GetCourseDto>(course);
         }
 
-        public async Task<List<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = Defaults.PageSize, string? searchString = null, string? category = null)
+        public async Task<PagedResult<GetCourseDto>> GetCourses(int pageIndex = 1, int pageSize = Defaults.PageSize, string? searchString = null, string? category = null)
         {
-            var courses = await _context.Courses
+            if (pageIndex < 1) pageIndex = 1;
+            if (pageSize < 1) pageSize = Defaults.PageSize;
+            if (pageSize > 50) pageSize = 50;
+
+            searchString = searchString?.Trim();
+            category = category?.Trim();
+
+            var query = _context.Courses
                 .AsNoTrackingWithIdentityResolution()
                 .Include(c => c.FileCourses)
-                .Where(c =>
-                            ((string.IsNullOrEmpty(searchString) != true && c.Title!.ToLower().Contains(searchString.ToLower())) || string.IsNullOrEmpty(searchString) == true)
-                         && ((string.IsNullOrEmpty(category) != true && c.Category!.ToLower().Contains(category.ToLower())) || string.IsNullOrEmpty(category) == true)
-                )
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                query = query.Where(c =>
+                    (c.Title != null && c.Title.Contains(searchString)) ||
+                    (c.Description != null && c.Description.Contains(searchString)) ||
+                    (c.Type != null && c.Type.Contains(searchString)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                query = query.Where(c => c.Category != null && c.Category.Contains(category));
+            }
+
+            var totalCount = await query.CountAsync();
+            var courses = await query
+                .OrderBy(c => c.Title)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            return _mapper.Map<List<Course>, List<GetCourseDto>>(courses);
+            return new PagedResult<GetCourseDto>
+            {
+                Items = _mapper.Map<List<Course>, List<GetCourseDto>>(courses),
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                TotalCount = totalCount,
+            };
         }
 
         public async Task<IEnumerable<Course>> SearchAndFilterCoursesAsync(string? keyword, string? description, decimal? minPrice, decimal? maxPrice, int? minDuration, int? maxDuration, double? minRating, string? category)

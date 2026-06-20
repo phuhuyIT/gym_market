@@ -1,0 +1,128 @@
+<div class="space-y-6 animate-fade-in pb-12">
+  <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+      <div>
+        <p class="text-xs font-extrabold uppercase tracking-wider text-blue-500 dark:text-blue-400 mb-2">Food database</p>
+        <h1 class="text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white">Manage nutrition records</h1>
+        <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-2 max-w-2xl">
+          Maintain the master food values used by the calorie calculator. Values are stored per 100g.
+        </p>
+      </div>
+      <div class="relative w-full lg:w-80">
+        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-neutral-400 pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
+          </svg>
+        </span>
+        <input type="text" [(ngModel)]="searchString" (keyup.enter)="onSearch()" placeholder="Search foods" class="w-full bg-[#F7F6F3] dark:bg-[#252528] pl-11 pr-4 py-3 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 xl:grid-cols-[380px_1fr] gap-6 items-start">
+    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 shadow-sm">
+      <h2 class="text-lg font-extrabold text-neutral-900 dark:text-white mb-5">{{ editingId ? 'Edit food' : 'Create food' }}</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Name</label>
+          <input [(ngModel)]="form.name" type="text" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Calories</label>
+            <input [(ngModel)]="form.caloricValue" type="number" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Carbs</label>
+            <input [(ngModel)]="form.carbs" type="number" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Fat</label>
+            <input [(ngModel)]="form.fat" type="number" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Sugar</label>
+            <input [(ngModel)]="form.sugars" type="number" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Protein</label>
+            <input [(ngModel)]="form.protein" type="number" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+          </div>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button (click)="save()" class="flex-1 bg-[#007AFF] hover:bg-blue-600 text-white font-extrabold text-sm px-4 py-3 rounded-2xl transition-colors">
+            {{ editingId ? 'Save changes' : 'Create food' }}
+          </button>
+          <button (click)="cancelEdit()" class="px-4 py-3 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 font-bold text-sm transition-colors">
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#161618]/30">
+              <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider">Food</th>
+              <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider text-right">Cal</th>
+              <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider text-right">Carbs</th>
+              <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider text-right">Fat</th>
+              <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider text-right">Sugar</th>
+              <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider text-right">Protein</th>
+              <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
+            @for (food of foods; track food.id) {
+              <tr class="hover:bg-blue-50/40 dark:hover:bg-blue-500/5 transition-colors">
+                <td class="py-4 px-6">
+                  <p class="font-bold text-sm text-neutral-800 dark:text-neutral-200">{{ food.name }}</p>
+                  <p class="text-[10px] text-neutral-400 font-semibold">ID {{ food.id }}</p>
+                </td>
+                <td class="py-4 px-6 text-right text-sm font-bold tabular-nums">{{ food.caloricValue | number:'1.0-0' }}</td>
+                <td class="py-4 px-6 text-right text-sm font-bold tabular-nums">{{ food.carbs || 0 | number:'1.0-1' }}g</td>
+                <td class="py-4 px-6 text-right text-sm font-bold tabular-nums">{{ food.fat | number:'1.0-1' }}g</td>
+                <td class="py-4 px-6 text-right text-sm font-bold tabular-nums">{{ food.sugars | number:'1.0-1' }}g</td>
+                <td class="py-4 px-6 text-right text-sm font-bold tabular-nums">{{ food.protein | number:'1.0-1' }}g</td>
+                <td class="py-4 px-6 text-right whitespace-nowrap">
+                  <button (click)="edit(food)" class="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-600 text-[#007AFF] hover:text-white text-xs font-bold transition-colors mr-2">Edit</button>
+                  <button (click)="confirmDelete(food)" class="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white text-xs font-bold transition-colors">Delete</button>
+                </td>
+              </tr>
+            }
+            @if (foods.length === 0) {
+              <tr>
+                <td colspan="7" class="py-14 text-center">
+                  <p class="text-sm font-bold text-neutral-600 dark:text-neutral-300">No foods found</p>
+                  <p class="text-xs text-neutral-400 mt-1">Try another search or add a new food record.</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if(deleteTarget) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div (click)="deleteTarget = null" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+  <div class="relative bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl text-center space-y-6 animate-scale-in">
+    <div>
+      <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Delete food?</h3>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-2">This removes {{ deleteTarget.name }} from the master food database. Existing user logs keep their saved values.</p>
+    </div>
+    <div class="flex justify-center items-center gap-3">
+      <button (click)="deleteTarget = null" class="w-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700/60 text-neutral-700 dark:text-neutral-300 font-bold px-4 py-2.5 rounded-xl text-sm transition-colors">
+        Cancel
+      </button>
+      <button (click)="deleteFood()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-colors shadow-lg shadow-red-500/20">
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+}

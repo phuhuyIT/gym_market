@@ -15,10 +15,17 @@ namespace GymMarket.API.Repositories
             _context = context;
         }
 
-        public async Task<List<FoodNutrition>> SearchFoodNutrition(string search, int skip, int take)
+        public async Task<List<FoodNutrition>> SearchFoodNutrition(string? search, int skip, int take)
         {
-            var list = await _context.FoodNutritions.AsNoTrackingWithIdentityResolution()
-                .Where(f => f.Name!.ToLower().Contains(search.ToLower()))
+            var normalizedSearch = search?.Trim();
+            var query = _context.FoodNutritions.AsNoTrackingWithIdentityResolution();
+
+            if (!string.IsNullOrWhiteSpace(normalizedSearch))
+            {
+                query = query.Where(f => f.Name != null && f.Name.Contains(normalizedSearch));
+            }
+
+            var list = await query
                 .OrderBy(f => f.Name)
                 .Skip(skip)
                 .Take(take)
@@ -34,8 +41,16 @@ namespace GymMarket.API.Repositories
 
         public async Task<bool> FoodNutritionNameExists(string name, int? excludeId = null)
         {
+            name = name.Trim();
+            if (_context.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory")
+            {
+                var normalizedName = name.ToLower();
+                return await _context.FoodNutritions
+                    .AnyAsync(f => f.Name != null && f.Name.ToLower() == normalizedName && (excludeId == null || f.Id != excludeId));
+            }
+
             return await _context.FoodNutritions
-                .AnyAsync(f => f.Name!.ToLower() == name.ToLower() && (excludeId == null || f.Id != excludeId));
+                .AnyAsync(f => f.Name == name && (excludeId == null || f.Id != excludeId));
         }
 
         public async Task<FoodNutrition> AddFoodNutrition(FoodNutrition food)
@@ -58,6 +73,15 @@ namespace GymMarket.API.Repositories
                 .OrderBy(f => f.Id)
                 .Skip(skip)
                 .Take(take)
+                .ToListAsync();
+        }
+
+        public async Task<List<FoodNutritionUser>> GetFoodNutritionUserRange(string userId, DateOnly from, DateOnly to)
+        {
+            return await _context.FoodNutritionUsers.AsNoTrackingWithIdentityResolution()
+                .Where(f => f.UserId == userId && f.Date >= from && f.Date <= to)
+                .OrderBy(f => f.Date)
+                .ThenBy(f => f.Id)
                 .ToListAsync();
         }
 
