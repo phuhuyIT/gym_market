@@ -4,14 +4,17 @@ import { RouterLink } from '@angular/router';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Trainer } from '../../core/models/trainer.model';
+import { Trainer, TrainerSearch } from '../../core/models/trainer.model';
 
 import { FormsModule } from '@angular/forms';
 import { GmCardComponent } from '../../shared/components/gm-card/gm-card.component';
+import { SEARCH_DEBOUNCE_MS } from '../../utilities/defaults.const';
 import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
 import { DEFAULT_AVATAR_IMAGE_URL } from '../../utilities/defaults.const';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 import { matchesSearch, normalizeSearch } from '../../shared/utils/search.util';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'app-trainer-list',
@@ -27,14 +30,32 @@ export class TrainerListComponent implements OnInit {
 	categories: string[] = ['All', 'Yoga', 'Cardio', 'Strength', 'Crossfit', 'Elite'];
 	bookmarkedTrainers: Set<string> = new Set();
 	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
+	pageIndex = 1;
+	pageSize = 12;
+	totalCount = 0;
+	totalPages = 0;
+	hasPreviousPage = false;
+	hasNextPage = false;
 
 	loader = inject(LoaderModalStore);
 	private destroyRef = inject(DestroyRef);
 	private cdr = inject(ChangeDetectorRef);
+	private searchChanged$ = new Subject<string>();
 
 	constructor(private trainerService: TrainerService) {}
 
 	ngOnInit() {
+		this.searchChanged$
+			.pipe(
+				debounceTime(SEARCH_DEBOUNCE_MS),
+				distinctUntilChanged(),
+				takeUntilDestroyed(this.destroyRef)
+			)
+			.subscribe(() => {
+				this.pageIndex = 1;
+				this.getAllTrainers();
+			});
+
 		this.getAllTrainers();
 		this.loadBookmarks();
 	}
@@ -53,12 +74,16 @@ export class TrainerListComponent implements OnInit {
 	private getAllTrainers() {
 		patchState(this.loader, { isShow: true });
 		this.trainerService
-			.getTrainers()
+			.searchTrainersPaged(this.searchString, this.pageIndex, this.pageSize)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: res => {
 					patchState(this.loader, { isShow: false });
-					this.trainers = res;
+					this.trainers = res.items.map(trainer => this.toTrainer(trainer));
+					this.totalCount = res.totalCount;
+					this.totalPages = res.totalPages;
+					this.hasPreviousPage = res.hasPreviousPage;
+					this.hasNextPage = res.hasNextPage;
 					this.cdr.markForCheck();
 				},
 				error: () => {
@@ -67,10 +92,26 @@ export class TrainerListComponent implements OnInit {
 			});
 	}
 
+	private toTrainer(trainer: TrainerSearch): Trainer {
+		return {
+			trainerId: trainer.trainerId,
+			userId: trainer.userId || '',
+			name: trainer.fullName || trainer.name || 'Trainer',
+			email: trainer.email || '',
+			profilePicture: trainer.profilePicture || '',
+			bio: trainer.bio || '',
+			certification: trainer.certification || '',
+			experience: trainer.experience || 0,
+			rating: trainer.rating || 0,
+			createdAt: trainer.createdAt || '',
+			updatedAt: trainer.createdAt || ''
+		};
+	}
+
 	get filteredTrainers(): Trainer[] {
 		const selectedCategory = normalizeSearch(this.selectedCategory);
 		return this.trainers.filter(trainer => {
-			const matchesText = matchesSearch(this.searchString, [trainer.name, trainer.certification, trainer.bio]);
+			const matchesText = matchesSearch(this.searchString, [trainer.name, trainer.email, trainer.certification, trainer.bio]);
 
 			const matchesCategory = this.selectedCategory === 'All' ||
 				(this.selectedCategory === 'Elite' && trainer.experience >= 8) ||
@@ -84,6 +125,12 @@ export class TrainerListComponent implements OnInit {
 	selectCategory(category: string) {
 		this.selectedCategory = category;
 		this.cdr.markForCheck();
+	}
+
+	goToPage(pageIndex: number) {
+		if (pageIndex < 1 || (this.totalPages && pageIndex > this.totalPages) || pageIndex === this.pageIndex) return;
+		this.pageIndex = pageIndex;
+		this.getAllTrainers();
 	}
 
 	toggleBookmark(trainerId: string, event: Event) {
@@ -125,6 +172,6 @@ export class TrainerListComponent implements OnInit {
 	}
 
 	onSubmit() {
-		this.cdr.markForCheck();
+		this.searchChanged$.next(this.searchString);
 	}
 }

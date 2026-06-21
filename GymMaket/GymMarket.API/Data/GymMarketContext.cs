@@ -57,6 +57,12 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
         base.OnModelCreating(modelBuilder);
         
+        modelBuilder.Entity<AppUser>(entity =>
+        {
+            entity.HasIndex(e => e.FullName);
+            entity.HasIndex(e => e.PhoneNumber);
+            entity.HasIndex(e => e.Status);
+        });
 
         modelBuilder.Entity<Course>(entity =>
         {
@@ -96,6 +102,11 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.Type)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+
+            entity.HasIndex(e => e.Title);
+            entity.HasIndex(e => e.Category);
+            entity.HasIndex(e => e.Type);
+            entity.HasIndex(e => e.TrainerId);
 
             entity.HasOne(d => d.Trainer).WithMany(p => p.Courses)
                 .HasForeignKey(d => d.TrainerId)
@@ -467,6 +478,12 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_At");
 
+            entity.HasIndex(e => e.CourseId);
+            entity.HasIndex(e => e.StudentId);
+            entity.HasIndex(e => e.PaymentStatus);
+            entity.HasIndex(e => e.PaymentType);
+            entity.HasIndex(e => e.CreatedAt);
+
             entity.HasOne(d => d.Course).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.CourseId)
                 .HasConstraintName("FK_Payments_Course");
@@ -499,6 +516,9 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_At");
+            entity.HasIndex(e => e.Name);
+            entity.HasIndex(e => e.Email);
+            entity.HasIndex(e => e.UserId);
             entity.HasOne(d => d.AppUser).WithOne(p => p.Student)
                 .HasForeignKey<Student>(d => d.UserId)
                 .HasConstraintName("FK_Student_AppUser");
@@ -529,6 +549,10 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_At");
+            entity.HasIndex(e => e.Name);
+            entity.HasIndex(e => e.Email);
+            entity.HasIndex(e => e.Certification);
+            entity.HasIndex(e => e.UserId);
             entity.HasOne(d => d.AppUser).WithOne(p => p.Trainer)
                 .HasForeignKey<Trainer>(d => d.UserId)
                 .HasConstraintName("FK_Trainer_AppUser");
@@ -558,6 +582,11 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
         {
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Type).HasMaxLength(20).HasDefaultValue(MessageTypes.Text);
+        });
+
+        modelBuilder.Entity<FoodNutrition>(entity =>
+        {
+            entity.HasIndex(e => e.Name);
         });
 
         modelBuilder.Entity<FoodNutritionUser>(entity =>

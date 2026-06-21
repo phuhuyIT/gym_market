@@ -9,6 +9,19 @@ export interface Student {
   updatedAt: string;
 }
 
+export interface StudentSearch {
+  studentId: string;
+  userId?: string;
+  name?: string;
+  email?: string;
+  fullName?: string;
+  phoneNumber?: string;
+  healthStatus?: string;
+  profilePicture?: string;
+  status?: string;
+  createdAt?: string;
+}
+
 export interface StudentProfile {
   studentId: string;
   userId: string;

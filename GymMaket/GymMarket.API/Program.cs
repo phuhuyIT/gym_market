@@ -124,6 +124,7 @@ builder.Services.AddScoped<ILectureMaterialRepository, LectureMaterialRepository
 builder.Services.AddScoped<IFoodNutritionRepository, FoodNutritionRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
 // service

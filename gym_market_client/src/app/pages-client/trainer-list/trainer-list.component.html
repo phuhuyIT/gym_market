@@ -97,5 +97,15 @@
         }
       </div>
     }
+
+    @if (totalCount > 0) {
+      <div class="pagination-row">
+        <span>Page {{ pageIndex }} of {{ totalPages || 1 }} · {{ totalCount }} trainers</span>
+        <div class="pagination-actions">
+          <button type="button" (click)="goToPage(pageIndex - 1)" [disabled]="!hasPreviousPage">Previous</button>
+          <button type="button" (click)="goToPage(pageIndex + 1)" [disabled]="!hasNextPage">Next</button>
+        </div>
+      </div>
+    }
   </main>
 </div>

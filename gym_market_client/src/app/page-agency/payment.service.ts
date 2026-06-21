@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CancelPaymentDto, Payment } from '../core/models/payment.model';
+import { PagedResult } from '../core/models/paged-result.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -14,6 +15,26 @@ export class PaymentService {
 		return this.http.get<Payment[]>(
 			`${environment.baseApi}/Payments/get-payments-of-course/${courseId}`
 		);
+	}
+
+	searchPaymentsPaged(
+		search = '',
+		pageIndex = 1,
+		pageSize = 15,
+		courseId = '',
+		studentId = '',
+		status = ''
+	): Observable<PagedResult<Payment>> {
+		let params = new HttpParams()
+			.set('search', search.trim())
+			.set('pageIndex', pageIndex)
+			.set('pageSize', pageSize);
+
+		if (courseId) params = params.set('courseId', courseId);
+		if (studentId) params = params.set('studentId', studentId);
+		if (status) params = params.set('status', status);
+
+		return this.http.get<PagedResult<Payment>>(`${environment.baseApi}/Payments/search`, { params });
 	}
 
 	okPayment(paymentId: string): Observable<void> {

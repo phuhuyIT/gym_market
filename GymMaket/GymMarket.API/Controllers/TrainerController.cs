@@ -10,8 +10,18 @@ namespace GymMarket.API.Controllers
     [ApiController]
     public class TrainerController : GenericController<TrainerCreateDTO, TrainerUpdateDTO, Trainer, string>
     {
-        public TrainerController(IGenericRepository<Trainer, string> repository, IMapper mapper) : base(repository, mapper)
+        private readonly ITrainerRepository _trainerRepository;
+
+        public TrainerController(ITrainerRepository repository, IMapper mapper) : base(repository, mapper)
         {
+            _trainerRepository = repository;
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string? search, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = Defaults.PageSize)
+        {
+            var result = await _trainerRepository.SearchTrainers(pageIndex, pageSize, search);
+            return Ok(result);
         }
 
         protected override string GetEntityId(Trainer entity)

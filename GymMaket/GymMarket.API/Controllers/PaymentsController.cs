@@ -3,6 +3,7 @@ using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GymMarket.API.Controllers
 {
@@ -33,6 +34,33 @@ namespace GymMarket.API.Controllers
 
             var list = await _paymentRepository.GetPaymentsOfCourse(courseId);
             return Ok(list);
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(
+            [FromQuery] string? search,
+            [FromQuery] string? courseId,
+            [FromQuery] string? studentId,
+            [FromQuery] string? status,
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = Defaults.PageSize)
+        {
+            if (!string.IsNullOrWhiteSpace(courseId) && !await _courseAccessService.CanManageCourseAsync(User, courseId))
+                return Forbid();
+
+            var isAdmin = User.IsInRole(ApplicationRoles.Admin);
+            var trainerId = User.FindFirstValue("trainerId");
+            var result = await _paymentRepository.SearchPayments(
+                pageIndex,
+                pageSize,
+                search,
+                courseId,
+                studentId,
+                status,
+                trainerId,
+                includeAllCourses: isAdmin);
+
+            return Ok(result);
         }
 
         [HttpPost("ok-payment/{paymentId}")]

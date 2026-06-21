@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
-import { Trainer, UpdateTrainerProfileDto } from '../core/models/trainer.model';
+import { PagedResult } from '../core/models/paged-result.model';
+import { Trainer, TrainerSearch, UpdateTrainerProfileDto } from '../core/models/trainer.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -20,5 +21,15 @@ export class TrainerService {
 
 	getTrainers(): Observable<Trainer[]> {
 		return this.http.get<Trainer[]>(`${environment.baseApi}/trainer`);
+	}
+
+	searchTrainersPaged(search = '', pageIndex = 1, pageSize = 12): Observable<PagedResult<TrainerSearch>> {
+		return this.http.get<PagedResult<TrainerSearch>>(`${environment.baseApi}/trainer/search`, {
+			params: {
+				search: search.trim(),
+				pageIndex: pageIndex.toString(),
+				pageSize: pageSize.toString(),
+			},
+		});
 	}
 }

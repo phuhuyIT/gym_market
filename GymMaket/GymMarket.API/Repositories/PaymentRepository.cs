@@ -1,6 +1,7 @@
 using AutoMapper;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Payment;
+using GymMarket.API.DTOs.Response;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -64,6 +65,7 @@ namespace GymMarket.API.Repositories
                     PaymentType = p.PaymentType,
                     Note = p.Note,
                     CreatedAt = p.CreatedAt,
+                    CourseTitle = p.Course!.Title,
                     FullName = p.Student!.Name,
                     UserId = p.Student!.UserId
                 })
@@ -76,6 +78,109 @@ namespace GymMarket.API.Repositories
             }
 
             return list;
+        }
+
+        public async Task<PagedResult<GetPaymentDto>> SearchPayments(
+            int pageIndex = 1,
+            int pageSize = Defaults.PageSize,
+            string? search = null,
+            string? courseId = null,
+            string? studentId = null,
+            string? status = null,
+            string? trainerId = null,
+            bool includeAllCourses = false)
+        {
+            if (pageIndex < 1) pageIndex = 1;
+            if (pageSize < 1) pageSize = Defaults.PageSize;
+            if (pageSize > 50) pageSize = 50;
+
+            search = search?.Trim();
+            courseId = courseId?.Trim();
+            studentId = studentId?.Trim();
+            status = PaymentStatus.Normalize(status?.Trim());
+            trainerId = trainerId?.Trim();
+
+            var query = _context.Payments
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (!includeAllCourses)
+            {
+                if (string.IsNullOrWhiteSpace(trainerId))
+                {
+                    return new PagedResult<GetPaymentDto>
+                    {
+                        Items = [],
+                        PageIndex = pageIndex,
+                        PageSize = pageSize,
+                        TotalCount = 0
+                    };
+                }
+
+                query = query.Where(p => p.Course != null && p.Course.TrainerId == trainerId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(courseId))
+            {
+                query = query.Where(p => p.CourseId == courseId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(studentId))
+            {
+                query = query.Where(p => p.StudentId == studentId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = status == PaymentStatus.Paid
+                    ? query.Where(p => p.PaymentStatus == PaymentStatus.Paid || p.PaymentStatus == PaymentStatus.Completed)
+                    : query.Where(p => p.PaymentStatus == status);
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(p =>
+                    (p.PaymentStatus != null && p.PaymentStatus.Contains(search)) ||
+                    (p.PaymentType != null && p.PaymentType.Contains(search)) ||
+                    p.Note.Contains(search) ||
+                    (p.Course != null && p.Course.Title != null && p.Course.Title.Contains(search)) ||
+                    (p.Student != null && p.Student.Name != null && p.Student.Name.Contains(search)) ||
+                    (p.Student != null && p.Student.Email != null && p.Student.Email.Contains(search)) ||
+                    (p.Student != null && p.Student.AppUser != null && p.Student.AppUser.FullName != null && p.Student.AppUser.FullName.Contains(search)) ||
+                    (p.Student != null && p.Student.AppUser != null && p.Student.AppUser.Email != null && p.Student.AppUser.Email.Contains(search)) ||
+                    (p.Student != null && p.Student.AppUser != null && p.Student.AppUser.PhoneNumber != null && p.Student.AppUser.PhoneNumber.Contains(search)));
+            }
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .OrderByDescending(p => p.CreatedAt)
+                .ThenBy(p => p.PaymentId)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new GetPaymentDto
+                {
+                    PaymentId = p.PaymentId,
+                    CourseId = p.CourseId,
+                    StudentId = p.StudentId,
+                    PaymentAmount = p.PaymentAmount,
+                    PaymentDate = p.PaymentDate,
+                    PaymentStatus = p.PaymentStatus == PaymentStatus.Completed ? PaymentStatus.Paid : p.PaymentStatus,
+                    PaymentType = p.PaymentType,
+                    Note = p.Note,
+                    CreatedAt = p.CreatedAt,
+                    CourseTitle = p.Course != null ? p.Course.Title : null,
+                    FullName = p.Student != null ? p.Student.Name : null,
+                    UserId = p.Student != null ? p.Student.UserId : null
+                })
+                .ToListAsync();
+
+            return new PagedResult<GetPaymentDto>
+            {
+                Items = items,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            };
         }
 
         public async Task<Payment?> OkPayment(string paymentId)

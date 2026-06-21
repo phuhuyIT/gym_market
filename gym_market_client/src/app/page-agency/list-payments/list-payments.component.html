@@ -5,6 +5,21 @@
   </div>
 
   <div class="data-table" appReveal>
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 16px;">
+      <input
+        type="text"
+        [(ngModel)]="searchString"
+        (ngModelChange)="onSearch()"
+        placeholder="Search payments..."
+        style="width: min(100%, 320px); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text);"
+      />
+      <span style="font-size: 0.8125rem; color: var(--text-soft);">
+        {{ totalCount }} payments
+      </span>
+    </div>
+  </div>
+
+  <div class="data-table" appReveal>
     <table>
       <thead>
         <tr>
@@ -50,6 +65,20 @@
       </tbody>
     </table>
   </div>
+
+  @if (totalCount > 0) {
+  <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-top: 16px; color: var(--text-soft); font-size: 0.8125rem;">
+    <span>Page {{ pageIndex }} of {{ totalPages || 1 }}</span>
+    <div style="display: flex; gap: 8px;">
+      <button (click)="goToPage(pageIndex - 1)" [disabled]="!hasPreviousPage" class="btn-ghost">
+        Previous
+      </button>
+      <button (click)="goToPage(pageIndex + 1)" [disabled]="!hasNextPage" class="btn-ghost">
+        Next
+      </button>
+    </div>
+  </div>
+  }
 </div>
 
 @if(showDelete) {

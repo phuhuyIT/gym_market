@@ -26,6 +26,14 @@ export class ListPaymentsComponent implements OnInit {
 	showCancel: boolean = false;
 	paymentNote: string = '';
 	paymentId: string | null = null;
+	courseId = '';
+	searchString = '';
+	pageIndex = 1;
+	pageSize = 15;
+	totalCount = 0;
+	totalPages = 0;
+	hasPreviousPage = false;
+	hasNextPage = false;
 
 	ngOnInit() {
 		this.getPayments();
@@ -34,17 +42,39 @@ export class ListPaymentsComponent implements OnInit {
 	private getPayments() {
 		this.activatedRoute.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: (params) => {
-				const courseId = params['courseId'];
-				if (courseId) {
-					this.paymentService.getPayments(courseId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-						next: (res: Payment[]) => {
-							this.payments = res;
-							this.cdr.markForCheck();
-						},
-					});
+				this.courseId = params['courseId'];
+				if (this.courseId) {
+					this.loadPayments();
 				}
 			},
 		});
+	}
+
+	loadPayments() {
+		this.paymentService
+			.searchPaymentsPaged(this.searchString, this.pageIndex, this.pageSize, this.courseId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: result => {
+					this.payments = result.items;
+					this.totalCount = result.totalCount;
+					this.totalPages = result.totalPages;
+					this.hasPreviousPage = result.hasPreviousPage;
+					this.hasNextPage = result.hasNextPage;
+					this.cdr.markForCheck();
+				},
+			});
+	}
+
+	onSearch() {
+		this.pageIndex = 1;
+		this.loadPayments();
+	}
+
+	goToPage(pageIndex: number) {
+		if (pageIndex < 1 || (this.totalPages && pageIndex > this.totalPages) || pageIndex === this.pageIndex) return;
+		this.pageIndex = pageIndex;
+		this.loadPayments();
 	}
 
 	okPayment(paymentId: string) {
@@ -53,10 +83,11 @@ export class ListPaymentsComponent implements OnInit {
 				patchState(this.notice, { message: 'Successfully', isShow: true });
 				const pay = this.payments.find((c) => c.paymentId === paymentId);
 
-				if (pay) {
-					pay.paymentStatus = 'Paid';
-				}
-				this.cdr.markForCheck();
+					if (pay) {
+						pay.paymentStatus = 'Paid';
+					}
+					this.loadPayments();
+					this.cdr.markForCheck();
 			},
 		});
 	}
@@ -85,9 +116,10 @@ export class ListPaymentsComponent implements OnInit {
 				}
 
 				this.paymentNote = '';
-				this.paymentId = null;
-				this.showCancel = false;
-				this.cdr.markForCheck();
+					this.paymentId = null;
+					this.showCancel = false;
+					this.loadPayments();
+					this.cdr.markForCheck();
 			},
 		});
 	}

@@ -2,6 +2,8 @@ using AutoMapper;
 using GymMarket.API.DTOs.Student;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using GymMarket.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -87,6 +89,23 @@ namespace GymMarket.API.Controllers
             if (student == null)
                 return NotFound();
             return Ok(student);
+        }
+
+        [Authorize(Roles = "Trainer,Admin")]
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string? search, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = Defaults.PageSize)
+        {
+            var isAdmin = User.IsInRole(ApplicationRoles.Admin);
+            var trainerId = User.FindFirstValue("trainerId");
+
+            var result = await _studentRepository.SearchStudents(
+                pageIndex,
+                pageSize,
+                search,
+                trainerId,
+                includeAllStudents: isAdmin);
+
+            return Ok(result);
         }
 
         protected override string GetEntityId(Student entity)

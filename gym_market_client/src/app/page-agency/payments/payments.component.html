@@ -34,7 +34,7 @@
   <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <!-- Search -->
     <div class="relative w-full sm:w-80">
-      <input type="text" [(ngModel)]="searchString" (keyup.enter)="onSearch()" placeholder="Search students or courses..." class="w-full bg-[#F7F6F3] dark:bg-[#252528] pl-4 pr-10 py-2.5 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 transition-all border-none">
+      <input type="text" [(ngModel)]="searchString" (ngModelChange)="onSearch()" (keyup.enter)="loadPayments()" placeholder="Search students or courses..." class="w-full bg-[#F7F6F3] dark:bg-[#252528] pl-4 pr-10 py-2.5 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 transition-all border-none">
       <button (click)="onSearch()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
@@ -80,10 +80,10 @@
               <td class="py-4 px-6">
                 <div class="flex items-center gap-2.5">
                   <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-[#007AFF] to-blue-400 flex items-center justify-center text-white font-bold text-xs shadow-sm flex-shrink-0">
-                    {{ p.studentName.substring(0,1).toUpperCase() }}
+                    {{ (p.fullName || 'Student').substring(0,1).toUpperCase() }}
                   </div>
                   <div>
-                    <span class="font-bold text-xs text-neutral-800 dark:text-neutral-200">{{ p.studentName }}</span>
+                    <span class="font-bold text-xs text-neutral-800 dark:text-neutral-200">{{ p.fullName || 'Student' }}</span>
                     @if (p.note) {
                       <p class="text-[9px] text-neutral-400 dark:text-neutral-500 mt-0.5 truncate max-w-[120px]" [title]="p.note">Note: {{ p.note }}</p>
                     }
@@ -92,8 +92,8 @@
               </td>
               <!-- Course title -->
               <td class="py-4 px-6">
-                <span class="text-xs text-neutral-600 dark:text-neutral-400 font-semibold line-clamp-1 max-w-[180px] md:max-w-[240px]" [title]="p.courseTitle">
-                  {{ p.courseTitle }}
+                <span class="text-xs text-neutral-600 dark:text-neutral-400 font-semibold line-clamp-1 max-w-[180px] md:max-w-[240px]" [title]="p.courseTitle || 'Course'">
+                  {{ p.courseTitle || 'Course' }}
                 </span>
               </td>
               <!-- Payment amount -->
@@ -102,7 +102,7 @@
               </td>
               <!-- Date -->
               <td class="py-4 px-6 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-                {{ p.paymentDate | date:'mediumDate' }}
+                {{ (p.paymentDate || p.createdAt) | date:'mediumDate' }}
               </td>
               <!-- Status -->
               <td class="py-4 px-6 text-center">
@@ -162,6 +162,22 @@
       </table>
     </div>
   </div>
+
+  @if (totalCount > 0) {
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-neutral-500 dark:text-neutral-400">
+      <span class="font-semibold">
+        Showing page {{ pageIndex }} of {{ totalPages || 1 }} · {{ totalCount }} payments
+      </span>
+      <div class="flex items-center gap-2">
+        <button (click)="goToPage(pageIndex - 1)" [disabled]="!hasPreviousPage" class="px-3 py-2 rounded-xl bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 font-bold disabled:opacity-40 disabled:cursor-not-allowed">
+          Previous
+        </button>
+        <button (click)="goToPage(pageIndex + 1)" [disabled]="!hasNextPage" class="px-3 py-2 rounded-xl bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 font-bold disabled:opacity-40 disabled:cursor-not-allowed">
+          Next
+        </button>
+      </div>
+    </div>
+  }
 
 </div>
 

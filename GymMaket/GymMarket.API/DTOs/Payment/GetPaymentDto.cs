@@ -12,6 +12,8 @@ namespace GymMarket.API.DTOs.Payment
         public string Note { get; set; } = string.Empty;
         public DateTime? CreatedAt { get; set; }
 
+        public string? CourseTitle { get; set; }
+
         // Flattened from the related Student so the client can show the student's name.
         public string? FullName { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using GymMarket.API.DTOs.Payment;
+using GymMarket.API.DTOs.Response;
 using GymMarket.API.Models;
 
 namespace GymMarket.API.Repositories.IRepositories
@@ -6,6 +7,15 @@ namespace GymMarket.API.Repositories.IRepositories
     public interface IPaymentRepository : IGenericRepository<Payment, string>
     {
         Task<List<GetPaymentDto>> GetPaymentsOfCourse(string courseId);
+        Task<PagedResult<GetPaymentDto>> SearchPayments(
+            int pageIndex = 1,
+            int pageSize = Defaults.PageSize,
+            string? search = null,
+            string? courseId = null,
+            string? studentId = null,
+            string? status = null,
+            string? trainerId = null,
+            bool includeAllCourses = false);
         Task<Payment?> OkPayment(string paymentId);
         Task<Payment?> CancelPayment(CancelPayment model);
 

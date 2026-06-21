@@ -1,46 +1,48 @@
-import { ChangeDetectorRef, Component, DestroyRef, effect, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, inject, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { patchState } from '@ngrx/signals';
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { CourseAgencyService } from '../course-agency.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PaymentService } from '../payment.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { NoticeModalStore } from '../../stores/notice.store';
 import { UserStore } from '../../stores/user.store';
 import { ToastService } from '../../shared/services/toast.service';
-import { Course } from '../../core/models/course.model';
-import { CancelPaymentDto } from '../../core/models/payment.model';
-import { matchesSearch } from '../../shared/utils/search.util';
+import { CancelPaymentDto, Payment } from '../../core/models/payment.model';
+import { SEARCH_DEBOUNCE_MS } from '../../utilities/defaults.const';
 
 @Component({
-    selector: 'app-payments',
-    standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, RouterLink, FormsModule, DecimalPipe, DatePipe],
-    templateUrl: './payments.component.html'
+	selector: 'app-payments',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [CommonModule, RouterLink, FormsModule, DecimalPipe, DatePipe],
+	templateUrl: './payments.component.html'
 })
 export class PaymentsComponent implements OnInit {
-	courses: Course[] = [];
-	allPayments: any[] = [];
-	filteredPayments: any[] = [];
+	allPayments: Payment[] = [];
+	filteredPayments: Payment[] = [];
 
 	searchString = '';
 	statusFilter = '';
-	// optional context when navigated from a specific course or student
 	courseIdFilter = '';
 	courseTitleFilter = '';
 	studentIdFilter = '';
 	studentNameFilter = '';
 
-	// cancel modal state
 	showCancelModal = false;
 	paymentIdToCancel = '';
 	cancelNote = '';
+
+	pageIndex = 1;
+	pageSize = 15;
+	totalCount = 0;
+	totalPages = 0;
+	hasPreviousPage = false;
+	hasNextPage = false;
 
 	loaderStore = inject(LoaderModalStore);
 	noticeStore = inject(NoticeModalStore);
@@ -52,13 +54,11 @@ export class PaymentsComponent implements OnInit {
 	private notificationService = inject(NotificationService);
 	private activatedRoute = inject(ActivatedRoute);
 	private router = inject(Router);
+	private searchChanged$ = new Subject<string>();
 
-	// Opening the Payments page counts as seeing the payment alerts: clear their nav
-	// cue once notifications have loaded. Guarded so it only clears the batch present
-	// on arrival, not every alert that streams in while the trainer stays on the page.
 	private paymentsCueCleared = false;
 
-	constructor(private courseAgencyService: CourseAgencyService) {
+	constructor() {
 		effect(() => {
 			if (this.notificationService.unreadPaymentCount() > 0 && !this.paymentsCueCleared) {
 				this.paymentsCueCleared = true;
@@ -68,20 +68,30 @@ export class PaymentsComponent implements OnInit {
 	}
 
 	ngOnInit() {
+		this.searchChanged$
+			.pipe(
+				debounceTime(SEARCH_DEBOUNCE_MS),
+				distinctUntilChanged(),
+				takeUntilDestroyed(this.destroyRef)
+			)
+			.subscribe(() => {
+				this.pageIndex = 1;
+				this.loadPayments();
+			});
+
 		this.activatedRoute.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
 			this.courseIdFilter = params['courseId'] || '';
 			this.studentIdFilter = params['studentId'] || '';
-			this.updateContextLabels();
-			this.applyFilters();
+			this.pageIndex = 1;
+			this.loadPayments();
 		});
-		this.loadData();
 	}
 
 	private updateContextLabels() {
-		const course = this.courses.find(c => c.courseId === this.courseIdFilter);
-		this.courseTitleFilter = course?.title ?? '';
-		const payment = this.allPayments.find(p => p.studentId === this.studentIdFilter);
-		this.studentNameFilter = payment?.studentName ?? '';
+		const coursePayment = this.allPayments.find(p => p.courseId === this.courseIdFilter);
+		this.courseTitleFilter = coursePayment?.courseTitle ?? this.courseTitleFilter;
+		const studentPayment = this.allPayments.find(p => p.studentId === this.studentIdFilter);
+		this.studentNameFilter = studentPayment?.fullName ?? this.studentNameFilter;
 	}
 
 	clearContextFilter() {
@@ -90,108 +100,53 @@ export class PaymentsComponent implements OnInit {
 		this.studentIdFilter = '';
 		this.studentNameFilter = '';
 		this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: {} });
-		this.applyFilters();
 	}
 
-	loadData() {
+	loadPayments() {
 		patchState(this.loaderStore, { isShow: true });
-		this.courseAgencyService
-			.getCoursesOfTrainer(this.userStore.trainerId() ?? '')
+		this.paymentService
+			.searchPaymentsPaged(
+				this.searchString,
+				this.pageIndex,
+				this.pageSize,
+				this.courseIdFilter,
+				this.studentIdFilter,
+				this.statusFilter
+			)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: courses => {
-					this.courses = courses;
+				next: result => {
+					this.allPayments = result.items;
+					this.filteredPayments = result.items;
+					this.totalCount = result.totalCount;
+					this.totalPages = result.totalPages;
+					this.hasPreviousPage = result.hasPreviousPage;
+					this.hasNextPage = result.hasNextPage;
 					this.updateContextLabels();
-					this.loadPaymentsFromCourses();
+					patchState(this.loaderStore, { isShow: false });
+					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.loaderStore, { isShow: false });
-					this.toastService.show('Failed to load courses', 'error');
+					this.toastService.show('Failed to load payments', 'error');
 				}
 			});
 	}
 
-	loadPaymentsFromCourses() {
-		if (this.courses.length === 0) {
-			this.allPayments = [];
-			this.filteredPayments = [];
-			patchState(this.loaderStore, { isShow: false });
-			this.cdr.markForCheck();
-			return;
-		}
-
-		const requests = this.courses.map(c =>
-			this.paymentService.getPayments(c.courseId).pipe(
-				catchError(() => of([]))
-			)
-		);
-
-		forkJoin(requests).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-			next: (results) => {
-				const list: any[] = [];
-				results.forEach((payments, idx) => {
-					const course = this.courses[idx];
-					payments.forEach(p => {
-						list.push({
-							paymentId: p.paymentId,
-							studentId: p.studentId,
-							userId: p.userId,
-							studentName: p.fullName || 'Student',
-							courseId: course.courseId,
-							courseTitle: course.title,
-							paymentAmount: p.paymentAmount || course.price,
-							paymentStatus: p.paymentStatus || 'Paid',
-							paymentDate: p.paymentDate || p.createdAt || new Date().toISOString(),
-							note: p.note
-						});
-					});
-				});
-
-				// Sort by registration date desc
-				list.sort((a, b) => new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime());
-				this.allPayments = list;
-				this.updateContextLabels();
-				this.applyFilters();
-				patchState(this.loaderStore, { isShow: false });
-				this.cdr.markForCheck();
-			},
-			error: () => {
-				patchState(this.loaderStore, { isShow: false });
-				this.toastService.show('Failed to load payments', 'error');
-			}
-		});
-	}
-
-	applyFilters() {
-		let result = this.allPayments;
-
-		if (this.courseIdFilter) {
-			result = result.filter(p => p.courseId === this.courseIdFilter);
-		}
-
-		if (this.studentIdFilter) {
-			result = result.filter(p => p.studentId === this.studentIdFilter);
-		}
-
-		if (this.searchString.trim()) {
-			result = result.filter(p => matchesSearch(this.searchString, [p.studentName, p.courseTitle]));
-		}
-
-		if (this.statusFilter) {
-			result = result.filter(p => p.paymentStatus === this.statusFilter);
-		}
-
-		this.filteredPayments = result;
-		this.cdr.markForCheck();
-	}
-
 	onSearch() {
-		this.applyFilters();
+		this.searchChanged$.next(this.searchString);
 	}
 
 	onStatusFilter(status: string) {
 		this.statusFilter = status;
-		this.applyFilters();
+		this.pageIndex = 1;
+		this.loadPayments();
+	}
+
+	goToPage(pageIndex: number) {
+		if (pageIndex < 1 || (this.totalPages && pageIndex > this.totalPages) || pageIndex === this.pageIndex) return;
+		this.pageIndex = pageIndex;
+		this.loadPayments();
 	}
 
 	okPayment(paymentId: string) {
@@ -203,13 +158,7 @@ export class PaymentsComponent implements OnInit {
 				next: () => {
 					patchState(this.loaderStore, { isShow: false });
 					this.toastService.show('Payment approved');
-
-					const payment = this.allPayments.find(p => p.paymentId === paymentId);
-					if (payment) {
-						payment.paymentStatus = 'Paid';
-					}
-					this.applyFilters();
-					this.cdr.markForCheck();
+					this.loadPayments();
 				},
 				error: () => {
 					patchState(this.loaderStore, { isShow: false });
@@ -245,14 +194,7 @@ export class PaymentsComponent implements OnInit {
 				next: () => {
 					patchState(this.loaderStore, { isShow: false });
 					this.toastService.show('Payment canceled');
-
-					const payment = this.allPayments.find(p => p.paymentId === this.paymentIdToCancel);
-					if (payment) {
-						payment.paymentStatus = 'Canceled';
-						payment.note = this.cancelNote;
-					}
-					this.applyFilters();
-					this.cdr.markForCheck();
+					this.loadPayments();
 				},
 				error: () => {
 					patchState(this.loaderStore, { isShow: false });
