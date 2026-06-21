@@ -23,12 +23,20 @@ export class TrainerService {
 		return this.http.get<Trainer[]>(`${environment.baseApi}/trainer`);
 	}
 
-	searchTrainersPaged(search = '', pageIndex = 1, pageSize = 12): Observable<PagedResult<TrainerSearch>> {
+	searchTrainersPaged(
+		search = '',
+		pageIndex = 1,
+		pageSize = 12,
+		category = '',
+		eliteOnly = false
+	): Observable<PagedResult<TrainerSearch>> {
 		return this.http.get<PagedResult<TrainerSearch>>(`${environment.baseApi}/trainer/search`, {
 			params: {
 				search: search.trim(),
 				pageIndex: pageIndex.toString(),
 				pageSize: pageSize.toString(),
+				category: category.trim(),
+				eliteOnly: eliteOnly.toString(),
 			},
 		});
 	}

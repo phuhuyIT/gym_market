@@ -12,7 +12,6 @@ import { SEARCH_DEBOUNCE_MS } from '../../utilities/defaults.const';
 import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
 import { DEFAULT_AVATAR_IMAGE_URL } from '../../utilities/defaults.const';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
-import { matchesSearch, normalizeSearch } from '../../shared/utils/search.util';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -72,9 +71,11 @@ export class TrainerListComponent implements OnInit {
 	}
 
 	private getAllTrainers() {
+		const category = this.selectedCategory === 'All' || this.selectedCategory === 'Elite' ? '' : this.selectedCategory;
+		const eliteOnly = this.selectedCategory === 'Elite';
 		patchState(this.loader, { isShow: true });
 		this.trainerService
-			.searchTrainersPaged(this.searchString, this.pageIndex, this.pageSize)
+			.searchTrainersPaged(this.searchString, this.pageIndex, this.pageSize, category, eliteOnly)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: res => {
@@ -109,21 +110,14 @@ export class TrainerListComponent implements OnInit {
 	}
 
 	get filteredTrainers(): Trainer[] {
-		const selectedCategory = normalizeSearch(this.selectedCategory);
-		return this.trainers.filter(trainer => {
-			const matchesText = matchesSearch(this.searchString, [trainer.name, trainer.email, trainer.certification, trainer.bio]);
-
-			const matchesCategory = this.selectedCategory === 'All' ||
-				(this.selectedCategory === 'Elite' && trainer.experience >= 8) ||
-				normalizeSearch(trainer.certification).includes(selectedCategory) ||
-				normalizeSearch(trainer.bio).includes(selectedCategory);
-
-			return matchesText && matchesCategory;
-		});
+		return this.trainers;
 	}
 
 	selectCategory(category: string) {
+		if (this.selectedCategory === category) return;
 		this.selectedCategory = category;
+		this.pageIndex = 1;
+		this.getAllTrainers();
 		this.cdr.markForCheck();
 	}
 

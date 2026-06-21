@@ -9,6 +9,8 @@ namespace GymMarket.API.Repositories.IRepositories
         Task<PagedResult<TrainerSearchDto>> SearchTrainers(
             int pageIndex = 1,
             int pageSize = Defaults.PageSize,
-            string? search = null);
+            string? search = null,
+            string? category = null,
+            bool? eliteOnly = null);
     }
 }

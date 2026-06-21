@@ -20,13 +20,16 @@ namespace GymMarket.API.Repositories
         public async Task<PagedResult<TrainerSearchDto>> SearchTrainers(
             int pageIndex = 1,
             int pageSize = Defaults.PageSize,
-            string? search = null)
+            string? search = null,
+            string? category = null,
+            bool? eliteOnly = null)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize < 1) pageSize = Defaults.PageSize;
             if (pageSize > 50) pageSize = 50;
 
             search = search?.Trim();
+            category = category?.Trim();
 
             var query = _context.Trainers
                 .AsNoTracking()
@@ -44,6 +47,19 @@ namespace GymMarket.API.Repositories
                     (t.AppUser != null && t.AppUser.Email != null && t.AppUser.Email.Contains(search)) ||
                     (t.AppUser != null && t.AppUser.PhoneNumber != null && t.AppUser.PhoneNumber.Contains(search)) ||
                     (t.AppUser != null && t.AppUser.Status != null && t.AppUser.Status.Contains(search)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                query = query.Where(t =>
+                    (t.Certification != null && t.Certification.Contains(category)) ||
+                    (t.Bio != null && t.Bio.Contains(category)) ||
+                    t.Description.Contains(category));
+            }
+
+            if (eliteOnly == true)
+            {
+                query = query.Where(t => t.Experience >= 8);
             }
 
             var totalCount = await query.CountAsync();

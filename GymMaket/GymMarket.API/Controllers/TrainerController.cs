@@ -18,9 +18,14 @@ namespace GymMarket.API.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] string? search, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = Defaults.PageSize)
+        public async Task<IActionResult> Search(
+            [FromQuery] string? search,
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = Defaults.PageSize,
+            [FromQuery] string? category = null,
+            [FromQuery] bool? eliteOnly = null)
         {
-            var result = await _trainerRepository.SearchTrainers(pageIndex, pageSize, search);
+            var result = await _trainerRepository.SearchTrainers(pageIndex, pageSize, search, category, eliteOnly);
             return Ok(result);
         }
 
