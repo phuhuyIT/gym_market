@@ -19,6 +19,8 @@ namespace GymMarket.API.Migrations
                 nullable: true,
                 defaultValue: "Published");
 
+            migrationBuilder.Sql("UPDATE [Courses] SET [Status] = 'Published' WHERE [Status] IS NULL OR [Status] = '';");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Courses_Status",
                 table: "Courses",

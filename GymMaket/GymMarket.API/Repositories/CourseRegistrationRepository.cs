@@ -36,7 +36,7 @@ namespace GymMarket.API.Repositories
             }
 
             var course = await _context.Courses.Where(c => c.CourseId == dto.CourseId).FirstOrDefaultAsync();
-            if (course == null || course.Status != CourseStatus.Published)
+            if (course == null || (!string.IsNullOrWhiteSpace(course.Status) && course.Status != CourseStatus.Published))
             {
                 return null;
             }

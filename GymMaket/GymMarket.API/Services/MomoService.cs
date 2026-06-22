@@ -25,7 +25,7 @@ namespace GymMarket.API.Services
         public async Task<MomoCreatePaymentResponseModel?> CreatePaymentAsync(string courseId, string studentId)
         {
             var course = await _context.Courses.FindAsync(courseId);
-            if (course == null || course.Status != CourseStatus.Published) return null;
+            if (course == null || (!string.IsNullOrWhiteSpace(course.Status) && course.Status != CourseStatus.Published)) return null;
 
             var registration = await _context.CourseRegistrations
                 .FirstOrDefaultAsync(cr => cr.CourseId == courseId && cr.StudentId == studentId);

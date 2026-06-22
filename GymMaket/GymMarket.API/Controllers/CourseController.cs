@@ -118,7 +118,8 @@ namespace GymMarket.API.Controllers
             {
                 return BadRequest(new { errors = new string[] { "COURSE_NOT_FOUND" } });
             }
-            if (course.Status != CourseStatus.Published && !await _courseAccessService.CanManageCourseAsync(User, id))
+            var isPublished = string.IsNullOrWhiteSpace(course.Status) || course.Status == CourseStatus.Published;
+            if (!isPublished && !await _courseAccessService.CanManageCourseAsync(User, id))
             {
                 return BadRequest(new { errors = new string[] { "COURSE_NOT_FOUND" } });
             }

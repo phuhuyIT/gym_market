@@ -182,7 +182,7 @@ namespace GymMarket.API.Repositories
             var query = _context.Courses
                 .AsNoTrackingWithIdentityResolution()
                 .Include(c => c.FileCourses)
-                .Where(c => c.Status == CourseStatus.Published)
+                .Where(c => c.Status == null || c.Status == "" || c.Status == CourseStatus.Published)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchString))
@@ -216,7 +216,9 @@ namespace GymMarket.API.Repositories
 
         public async Task<IEnumerable<Course>> SearchAndFilterCoursesAsync(string? keyword, string? description, decimal? minPrice, decimal? maxPrice, int? minDuration, int? maxDuration, double? minRating, string? category)
         {
-            var query = _context.Courses.Where(c => c.Status == CourseStatus.Published).AsQueryable();
+            var query = _context.Courses
+                .Where(c => c.Status == null || c.Status == "" || c.Status == CourseStatus.Published)
+                .AsQueryable();
 
             // Search by course title or topic
             if (!string.IsNullOrEmpty(keyword))
