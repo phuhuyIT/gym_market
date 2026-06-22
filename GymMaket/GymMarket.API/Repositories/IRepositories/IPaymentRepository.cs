@@ -28,6 +28,11 @@ namespace GymMarket.API.Repositories.IRepositories
         // and keeps the matching CourseRegistration in sync. Idempotent.
         Task<Payment?> ConfirmCoursePayment(string studentId, string courseId, string paymentType);
 
+        // Gateway callbacks identify the exact payment attempt by orderId/paymentId.
+        // These methods are idempotent so browser return and IPN can both call them.
+        Task<Payment?> ConfirmGatewayPayment(string paymentId, string paymentType);
+        Task<Payment?> CancelGatewayPayment(string paymentId, string? note);
+
         // Gate for study access: true when the student has a successful payment for the course.
         Task<bool> HasPaidForCourse(string studentId, string courseId);
     }

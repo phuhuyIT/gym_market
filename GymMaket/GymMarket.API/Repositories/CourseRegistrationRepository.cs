@@ -23,7 +23,7 @@ namespace GymMarket.API.Repositories
         }
 
         // Registers a course for a student and initializes status as 'Pending Payment'
-        public async Task<CourseRegistration?> RegisterCourseAsync(RegisterCourseDto dto, string studentId)
+        public async Task<RegisterCourseResultDto> RegisterCourseAsync(RegisterCourseDto dto, string studentId)
         {
             var courseExists = await _context.CourseRegistrations
                 .Where(cr => cr.StudentId == studentId && cr.CourseId == dto.CourseId)
@@ -32,18 +32,23 @@ namespace GymMarket.API.Repositories
 
             if(courseExists != null && !IsRetryable(courseExists))
             {
-                return courseExists;
+                return RegisterCourseResultDto.Ok(courseExists);
             }
 
             var course = await _context.Courses.Where(c => c.CourseId == dto.CourseId).FirstOrDefaultAsync();
-            if (course == null || (!string.IsNullOrWhiteSpace(course.Status) && course.Status != CourseStatus.Published))
+            if (course == null)
             {
-                return null;
+                return RegisterCourseResultDto.Fail(CourseRegistrationErrorCode.CourseNotFound);
+            }
+
+            if (!string.IsNullOrWhiteSpace(course.Status) && course.Status != CourseStatus.Published)
+            {
+                return RegisterCourseResultDto.Fail(CourseRegistrationErrorCode.CourseNotPublished);
             }
 
             if (await IsCourseFullAsync(dto.CourseId))
             {
-                return null;
+                return RegisterCourseResultDto.Fail(CourseRegistrationErrorCode.CourseFull);
             }
 
             var now = DateTime.UtcNow;
@@ -85,7 +90,7 @@ namespace GymMarket.API.Repositories
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
 
-            return registration;
+            return RegisterCourseResultDto.Ok(registration);
         }
 
         // Initializes the payment, setting a timestamp for tracking the 5-minute window.

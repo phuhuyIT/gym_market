@@ -296,6 +296,56 @@ namespace GymMarket.API.Repositories
             return payment;
         }
 
+        public async Task<Payment?> ConfirmGatewayPayment(string paymentId, string paymentType)
+        {
+            var payment = await _context.Payments.FirstOrDefaultAsync(p => p.PaymentId == paymentId);
+            if (payment == null)
+                return null;
+
+            if (!PaymentStatus.IsPaid(payment.PaymentStatus))
+            {
+                payment.PaymentStatus = PaymentStatus.Paid;
+                payment.PaymentType = paymentType;
+                payment.PaymentDate = DateTime.UtcNow;
+                payment.UpdatedAt = DateTime.UtcNow;
+
+                await CancelOtherPendingPaymentsAsync(payment);
+                await SyncRegistrationStatusAsync(payment.StudentId, payment.CourseId, PaymentStatus.Paid);
+                await _context.SaveChangesAsync();
+            }
+
+            return payment;
+        }
+
+        public async Task<Payment?> CancelGatewayPayment(string paymentId, string? note)
+        {
+            var payment = await _context.Payments.FirstOrDefaultAsync(p => p.PaymentId == paymentId);
+            if (payment == null)
+                return null;
+
+            if (PaymentStatus.IsPaid(payment.PaymentStatus))
+                return payment;
+
+            payment.PaymentStatus = PaymentStatus.Canceled;
+            payment.Note = string.IsNullOrWhiteSpace(note) ? payment.Note : note;
+            payment.UpdatedAt = DateTime.UtcNow;
+            await CancelOtherPendingPaymentsAsync(payment);
+
+            var hasPaidPayment = await _context.Payments.AnyAsync(p =>
+                p.PaymentId != paymentId
+                && p.StudentId == payment.StudentId
+                && p.CourseId == payment.CourseId
+                && (p.PaymentStatus == PaymentStatus.Paid || p.PaymentStatus == PaymentStatus.Completed));
+
+            if (!hasPaidPayment)
+            {
+                await SyncRegistrationStatusAsync(payment.StudentId, payment.CourseId, PaymentStatus.Canceled);
+            }
+
+            await _context.SaveChangesAsync();
+            return payment;
+        }
+
         public async Task<bool> HasPaidForCourse(string studentId, string courseId)
         {
             return await _context.Payments.AnyAsync(p =>
@@ -319,6 +369,25 @@ namespace GymMarket.API.Repositories
                 registration.PaymentStatus = status;
                 registration.Status = status;
                 registration.UpdatedAt = DateTime.UtcNow;
+            }
+        }
+
+        private async Task CancelOtherPendingPaymentsAsync(Payment paidPayment)
+        {
+            var pendingPayments = await _context.Payments
+                .Where(p => p.PaymentId != paidPayment.PaymentId
+                    && p.StudentId == paidPayment.StudentId
+                    && p.CourseId == paidPayment.CourseId
+                    && (p.PaymentStatus == PaymentStatus.Pending || p.PaymentStatus == PaymentStatus.NotStarted))
+                .ToListAsync();
+
+            foreach (var pending in pendingPayments)
+            {
+                pending.PaymentStatus = PaymentStatus.Canceled;
+                pending.Note = string.IsNullOrWhiteSpace(pending.Note)
+                    ? "Canceled because another payment method completed."
+                    : pending.Note;
+                pending.UpdatedAt = DateTime.UtcNow;
             }
         }
     }

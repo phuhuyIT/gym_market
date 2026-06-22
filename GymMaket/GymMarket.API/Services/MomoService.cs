@@ -22,23 +22,39 @@ namespace GymMarket.API.Services
             _context = context;
         }
 
-        public async Task<MomoCreatePaymentResponseModel?> CreatePaymentAsync(string courseId, string studentId)
+        public async Task<MomoCreatePaymentResultDto> CreatePaymentAsync(string courseId, string studentId)
         {
             var course = await _context.Courses.FindAsync(courseId);
-            if (course == null || (!string.IsNullOrWhiteSpace(course.Status) && course.Status != CourseStatus.Published)) return null;
+            if (course == null)
+                return MomoCreatePaymentResultDto.Fail(CourseRegistrationErrorCode.CourseNotFound);
+
+            if (!string.IsNullOrWhiteSpace(course.Status) && course.Status != CourseStatus.Published)
+                return MomoCreatePaymentResultDto.Fail(CourseRegistrationErrorCode.CourseNotPublished);
 
             var registration = await _context.CourseRegistrations
                 .FirstOrDefaultAsync(cr => cr.CourseId == courseId && cr.StudentId == studentId);
-            if (registration == null
-                || registration.PaymentStatus == PaymentStatus.Canceled
+            if (registration == null)
+                return MomoCreatePaymentResultDto.Fail(CourseRegistrationErrorCode.RegistrationNotFound);
+
+            if (registration.PaymentStatus == PaymentStatus.Canceled
                 || registration.PaymentStatus == PaymentStatus.Expired)
             {
-                return null;
+                return MomoCreatePaymentResultDto.Fail(CourseRegistrationErrorCode.RegistrationCanceled);
             }
 
             if (await IsCourseFullForNewStudentAsync(courseId, studentId, course.MaxParticipants))
             {
-                return null;
+                return MomoCreatePaymentResultDto.Fail(CourseRegistrationErrorCode.CourseFull);
+            }
+
+            if (string.IsNullOrWhiteSpace(_options.Value.MomoApiUrl)
+                || string.IsNullOrWhiteSpace(_options.Value.PartnerCode)
+                || string.IsNullOrWhiteSpace(_options.Value.AccessKey)
+                || string.IsNullOrWhiteSpace(_options.Value.SecretKey)
+                || string.IsNullOrWhiteSpace(_options.Value.ReturnUrl)
+                || string.IsNullOrWhiteSpace(_options.Value.NotifyUrl))
+            {
+                return MomoCreatePaymentResultDto.Fail(CourseRegistrationErrorCode.MomoNotConfigured);
             }
 
             string paymentId = Guid.NewGuid().ToString("N");
@@ -81,9 +97,44 @@ namespace GymMarket.API.Services
 
             request.AddParameter("application/json", JsonConvert.SerializeObject(requestData), ParameterType.RequestBody);
 
-            var response = await client.ExecuteAsync(request);
-            var momoResponse = JsonConvert.DeserializeObject<MomoCreatePaymentResponseModel>(response.Content!);
-            return momoResponse!;
+            RestResponse response;
+            try
+            {
+                response = await client.ExecuteAsync(request);
+            }
+            catch
+            {
+                return MomoCreatePaymentResultDto.Fail(CourseRegistrationErrorCode.MomoProviderUnavailable);
+            }
+
+            if (!response.IsSuccessful || string.IsNullOrWhiteSpace(response.Content))
+            {
+                return MomoCreatePaymentResultDto.Fail(CourseRegistrationErrorCode.MomoProviderUnavailable);
+            }
+
+            var momoResponse = JsonConvert.DeserializeObject<MomoCreatePaymentResponseModel>(response.Content);
+            if (momoResponse == null || string.IsNullOrWhiteSpace(momoResponse.PayUrl) || momoResponse.ErrorCode != Defaults.MomoSuccessResultCode)
+            {
+                return MomoCreatePaymentResultDto.Fail(CourseRegistrationErrorCode.MomoProviderUnavailable);
+            }
+
+            var payment = new Payment
+            {
+                PaymentId = paymentId,
+                StudentId = studentId,
+                CourseId = courseId,
+                PaymentAmount = (decimal)paymentAmount,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                PaymentDate = DateTime.UtcNow,
+                PaymentStatus = PaymentStatus.Pending,
+                PaymentType = PaymentType.Momo,
+                Note = $"MOMO-{paymentId[..8].ToUpperInvariant()}"
+            };
+            _context.Payments.Add(payment);
+            await _context.SaveChangesAsync();
+
+            return MomoCreatePaymentResultDto.Ok(momoResponse);
         }
 
         private async Task<bool> IsCourseFullForNewStudentAsync(string courseId, string studentId, int? maxParticipants)

@@ -5,6 +5,13 @@ import { Observable } from 'rxjs';
 import { Course } from '../core/models/course.model';
 import { CoursePaymentInfo } from '../core/models/course-registration.model';
 
+export interface RegisterCourseResponse {
+	message?: string;
+	Message?: string;
+	registration?: unknown;
+	Registration?: unknown;
+}
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -13,8 +20,8 @@ export class CourseRegistrationService {
 
 	// The acting student is derived from the JWT on the backend, so no
 	// studentId is ever sent.
-	registerCourse(courseId: string): Observable<void> {
-		return this.http.post<void>(`${environment.baseApi}/CourseRegistration/register-course`, {
+	registerCourse(courseId: string): Observable<RegisterCourseResponse> {
+		return this.http.post<RegisterCourseResponse>(`${environment.baseApi}/CourseRegistration/register-course`, {
 			courseId,
 		});
 	}

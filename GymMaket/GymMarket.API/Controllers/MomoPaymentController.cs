@@ -37,12 +37,22 @@ namespace GymMarket.API.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden, new { error = "NOT_A_STUDENT" });
             }
 
-            var response = await _momoService.CreatePaymentAsync(dto.CourseId, studentId);
-            if (response == null)
+            var result = await _momoService.CreatePaymentAsync(dto.CourseId, studentId);
+            if (!result.Success || result.Payment == null)
             {
-                return NotFound(new { error = "COURSE_NOT_FOUND" });
+                return result.ErrorCode switch
+                {
+                    CourseRegistrationErrorCode.CourseNotFound => NotFound(new { error = result.ErrorCode }),
+                    CourseRegistrationErrorCode.RegistrationNotFound => NotFound(new { error = result.ErrorCode }),
+                    CourseRegistrationErrorCode.CourseNotPublished => Conflict(new { error = result.ErrorCode }),
+                    CourseRegistrationErrorCode.CourseFull => Conflict(new { error = result.ErrorCode }),
+                    CourseRegistrationErrorCode.RegistrationCanceled => Conflict(new { error = result.ErrorCode }),
+                    CourseRegistrationErrorCode.MomoNotConfigured => StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = result.ErrorCode }),
+                    CourseRegistrationErrorCode.MomoProviderUnavailable => StatusCode(StatusCodes.Status502BadGateway, new { error = result.ErrorCode }),
+                    _ => BadRequest(new { error = result.ErrorCode ?? "MOMO_PAYMENT_FAILED" })
+                };
             }
-            return Ok(new { payUrl = response.PayUrl });
+            return Ok(new { payUrl = result.Payment.PayUrl });
         }
 
         // Browser redirect (returnUrl). This is user-controllable and not guaranteed to fire,
@@ -55,9 +65,9 @@ namespace GymMarket.API.Controllers
             if (!_momoService.VerifySignature(callback))
                 return BadRequest(new { error = "INVALID_SIGNATURE" });
 
-            await TryConfirmPaymentAsync(callback);
+            var result = await HandleGatewayCallbackAsync(callback);
 
-            var redirectUrl = _configuration["MomoAPI:PaymentRedirectUrl"] ?? "/client/course-registration";
+            var redirectUrl = BuildPaymentRedirectUrl(result, callback);
             return Redirect(redirectUrl);
         }
 
@@ -70,22 +80,93 @@ namespace GymMarket.API.Controllers
             if (!_momoService.VerifySignature(callback))
                 return BadRequest(new { error = "INVALID_SIGNATURE" });
 
-            await TryConfirmPaymentAsync(callback);
-            return Ok();
+            var result = await HandleGatewayCallbackAsync(callback);
+            return Ok(new { message = result.Status, courseId = result.CourseId });
         }
 
-        private async Task TryConfirmPaymentAsync(MomoCallbackDto callback)
+        private async Task<MomoGatewayResult> HandleGatewayCallbackAsync(MomoCallbackDto callback)
         {
-            if (callback.ResultCode != Defaults.MomoSuccessResultCode || string.IsNullOrEmpty(callback.ExtraData))
-                return;
+            var extraData = TryReadExtraData(callback.ExtraData);
+            var result = new MomoGatewayResult
+            {
+                CourseId = extraData?.CourseId,
+                StudentId = extraData?.StudentId,
+                ResultCode = callback.ResultCode,
+                Status = callback.ResultCode == Defaults.MomoSuccessResultCode ? "success" : "canceled",
+            };
 
-            var extraDataJson = Encoding.UTF8.GetString(Convert.FromBase64String(callback.ExtraData));
-            var extraData = JsonConvert.DeserializeObject<MomoExtraData>(extraDataJson);
+            if (string.IsNullOrWhiteSpace(callback.OrderId))
+            {
+                result.Status = "failed";
+                return result;
+            }
 
-            if (extraData == null || string.IsNullOrEmpty(extraData.StudentId) || string.IsNullOrEmpty(extraData.CourseId))
-                return;
+            if (callback.ResultCode == Defaults.MomoSuccessResultCode)
+            {
+                var payment = await _paymentRepository.ConfirmGatewayPayment(callback.OrderId, PaymentType.Momo);
+                result.CourseId ??= payment?.CourseId;
+                result.StudentId ??= payment?.StudentId;
+                result.Status = payment == null ? "failed" : "success";
+                return result;
+            }
 
-            await _paymentRepository.ConfirmCoursePayment(extraData.StudentId, extraData.CourseId, PaymentType.Momo);
+            var note = string.IsNullOrWhiteSpace(callback.Message)
+                ? $"Momo payment failed with result code {callback.ResultCode}."
+                : callback.Message;
+            var canceled = await _paymentRepository.CancelGatewayPayment(callback.OrderId, note);
+            result.CourseId ??= canceled?.CourseId;
+            result.StudentId ??= canceled?.StudentId;
+            result.Status = canceled == null ? "failed" : "canceled";
+            return result;
+        }
+
+        private MomoExtraData? TryReadExtraData(string? extraData)
+        {
+            if (string.IsNullOrWhiteSpace(extraData))
+                return null;
+
+            try
+            {
+                var extraDataJson = Encoding.UTF8.GetString(Convert.FromBase64String(extraData));
+                return JsonConvert.DeserializeObject<MomoExtraData>(extraDataJson);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private string BuildPaymentRedirectUrl(MomoGatewayResult result, MomoCallbackDto callback)
+        {
+            var configuredUrl = _configuration["MomoAPI:PaymentRedirectUrl"] ?? "/client/course-registration";
+            var courseId = result.CourseId;
+            var targetUrl = BuildCoursePaymentUrl(configuredUrl, courseId);
+
+            var separator = targetUrl.Contains('?') ? "&" : "?";
+            var message = Uri.EscapeDataString(callback.Message ?? string.Empty);
+            return $"{targetUrl}{separator}momoResult={result.Status}&momoCode={callback.ResultCode}&momoMessage={message}";
+        }
+
+        private string BuildCoursePaymentUrl(string configuredUrl, string? courseId)
+        {
+            if (string.IsNullOrWhiteSpace(courseId))
+                return configuredUrl;
+
+            var paymentPath = $"/client/course-payment/{Uri.EscapeDataString(courseId)}";
+            if (Uri.TryCreate(configuredUrl, UriKind.Absolute, out var absoluteUri))
+            {
+                return $"{absoluteUri.Scheme}://{absoluteUri.Authority}{paymentPath}";
+            }
+
+            return paymentPath;
+        }
+
+        private class MomoGatewayResult
+        {
+            public string Status { get; set; } = "failed";
+            public int ResultCode { get; set; }
+            public string? CourseId { get; set; }
+            public string? StudentId { get; set; }
         }
     }
 }

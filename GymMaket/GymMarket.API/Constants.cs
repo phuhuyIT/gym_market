@@ -38,6 +38,17 @@ namespace GymMarket.API
             string.IsNullOrWhiteSpace(status) ? Published : status.Trim();
     }
 
+    public static class CourseRegistrationErrorCode
+    {
+        public const string CourseNotFound = "COURSE_NOT_FOUND";
+        public const string CourseNotPublished = "COURSE_NOT_PUBLISHED";
+        public const string CourseFull = "COURSE_FULL";
+        public const string RegistrationNotFound = "REGISTRATION_NOT_FOUND";
+        public const string RegistrationCanceled = "REGISTRATION_CANCELED";
+        public const string MomoNotConfigured = "MOMO_NOT_CONFIGURED";
+        public const string MomoProviderUnavailable = "MOMO_PROVIDER_UNAVAILABLE";
+    }
+
     public static class FileType
     {
         public const string Image = "IMAGE";

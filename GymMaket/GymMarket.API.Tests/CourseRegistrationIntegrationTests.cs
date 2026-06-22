@@ -5,6 +5,7 @@ using GymMarket.API.Data;
 using GymMarket.API.DTOs.Course;
 using GymMarket.API.DTOs.CourseRegistration;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -296,7 +297,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
     }
 
     [Fact]
-    public async Task RegisterCourse_WhenCapacityIsFull_ReturnsBadRequest()
+    public async Task RegisterCourse_WhenCapacityIsFull_ReturnsConflictWithCode()
     {
         await AuthenticateAsync(email: "capacity_trainer@example.com", role: "Trainer");
         await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
@@ -322,7 +323,143 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             CourseId = "CRS_CAPACITY_001"
         });
 
-        Assert.Equal(HttpStatusCode.BadRequest, second.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+        var body = await second.Content.ReadFromJsonAsync<RegisterCourseResponseDto>();
+        Assert.Equal(CourseRegistrationErrorCode.CourseFull, body!.Message);
+    }
+
+    [Fact]
+    public async Task RegisterCourse_WhenCourseIsDraft_ReturnsConflictWithCode()
+    {
+        await AuthenticateAsync(email: "draft_trainer@example.com", role: "Trainer");
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_DRAFT_001",
+            Title = "Draft Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50,
+            Status = CourseStatus.Draft
+        });
+
+        await AuthenticateAsync(email: "student_draft@example.com");
+        var response = await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_DRAFT_001"
+        });
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<RegisterCourseResponseDto>();
+        Assert.Equal(CourseRegistrationErrorCode.CourseNotPublished, body!.Message);
+    }
+
+    [Fact]
+    public async Task ConfirmGatewayPayment_MarksExactMomoAttemptPaidAndCancelsOtherPendingPayments()
+    {
+        await AuthenticateAsync(email: "momo_success_trainer@example.com", role: "Trainer");
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_MOMO_SUCCESS_001",
+            Title = "Momo Success Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50
+        });
+
+        await AuthenticateAsync(email: "student_momo_success@example.com");
+        var studentId = GetTokenClaim("studentId")!;
+        await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_MOMO_SUCCESS_001"
+        });
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            db.Payments.Add(new Payment
+            {
+                PaymentId = "MOMO_SUCCESS_ORDER",
+                CourseId = "CRS_MOMO_SUCCESS_001",
+                StudentId = studentId,
+                PaymentAmount = 50,
+                PaymentStatus = PaymentStatus.Pending,
+                PaymentType = PaymentType.Momo,
+                Note = "MOMO-SUCCESS",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            });
+            await db.SaveChangesAsync();
+
+            var payments = scope.ServiceProvider.GetRequiredService<IPaymentRepository>();
+            await payments.ConfirmGatewayPayment("MOMO_SUCCESS_ORDER", PaymentType.Momo);
+        }
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            var momoPayment = await db.Payments.SingleAsync(p => p.PaymentId == "MOMO_SUCCESS_ORDER");
+            var registration = await db.CourseRegistrations.SingleAsync(r => r.CourseId == "CRS_MOMO_SUCCESS_001");
+            var payments = await db.Payments.Where(p => p.CourseId == "CRS_MOMO_SUCCESS_001").ToListAsync();
+
+            Assert.Equal(PaymentStatus.Paid, momoPayment.PaymentStatus);
+            Assert.Equal(PaymentStatus.Paid, registration.PaymentStatus);
+            Assert.Contains(payments, p => p.PaymentId != "MOMO_SUCCESS_ORDER" && p.PaymentStatus == PaymentStatus.Canceled);
+        }
+    }
+
+    [Fact]
+    public async Task CancelGatewayPayment_MarksMomoAttemptCanceledAndRegistrationRetryable()
+    {
+        await AuthenticateAsync(email: "momo_cancel_trainer@example.com", role: "Trainer");
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_MOMO_CANCEL_001",
+            Title = "Momo Cancel Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50
+        });
+
+        await AuthenticateAsync(email: "student_momo_cancel@example.com");
+        var studentId = GetTokenClaim("studentId")!;
+        await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_MOMO_CANCEL_001"
+        });
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            db.Payments.Add(new Payment
+            {
+                PaymentId = "MOMO_CANCEL_ORDER",
+                CourseId = "CRS_MOMO_CANCEL_001",
+                StudentId = studentId,
+                PaymentAmount = 50,
+                PaymentStatus = PaymentStatus.Pending,
+                PaymentType = PaymentType.Momo,
+                Note = "MOMO-CANCEL",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            });
+            await db.SaveChangesAsync();
+
+            var payments = scope.ServiceProvider.GetRequiredService<IPaymentRepository>();
+            await payments.CancelGatewayPayment("MOMO_CANCEL_ORDER", "User canceled payment.");
+        }
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            var momoPayment = await db.Payments.SingleAsync(p => p.PaymentId == "MOMO_CANCEL_ORDER");
+            var registration = await db.CourseRegistrations.SingleAsync(r => r.CourseId == "CRS_MOMO_CANCEL_001");
+            var payments = await db.Payments.Where(p => p.CourseId == "CRS_MOMO_CANCEL_001").ToListAsync();
+
+            Assert.Equal(PaymentStatus.Canceled, momoPayment.PaymentStatus);
+            Assert.Equal("User canceled payment.", momoPayment.Note);
+            Assert.Equal(PaymentStatus.Canceled, registration.PaymentStatus);
+            Assert.All(payments, p => Assert.Equal(PaymentStatus.Canceled, p.PaymentStatus));
+        }
     }
 
     private class RegisterCourseResponseDto

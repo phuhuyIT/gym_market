@@ -24,6 +24,7 @@ import { MOCK_FRIENDS } from '../../utilities/mock-data.const';
 import { generateWorkoutPlans } from '../../utilities/workout-plans.const';
 import { DEFAULT_AVATAR_IMAGE_URL, DEFAULT_COURSE_THUMBNAIL_URL, DEFAULT_IMAGE_URL } from '../../utilities/defaults.const';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
+import { coursePaymentErrorMessage } from '../course-payment-error.util';
 
 @Component({
     selector: 'app-course-details',
@@ -296,9 +297,12 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 					this.toastService.show('Registration created — complete payment to unlock the course.');
 					this.router.navigate(['/client/course-payment', this.courseId]);
 				},
-				error: () => {
+				error: err => {
 					patchState(this.loader, { isShow: false });
-					this.toastService.show('Enrollment failed. Please try again.', 'error');
+					this.toastService.show(
+						coursePaymentErrorMessage(err, 'Enrollment failed. Please try again.'),
+						'error'
+					);
 				},
 			});
 	}

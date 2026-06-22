@@ -32,11 +32,18 @@ namespace GymMarket.API.Controllers
             // Call registration function in repository
             var result = await _courseRegistrationRepository.RegisterCourseAsync(dto, studentId);
 
-            if (result != null)
+            if (result.Success && result.Registration != null)
             {
-                return Ok(new { Message = "COURSE_REGISTRATION_SUCCESS", Registration = result });
+                return Ok(new { Message = "COURSE_REGISTRATION_SUCCESS", Registration = result.Registration });
             }
-            return BadRequest(new { Message = "COURSE_REGISTRATION_FAILED" });
+
+            return result.ErrorCode switch
+            {
+                CourseRegistrationErrorCode.CourseNotFound => NotFound(new { Message = result.ErrorCode }),
+                CourseRegistrationErrorCode.CourseNotPublished => Conflict(new { Message = result.ErrorCode }),
+                CourseRegistrationErrorCode.CourseFull => Conflict(new { Message = result.ErrorCode }),
+                _ => BadRequest(new { Message = result.ErrorCode ?? "COURSE_REGISTRATION_FAILED" })
+            };
         }
 
 

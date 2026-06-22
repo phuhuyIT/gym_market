@@ -15,6 +15,7 @@ import { ToastService } from '../../shared/services/toast.service';
 import { GmButtonComponent, GmCardComponent } from '../../shared';
 import { CourseRegistrationService } from '../course-registration.service';
 import { CoursePaymentInfo } from '../../core/models/course-registration.model';
+import { coursePaymentErrorMessage } from '../course-payment-error.util';
 
 @Component({
 	selector: 'app-course-payment',
@@ -42,6 +43,9 @@ export class CoursePaymentComponent implements OnInit {
 				this.loadPaymentInfo();
 			},
 		});
+		this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: params => this.handleMomoReturn(params),
+		});
 	}
 
 	private loadPaymentInfo() {
@@ -67,6 +71,33 @@ export class CoursePaymentComponent implements OnInit {
 					this.cdr.markForCheck();
 				},
 			});
+	}
+
+	private handleMomoReturn(params: Record<string, string | undefined>) {
+		const result = params['momoResult'];
+		if (!result) {
+			return;
+		}
+
+		if (result === 'success') {
+			this.toastService.show('Momo payment completed. Your course is unlocked.');
+		} else if (result === 'canceled') {
+			this.toastService.show('Momo payment was canceled. You can retry payment.', 'error');
+		} else {
+			this.toastService.show('Momo payment could not be completed. Please try again.', 'error');
+		}
+
+		this.router.navigate([], {
+			relativeTo: this.route,
+			queryParams: {
+				momoResult: null,
+				momoCode: null,
+				momoMessage: null,
+			},
+			queryParamsHandling: 'merge',
+			replaceUrl: true,
+		});
+		this.loadPaymentInfo();
 	}
 
 	get isPaid(): boolean {
@@ -113,9 +144,12 @@ export class CoursePaymentComponent implements OnInit {
 					}
 					this.cdr.markForCheck();
 				},
-				error: () => {
+				error: err => {
 					patchState(this.loader, { isShow: false });
-					this.toastService.show('Failed to notify your trainer. Please try again.', 'error');
+					this.toastService.show(
+						coursePaymentErrorMessage(err, 'Failed to notify your trainer. Please try again.'),
+						'error'
+					);
 					this.cdr.markForCheck();
 				},
 			});
@@ -136,9 +170,12 @@ export class CoursePaymentComponent implements OnInit {
 					}
 					this.cdr.markForCheck();
 				},
-				error: () => {
+				error: err => {
 					patchState(this.loader, { isShow: false });
-					this.toastService.show('Failed to start Momo payment. Please try again.', 'error');
+					this.toastService.show(
+						coursePaymentErrorMessage(err, 'Failed to start Momo payment. Please try again.'),
+						'error'
+					);
 					this.cdr.markForCheck();
 				},
 			});
@@ -155,9 +192,12 @@ export class CoursePaymentComponent implements OnInit {
 					this.toastService.show('Payment restarted. Please complete the new payment.');
 					this.loadPaymentInfo();
 				},
-				error: () => {
+				error: err => {
 					patchState(this.loader, { isShow: false });
-					this.toastService.show('Could not restart payment for this course.', 'error');
+					this.toastService.show(
+						coursePaymentErrorMessage(err, 'Could not restart payment for this course.'),
+						'error'
+					);
 					this.cdr.markForCheck();
 				},
 			});
