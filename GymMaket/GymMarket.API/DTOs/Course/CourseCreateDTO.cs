@@ -41,5 +41,8 @@ namespace GymMarket.API.DTOs.Course
 
         [Range(1, int.MaxValue, ErrorMessage = "Maximum participants must be a positive number")]
         public int? MaxParticipants { get; set; }
+
+        [StringLength(50)]
+        public string? Status { get; set; }
     }
 }

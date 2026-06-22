@@ -8,7 +8,7 @@ namespace GymMarket.API.Repositories.IRepositories
     public interface IGenericRepository<TEntity, TKey> where TEntity : class
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
-        Task<TEntity> GetByIdAsync(TKey id);
+        Task<TEntity?> GetByIdAsync(TKey id);
         Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
         Task AddAsync<TCreateDto>(TCreateDto entity) where TCreateDto:class;
         Task AddRangeAsync<TCreateDto>(IEnumerable<TCreateDto> entities) where TCreateDto:class;

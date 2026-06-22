@@ -12,6 +12,9 @@ namespace GymMarket.API.Repositories.IRepositories
             int pageIndex = 1,
             int pageSize = Defaults.PageSize,
             string? search = null,
+            string? healthStatus = null,
+            string? status = null,
+            string? paymentStatus = null,
             string? trainerId = null,
             bool includeAllStudents = false);
     }

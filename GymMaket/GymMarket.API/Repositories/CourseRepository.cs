@@ -34,7 +34,7 @@ namespace GymMarket.API.Repositories
         }
         //override getbyid method
 
-        public override async Task<Course> GetByIdAsync(string id)
+        public override async Task<Course?> GetByIdAsync(string id)
         {
             var course = await _context.Courses
                 .Include(c => c.CourseRatings)
@@ -59,13 +59,13 @@ namespace GymMarket.API.Repositories
         {
             // The DTO carries no TrainerId; keep the current owner so the full-entity
             // Update below can't clear (or transfer) course ownership.
-            var currentTrainerId = await _context.Courses
+            var currentCourse = await _context.Courses
                 .AsNoTracking()
                 .Where(c => c.CourseId == courseUpdateDTO.CourseId)
-                .Select(c => c.TrainerId)
+                .Select(c => new { c.TrainerId, c.Status })
                 .FirstOrDefaultAsync();
 
-            if (currentTrainerId == null)
+            if (currentCourse == null)
             {
                 return new ApiResponse
                 {
@@ -76,7 +76,8 @@ namespace GymMarket.API.Repositories
             }
 
             var mapEntity = _mapper.Map<CourseUpdateDTO, Course>(courseUpdateDTO);
-            mapEntity.TrainerId = currentTrainerId;
+            mapEntity.TrainerId = currentCourse.TrainerId;
+            mapEntity.Status = CourseStatus.Normalize(courseUpdateDTO.Status ?? currentCourse.Status);
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -181,6 +182,7 @@ namespace GymMarket.API.Repositories
             var query = _context.Courses
                 .AsNoTrackingWithIdentityResolution()
                 .Include(c => c.FileCourses)
+                .Where(c => c.Status == CourseStatus.Published)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchString))
@@ -214,7 +216,7 @@ namespace GymMarket.API.Repositories
 
         public async Task<IEnumerable<Course>> SearchAndFilterCoursesAsync(string? keyword, string? description, decimal? minPrice, decimal? maxPrice, int? minDuration, int? maxDuration, double? minRating, string? category)
         {
-            var query = _context.Courses.AsQueryable();
+            var query = _context.Courses.Where(c => c.Status == CourseStatus.Published).AsQueryable();
 
             // Search by course title or topic
             if (!string.IsNullOrEmpty(keyword))

@@ -103,6 +103,24 @@
               }
             </div>
           </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Publish Status</label>
+            <div class="grid grid-cols-3 gap-2">
+              @for (status of courseStatuses; track status) {
+                <button
+                  type="button"
+                  (click)="model.status = status"
+                  class="px-3 py-2.5 rounded-2xl text-xs font-bold transition-all"
+                  [class]="model.status === status
+                    ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-md'
+                    : 'bg-[#F7F6F3] dark:bg-[#252528] text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'"
+                >
+                  {{ status }}
+                </button>
+              }
+            </div>
+          </div>
         </div>
       </div>
 

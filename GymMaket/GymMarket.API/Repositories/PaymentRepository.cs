@@ -87,6 +87,9 @@ namespace GymMarket.API.Repositories
             string? courseId = null,
             string? studentId = null,
             string? status = null,
+            string? paymentType = null,
+            DateTime? fromDate = null,
+            DateTime? toDate = null,
             string? trainerId = null,
             bool includeAllCourses = false)
         {
@@ -98,6 +101,7 @@ namespace GymMarket.API.Repositories
             courseId = courseId?.Trim();
             studentId = studentId?.Trim();
             status = PaymentStatus.Normalize(status?.Trim());
+            paymentType = paymentType?.Trim();
             trainerId = trainerId?.Trim();
 
             var query = _context.Payments
@@ -135,6 +139,23 @@ namespace GymMarket.API.Repositories
                 query = status == PaymentStatus.Paid
                     ? query.Where(p => p.PaymentStatus == PaymentStatus.Paid || p.PaymentStatus == PaymentStatus.Completed)
                     : query.Where(p => p.PaymentStatus == status);
+            }
+
+            if (!string.IsNullOrWhiteSpace(paymentType))
+            {
+                query = query.Where(p => p.PaymentType == paymentType);
+            }
+
+            if (fromDate.HasValue)
+            {
+                var start = fromDate.Value.Date;
+                query = query.Where(p => (p.PaymentDate ?? p.CreatedAt) >= start);
+            }
+
+            if (toDate.HasValue)
+            {
+                var endExclusive = toDate.Value.Date.AddDays(1);
+                query = query.Where(p => (p.PaymentDate ?? p.CreatedAt) < endExclusive);
             }
 
             if (!string.IsNullOrWhiteSpace(search))

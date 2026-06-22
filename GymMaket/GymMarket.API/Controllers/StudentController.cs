@@ -93,7 +93,13 @@ namespace GymMarket.API.Controllers
 
         [Authorize(Roles = "Trainer,Admin")]
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] string? search, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = Defaults.PageSize)
+        public async Task<IActionResult> Search(
+            [FromQuery] string? search,
+            [FromQuery] string? healthStatus,
+            [FromQuery] string? status,
+            [FromQuery] string? paymentStatus,
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = Defaults.PageSize)
         {
             var isAdmin = User.IsInRole(ApplicationRoles.Admin);
             var trainerId = User.FindFirstValue("trainerId");
@@ -102,6 +108,9 @@ namespace GymMarket.API.Controllers
                 pageIndex,
                 pageSize,
                 search,
+                healthStatus,
+                status,
+                paymentStatus,
                 trainerId,
                 includeAllStudents: isAdmin);
 

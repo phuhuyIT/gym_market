@@ -27,32 +27,42 @@ namespace GymMarket.API.Repositories
         {
             var courseExists = await _context.CourseRegistrations
                 .Where(cr => cr.StudentId == studentId && cr.CourseId == dto.CourseId)
+                .OrderByDescending(cr => cr.UpdatedAt ?? cr.CreatedAt)
                 .FirstOrDefaultAsync();
 
-            if(courseExists != null)
+            if(courseExists != null && !IsRetryable(courseExists))
             {
                 return courseExists;
             }
 
-            var registration = new CourseRegistration
+            var course = await _context.Courses.Where(c => c.CourseId == dto.CourseId).FirstOrDefaultAsync();
+            if (course == null || course.Status != CourseStatus.Published)
+            {
+                return null;
+            }
+
+            if (await IsCourseFullAsync(dto.CourseId))
+            {
+                return null;
+            }
+
+            var now = DateTime.UtcNow;
+            var registration = courseExists ?? new CourseRegistration
             {
                 RegistrationId = Guid.NewGuid().ToString(),
                 CourseId = dto.CourseId,
                 StudentId = studentId,
-                Status = PaymentStatus.PendingPayment,
-                PaymentStatus = PaymentStatus.NotStarted,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
             };
 
-            // Add the registration to the database
-            _context.CourseRegistrations.Add(registration);
+            registration.Status = PaymentStatus.PendingPayment;
+            registration.PaymentStatus = PaymentStatus.NotStarted;
+            registration.InitialPayment = null;
+            registration.UpdatedAt = now;
+            registration.CreatedAt ??= now;
 
-
-            var course = await _context.Courses.Where(c => c.CourseId == dto.CourseId).FirstOrDefaultAsync();
-            if (course == null)
+            if (courseExists == null)
             {
-                return null;
+                _context.CourseRegistrations.Add(registration);
             }
 
             var paymentId = Guid.NewGuid().ToString();
@@ -60,16 +70,16 @@ namespace GymMarket.API.Repositories
             {
                 CourseId = dto.CourseId,
                 PaymentAmount = course.Price + course.AdditionalPrice,
-                CreatedAt = DateTime.UtcNow,
-                PaymentDate = DateTime.UtcNow,
+                CreatedAt = now,
+                PaymentDate = now,
                 PaymentId = paymentId,
                 PaymentStatus = PaymentStatus.Pending,
-                PaymentType = "",
+                PaymentType = PaymentType.BankTransfer,
                 // Short transfer reference the student puts in their bank transfer memo
                 // and the trainer matches against in the payments list (shown as Note).
                 Note = BuildTransferReference(paymentId),
                 StudentId = studentId,
-                UpdatedAt = DateTime.UtcNow,
+                UpdatedAt = now,
             };
 
             _context.Payments.Add(payment);
@@ -304,6 +314,33 @@ namespace GymMarket.API.Repositories
             var compact = paymentId.Replace("-", "");
             var suffix = compact.Length >= 8 ? compact.Substring(0, 8) : compact;
             return $"GYM{suffix.ToUpperInvariant()}";
+        }
+
+        private static bool IsRetryable(CourseRegistration registration)
+        {
+            var status = PaymentStatus.Normalize(registration.PaymentStatus);
+            return status == PaymentStatus.Canceled || status == PaymentStatus.Expired;
+        }
+
+        private async Task<bool> IsCourseFullAsync(string courseId)
+        {
+            var course = await _context.Courses
+                .Where(c => c.CourseId == courseId)
+                .Select(c => new { c.MaxParticipants })
+                .FirstOrDefaultAsync();
+
+            if (course?.MaxParticipants == null || course.MaxParticipants <= 0)
+                return false;
+
+            var activeRegistrations = await _context.CourseRegistrations
+                .Where(cr => cr.CourseId == courseId
+                    && cr.PaymentStatus != PaymentStatus.Canceled
+                    && cr.PaymentStatus != PaymentStatus.Expired)
+                .Select(cr => cr.StudentId)
+                .Distinct()
+                .CountAsync();
+
+            return activeRegistrations >= course.MaxParticipants;
         }
 
     }

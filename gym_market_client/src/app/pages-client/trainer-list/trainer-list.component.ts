@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { TrainerService } from '../../page-agency/trainer.service';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { patchState } from '@ngrx/signals';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -24,9 +24,11 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 })
 export class TrainerListComponent implements OnInit {
 	trainers: Trainer[] = [];
-	searchString: string = '';
-	selectedCategory: string = 'All';
-	categories: string[] = ['All', 'Yoga', 'Cardio', 'Strength', 'Crossfit', 'Elite'];
+		searchString: string = '';
+		selectedCategory: string = 'All';
+		categories: string[] = ['All', 'Yoga', 'Cardio', 'Strength', 'Crossfit', 'Elite'];
+		minRatingFilter = '';
+		minExperienceFilter = '';
 	bookmarkedTrainers: Set<string> = new Set();
 	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
 	pageIndex = 1;
@@ -36,8 +38,10 @@ export class TrainerListComponent implements OnInit {
 	hasPreviousPage = false;
 	hasNextPage = false;
 
-	loader = inject(LoaderModalStore);
-	private destroyRef = inject(DestroyRef);
+		loader = inject(LoaderModalStore);
+		private activatedRoute = inject(ActivatedRoute);
+		private router = inject(Router);
+		private destroyRef = inject(DestroyRef);
 	private cdr = inject(ChangeDetectorRef);
 	private searchChanged$ = new Subject<string>();
 
@@ -49,15 +53,50 @@ export class TrainerListComponent implements OnInit {
 				debounceTime(SEARCH_DEBOUNCE_MS),
 				distinctUntilChanged(),
 				takeUntilDestroyed(this.destroyRef)
-			)
-			.subscribe(() => {
-				this.pageIndex = 1;
+				)
+				.subscribe(() => {
+					this.pageIndex = 1;
+					this.updateQueryParams();
+				});
+
+			this.activatedRoute.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+				this.searchString = params['search'] || '';
+				const category = params['category'] || 'All';
+				this.selectedCategory = this.categories.includes(category) ? category : 'All';
+				this.minRatingFilter = params['minRating'] || '';
+				this.minExperienceFilter = params['minExperience'] || '';
+				this.pageIndex = this.toPositiveInt(params['pageIndex'], 1);
+				this.pageSize = this.toPositiveInt(params['pageSize'], 12);
 				this.getAllTrainers();
 			});
+			this.loadBookmarks();
+		}
 
-		this.getAllTrainers();
-		this.loadBookmarks();
-	}
+		private toPositiveInt(value: unknown, fallback: number): number {
+			const parsed = Number(value);
+			return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+		}
+
+		private toOptionalNumber(value: string): number | undefined {
+			if (!value.trim()) return undefined;
+			const parsed = Number(value);
+			return Number.isFinite(parsed) ? parsed : undefined;
+		}
+
+		private updateQueryParams() {
+			this.router.navigate([], {
+				relativeTo: this.activatedRoute,
+				queryParams: {
+					search: this.searchString.trim() || null,
+					category: this.selectedCategory !== 'All' ? this.selectedCategory : null,
+					minRating: this.minRatingFilter || null,
+					minExperience: this.minExperienceFilter || null,
+					pageIndex: this.pageIndex > 1 ? this.pageIndex : null,
+					pageSize: this.pageSize !== 12 ? this.pageSize : null
+				},
+				queryParamsHandling: 'merge'
+			});
+		}
 
 	private loadBookmarks() {
 		const saved = localStorage.getItem(STORAGE_KEYS.bookmarkedTrainers);
@@ -73,9 +112,18 @@ export class TrainerListComponent implements OnInit {
 	private getAllTrainers() {
 		const category = this.selectedCategory === 'All' || this.selectedCategory === 'Elite' ? '' : this.selectedCategory;
 		const eliteOnly = this.selectedCategory === 'Elite';
-		patchState(this.loader, { isShow: true });
-		this.trainerService
-			.searchTrainersPaged(this.searchString, this.pageIndex, this.pageSize, category, eliteOnly)
+			patchState(this.loader, { isShow: true });
+			this.trainerService
+				.searchTrainersPaged(
+					this.searchString,
+					this.pageIndex,
+					this.pageSize,
+					category,
+					eliteOnly,
+					this.toOptionalNumber(this.minRatingFilter),
+					undefined,
+					this.toOptionalNumber(this.minExperienceFilter)
+				)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: res => {
@@ -115,18 +163,32 @@ export class TrainerListComponent implements OnInit {
 	}
 
 	selectCategory(category: string) {
-		if (this.selectedCategory === category) return;
-		this.selectedCategory = category;
-		this.pageIndex = 1;
-		this.getAllTrainers();
-		this.cdr.markForCheck();
-	}
+			if (this.selectedCategory === category) return;
+			this.selectedCategory = category;
+			this.pageIndex = 1;
+			this.updateQueryParams();
+			this.cdr.markForCheck();
+		}
+
+		onFilterChange() {
+			this.pageIndex = 1;
+			this.updateQueryParams();
+		}
+
+		clearFilters() {
+			this.searchString = '';
+			this.selectedCategory = 'All';
+			this.minRatingFilter = '';
+			this.minExperienceFilter = '';
+			this.pageIndex = 1;
+			this.updateQueryParams();
+		}
 
 	goToPage(pageIndex: number) {
-		if (pageIndex < 1 || (this.totalPages && pageIndex > this.totalPages) || pageIndex === this.pageIndex) return;
-		this.pageIndex = pageIndex;
-		this.getAllTrainers();
-	}
+			if (pageIndex < 1 || (this.totalPages && pageIndex > this.totalPages) || pageIndex === this.pageIndex) return;
+			this.pageIndex = pageIndex;
+			this.updateQueryParams();
+		}
 
 	toggleBookmark(trainerId: string, event: Event) {
 		event.preventDefault();
@@ -166,7 +228,7 @@ export class TrainerListComponent implements OnInit {
 		return '💪';
 	}
 
-	onSubmit() {
-		this.searchChanged$.next(this.searchString);
-	}
+		onSubmit() {
+			this.searchChanged$.next(this.searchString);
+		}
 }

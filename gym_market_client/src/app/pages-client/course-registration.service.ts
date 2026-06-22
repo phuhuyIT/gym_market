@@ -9,7 +9,7 @@ import { CoursePaymentInfo } from '../core/models/course-registration.model';
 	providedIn: 'root',
 })
 export class CourseRegistrationService {
-	constructor(private http: HttpClient) {}
+		constructor(private http: HttpClient) {}
 
 	// The acting student is derived from the JWT on the backend, so no
 	// studentId is ever sent.
@@ -46,6 +46,13 @@ export class CourseRegistrationService {
 		return this.http.post<CoursePaymentInfo>(
 			`${environment.baseApi}/CourseRegistration/confirm-payment/${courseId}`,
 			{}
+		);
+	}
+
+	createMomoPayment(courseId: string): Observable<{ payUrl: string }> {
+		return this.http.post<{ payUrl: string }>(
+			`${environment.baseApi}/MomoPayment/CreatePaymentUrl`,
+			{ courseId }
 		);
 	}
 }

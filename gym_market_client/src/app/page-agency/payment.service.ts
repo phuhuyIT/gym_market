@@ -20,22 +20,28 @@ export class PaymentService {
 	searchPaymentsPaged(
 		search = '',
 		pageIndex = 1,
-		pageSize = 15,
-		courseId = '',
-		studentId = '',
-		status = ''
-	): Observable<PagedResult<Payment>> {
+			pageSize = 15,
+			courseId = '',
+			studentId = '',
+			status = '',
+			paymentType = '',
+			fromDate = '',
+			toDate = ''
+		): Observable<PagedResult<Payment>> {
 		let params = new HttpParams()
 			.set('search', search.trim())
 			.set('pageIndex', pageIndex)
 			.set('pageSize', pageSize);
 
-		if (courseId) params = params.set('courseId', courseId);
-		if (studentId) params = params.set('studentId', studentId);
-		if (status) params = params.set('status', status);
+			if (courseId) params = params.set('courseId', courseId);
+			if (studentId) params = params.set('studentId', studentId);
+			if (status) params = params.set('status', status);
+			if (paymentType) params = params.set('paymentType', paymentType);
+			if (fromDate) params = params.set('fromDate', fromDate);
+			if (toDate) params = params.set('toDate', toDate);
 
-		return this.http.get<PagedResult<Payment>>(`${environment.baseApi}/Payments/search`, { params });
-	}
+			return this.http.get<PagedResult<Payment>>(`${environment.baseApi}/Payments/search`, { params });
+		}
 
 	okPayment(paymentId: string): Observable<void> {
 		return this.http.post<void>(`${environment.baseApi}/Payments/ok-payment/${paymentId}`, {});

@@ -14,6 +14,9 @@ namespace GymMarket.API.Repositories.IRepositories
             string? courseId = null,
             string? studentId = null,
             string? status = null,
+            string? paymentType = null,
+            DateTime? fromDate = null,
+            DateTime? toDate = null,
             string? trainerId = null,
             bool includeAllCourses = false);
         Task<Payment?> OkPayment(string paymentId);

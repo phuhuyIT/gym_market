@@ -11,6 +11,7 @@ export interface Course {
   endDate: string;
   duration: number;
   maxParticipants: number;
+  status?: 'Draft' | 'Published' | 'Archived';
   rating: number;
   getFileDtos: CourseFile[];
   statusPayment?: string;

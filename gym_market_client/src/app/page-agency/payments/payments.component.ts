@@ -27,7 +27,10 @@ export class PaymentsComponent implements OnInit {
 	filteredPayments: Payment[] = [];
 
 	searchString = '';
-	statusFilter = '';
+		statusFilter = '';
+		paymentTypeFilter = '';
+		fromDateFilter = '';
+		toDateFilter = '';
 	courseIdFilter = '';
 	courseTitleFilter = '';
 	studentIdFilter = '';
@@ -68,24 +71,53 @@ export class PaymentsComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.searchChanged$
-			.pipe(
-				debounceTime(SEARCH_DEBOUNCE_MS),
-				distinctUntilChanged(),
-				takeUntilDestroyed(this.destroyRef)
-			)
-			.subscribe(() => {
-				this.pageIndex = 1;
+			this.searchChanged$
+				.pipe(
+					debounceTime(SEARCH_DEBOUNCE_MS),
+					distinctUntilChanged(),
+					takeUntilDestroyed(this.destroyRef)
+				)
+				.subscribe(() => {
+					this.pageIndex = 1;
+					this.updateQueryParams();
+				});
+
+			this.activatedRoute.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+				this.searchString = params['search'] || '';
+				this.courseIdFilter = params['courseId'] || '';
+				this.studentIdFilter = params['studentId'] || '';
+				this.statusFilter = params['status'] || '';
+				this.paymentTypeFilter = params['paymentType'] || '';
+				this.fromDateFilter = params['fromDate'] || '';
+				this.toDateFilter = params['toDate'] || '';
+				this.pageIndex = this.toPositiveInt(params['pageIndex'], 1);
+				this.pageSize = this.toPositiveInt(params['pageSize'], 15);
 				this.loadPayments();
 			});
+		}
 
-		this.activatedRoute.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-			this.courseIdFilter = params['courseId'] || '';
-			this.studentIdFilter = params['studentId'] || '';
-			this.pageIndex = 1;
-			this.loadPayments();
-		});
-	}
+		private toPositiveInt(value: unknown, fallback: number): number {
+			const parsed = Number(value);
+			return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+		}
+
+		private updateQueryParams() {
+			this.router.navigate([], {
+				relativeTo: this.activatedRoute,
+				queryParams: {
+					search: this.searchString.trim() || null,
+					courseId: this.courseIdFilter || null,
+					studentId: this.studentIdFilter || null,
+					status: this.statusFilter || null,
+					paymentType: this.paymentTypeFilter || null,
+					fromDate: this.fromDateFilter || null,
+					toDate: this.toDateFilter || null,
+					pageIndex: this.pageIndex > 1 ? this.pageIndex : null,
+					pageSize: this.pageSize !== 15 ? this.pageSize : null
+				},
+				queryParamsHandling: 'merge'
+			});
+		}
 
 	private updateContextLabels() {
 		const coursePayment = this.allPayments.find(p => p.courseId === this.courseIdFilter);
@@ -104,15 +136,18 @@ export class PaymentsComponent implements OnInit {
 
 	loadPayments() {
 		patchState(this.loaderStore, { isShow: true });
-		this.paymentService
-			.searchPaymentsPaged(
-				this.searchString,
-				this.pageIndex,
-				this.pageSize,
-				this.courseIdFilter,
-				this.studentIdFilter,
-				this.statusFilter
-			)
+			this.paymentService
+				.searchPaymentsPaged(
+					this.searchString,
+					this.pageIndex,
+					this.pageSize,
+					this.courseIdFilter,
+					this.studentIdFilter,
+					this.statusFilter,
+					this.paymentTypeFilter,
+					this.fromDateFilter,
+					this.toDateFilter
+				)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: result => {
@@ -137,17 +172,32 @@ export class PaymentsComponent implements OnInit {
 		this.searchChanged$.next(this.searchString);
 	}
 
-	onStatusFilter(status: string) {
-		this.statusFilter = status;
-		this.pageIndex = 1;
-		this.loadPayments();
-	}
+		onStatusFilter(status: string) {
+			this.statusFilter = status;
+			this.pageIndex = 1;
+			this.updateQueryParams();
+		}
 
-	goToPage(pageIndex: number) {
-		if (pageIndex < 1 || (this.totalPages && pageIndex > this.totalPages) || pageIndex === this.pageIndex) return;
-		this.pageIndex = pageIndex;
-		this.loadPayments();
-	}
+		onFilterChange() {
+			this.pageIndex = 1;
+			this.updateQueryParams();
+		}
+
+		clearFilters() {
+			this.searchString = '';
+			this.statusFilter = '';
+			this.paymentTypeFilter = '';
+			this.fromDateFilter = '';
+			this.toDateFilter = '';
+			this.pageIndex = 1;
+			this.updateQueryParams();
+		}
+
+		goToPage(pageIndex: number) {
+			if (pageIndex < 1 || (this.totalPages && pageIndex > this.totalPages) || pageIndex === this.pageIndex) return;
+			this.pageIndex = pageIndex;
+			this.updateQueryParams();
+		}
 
 	okPayment(paymentId: string) {
 		patchState(this.loaderStore, { isShow: true });

@@ -61,6 +61,41 @@
   }
 }
 
+.trainer-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.trainer-filter-select,
+.trainer-filter-clear {
+  min-height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  color: var(--text-soft);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.trainer-filter-select {
+  padding: 8px 12px;
+}
+
+.trainer-filter-clear {
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all var(--transition);
+
+  &:hover {
+    background: var(--glass-fill2);
+    color: var(--text);
+    transform: translateY(-1px);
+  }
+}
+
 .search-bar-container {
   display: flex;
   align-items: center;

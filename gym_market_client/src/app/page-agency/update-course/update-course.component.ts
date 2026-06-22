@@ -41,11 +41,13 @@ export class UpdateCourseComponent implements OnInit {
 		endDate: '',
 		duration: 0,
 		maxParticipants: 0,
+		status: 'Published',
 		rating: 0,
 		getFileDtos: [],
 	};
 
 	readonly descriptionLimit = 500;
+	readonly courseStatuses = ['Draft', 'Published', 'Archived'] as const;
 	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
 	readonly DEFAULT_IMAGE_URL = DEFAULT_IMAGE_URL;
 
@@ -186,6 +188,7 @@ export class UpdateCourseComponent implements OnInit {
 		form.append('EndDate', this.model.endDate);
 		form.append('Duration', this.model.duration.toString());
 		form.append('MaxParticipants', this.model.maxParticipants.toString());
+		form.append('Status', this.model.status || 'Published');
 		// No TrainerId: ownership never changes on update and the backend
 		// keeps the current owner.
 

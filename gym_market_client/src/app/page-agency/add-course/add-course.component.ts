@@ -39,9 +39,11 @@ export class AddCourseComponent {
 		endDate: formatDateToInput(new Date()),
 		duration: 0,
 		maxParticipants: 0,
+		status: 'Published' as 'Draft' | 'Published' | 'Archived',
 	};
 
 	readonly descriptionLimit = 500;
+	readonly courseStatuses = ['Draft', 'Published', 'Archived'] as const;
 
 	// Full Tailwind class strings kept literal so the JIT compiler picks them up.
 	readonly courseTypes: CourseTypeOption[] = [

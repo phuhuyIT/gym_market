@@ -27,7 +27,7 @@ namespace GymMarket.API.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public virtual async Task<TEntity> GetByIdAsync(TKey id)
+        public virtual async Task<TEntity?> GetByIdAsync(TKey id)
         {
             return await _dbSet.FindAsync(id);
         }

@@ -25,6 +25,17 @@ namespace GymMarket.API
     public static class PaymentType
     {
         public const string Momo = "MOMO";
+        public const string BankTransfer = "BANK_TRANSFER";
+    }
+
+    public static class CourseStatus
+    {
+        public const string Draft = "Draft";
+        public const string Published = "Published";
+        public const string Archived = "Archived";
+
+        public static string Normalize(string? status) =>
+            string.IsNullOrWhiteSpace(status) ? Published : status.Trim();
     }
 
     public static class FileType

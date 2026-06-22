@@ -24,75 +24,82 @@
           <div class="state-card__icon">⚠️</div>
           <h2 class="state-card__title">Payment canceled</h2>
           <p class="state-card__text">
-            This payment was canceled. Please contact your trainer or enrol again to retry.
+            This payment was canceled. Start a new payment attempt to continue with this course.
           </p>
-          <gm-button variant="ghost" (clicked)="goToDetails()">BACK TO COURSE</gm-button>
-        </gm-card>
-      } @else if (!info.bankConfigured) {
-        <!-- Trainer hasn't set up a bank account -->
-        <gm-card class="state-card gl-2">
-          <div class="state-card__icon">🏦</div>
-          <h2 class="state-card__title">Payment not available yet</h2>
-          <p class="state-card__text">
-            {{ info.trainerName || 'This trainer' }} hasn't set up a payment account yet.
-            Please check back later or contact them.
-          </p>
+          <gm-button variant="primary" (clicked)="retryPayment()">RETRY PAYMENT</gm-button>
           <gm-button variant="ghost" (clicked)="goToDetails()">BACK TO COURSE</gm-button>
         </gm-card>
       } @else {
-        <!-- Pending: show the bank QR -->
+        <!-- Pending: choose Momo or bank transfer -->
         <div class="pay-layout">
 
-          <gm-card class="qr-card gl-2">
-            <h3 class="qr-card__title">Scan to pay</h3>
-            <div class="qr-card__img">
-              <img [src]="qrUrl" alt="Bank transfer QR code" />
-            </div>
-            <p class="qr-card__hint">
-              Open your banking app, scan this code, and confirm the transfer.
-            </p>
-          </gm-card>
-
           <gm-card class="details-card gl">
-            <h3 class="details-card__title">Or transfer manually</h3>
-            <ul class="bank-details">
-              <li>
-                <span class="bank-details__label">Amount</span>
-                <span class="bank-details__value">
-                  {{ info.amount | number:'1.0-0' }} VND
-                  <button class="copy-btn" (click)="copy(info.amount)">Copy</button>
-                </span>
-              </li>
-              <li>
-                <span class="bank-details__label">Account name</span>
-                <span class="bank-details__value">{{ info.bankAccountName || '—' }}</span>
-              </li>
-              <li>
-                <span class="bank-details__label">Account number</span>
-                <span class="bank-details__value">
-                  {{ info.bankAccountNo }}
-                  <button class="copy-btn" (click)="copy(info.bankAccountNo)">Copy</button>
-                </span>
-              </li>
-              <li class="bank-details--highlight">
-                <span class="bank-details__label">Transfer note</span>
-                <span class="bank-details__value">
-                  <strong>{{ info.reference }}</strong>
-                  <button class="copy-btn" (click)="copy(info.reference)">Copy</button>
-                </span>
-              </li>
-            </ul>
-            <p class="details-card__warning">
-              ⚠️ Include the transfer note exactly so your trainer can match your payment.
+            <h3 class="details-card__title">Pay online</h3>
+            <p class="details-card__pending">
+              Pay immediately with Momo. Your course unlocks when the gateway confirms the payment.
             </p>
-
             <div class="details-card__actions">
-              <gm-button variant="primary" (clicked)="confirmPayment()">I'VE PAID — NOTIFY TRAINER</gm-button>
-              <p class="details-card__pending">
-                Status: <strong>Pending</strong>. Your trainer verifies the transfer and confirms it manually.
-              </p>
+              <gm-button variant="primary" (clicked)="payWithMomo()">PAY WITH MOMO</gm-button>
             </div>
+            @if (!info.bankConfigured) {
+              <p class="details-card__warning">
+                Bank transfer is unavailable because {{ info.trainerName || 'this trainer' }} has not set up receiving bank details.
+              </p>
+            }
           </gm-card>
+
+          @if (info.bankConfigured) {
+            <gm-card class="qr-card gl-2">
+              <h3 class="qr-card__title">Scan to pay by bank</h3>
+              <div class="qr-card__img">
+                <img [src]="qrUrl" alt="Bank transfer QR code" />
+              </div>
+              <p class="qr-card__hint">
+                Open your banking app, scan this code, and confirm the transfer.
+              </p>
+            </gm-card>
+
+            <gm-card class="details-card gl">
+              <h3 class="details-card__title">Or transfer manually</h3>
+              <ul class="bank-details">
+                <li>
+                  <span class="bank-details__label">Amount</span>
+                  <span class="bank-details__value">
+                    {{ info.amount | number:'1.0-0' }} VND
+                    <button class="copy-btn" (click)="copy(info.amount)">Copy</button>
+                  </span>
+                </li>
+                <li>
+                  <span class="bank-details__label">Account name</span>
+                  <span class="bank-details__value">{{ info.bankAccountName || '—' }}</span>
+                </li>
+                <li>
+                  <span class="bank-details__label">Account number</span>
+                  <span class="bank-details__value">
+                    {{ info.bankAccountNo }}
+                    <button class="copy-btn" (click)="copy(info.bankAccountNo)">Copy</button>
+                  </span>
+                </li>
+                <li class="bank-details--highlight">
+                  <span class="bank-details__label">Transfer note</span>
+                  <span class="bank-details__value">
+                    <strong>{{ info.reference }}</strong>
+                    <button class="copy-btn" (click)="copy(info.reference)">Copy</button>
+                  </span>
+                </li>
+              </ul>
+              <p class="details-card__warning">
+                Include the transfer note exactly so your trainer can match your payment.
+              </p>
+
+              <div class="details-card__actions">
+                <gm-button variant="primary" (clicked)="confirmPayment()">I'VE PAID - NOTIFY TRAINER</gm-button>
+                <p class="details-card__pending">
+                  Status: <strong>Pending</strong>. Your trainer verifies the transfer and confirms it manually.
+                </p>
+              </div>
+            </gm-card>
+          }
 
         </div>
       }

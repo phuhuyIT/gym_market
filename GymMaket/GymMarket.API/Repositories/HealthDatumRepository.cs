@@ -20,7 +20,7 @@ namespace GymMarket.API.Repositories
                 .ToListAsync();
         }
         // Override getById method
-        public override async Task<HealthDatum> GetByIdAsync(string id)
+        public override async Task<HealthDatum?> GetByIdAsync(string id)
         {
             var healthDatum = await _context.HealthData
                 .Include(h => h.HealthIndicators)

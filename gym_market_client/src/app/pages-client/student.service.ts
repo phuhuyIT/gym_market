@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
@@ -15,13 +15,25 @@ export class StudentService {
 		return this.http.get<Student>(`${environment.baseApi}/student/${studentId}`);
 	}
 
-	searchStudentsPaged(search = '', pageIndex = 1, pageSize = 15): Observable<PagedResult<StudentSearch>> {
+	searchStudentsPaged(
+		search = '',
+		pageIndex = 1,
+		pageSize = 15,
+		healthStatus = '',
+		status = '',
+		paymentStatus = ''
+	): Observable<PagedResult<StudentSearch>> {
+		let params = new HttpParams()
+			.set('search', search.trim())
+			.set('pageIndex', pageIndex)
+			.set('pageSize', pageSize);
+
+		if (healthStatus) params = params.set('healthStatus', healthStatus);
+		if (status) params = params.set('status', status);
+		if (paymentStatus) params = params.set('paymentStatus', paymentStatus);
+
 		return this.http.get<PagedResult<StudentSearch>>(`${environment.baseApi}/student/search`, {
-			params: {
-				search: search.trim(),
-				pageIndex: pageIndex.toString(),
-				pageSize: pageSize.toString(),
-			},
+			params,
 		});
 	}
 

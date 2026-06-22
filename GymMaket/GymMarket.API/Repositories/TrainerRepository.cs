@@ -22,7 +22,12 @@ namespace GymMarket.API.Repositories
             int pageSize = Defaults.PageSize,
             string? search = null,
             string? category = null,
-            bool? eliteOnly = null)
+            bool? eliteOnly = null,
+            decimal? minRating = null,
+            decimal? maxRating = null,
+            int? minExperience = null,
+            int? maxExperience = null,
+            string? status = null)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize < 1) pageSize = Defaults.PageSize;
@@ -30,6 +35,7 @@ namespace GymMarket.API.Repositories
 
             search = search?.Trim();
             category = category?.Trim();
+            status = status?.Trim();
 
             var query = _context.Trainers
                 .AsNoTracking()
@@ -65,6 +71,31 @@ namespace GymMarket.API.Repositories
             if (eliteOnly == true)
             {
                 query = query.Where(t => t.Experience >= 8);
+            }
+
+            if (minRating.HasValue)
+            {
+                query = query.Where(t => t.Rating >= minRating.Value);
+            }
+
+            if (maxRating.HasValue)
+            {
+                query = query.Where(t => t.Rating <= maxRating.Value);
+            }
+
+            if (minExperience.HasValue)
+            {
+                query = query.Where(t => t.Experience >= minExperience.Value);
+            }
+
+            if (maxExperience.HasValue)
+            {
+                query = query.Where(t => t.Experience <= maxExperience.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(t => t.AppUser != null && t.AppUser.Status == status);
             }
 
             var totalCount = await query.CountAsync();

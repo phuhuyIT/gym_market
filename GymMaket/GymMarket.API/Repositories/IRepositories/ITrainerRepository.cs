@@ -11,6 +11,11 @@ namespace GymMarket.API.Repositories.IRepositories
             int pageSize = Defaults.PageSize,
             string? search = null,
             string? category = null,
-            bool? eliteOnly = null);
+            bool? eliteOnly = null,
+            decimal? minRating = null,
+            decimal? maxRating = null,
+            int? minExperience = null,
+            int? maxExperience = null,
+            string? status = null);
     }
 }

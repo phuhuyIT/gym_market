@@ -42,6 +42,9 @@ namespace GymMarket.API.Controllers
             [FromQuery] string? courseId,
             [FromQuery] string? studentId,
             [FromQuery] string? status,
+            [FromQuery] string? paymentType,
+            [FromQuery] DateTime? fromDate,
+            [FromQuery] DateTime? toDate,
             [FromQuery] int pageIndex = 1,
             [FromQuery] int pageSize = Defaults.PageSize)
         {
@@ -57,6 +60,9 @@ namespace GymMarket.API.Controllers
                 courseId,
                 studentId,
                 status,
+                paymentType,
+                fromDate,
+                toDate,
                 trainerId,
                 includeAllCourses: isAdmin);
 

@@ -25,7 +25,21 @@ namespace GymMarket.API.Services
         public async Task<MomoCreatePaymentResponseModel?> CreatePaymentAsync(string courseId, string studentId)
         {
             var course = await _context.Courses.FindAsync(courseId);
-            if (course == null) return null;
+            if (course == null || course.Status != CourseStatus.Published) return null;
+
+            var registration = await _context.CourseRegistrations
+                .FirstOrDefaultAsync(cr => cr.CourseId == courseId && cr.StudentId == studentId);
+            if (registration == null
+                || registration.PaymentStatus == PaymentStatus.Canceled
+                || registration.PaymentStatus == PaymentStatus.Expired)
+            {
+                return null;
+            }
+
+            if (await IsCourseFullForNewStudentAsync(courseId, studentId, course.MaxParticipants))
+            {
+                return null;
+            }
 
             string paymentId = Guid.NewGuid().ToString("N");
             double paymentAmount = (double)((course.Price ?? 0) + (course.AdditionalPrice ?? 0));
@@ -70,6 +84,30 @@ namespace GymMarket.API.Services
             var response = await client.ExecuteAsync(request);
             var momoResponse = JsonConvert.DeserializeObject<MomoCreatePaymentResponseModel>(response.Content!);
             return momoResponse!;
+        }
+
+        private async Task<bool> IsCourseFullForNewStudentAsync(string courseId, string studentId, int? maxParticipants)
+        {
+            if (maxParticipants == null || maxParticipants <= 0)
+                return false;
+
+            var studentAlreadyActive = await _context.CourseRegistrations.AnyAsync(cr =>
+                cr.CourseId == courseId
+                && cr.StudentId == studentId
+                && cr.PaymentStatus != PaymentStatus.Canceled
+                && cr.PaymentStatus != PaymentStatus.Expired);
+            if (studentAlreadyActive)
+                return false;
+
+            var activeRegistrations = await _context.CourseRegistrations
+                .Where(cr => cr.CourseId == courseId
+                    && cr.PaymentStatus != PaymentStatus.Canceled
+                    && cr.PaymentStatus != PaymentStatus.Expired)
+                .Select(cr => cr.StudentId)
+                .Distinct()
+                .CountAsync();
+
+            return activeRegistrations >= maxParticipants;
         }
 
         public bool VerifySignature(MomoCallbackDto callback)

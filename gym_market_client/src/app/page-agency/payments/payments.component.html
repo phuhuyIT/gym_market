@@ -31,10 +31,11 @@
   }
 
   <!-- Search and Status Filters -->
-  <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-5 shadow-sm flex flex-col gap-4">
     <!-- Search -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     <div class="relative w-full sm:w-80">
-      <input type="text" [(ngModel)]="searchString" (ngModelChange)="onSearch()" (keyup.enter)="loadPayments()" placeholder="Search students or courses..." class="w-full bg-[#F7F6F3] dark:bg-[#252528] pl-4 pr-10 py-2.5 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 transition-all border-none">
+      <input type="text" [(ngModel)]="searchString" (ngModelChange)="onSearch()" (keyup.enter)="onSearch()" placeholder="Search students or courses..." class="w-full bg-[#F7F6F3] dark:bg-[#252528] pl-4 pr-10 py-2.5 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 transition-all border-none">
       <button (click)="onSearch()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
@@ -55,6 +56,22 @@
       </button>
       <button (click)="onStatusFilter('Canceled')" [class]="statusFilter === 'Canceled' ? 'bg-red-500/10 text-red-600 dark:bg-red-950/30 dark:text-red-400' : 'bg-[#F7F6F3] dark:bg-[#252528] text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/40'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
         Canceled
+      </button>
+    </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[180px_180px_180px_auto] gap-3">
+      <select [(ngModel)]="paymentTypeFilter" (ngModelChange)="onFilterChange()" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-2.5 rounded-2xl text-sm font-semibold text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40">
+        <option value="">All methods</option>
+        <option value="MOMO">MOMO</option>
+        <option value="Manual">Manual</option>
+        <option value="Cash">Cash</option>
+        <option value="Bank Transfer">Bank Transfer</option>
+      </select>
+      <input type="date" [(ngModel)]="fromDateFilter" (ngModelChange)="onFilterChange()" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-2.5 rounded-2xl text-sm font-semibold text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40">
+      <input type="date" [(ngModel)]="toDateFilter" (ngModelChange)="onFilterChange()" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-2.5 rounded-2xl text-sm font-semibold text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40">
+      <button (click)="clearFilters()" class="px-4 py-2.5 rounded-2xl text-xs font-bold bg-neutral-100 dark:bg-neutral-800/50 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors">
+        Clear filters
       </button>
     </div>
   </div>

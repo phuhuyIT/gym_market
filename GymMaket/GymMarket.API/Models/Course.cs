@@ -31,6 +31,8 @@ public partial class Course
 
     public decimal? Rating { get; set; }
 
+    public string? Status { get; set; }
+
     public virtual ICollection<CourseRating> CourseRatings { get; set; } = new List<CourseRating>();
 
     public virtual ICollection<CourseRegistration> CourseRegistrations { get; set; } = new List<CourseRegistration>();

@@ -62,6 +62,9 @@ namespace GymMarket.API.Repositories
             int pageIndex = 1,
             int pageSize = Defaults.PageSize,
             string? search = null,
+            string? healthStatus = null,
+            string? status = null,
+            string? paymentStatus = null,
             string? trainerId = null,
             bool includeAllStudents = false)
         {
@@ -70,6 +73,9 @@ namespace GymMarket.API.Repositories
             if (pageSize > 50) pageSize = 50;
 
             search = search?.Trim();
+            healthStatus = healthStatus?.Trim();
+            status = status?.Trim();
+            paymentStatus = PaymentStatus.Normalize(paymentStatus?.Trim());
             trainerId = trainerId?.Trim();
 
             var query = _context.Students
@@ -104,6 +110,40 @@ namespace GymMarket.API.Repositories
                     (s.AppUser != null && s.AppUser.Email != null && s.AppUser.Email.Contains(search)) ||
                     (s.AppUser != null && s.AppUser.PhoneNumber != null && s.AppUser.PhoneNumber.Contains(search)) ||
                     (s.AppUser != null && s.AppUser.Status != null && s.AppUser.Status.Contains(search)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(healthStatus))
+            {
+                query = query.Where(s => s.HealthStatus == healthStatus);
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(s => s.AppUser != null && s.AppUser.Status == status);
+            }
+
+            if (!string.IsNullOrWhiteSpace(paymentStatus))
+            {
+                if (paymentStatus == PaymentStatus.Paid)
+                {
+                    query = query.Where(s =>
+                        s.Payments.Any(p =>
+                            (includeAllStudents || (p.Course != null && p.Course.TrainerId == trainerId)) &&
+                            (p.PaymentStatus == PaymentStatus.Paid || p.PaymentStatus == PaymentStatus.Completed)) ||
+                        s.CourseRegistrations.Any(r =>
+                            (includeAllStudents || (r.Course != null && r.Course.TrainerId == trainerId)) &&
+                            (r.PaymentStatus == PaymentStatus.Paid || r.PaymentStatus == PaymentStatus.Completed)));
+                }
+                else
+                {
+                    query = query.Where(s =>
+                        s.Payments.Any(p =>
+                            (includeAllStudents || (p.Course != null && p.Course.TrainerId == trainerId)) &&
+                            p.PaymentStatus == paymentStatus) ||
+                        s.CourseRegistrations.Any(r =>
+                            (includeAllStudents || (r.Course != null && r.Course.TrainerId == trainerId)) &&
+                            r.PaymentStatus == paymentStatus));
+                }
             }
 
             var totalCount = await query.CountAsync();

@@ -23,9 +23,24 @@ namespace GymMarket.API.Controllers
             [FromQuery] int pageIndex = 1,
             [FromQuery] int pageSize = Defaults.PageSize,
             [FromQuery] string? category = null,
-            [FromQuery] bool? eliteOnly = null)
+            [FromQuery] bool? eliteOnly = null,
+            [FromQuery] decimal? minRating = null,
+            [FromQuery] decimal? maxRating = null,
+            [FromQuery] int? minExperience = null,
+            [FromQuery] int? maxExperience = null,
+            [FromQuery] string? status = null)
         {
-            var result = await _trainerRepository.SearchTrainers(pageIndex, pageSize, search, category, eliteOnly);
+            var result = await _trainerRepository.SearchTrainers(
+                pageIndex,
+                pageSize,
+                search,
+                category,
+                eliteOnly,
+                minRating,
+                maxRating,
+                minExperience,
+                maxExperience,
+                status);
             return Ok(result);
         }
 

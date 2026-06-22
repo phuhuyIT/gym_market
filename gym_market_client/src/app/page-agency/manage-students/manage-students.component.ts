@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { patchState } from '@ngrx/signals';
@@ -34,8 +34,10 @@ export class ManageStudentsComponent implements OnInit {
 	allStudents: StudentSummary[] = [];
 	filteredStudents: StudentSummary[] = [];
 
-	searchString = '';
-	statusFilter = '';
+		searchString = '';
+		statusFilter = '';
+		healthStatusFilter = '';
+		paymentStatusFilter = '';
 	pageIndex = 1;
 	pageSize = 15;
 	totalCount = 0;
@@ -46,9 +48,11 @@ export class ManageStudentsComponent implements OnInit {
 	loaderStore = inject(LoaderModalStore);
 	toastService = inject(ToastService);
 	private destroyRef = inject(DestroyRef);
-	private cdr = inject(ChangeDetectorRef);
-	private studentService = inject(StudentService);
-	private searchChanged$ = new Subject<string>();
+		private cdr = inject(ChangeDetectorRef);
+		private studentService = inject(StudentService);
+		private activatedRoute = inject(ActivatedRoute);
+		private router = inject(Router);
+		private searchChanged$ = new Subject<string>();
 
 	ngOnInit() {
 		this.searchChanged$
@@ -56,19 +60,54 @@ export class ManageStudentsComponent implements OnInit {
 				debounceTime(SEARCH_DEBOUNCE_MS),
 				distinctUntilChanged(),
 				takeUntilDestroyed(this.destroyRef)
-			)
-			.subscribe(() => {
-				this.pageIndex = 1;
+				)
+				.subscribe(() => {
+					this.pageIndex = 1;
+					this.updateQueryParams();
+				});
+
+			this.activatedRoute.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+				this.searchString = params['search'] || '';
+				this.statusFilter = params['status'] || '';
+				this.healthStatusFilter = params['healthStatus'] || '';
+				this.paymentStatusFilter = params['paymentStatus'] || '';
+				this.pageIndex = this.toPositiveInt(params['pageIndex'], 1);
+				this.pageSize = this.toPositiveInt(params['pageSize'], 15);
 				this.loadData();
 			});
+		}
 
-		this.loadData();
-	}
+		private toPositiveInt(value: unknown, fallback: number): number {
+			const parsed = Number(value);
+			return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+		}
+
+		private updateQueryParams() {
+			this.router.navigate([], {
+				relativeTo: this.activatedRoute,
+				queryParams: {
+					search: this.searchString.trim() || null,
+					status: this.statusFilter || null,
+					healthStatus: this.healthStatusFilter || null,
+					paymentStatus: this.paymentStatusFilter || null,
+					pageIndex: this.pageIndex > 1 ? this.pageIndex : null,
+					pageSize: this.pageSize !== 15 ? this.pageSize : null
+				},
+				queryParamsHandling: 'merge'
+			});
+		}
 
 	loadData() {
 		patchState(this.loaderStore, { isShow: true });
-		this.studentService
-			.searchStudentsPaged(this.searchString, this.pageIndex, this.pageSize)
+			this.studentService
+				.searchStudentsPaged(
+					this.searchString,
+					this.pageIndex,
+					this.pageSize,
+					this.healthStatusFilter,
+					this.statusFilter,
+					this.paymentStatusFilter
+				)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: result => {
@@ -101,27 +140,40 @@ export class ManageStudentsComponent implements OnInit {
 		};
 	}
 
-	applyFilters() {
-		this.filteredStudents = this.statusFilter
-			? this.allStudents.filter(s => s.status === this.statusFilter)
-			: this.allStudents;
-		this.cdr.markForCheck();
-	}
+		applyFilters() {
+			this.filteredStudents = this.allStudents;
+			this.cdr.markForCheck();
+		}
 
 	onSearch() {
 		this.searchChanged$.next(this.searchString);
 	}
 
-	onStatusFilter(status: string) {
-		this.statusFilter = status;
-		this.applyFilters();
-	}
+		onStatusFilter(status: string) {
+			this.statusFilter = status;
+			this.pageIndex = 1;
+			this.updateQueryParams();
+		}
+
+		onFilterChange() {
+			this.pageIndex = 1;
+			this.updateQueryParams();
+		}
+
+		clearFilters() {
+			this.searchString = '';
+			this.statusFilter = '';
+			this.healthStatusFilter = '';
+			this.paymentStatusFilter = '';
+			this.pageIndex = 1;
+			this.updateQueryParams();
+		}
 
 	goToPage(pageIndex: number) {
-		if (pageIndex < 1 || (this.totalPages && pageIndex > this.totalPages) || pageIndex === this.pageIndex) return;
-		this.pageIndex = pageIndex;
-		this.loadData();
-	}
+			if (pageIndex < 1 || (this.totalPages && pageIndex > this.totalPages) || pageIndex === this.pageIndex) return;
+			this.pageIndex = pageIndex;
+			this.updateQueryParams();
+		}
 
 	get activeStudents(): number {
 		return this.allStudents.filter(s => s.status === 'Active').length;

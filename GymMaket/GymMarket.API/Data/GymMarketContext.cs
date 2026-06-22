@@ -92,6 +92,10 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.StartDate)
                 .HasColumnType("datetime")
                 .HasColumnName("Start_Date");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(CourseStatus.Published);
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .IsUnicode(false);
@@ -107,6 +111,7 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasIndex(e => e.Category);
             entity.HasIndex(e => e.Type);
             entity.HasIndex(e => e.TrainerId);
+            entity.HasIndex(e => e.Status);
 
             entity.HasOne(d => d.Trainer).WithMany(p => p.Courses)
                 .HasForeignKey(d => d.TrainerId)
@@ -223,6 +228,12 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.CourseId);
+            entity.HasIndex(e => e.StudentId);
+            entity.HasIndex(e => e.PaymentStatus);
+            entity.HasIndex(e => new { e.StudentId, e.PaymentStatus });
+            entity.HasIndex(e => new { e.CourseId, e.PaymentStatus });
 
             entity.HasOne(d => d.Course).WithMany(p => p.CourseRegistrations)
                 .HasForeignKey(d => d.CourseId)
@@ -483,6 +494,9 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasIndex(e => e.PaymentStatus);
             entity.HasIndex(e => e.PaymentType);
             entity.HasIndex(e => e.CreatedAt);
+            entity.HasIndex(e => new { e.CourseId, e.PaymentStatus, e.CreatedAt });
+            entity.HasIndex(e => new { e.StudentId, e.PaymentStatus, e.CreatedAt });
+            entity.HasIndex(e => new { e.PaymentType, e.CreatedAt });
 
             entity.HasOne(d => d.Course).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.CourseId)
@@ -519,6 +533,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasIndex(e => e.Name);
             entity.HasIndex(e => e.Email);
             entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.HealthStatus);
+            entity.HasIndex(e => new { e.HealthStatus, e.CreatedAt });
             entity.HasOne(d => d.AppUser).WithOne(p => p.Student)
                 .HasForeignKey<Student>(d => d.UserId)
                 .HasConstraintName("FK_Student_AppUser");
@@ -557,6 +573,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasIndex(e => e.Category);
             entity.HasIndex(e => e.Certification);
             entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => new { e.Category, e.Experience });
+            entity.HasIndex(e => new { e.Category, e.Rating });
             entity.HasOne(d => d.AppUser).WithOne(p => p.Trainer)
                 .HasForeignKey<Trainer>(d => d.UserId)
                 .HasConstraintName("FK_Trainer_AppUser");

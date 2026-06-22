@@ -26,18 +26,29 @@ export class TrainerService {
 	searchTrainersPaged(
 		search = '',
 		pageIndex = 1,
-		pageSize = 12,
-		category = '',
-		eliteOnly = false
-	): Observable<PagedResult<TrainerSearch>> {
-		return this.http.get<PagedResult<TrainerSearch>>(`${environment.baseApi}/trainer/search`, {
-			params: {
+			pageSize = 12,
+			category = '',
+			eliteOnly = false,
+			minRating?: number,
+			maxRating?: number,
+			minExperience?: number,
+			maxExperience?: number,
+			status = ''
+		): Observable<PagedResult<TrainerSearch>> {
+			const params: Record<string, string> = {
 				search: search.trim(),
 				pageIndex: pageIndex.toString(),
 				pageSize: pageSize.toString(),
 				category: category.trim(),
 				eliteOnly: eliteOnly.toString(),
-			},
-		});
-	}
+			};
+
+			if (minRating !== undefined) params['minRating'] = minRating.toString();
+			if (maxRating !== undefined) params['maxRating'] = maxRating.toString();
+			if (minExperience !== undefined) params['minExperience'] = minExperience.toString();
+			if (maxExperience !== undefined) params['maxExperience'] = maxExperience.toString();
+			if (status) params['status'] = status;
+
+			return this.http.get<PagedResult<TrainerSearch>>(`${environment.baseApi}/trainer/search`, { params });
+		}
 }

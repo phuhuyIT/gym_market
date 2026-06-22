@@ -121,6 +121,48 @@ export class CoursePaymentComponent implements OnInit {
 			});
 	}
 
+	payWithMomo() {
+		patchState(this.loader, { isShow: true });
+		this.registrationService
+			.createMomoPayment(this.courseId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					patchState(this.loader, { isShow: false });
+					if (res?.payUrl) {
+						window.location.href = res.payUrl;
+					} else {
+						this.toastService.show('Momo payment is not available for this course.', 'error');
+					}
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					patchState(this.loader, { isShow: false });
+					this.toastService.show('Failed to start Momo payment. Please try again.', 'error');
+					this.cdr.markForCheck();
+				},
+			});
+	}
+
+	retryPayment() {
+		patchState(this.loader, { isShow: true });
+		this.registrationService
+			.registerCourse(this.courseId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					patchState(this.loader, { isShow: false });
+					this.toastService.show('Payment restarted. Please complete the new payment.');
+					this.loadPaymentInfo();
+				},
+				error: () => {
+					patchState(this.loader, { isShow: false });
+					this.toastService.show('Could not restart payment for this course.', 'error');
+					this.cdr.markForCheck();
+				},
+			});
+	}
+
 	copy(value: string | number | undefined) {
 		if (value === undefined || value === null || value === '') return;
 		navigator.clipboard?.writeText(String(value)).then(

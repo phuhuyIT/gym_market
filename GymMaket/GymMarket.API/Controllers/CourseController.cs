@@ -44,6 +44,7 @@ namespace GymMarket.API.Controllers
             {
                 createDto.TrainerId = trainerId;
             }
+            createDto.Status = CourseStatus.Normalize(createDto.Status);
 
             return await base.Create(createDto);
         }
@@ -55,6 +56,8 @@ namespace GymMarket.API.Controllers
             if (!await _courseAccessService.CanManageCourseAsync(User, id))
                 return Forbid();
 
+            if (updateDto.Status != null)
+                updateDto.Status = CourseStatus.Normalize(updateDto.Status);
             return await base.Update(id, updateDto);
         }
 
@@ -91,6 +94,8 @@ namespace GymMarket.API.Controllers
             if (!await _courseAccessService.CanManageCourseAsync(User, courseUpdate.CourseId))
                 return Forbid();
 
+            if (courseUpdate.Status != null)
+                courseUpdate.Status = CourseStatus.Normalize(courseUpdate.Status);
             var res = await _courseRepository.UpdateCourse(courseUpdate);
             return StatusCode(res.StatusCode, new { res.Message, res.Errors });
         }
@@ -110,6 +115,10 @@ namespace GymMarket.API.Controllers
             var course = await _courseRepository.GetCourse(id);
 
             if (course == null)
+            {
+                return BadRequest(new { errors = new string[] { "COURSE_NOT_FOUND" } });
+            }
+            if (course.Status != CourseStatus.Published && !await _courseAccessService.CanManageCourseAsync(User, id))
             {
                 return BadRequest(new { errors = new string[] { "COURSE_NOT_FOUND" } });
             }

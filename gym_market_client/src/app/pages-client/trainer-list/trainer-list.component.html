@@ -15,6 +15,24 @@
         }
       </div>
 
+      <div class="trainer-filter-controls">
+        <select [(ngModel)]="minRatingFilter" (ngModelChange)="onFilterChange()" class="trainer-filter-select" aria-label="Minimum rating">
+          <option value="">Any rating</option>
+          <option value="4">4.0+ rating</option>
+          <option value="4.5">4.5+ rating</option>
+          <option value="4.8">4.8+ rating</option>
+        </select>
+        <select [(ngModel)]="minExperienceFilter" (ngModelChange)="onFilterChange()" class="trainer-filter-select" aria-label="Minimum experience">
+          <option value="">Any experience</option>
+          <option value="3">3+ years</option>
+          <option value="5">5+ years</option>
+          <option value="8">8+ years</option>
+        </select>
+        <button type="button" class="trainer-filter-clear" (click)="clearFilters()" aria-label="Clear trainer filters">
+          Clear
+        </button>
+      </div>
+
       <div class="search-bar-container gl">
         <input
           (ngModelChange)="onSubmit()"

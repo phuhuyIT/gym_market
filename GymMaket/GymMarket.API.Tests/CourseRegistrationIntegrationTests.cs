@@ -246,6 +246,85 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
+    [Fact]
+    public async Task RegisterCourse_WhenPreviousPaymentWasCanceled_ReopensRegistrationWithNewPayment()
+    {
+        await AuthenticateAsync(email: "retry_trainer@example.com", role: "Trainer");
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_RETRY_001",
+            Title = "Retry Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50
+        });
+
+        await AuthenticateAsync(email: "student_retry@example.com");
+        await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_RETRY_001"
+        });
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            var registration = await db.CourseRegistrations.SingleAsync(r => r.CourseId == "CRS_RETRY_001");
+            registration.PaymentStatus = PaymentStatus.Canceled;
+            registration.Status = PaymentStatus.Canceled;
+            var payment = await db.Payments.SingleAsync(p => p.CourseId == "CRS_RETRY_001");
+            payment.PaymentStatus = PaymentStatus.Canceled;
+            await db.SaveChangesAsync();
+        }
+
+        var response = await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_RETRY_001"
+        });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            var registrations = await db.CourseRegistrations.Where(r => r.CourseId == "CRS_RETRY_001").ToListAsync();
+            var payments = await db.Payments.Where(p => p.CourseId == "CRS_RETRY_001").ToListAsync();
+
+            Assert.Single(registrations);
+            Assert.Equal(PaymentStatus.NotStarted, registrations.Single().PaymentStatus);
+            Assert.Equal(2, payments.Count);
+            Assert.Contains(payments, p => p.PaymentStatus == PaymentStatus.Pending);
+        }
+    }
+
+    [Fact]
+    public async Task RegisterCourse_WhenCapacityIsFull_ReturnsBadRequest()
+    {
+        await AuthenticateAsync(email: "capacity_trainer@example.com", role: "Trainer");
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_CAPACITY_001",
+            Title = "Small Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50,
+            MaxParticipants = 1
+        });
+
+        await AuthenticateAsync(email: "student_capacity_a@example.com");
+        var first = await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_CAPACITY_001"
+        });
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        await AuthenticateAsync(email: "student_capacity_b@example.com");
+        var second = await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_CAPACITY_001"
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, second.StatusCode);
+    }
+
     private class RegisterCourseResponseDto
     {
         public string? Message { get; set; }
