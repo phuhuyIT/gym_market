@@ -8,6 +8,7 @@ namespace GymMarket.API.DTOs.Trainer
         public string? Email { get; set; }
         public string? FullName { get; set; }
         public string? Certification { get; set; }
+        public string? Category { get; set; }
         public string? Bio { get; set; }
         public int? Experience { get; set; }
         public decimal? Rating { get; set; }

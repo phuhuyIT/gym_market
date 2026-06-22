@@ -24,6 +24,7 @@ import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 })
 export class SignupComponent implements OnInit, AfterViewInit {
 	readonly ROLES = ROLES;
+	readonly trainerCategories = ['Yoga', 'Cardio', 'Strength', 'Crossfit'];
 	model = {
 		fullName: '',
 		email: '',
@@ -33,6 +34,7 @@ export class SignupComponent implements OnInit, AfterViewInit {
 		// Trainer extra fields
 		bio: '',
 		specialization: '',
+		category: '',
 		experience: 0,
 		// Student extra fields
 		healthStatus: '',
@@ -164,6 +166,7 @@ export class SignupComponent implements OnInit, AfterViewInit {
 		const trainerModel: TrainerSignup = {
 			bio: this.model.bio,
 			certification: this.model.specialization,
+			category: this.model.category,
 			createdAt: new Date(),
 			email: this.model.email,
 			experience: Number(this.model.experience),

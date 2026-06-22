@@ -46,6 +46,15 @@
             <div class="signup__section">
               <h3 class="signup__section-title">Professional Details</h3>
               <div class="signup__grid">
+                <label class="signup__field">
+                  <span>Category</span>
+                  <select class="signup__select" [(ngModel)]="model.category" name="trainerCategory">
+                    <option value="">Select category</option>
+                    @for (category of trainerCategories; track category) {
+                      <option [value]="category">{{ category }}</option>
+                    }
+                  </select>
+                </label>
                 <gm-input label="Specialization" [(value)]="model.specialization" />
                 <gm-input label="Experience (Years)" type="number" [(value)]="model.experience" />
                 <div class="full-width">

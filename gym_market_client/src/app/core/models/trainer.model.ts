@@ -6,6 +6,7 @@ export interface Trainer {
   profilePicture: string;
   bio: string;
   certification: string;
+  category?: string;
   experience: number;
   rating: number;
   createdAt: string;
@@ -22,6 +23,7 @@ export interface TrainerSearch {
   email?: string;
   fullName?: string;
   certification?: string;
+  category?: string;
   bio?: string;
   experience?: number;
   rating?: number;
@@ -35,6 +37,7 @@ export interface UpdateTrainerProfileDto {
   name: string;
   email: string;
   certification: string;
+  category?: string;
   bio: string;
   experience: number;
   rating: number;

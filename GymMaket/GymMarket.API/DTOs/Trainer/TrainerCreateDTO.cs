@@ -19,6 +19,9 @@ namespace GymMarket.API.DTOs.Trainer
         [StringLength(200, ErrorMessage = "Certification cannot exceed 200 characters.")]
         public string? Certification { get; set; }
 
+        [StringLength(100, ErrorMessage = "Category cannot exceed 100 characters.")]
+        public string? Category { get; set; }
+
         [StringLength(500, ErrorMessage = "Bio cannot exceed 500 characters.")]
         public string? Bio { get; set; }
 

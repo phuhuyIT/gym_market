@@ -29,6 +29,7 @@ export class UpdateProfileComponent implements OnInit {
 	updateForm!: FormGroup;
 	readonly banks = VIETNAM_BANKS;
 	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
+	readonly trainerCategories = ['Yoga', 'Cardio', 'Strength', 'Crossfit'];
 
 	loader = inject(LoaderModalStore);
 	errorModal = inject(ErrorModalStore);
@@ -51,6 +52,7 @@ export class UpdateProfileComponent implements OnInit {
 			phoneNumber: ['', [Validators.required]],
 			bio: ['', [Validators.required]],
 			experience: [0, [Validators.required, Validators.min(0)]],
+			category: ['', [Validators.required]],
 			certification: ['', [Validators.required]],
 			bankBin: [''],
 			bankAccountNo: [''],
@@ -95,6 +97,7 @@ export class UpdateProfileComponent implements OnInit {
 							profilePicture: res.profilePicture,
 							bio: res.bio,
 							experience: res.experience,
+							category: res.category ?? '',
 							certification: res.certification,
 							bankBin: res.bankBin ?? '',
 							bankAccountNo: res.bankAccountNo ?? '',
@@ -117,6 +120,7 @@ export class UpdateProfileComponent implements OnInit {
 			trainerId: this.userStore.trainerId() ?? '',
 			bio: this.updateForm.controls['bio'].value,
 			certification: this.updateForm.controls['certification'].value,
+			category: this.updateForm.controls['category'].value,
 			email: this.updateForm.controls['email'].value,
 			experience: this.updateForm.controls['experience'].value,
 			name: this.updateForm.controls['fullName'].value,

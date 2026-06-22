@@ -1348,6 +1348,11 @@ namespace GymMarket.API.Migrations
                     b.Property<string>("Bio")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Category")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<string>("Certification")
                         .HasMaxLength(255)
                         .IsUnicode(false)
@@ -1396,6 +1401,8 @@ namespace GymMarket.API.Migrations
 
                     b.HasKey("TrainerId")
                         .HasName("PK__Trainers__8B0EB931432C150B");
+
+                    b.HasIndex("Category");
 
                     b.HasIndex("Certification");
 

@@ -102,6 +102,7 @@ export class TrainerListComponent implements OnInit {
 			profilePicture: trainer.profilePicture || '',
 			bio: trainer.bio || '',
 			certification: trainer.certification || '',
+			category: trainer.category || '',
 			experience: trainer.experience || 0,
 			rating: trainer.rating || 0,
 			createdAt: trainer.createdAt || '',

@@ -184,6 +184,33 @@
     }
   }
 
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    span {
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+  }
+
+  &__select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    background: var(--glass-fill);
+    color: var(--text);
+    padding: 0 0.875rem;
+    outline: none;
+
+    option {
+      color: #111;
+    }
+  }
+
   &__footer {
     text-align: center;
     margin-top: 1rem;

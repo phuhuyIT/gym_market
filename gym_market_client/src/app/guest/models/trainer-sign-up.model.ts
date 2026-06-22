@@ -4,6 +4,7 @@ export interface TrainerSignup {
 	email: string;
 	password: string;
 	certification: string;
+	category?: string;
 	bio: string;
 	experience: number;
 	rating: number;

@@ -40,6 +40,7 @@ namespace GymMarket.API.Repositories
                 query = query.Where(t =>
                     (t.Name != null && t.Name.Contains(search)) ||
                     (t.Email != null && t.Email.Contains(search)) ||
+                    (t.Category != null && t.Category.Contains(search)) ||
                     (t.Certification != null && t.Certification.Contains(search)) ||
                     (t.Bio != null && t.Bio.Contains(search)) ||
                     t.Description.Contains(search) ||
@@ -51,10 +52,14 @@ namespace GymMarket.API.Repositories
 
             if (!string.IsNullOrWhiteSpace(category))
             {
-                query = query.Where(t =>
-                    (t.Certification != null && t.Certification.Contains(category)) ||
-                    (t.Bio != null && t.Bio.Contains(category)) ||
-                    t.Description.Contains(category));
+                var categoryQuery = query.Where(t => t.Category == category);
+                var legacyCategoryQuery = query.Where(t =>
+                    t.Category == null &&
+                    ((t.Certification != null && t.Certification.Contains(category)) ||
+                     (t.Bio != null && t.Bio.Contains(category)) ||
+                     t.Description.Contains(category)));
+
+                query = categoryQuery.Concat(legacyCategoryQuery);
             }
 
             if (eliteOnly == true)
@@ -76,6 +81,7 @@ namespace GymMarket.API.Repositories
                     Email = t.Email,
                     FullName = t.AppUser != null ? t.AppUser.FullName : null,
                     Certification = t.Certification,
+                    Category = t.Category,
                     Bio = t.Bio,
                     Experience = t.Experience,
                     Rating = t.Rating,

@@ -97,6 +97,20 @@
             }
           </div>
 
+          <!-- Category -->
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select formControlName="category" class="form-input">
+              <option value="">Select category</option>
+              @for (category of trainerCategories; track category) {
+                <option [value]="category">{{ category }}</option>
+              }
+            </select>
+            @if(updateForm.controls['category'].invalid && updateForm.controls['category'].touched) {
+              <small class="error-msg">Category is required</small>
+            }
+          </div>
+
           <!-- Email (Disabled) -->
           <div class="form-group">
             <label class="form-label">Email Address</label>
