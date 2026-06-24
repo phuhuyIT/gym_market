@@ -18,13 +18,15 @@
           <p class="state-card__text">You have full access to this course.</p>
           <gm-button variant="primary" (clicked)="goToContent()">GO TO COURSE CONTENT</gm-button>
         </gm-card>
-      } @else if (isCanceled) {
-        <!-- Canceled -->
+      } @else if (isCanceled || isExpired) {
+        <!-- Canceled / expired -->
         <gm-card class="state-card gl-2">
           <div class="state-card__icon">⚠️</div>
-          <h2 class="state-card__title">Payment canceled</h2>
+          <h2 class="state-card__title">{{ isExpired ? 'Payment expired' : 'Payment canceled' }}</h2>
           <p class="state-card__text">
-            This payment was canceled. Start a new payment attempt to continue with this course.
+            {{ isExpired
+              ? 'This payment window expired and your seat is no longer reserved. Start a new payment attempt to continue with this course.'
+              : 'This payment was canceled. Start a new payment attempt to continue with this course.' }}
           </p>
           <gm-button variant="primary" (clicked)="retryPayment()">RETRY PAYMENT</gm-button>
           <gm-button variant="ghost" (clicked)="goToDetails()">BACK TO COURSE</gm-button>

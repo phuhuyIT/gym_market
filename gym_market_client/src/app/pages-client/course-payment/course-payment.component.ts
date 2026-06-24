@@ -108,6 +108,10 @@ export class CoursePaymentComponent implements OnInit {
 		return this.info?.status === 'Canceled';
 	}
 
+	get isExpired(): boolean {
+		return this.info?.status === 'Expired';
+	}
+
 	// VietQR image with the amount and transfer reference pre-filled. The student
 	// scans it with any Vietnamese banking app; the trainer confirms the transfer
 	// manually and approves the payment.
@@ -136,6 +140,8 @@ export class CoursePaymentComponent implements OnInit {
 					if (res.status === 'Paid') {
 						this.toastService.show('Payment confirmed! Your course is unlocked.');
 						this.router.navigate(['/client/course-learn', this.courseId]);
+					} else if (res.status === 'Expired') {
+						this.toastService.show('This payment expired. Please restart payment.', 'error');
 					} else {
 						const who = res.trainerName || 'your trainer';
 						this.toastService.show(

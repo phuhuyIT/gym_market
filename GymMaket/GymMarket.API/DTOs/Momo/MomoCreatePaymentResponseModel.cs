@@ -4,6 +4,7 @@
     {
         public string RequestId { get; set; } =string.Empty;
         public int ErrorCode { get; set; }
+        public int ResultCode { get; set; }
         public string OrderId { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public string LocalMessage { get; set; } = string.Empty;

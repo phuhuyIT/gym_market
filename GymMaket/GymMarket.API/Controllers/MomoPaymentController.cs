@@ -1,5 +1,7 @@
+using GymMarket.API.Data;
 using GymMarket.API.DTOs.Momo;
 using GymMarket.API.DTOs.Payment;
+using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -17,12 +19,21 @@ namespace GymMarket.API.Controllers
     {
         private readonly MomoService _momoService;
         private readonly IPaymentRepository _paymentRepository;
+        private readonly IPaymentEventService _paymentEventService;
+        private readonly GymMarketContext _context;
         private readonly IConfiguration _configuration;
 
-        public MomoPaymentController(MomoService momoService, IPaymentRepository paymentRepository, IConfiguration configuration)
+        public MomoPaymentController(
+            MomoService momoService,
+            IPaymentRepository paymentRepository,
+            IPaymentEventService paymentEventService,
+            GymMarketContext context,
+            IConfiguration configuration)
         {
             _momoService = momoService;
             _paymentRepository = paymentRepository;
+            _paymentEventService = paymentEventService;
+            _context = context;
             _configuration = configuration;
         }
 
@@ -65,7 +76,7 @@ namespace GymMarket.API.Controllers
             if (!_momoService.VerifySignature(callback))
                 return BadRequest(new { error = "INVALID_SIGNATURE" });
 
-            var result = await HandleGatewayCallbackAsync(callback);
+            var result = await HandleGatewayCallbackAsync(callback, PaymentEventType.MomoReturned);
 
             var redirectUrl = BuildPaymentRedirectUrl(result, callback);
             return Redirect(redirectUrl);
@@ -80,11 +91,11 @@ namespace GymMarket.API.Controllers
             if (!_momoService.VerifySignature(callback))
                 return BadRequest(new { error = "INVALID_SIGNATURE" });
 
-            var result = await HandleGatewayCallbackAsync(callback);
+            var result = await HandleGatewayCallbackAsync(callback, PaymentEventType.MomoIpnReceived);
             return Ok(new { message = result.Status, courseId = result.CourseId });
         }
 
-        private async Task<MomoGatewayResult> HandleGatewayCallbackAsync(MomoCallbackDto callback)
+        private async Task<MomoGatewayResult> HandleGatewayCallbackAsync(MomoCallbackDto callback, string receiptEventType)
         {
             var extraData = TryReadExtraData(callback.ExtraData);
             var result = new MomoGatewayResult
@@ -107,6 +118,7 @@ namespace GymMarket.API.Controllers
                 result.CourseId ??= payment?.CourseId;
                 result.StudentId ??= payment?.StudentId;
                 result.Status = payment == null ? "failed" : "success";
+                await RecordMomoReceiptEventAsync(payment, callback, receiptEventType);
                 return result;
             }
 
@@ -117,7 +129,24 @@ namespace GymMarket.API.Controllers
             result.CourseId ??= canceled?.CourseId;
             result.StudentId ??= canceled?.StudentId;
             result.Status = canceled == null ? "failed" : "canceled";
+            await RecordMomoReceiptEventAsync(canceled, callback, receiptEventType);
             return result;
+        }
+
+        private async Task RecordMomoReceiptEventAsync(Payment? payment, MomoCallbackDto callback, string eventType)
+        {
+            if (payment == null)
+                return;
+
+            await _paymentEventService.AddPaymentEventAsync(
+                payment.PaymentId,
+                eventType,
+                payment.PaymentStatus,
+                payment.PaymentStatus,
+                PaymentEventSource.Momo,
+                callback.Message,
+                JsonConvert.SerializeObject(callback));
+            await _context.SaveChangesAsync();
         }
 
         private MomoExtraData? TryReadExtraData(string? extraData)

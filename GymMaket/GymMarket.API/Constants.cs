@@ -20,6 +20,19 @@ namespace GymMarket.API
         // True when the status represents a successfully paid course.
         public static bool IsPaid(string? status) =>
             status == Paid || status == Completed;
+
+        public static bool IsOpen(string? status)
+        {
+            status = Normalize(status);
+            return status == Pending || status == NotStarted || status == PendingPayment;
+        }
+
+        public static string[] OpenStatuses() =>
+        [
+            Pending,
+            NotStarted,
+            PendingPayment
+        ];
     }
 
     public static class PaymentType
@@ -47,6 +60,36 @@ namespace GymMarket.API
         public const string RegistrationCanceled = "REGISTRATION_CANCELED";
         public const string MomoNotConfigured = "MOMO_NOT_CONFIGURED";
         public const string MomoProviderUnavailable = "MOMO_PROVIDER_UNAVAILABLE";
+    }
+
+    public static class PaymentErrorCode
+    {
+        public const string PaymentNotFound = "PAYMENT_NOT_FOUND";
+        public const string PaymentAlreadyFinalized = "PAYMENT_ALREADY_FINALIZED";
+        public const string PaymentObsolete = "PAYMENT_OBSOLETE";
+        public const string GatewayPaymentManualApprovalNotAllowed = "GATEWAY_PAYMENT_MANUAL_APPROVAL_NOT_ALLOWED";
+    }
+
+    public static class PaymentEventType
+    {
+        public const string Created = "Created";
+        public const string MomoCreated = "MomoCreated";
+        public const string MomoReturned = "MomoReturned";
+        public const string MomoIpnReceived = "MomoIpnReceived";
+        public const string Paid = "Paid";
+        public const string Canceled = "Canceled";
+        public const string Expired = "Expired";
+        public const string ManualApproved = "ManualApproved";
+        public const string ManualCanceled = "ManualCanceled";
+        public const string ReplacedBySuccessfulPayment = "ReplacedBySuccessfulPayment";
+    }
+
+    public static class PaymentEventSource
+    {
+        public const string System = "System";
+        public const string Student = "Student";
+        public const string Trainer = "Trainer";
+        public const string Momo = "Momo";
     }
 
     public static class FileType

@@ -57,6 +57,9 @@
       <button (click)="onStatusFilter('Canceled')" [class]="statusFilter === 'Canceled' ? 'bg-red-500/10 text-red-600 dark:bg-red-950/30 dark:text-red-400' : 'bg-[#F7F6F3] dark:bg-[#252528] text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/40'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
         Canceled
       </button>
+      <button (click)="onStatusFilter('Expired')" [class]="statusFilter === 'Expired' ? 'bg-slate-500/10 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300' : 'bg-[#F7F6F3] dark:bg-[#252528] text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/40'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+        Expired
+      </button>
     </div>
     </div>
 
@@ -64,9 +67,7 @@
       <select [(ngModel)]="paymentTypeFilter" (ngModelChange)="onFilterChange()" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-2.5 rounded-2xl text-sm font-semibold text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40">
         <option value="">All methods</option>
         <option value="MOMO">MOMO</option>
-        <option value="Manual">Manual</option>
-        <option value="Cash">Cash</option>
-        <option value="Bank Transfer">Bank Transfer</option>
+        <option value="BANK_TRANSFER">Bank Transfer</option>
       </select>
       <input type="date" [(ngModel)]="fromDateFilter" (ngModelChange)="onFilterChange()" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-2.5 rounded-2xl text-sm font-semibold text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40">
       <input type="date" [(ngModel)]="toDateFilter" (ngModelChange)="onFilterChange()" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-2.5 rounded-2xl text-sm font-semibold text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40">
@@ -123,24 +124,21 @@
               </td>
               <!-- Status -->
               <td class="py-4 px-6 text-center">
-                @if (p.paymentStatus === 'Paid') {
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide bg-emerald-100 text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400">
-                    Approved
+                <div class="inline-flex flex-col items-center gap-1">
+                  <span [class]="statusBadgeClass(p.paymentStatus)" [title]="statusHelp(p.paymentStatus)">
+                    {{ statusLabel(p.paymentStatus) }}
                   </span>
-                } @else if (p.paymentStatus === 'Pending') {
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide bg-amber-100 text-amber-800 dark:bg-amber-950/30 dark:text-amber-400">
-                    Pending
-                  </span>
-                } @else {
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide bg-red-100 text-red-800 dark:bg-red-950/30 dark:text-red-400">
-                    Canceled
-                  </span>
-                }
+                  @if (p.paymentStatus === 'Expired') {
+                    <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                      Seat released
+                    </span>
+                  }
+                </div>
               </td>
               <!-- Actions -->
               <td class="py-4 px-6 text-right space-x-1 whitespace-nowrap">
                 <!-- Approve -->
-                @if (p.paymentStatus === 'Pending') {
+                @if (p.canApprove) {
                   <button (click)="okPayment(p.paymentId)" class="inline-flex items-center justify-center p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-600 text-emerald-600 dark:text-emerald-400 hover:text-white transition-colors shadow-sm" title="Approve Payment">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -149,7 +147,7 @@
                 }
 
                 <!-- Cancel -->
-                @if (p.paymentStatus !== 'Canceled') {
+                @if (p.canCancel) {
                   <button (click)="onShowCancelModal(true, p.paymentId)" class="inline-flex items-center justify-center p-2 rounded-xl bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white transition-colors shadow-sm" title="Cancel Enrollment">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -164,6 +162,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
                   </svg>
                 </a>
+                }
+                @if (!p.canApprove && !p.canCancel && p.actionBlockedReason) {
+                  <div class="mt-1 text-[10px] font-semibold text-neutral-400 dark:text-neutral-500" [title]="p.actionBlockedReason">
+                    {{ p.paymentStatus === 'Expired' ? 'No action: expired' : 'No action available' }}
+                  </div>
                 }
               </td>
             </tr>

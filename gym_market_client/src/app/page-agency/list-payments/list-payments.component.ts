@@ -7,6 +7,7 @@ import { patchState } from '@ngrx/signals';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CancelPaymentDto, Payment } from '../../core/models/payment.model';
+import { paymentActionErrorMessage } from '../payment-action-error.util';
 
 @Component({
     selector: 'app-list-payments',
@@ -71,6 +72,35 @@ export class ListPaymentsComponent implements OnInit {
 		this.loadPayments();
 	}
 
+	statusLabel(status: Payment['paymentStatus'] | undefined): string {
+		switch (status) {
+			case 'Paid':
+				return 'Approved';
+			case 'Pending':
+			case 'Not Started':
+				return 'Pending';
+			case 'Expired':
+				return 'Expired';
+			case 'Canceled':
+				return 'Canceled';
+			default:
+				return status || 'Unknown';
+		}
+	}
+
+	statusHelp(status: Payment['paymentStatus'] | undefined): string {
+		switch (status) {
+			case 'Expired':
+				return 'Payment window expired. Seat released.';
+			case 'Canceled':
+				return 'Payment was canceled.';
+			case 'Paid':
+				return 'Payment confirmed.';
+			default:
+				return 'Waiting for payment confirmation.';
+		}
+	}
+
 	goToPage(pageIndex: number) {
 		if (pageIndex < 1 || (this.totalPages && pageIndex > this.totalPages) || pageIndex === this.pageIndex) return;
 		this.pageIndex = pageIndex;
@@ -88,6 +118,14 @@ export class ListPaymentsComponent implements OnInit {
 					}
 					this.loadPayments();
 					this.cdr.markForCheck();
+			},
+			error: err => {
+				patchState(this.notice, {
+					message: paymentActionErrorMessage(err, 'Failed to approve payment'),
+					isShow: true
+				});
+				this.loadPayments();
+				this.cdr.markForCheck();
 			},
 		});
 	}
@@ -120,6 +158,14 @@ export class ListPaymentsComponent implements OnInit {
 					this.showCancel = false;
 					this.loadPayments();
 					this.cdr.markForCheck();
+			},
+			error: err => {
+				patchState(this.notice, {
+					message: paymentActionErrorMessage(err, 'Failed to cancel payment'),
+					isShow: true
+				});
+				this.loadPayments();
+				this.cdr.markForCheck();
 			},
 		});
 	}

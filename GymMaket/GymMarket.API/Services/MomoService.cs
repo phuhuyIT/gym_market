@@ -15,11 +15,16 @@ namespace GymMarket.API.Services
     {
         private readonly IOptions<Models.MomoOptionModel> _options;
         private readonly GymMarketContext _context;
+        private readonly IPaymentEventService _paymentEventService;
 
-        public MomoService(IOptions<Models.MomoOptionModel> options, GymMarketContext context)
+        public MomoService(
+            IOptions<Models.MomoOptionModel> options,
+            GymMarketContext context,
+            IPaymentEventService paymentEventService)
         {
             _options = options;
             _context = context;
+            _paymentEventService = paymentEventService;
         }
 
         public async Task<MomoCreatePaymentResultDto> CreatePaymentAsync(string courseId, string studentId)
@@ -63,16 +68,19 @@ namespace GymMarket.API.Services
             // Store studentId and courseId in extraData as JSON so the signed
             // callback/IPN can tell which student paid for which course.
             var extraData = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { StudentId = studentId, CourseId = courseId })));
+            var orderInfo = $"Payment for course: {course.Title}";
 
             var rawData =
-                $"partnerCode={_options.Value.PartnerCode}" +
-                $"&accessKey={_options.Value.AccessKey}" +
-                $"&requestId={paymentId}" +
+                $"accessKey={_options.Value.AccessKey}" +
                 $"&amount={paymentAmount}" +
+                $"&extraData={extraData}" +
+                $"&ipnUrl={_options.Value.NotifyUrl}" +
                 $"&orderId={paymentId}" +
-                $"&returnUrl={_options.Value.ReturnUrl}" +
-                $"&notifyUrl={_options.Value.NotifyUrl}" +
-                $"&extraData={extraData}";
+                $"&orderInfo={orderInfo}" +
+                $"&partnerCode={_options.Value.PartnerCode}" +
+                $"&redirectUrl={_options.Value.ReturnUrl}" +
+                $"&requestId={paymentId}" +
+                $"&requestType={_options.Value.RequestType}";
 
             var signature = ComputeHmacSha256(rawData, _options.Value.SecretKey);
 
@@ -85,14 +93,17 @@ namespace GymMarket.API.Services
                 accessKey = _options.Value.AccessKey,
                 partnerCode = _options.Value.PartnerCode,
                 requestType = _options.Value.RequestType,
-                notifyUrl = _options.Value.NotifyUrl,
-                returnUrl = _options.Value.ReturnUrl,
+                ipnUrl = _options.Value.NotifyUrl,
+                redirectUrl = _options.Value.ReturnUrl,
                 orderId = paymentId,
                 amount = paymentAmount.ToString(),
                 requestId = paymentId,
                 extraData = extraData,
                 signature = signature,
-                orderInfo = $"Payment for course: {course.Title}"
+                orderInfo = orderInfo,
+                lang = "vi",
+                autoCapture = true,
+                orderGroupId = string.Empty
             };
 
             request.AddParameter("application/json", JsonConvert.SerializeObject(requestData), ParameterType.RequestBody);
@@ -113,7 +124,9 @@ namespace GymMarket.API.Services
             }
 
             var momoResponse = JsonConvert.DeserializeObject<MomoCreatePaymentResponseModel>(response.Content);
-            if (momoResponse == null || string.IsNullOrWhiteSpace(momoResponse.PayUrl) || momoResponse.ErrorCode != Defaults.MomoSuccessResultCode)
+            if (momoResponse == null
+                || string.IsNullOrWhiteSpace(momoResponse.PayUrl)
+                || momoResponse.ResultCode != Defaults.MomoSuccessResultCode)
             {
                 return MomoCreatePaymentResultDto.Fail(CourseRegistrationErrorCode.MomoProviderUnavailable);
             }
@@ -132,6 +145,13 @@ namespace GymMarket.API.Services
                 Note = $"MOMO-{paymentId[..8].ToUpperInvariant()}"
             };
             _context.Payments.Add(payment);
+            await _paymentEventService.AddPaymentEventAsync(
+                payment.PaymentId,
+                PaymentEventType.MomoCreated,
+                null,
+                payment.PaymentStatus,
+                PaymentEventSource.Student,
+                "Student started a Momo payment attempt.");
             await _context.SaveChangesAsync();
 
             return MomoCreatePaymentResultDto.Ok(momoResponse);

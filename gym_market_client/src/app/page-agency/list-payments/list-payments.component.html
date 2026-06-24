@@ -44,9 +44,20 @@
             <span class="method-pill">{{ item.paymentType }}</span>
           </td>
           <td>
-            <div class="status-pill" [class.canceled]="item.paymentStatus === 'Canceled'">
-              {{ item.paymentStatus }}
+            <div
+              class="status-pill"
+              [class.pending]="item.paymentStatus === 'Pending' || item.paymentStatus === 'Not Started'"
+              [class.canceled]="item.paymentStatus === 'Canceled'"
+              [class.expired]="item.paymentStatus === 'Expired'"
+              [title]="statusHelp(item.paymentStatus)"
+            >
+              {{ statusLabel(item.paymentStatus) }}
             </div>
+            @if (item.paymentStatus === 'Expired') {
+              <div style="font-size: 0.6875rem; color: var(--text-soft); margin-top: 4px;">
+                Seat released
+              </div>
+            }
           </td>
           <td>
             <div style="font-size: 0.8125rem; color: var(--text-soft);">
@@ -55,9 +66,16 @@
           </td>
           <td>
             <div class="action-buttons">
-              <button (click)="onShowDelete(true, item)" class="action-btn delete" title="Delete">
+              @if (item.canCancel) {
+              <button (click)="onShowDelete(true, item)" class="action-btn delete" title="Cancel payment">
                 <i class="fa-solid fa-trash-can"></i>
               </button>
+              }
+              @if (!item.canCancel && item.actionBlockedReason) {
+              <span style="font-size: 0.6875rem; color: var(--text-soft);" [title]="item.actionBlockedReason">
+                {{ item.paymentStatus === 'Expired' ? 'Expired' : 'No action' }}
+              </span>
+              }
             </div>
           </td>
         </tr>
@@ -92,14 +110,14 @@
       <i class="fa-solid fa-trash text-red-500 text-xl"></i>
     </div>
     
-    <h3 class="modal__title">Delete Payment?</h3>
+    <h3 class="modal__title">Cancel Payment?</h3>
     <p style="color: var(--text-soft); margin-bottom: 2rem; font-size: 0.9375rem;">
-      Are you sure you want to remove this payment record? This action cannot be undone.
+      This will cancel the pending payment attempt and release the student's unpaid seat.
     </p>
 
     <div style="display: flex; gap: 12px;">
       <button (click)="onDelete()" class="btn-danger" style="flex: 1;">
-        Delete
+        Cancel Payment
       </button>
       <button (click)="onShowDelete(false, null)" class="btn-ghost" style="flex: 1;">
         Cancel

@@ -66,8 +66,13 @@
                     </div>
                     
                     <ul class="course-card-bullets">
-                      <li>• {{ getCourseModules(item.courseId) }} Modules Left</li>
-                      <li>• {{ getCourseVideos(item.courseId) }} Videos Left</li>
+                      @if (isPaid(item)) {
+                        <li>• {{ getCourseModules(item.courseId) }} Modules Left</li>
+                        <li>• {{ getCourseVideos(item.courseId) }} Videos Left</li>
+                      } @else {
+                        <li>• {{ statusHelp(item) }}</li>
+                        <li>• Course access unlocks after payment confirmation</li>
+                      }
                     </ul>
 
                     <div class="progress-container">
@@ -83,13 +88,18 @@
                     </div>
 
                     <div class="card-actions" (click)="$event.stopPropagation()">
-                      @if (item.statusPayment === 'Paid') {
-                        <span class="pay-badge pay-badge--paid">Paid</span>
-                        <gm-button variant="primary" [routerLink]="['/client/course-learn', item.courseId]">START LEARNING</gm-button>
-                      } @else {
-                        <span class="pay-badge pay-badge--pending">{{ item.statusPayment || 'Pending' }}</span>
-                        <gm-button variant="secondary" [routerLink]="['/client/course-payment', item.courseId]">COMPLETE PAYMENT</gm-button>
+                      <span class="pay-badge" [ngClass]="statusClass(item)" [title]="statusHelp(item)">
+                        {{ statusLabel(item) }}
+                      </span>
+                      @if (isRetryable(item)) {
+                        <p class="payment-state-note">Your seat was released. Restart payment to enroll again.</p>
                       }
+                      <gm-button
+                        [variant]="isPaid(item) ? 'primary' : 'secondary'"
+                        (clicked)="onCourseAction(item)"
+                      >
+                        {{ primaryActionLabel(item) }}
+                      </gm-button>
                     </div>
                   </div>
                 }

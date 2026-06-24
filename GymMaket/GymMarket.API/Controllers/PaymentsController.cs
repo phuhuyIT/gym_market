@@ -75,8 +75,8 @@ namespace GymMarket.API.Controllers
             if (!await CanManagePaymentAsync(paymentId))
                 return Forbid();
 
-            var payment = await _paymentRepository.OkPayment(paymentId);
-            return Ok(payment);
+            var result = await _paymentRepository.OkPayment(paymentId);
+            return ToPaymentActionResponse(result);
         }
 
         [HttpPost("cancel-payment")]
@@ -85,8 +85,19 @@ namespace GymMarket.API.Controllers
             if (!await CanManagePaymentAsync(model.PaymentId))
                 return Forbid();
 
-            var payment = await _paymentRepository.CancelPayment(model);
-            return Ok(payment);
+            var result = await _paymentRepository.CancelPayment(model);
+            return ToPaymentActionResponse(result);
+        }
+
+        private IActionResult ToPaymentActionResponse(PaymentActionResultDto result)
+        {
+            if (result.Succeeded)
+                return Ok(result.Payment);
+
+            if (result.ErrorCode == PaymentErrorCode.PaymentNotFound)
+                return NotFound(result);
+
+            return Conflict(result);
         }
 
         private async Task<bool> CanManagePaymentAsync(string paymentId)

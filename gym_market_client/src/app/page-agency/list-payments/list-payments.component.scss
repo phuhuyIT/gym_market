@@ -39,6 +39,14 @@
   &.canceled {
     color: var(--error);
   }
+
+  &.pending {
+    color: #d97706;
+  }
+
+  &.expired {
+    color: var(--text-soft);
+  }
 }
 
 .action-buttons {

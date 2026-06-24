@@ -28,4 +28,6 @@ public partial class Payment
     public virtual Course? Course { get; set; }
 
     public virtual Student? Student { get; set; }
+
+    public virtual ICollection<PaymentEvent> PaymentEvents { get; set; } = new List<PaymentEvent>();
 }

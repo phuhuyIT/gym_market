@@ -20,5 +20,9 @@ namespace GymMarket.API.DTOs.Payment
         // The student's AppUser id (distinct from StudentId). The trainer uses this to
         // open a 1:1 chat with the student — chat conversations key off AppUser ids.
         public string? UserId { get; set; }
+
+        public bool CanApprove { get; set; }
+        public bool CanCancel { get; set; }
+        public string? ActionBlockedReason { get; set; }
     }
 }

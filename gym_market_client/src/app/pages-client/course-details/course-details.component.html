@@ -53,8 +53,13 @@
                 <gm-button variant="primary" (clicked)="goToContent()">GO TO COURSE CONTENT</gm-button>
               } @else if (isPendingPayment) {
                 <gm-button variant="primary" (clicked)="goToPayment()">COMPLETE PAYMENT</gm-button>
+              } @else if (isRetryablePayment) {
+                <gm-button variant="primary" (clicked)="retryPayment()">RETRY PAYMENT</gm-button>
               } @else {
                 <gm-button variant="primary" (clicked)="addToCard(course.courseId)">ENROLL NOW</gm-button>
+              }
+              @if (paymentStatusMessage) {
+                <p class="enroll-card__status-note">{{ paymentStatusMessage }}</p>
               }
               <p class="enroll-card__guarantee">✓ 30-Day Results Guarantee</p>
             </gm-card>

@@ -138,6 +138,15 @@
     color: var(--text-xsoft);
     font-weight: 600;
   }
+
+  &__status-note {
+    margin: -0.35rem 0 0;
+    color: var(--text-soft);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: center;
+  }
 }
 
 .stat-item {
@@ -1043,4 +1052,3 @@
 }
 
 gm-button { width: 100%; }
-

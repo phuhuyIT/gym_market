@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, DestroyRef, inject , ChangeDetectionStrat
 import { CourseRegistrationService } from '../course-registration.service';
 import { CourseAgencyService } from '../../page-agency/course-agency.service';
 import { UserStore } from '../../stores/user.store';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LoaderModalStore } from '../../stores/loader.store';
@@ -14,6 +14,8 @@ import { ACTIVITY_DAYS, RECOMMENDED_COURSES_FALLBACK } from '../../utilities/moc
 import { DEFAULT_COURSE_THUMBNAIL_URL } from '../../utilities/defaults.const';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 import { matchesSearch } from '../../shared/utils/search.util';
+import { ToastService } from '../../shared/services/toast.service';
+import { coursePaymentErrorMessage } from '../course-payment-error.util';
 
 @Component({
     selector: 'app-course-registration',
@@ -39,12 +41,14 @@ export class CourseRegistrationComponent implements OnInit {
 
 	loader = inject(LoaderModalStore);
 	userStore = inject(UserStore);
+	toastService = inject(ToastService);
 	destroyRef = inject(DestroyRef);
 	private cdr = inject(ChangeDetectorRef);
 
 	constructor(
 		private courseRegistrationService: CourseRegistrationService,
-		private courseService: CourseAgencyService
+		private courseService: CourseAgencyService,
+		private router: Router
 	) {}
 
 	ngOnInit() {
@@ -152,6 +156,11 @@ export class CourseRegistrationComponent implements OnInit {
 
 	// Helpers for deterministic course info
 	getCourseProgress(courseId: string): number {
+		const course = this.courses.find(c => c.courseId === courseId);
+		if (course && !this.isPaid(course)) {
+			return 0;
+		}
+
 		let sum = 0;
 		for (let i = 0; i < courseId.length; i++) {
 			sum += courseId.charCodeAt(i);
@@ -177,6 +186,97 @@ export class CourseRegistrationComponent implements OnInit {
 
 	getCourseThumbnail(course: Course): string {
 		return course.getFileDtos?.find(file => file.typeFile === 'IMAGE')?.url || DEFAULT_COURSE_THUMBNAIL_URL;
+	}
+
+	isPaid(course: Course): boolean {
+		return course.statusPayment === 'Paid';
+	}
+
+	isRetryable(course: Course): boolean {
+		return course.statusPayment === 'Canceled' || course.statusPayment === 'Expired';
+	}
+
+	isOpenPayment(course: Course): boolean {
+		return !!course.statusPayment && !this.isPaid(course) && !this.isRetryable(course);
+	}
+
+	statusLabel(course: Course): string {
+		switch (course.statusPayment) {
+			case 'Paid':
+				return 'Paid';
+			case 'Expired':
+				return 'Expired';
+			case 'Canceled':
+				return 'Canceled';
+			case 'Not Started':
+			case 'Pending Payment':
+			case 'Pending':
+				return 'Pending';
+			default:
+				return 'Pending';
+		}
+	}
+
+	statusHelp(course: Course): string {
+		switch (course.statusPayment) {
+			case 'Paid':
+				return 'Payment confirmed. You can start learning.';
+			case 'Expired':
+				return 'Payment window expired and the seat was released.';
+			case 'Canceled':
+				return 'Payment was canceled. Start a new payment attempt to continue.';
+			default:
+				return 'Complete payment to unlock this course.';
+		}
+	}
+
+	statusClass(course: Course): string {
+		if (this.isPaid(course)) return 'pay-badge--paid';
+		if (course.statusPayment === 'Expired') return 'pay-badge--expired';
+		if (course.statusPayment === 'Canceled') return 'pay-badge--canceled';
+		return 'pay-badge--pending';
+	}
+
+	primaryActionLabel(course: Course): string {
+		if (this.isPaid(course)) return 'START LEARNING';
+		if (this.isRetryable(course)) return 'RETRY PAYMENT';
+		return 'COMPLETE PAYMENT';
+	}
+
+	onCourseAction(course: Course) {
+		if (this.isPaid(course)) {
+			this.router.navigate(['/client/course-learn', course.courseId]);
+			return;
+		}
+
+		if (this.isRetryable(course)) {
+			this.retryPayment(course.courseId);
+			return;
+		}
+
+		this.router.navigate(['/client/course-payment', course.courseId]);
+	}
+
+	retryPayment(courseId: string) {
+		patchState(this.loader, { isShow: true });
+		this.courseRegistrationService
+			.registerCourse(courseId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					patchState(this.loader, { isShow: false });
+					this.toastService.show('Payment restarted. Please complete the new payment.');
+					this.router.navigate(['/client/course-payment', courseId]);
+				},
+				error: err => {
+					patchState(this.loader, { isShow: false });
+					this.toastService.show(
+						coursePaymentErrorMessage(err, 'Could not restart payment for this course.'),
+						'error'
+					);
+					this.cdr.markForCheck();
+				},
+			});
 	}
 
 	getUpcomingEvents(): { title: string; time: string }[] {

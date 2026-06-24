@@ -56,6 +56,9 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 	hasPaidAccess: boolean = false;
 	// True when registered but not yet paid; surfaces a "complete payment" entry point.
 	isPendingPayment: boolean = false;
+	// True when the previous payment attempt no longer reserves a seat.
+	isRetryablePayment: boolean = false;
+	registrationPaymentStatus: string | null = null;
 
 	images: string[] = [];
 	videos: string[] = [];
@@ -194,6 +197,8 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 		this.canReview = false;
 		this.hasPaidAccess = false;
 		this.isPendingPayment = false;
+		this.isRetryablePayment = false;
+		this.registrationPaymentStatus = null;
 		const studentId = this.userStore.studentId();
 		if (!studentId) {
 			return;
@@ -204,14 +209,31 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: courses => {
 					const registration = courses.find(c => c.courseId === this.courseId);
-					const paid = registration?.statusPayment === 'Paid';
+					const status = registration?.statusPayment || null;
+					const paid = status === 'Paid';
 					this.canReview = paid;
 					this.hasPaidAccess = paid;
-					// Registered but not paid → still owes payment.
-					this.isPendingPayment = !!registration && !paid;
+					this.registrationPaymentStatus = status;
+					this.isRetryablePayment = status === 'Canceled' || status === 'Expired';
+					this.isPendingPayment = !!registration && !paid && !this.isRetryablePayment;
 					this.cdr.markForCheck();
 				},
 			});
+	}
+
+	get paymentStatusMessage(): string {
+		switch (this.registrationPaymentStatus) {
+			case 'Expired':
+				return 'Your previous payment window expired and the seat was released.';
+			case 'Canceled':
+				return 'Your previous payment was canceled. Start a new payment attempt to continue.';
+			case 'Pending':
+			case 'Not Started':
+			case 'Pending Payment':
+				return 'You are registered. Complete payment to unlock the course.';
+			default:
+				return '';
+		}
 	}
 
 	goToContent() {
@@ -220,6 +242,10 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 
 	goToPayment() {
 		this.router.navigate(['/client/course-payment', this.courseId]);
+	}
+
+	retryPayment() {
+		this.addToCard(this.courseId);
 	}
 
 	preventInvalidInput(event: KeyboardEvent): void {

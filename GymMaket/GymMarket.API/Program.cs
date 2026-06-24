@@ -134,7 +134,10 @@ builder.Services.AddScoped<MinIOService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICourseAccessService, CourseAccessService>();
 builder.Services.AddScoped<IFoodNutritionService, FoodNutritionService>();
+builder.Services.AddScoped<IRegistrationExpiryService, RegistrationExpiryService>();
+builder.Services.AddScoped<IPaymentEventService, PaymentEventService>();
 builder.Services.AddSingleton<IPresenceTracker, PresenceTracker>();
+builder.Services.AddHostedService<RegistrationExpiryHostedService>();
 
 
 

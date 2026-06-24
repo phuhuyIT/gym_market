@@ -6,6 +6,7 @@ using GymMarket.API.DTOs.Course;
 using GymMarket.API.DTOs.CourseRegistration;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using GymMarket.API.Services;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +49,15 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<RegisterCourseResponseDto>();
         Assert.Equal(GetTokenClaim("studentId"), body!.Registration!.StudentId);
+
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+        var payment = await db.Payments.SingleAsync(p => p.CourseId == "CRS_REG_001");
+        var paymentEvent = await db.PaymentEvents.SingleAsync(e => e.PaymentId == payment.PaymentId);
+
+        Assert.Equal(PaymentEventType.Created, paymentEvent.EventType);
+        Assert.Equal(PaymentEventSource.Student, paymentEvent.Source);
+        Assert.Equal(PaymentStatus.Pending, paymentEvent.NewStatus);
     }
 
     [Fact]
@@ -329,6 +339,169 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
     }
 
     [Fact]
+    public async Task RegisterCourse_WhenPreviousSeatReservationExpired_ReleasesCapacity()
+    {
+        await AuthenticateAsync(email: "capacity_expired_trainer@example.com", role: "Trainer");
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_CAPACITY_EXPIRED_001",
+            Title = "Capacity Expiry Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50,
+            MaxParticipants = 1
+        });
+
+        await AuthenticateAsync(email: "student_capacity_expired_a@example.com");
+        var first = await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_CAPACITY_EXPIRED_001"
+        });
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            var staleTime = DateTime.UtcNow.AddMinutes(-(Defaults.PaymentTimeoutMinutes + 1));
+            var registration = await db.CourseRegistrations.SingleAsync(r => r.CourseId == "CRS_CAPACITY_EXPIRED_001");
+            registration.UpdatedAt = staleTime;
+            registration.CreatedAt = staleTime;
+
+            var payment = await db.Payments.SingleAsync(p => p.CourseId == "CRS_CAPACITY_EXPIRED_001");
+            payment.PaymentStatus = PaymentStatus.Pending;
+            payment.UpdatedAt = staleTime;
+            payment.CreatedAt = staleTime;
+            await db.SaveChangesAsync();
+        }
+
+        await AuthenticateAsync(email: "student_capacity_expired_b@example.com");
+        var second = await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_CAPACITY_EXPIRED_001"
+        });
+
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            var registrations = await db.CourseRegistrations
+                .Where(r => r.CourseId == "CRS_CAPACITY_EXPIRED_001")
+                .OrderBy(r => r.CreatedAt)
+                .ToListAsync();
+            var payments = await db.Payments.Where(p => p.CourseId == "CRS_CAPACITY_EXPIRED_001").ToListAsync();
+
+            Assert.Equal(2, registrations.Count);
+            Assert.Contains(registrations, r => r.PaymentStatus == PaymentStatus.Expired);
+            Assert.Contains(registrations, r => r.PaymentStatus == PaymentStatus.NotStarted);
+            Assert.Contains(payments, p => p.PaymentStatus == PaymentStatus.Expired);
+            Assert.Contains(payments, p => p.PaymentStatus == PaymentStatus.Pending);
+        }
+    }
+
+    [Fact]
+    public async Task GetPaymentInfo_WhenRegistrationExpired_ReturnsExpiredStatus()
+    {
+        await AuthenticateAsync(email: "payment_expired_trainer@example.com", role: "Trainer");
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_PAYMENT_EXPIRED_001",
+            Title = "Payment Expiry Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50
+        });
+
+        await AuthenticateAsync(email: "student_payment_expired@example.com");
+        await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_PAYMENT_EXPIRED_001"
+        });
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            var staleTime = DateTime.UtcNow.AddMinutes(-(Defaults.PaymentTimeoutMinutes + 1));
+            var registration = await db.CourseRegistrations.SingleAsync(r => r.CourseId == "CRS_PAYMENT_EXPIRED_001");
+            registration.UpdatedAt = staleTime;
+            registration.CreatedAt = staleTime;
+
+            var payment = await db.Payments.SingleAsync(p => p.CourseId == "CRS_PAYMENT_EXPIRED_001");
+            payment.PaymentStatus = PaymentStatus.Pending;
+            payment.UpdatedAt = staleTime;
+            payment.CreatedAt = staleTime;
+            await db.SaveChangesAsync();
+        }
+
+        var response = await Client.GetAsync("/api/CourseRegistration/payment-info/CRS_PAYMENT_EXPIRED_001");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var info = await response.Content.ReadFromJsonAsync<CoursePaymentInfoDto>();
+        Assert.Equal(PaymentStatus.Expired, info!.Status);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            var registration = await db.CourseRegistrations.SingleAsync(r => r.CourseId == "CRS_PAYMENT_EXPIRED_001");
+            var payment = await db.Payments.SingleAsync(p => p.CourseId == "CRS_PAYMENT_EXPIRED_001");
+
+            Assert.Equal(PaymentStatus.Expired, registration.PaymentStatus);
+            Assert.Equal(PaymentStatus.Expired, payment.PaymentStatus);
+        }
+    }
+
+    [Fact]
+    public async Task RegistrationExpiryService_ExpiresStaleOpenRegistrationsAndPayments()
+    {
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+        var expiryService = scope.ServiceProvider.GetRequiredService<IRegistrationExpiryService>();
+        var staleTime = DateTime.UtcNow.AddMinutes(-(Defaults.PaymentTimeoutMinutes + 1));
+
+        db.CourseRegistrations.Add(new CourseRegistration
+        {
+            RegistrationId = "REG_EXPIRY_SERVICE_001",
+            CourseId = "CRS_EXPIRY_SERVICE_001",
+            StudentId = "STU_EXPIRY_SERVICE_001",
+            Status = PaymentStatus.PendingPayment,
+            PaymentStatus = PaymentStatus.NotStarted,
+            CreatedAt = staleTime,
+            UpdatedAt = staleTime
+        });
+        db.Payments.Add(new Payment
+        {
+            PaymentId = "PAY_EXPIRY_SERVICE_001",
+            CourseId = "CRS_EXPIRY_SERVICE_001",
+            StudentId = "STU_EXPIRY_SERVICE_001",
+            PaymentAmount = 50,
+            PaymentStatus = PaymentStatus.Pending,
+            PaymentType = PaymentType.BankTransfer,
+            Note = "",
+            CreatedAt = staleTime,
+            UpdatedAt = staleTime
+        });
+        await db.SaveChangesAsync();
+
+        var expiredCount = await expiryService.ExpireStalePendingRegistrationsAsync();
+
+        Assert.Equal(1, expiredCount);
+
+        var registration = await db.CourseRegistrations.SingleAsync(r => r.RegistrationId == "REG_EXPIRY_SERVICE_001");
+        var payment = await db.Payments.SingleAsync(p => p.PaymentId == "PAY_EXPIRY_SERVICE_001");
+
+        Assert.Equal(PaymentStatus.Expired, registration.Status);
+        Assert.Equal(PaymentStatus.Expired, registration.PaymentStatus);
+        Assert.Equal(PaymentStatus.Expired, payment.PaymentStatus);
+        Assert.Equal("Expired because payment was not completed in time.", payment.Note);
+
+        var paymentEvent = await db.PaymentEvents.SingleAsync(e => e.PaymentId == "PAY_EXPIRY_SERVICE_001");
+        Assert.Equal(PaymentEventType.Expired, paymentEvent.EventType);
+        Assert.Equal(PaymentStatus.Pending, paymentEvent.OldStatus);
+        Assert.Equal(PaymentStatus.Expired, paymentEvent.NewStatus);
+        Assert.Equal(PaymentEventSource.System, paymentEvent.Source);
+    }
+
+    [Fact]
     public async Task RegisterCourse_WhenCourseIsDraft_ReturnsConflictWithCode()
     {
         await AuthenticateAsync(email: "draft_trainer@example.com", role: "Trainer");
@@ -404,6 +577,17 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             Assert.Equal(PaymentStatus.Paid, momoPayment.PaymentStatus);
             Assert.Equal(PaymentStatus.Paid, registration.PaymentStatus);
             Assert.Contains(payments, p => p.PaymentId != "MOMO_SUCCESS_ORDER" && p.PaymentStatus == PaymentStatus.Canceled);
+
+            var momoEvent = await db.PaymentEvents.SingleAsync(e =>
+                e.PaymentId == "MOMO_SUCCESS_ORDER" && e.EventType == PaymentEventType.Paid);
+            Assert.Equal(PaymentStatus.Pending, momoEvent.OldStatus);
+            Assert.Equal(PaymentStatus.Paid, momoEvent.NewStatus);
+            Assert.Equal(PaymentEventSource.Momo, momoEvent.Source);
+
+            var replacedPayment = payments.Single(p => p.PaymentId != "MOMO_SUCCESS_ORDER");
+            var replacedEvent = await db.PaymentEvents.SingleAsync(e =>
+                e.PaymentId == replacedPayment.PaymentId && e.EventType == PaymentEventType.ReplacedBySuccessfulPayment);
+            Assert.Equal(PaymentStatus.Canceled, replacedEvent.NewStatus);
         }
     }
 
@@ -459,6 +643,12 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             Assert.Equal("User canceled payment.", momoPayment.Note);
             Assert.Equal(PaymentStatus.Canceled, registration.PaymentStatus);
             Assert.All(payments, p => Assert.Equal(PaymentStatus.Canceled, p.PaymentStatus));
+
+            var momoEvent = await db.PaymentEvents.SingleAsync(e =>
+                e.PaymentId == "MOMO_CANCEL_ORDER" && e.EventType == PaymentEventType.Canceled);
+            Assert.Equal(PaymentStatus.Pending, momoEvent.OldStatus);
+            Assert.Equal(PaymentStatus.Canceled, momoEvent.NewStatus);
+            Assert.Equal(PaymentEventSource.Momo, momoEvent.Source);
         }
     }
 

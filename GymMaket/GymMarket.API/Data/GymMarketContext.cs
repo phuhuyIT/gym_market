@@ -33,6 +33,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<Payment> Payments { get; set; }
 
+    public virtual DbSet<PaymentEvent> PaymentEvents { get; set; }
+
     public virtual DbSet<Student> Students { get; set; }
 
     public virtual DbSet<Trainer> Trainers { get; set; }
@@ -505,6 +507,56 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasOne(d => d.Student).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.StudentId)
                 .HasConstraintName("FK_Payments_Student");
+        });
+
+        modelBuilder.Entity<PaymentEvent>(entity =>
+        {
+            entity.HasKey(e => e.PaymentEventId);
+
+            entity.ToTable("Payment_Events");
+
+            entity.Property(e => e.PaymentEventId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Payment_Event_ID");
+            entity.Property(e => e.PaymentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Payment_ID");
+            entity.Property(e => e.EventType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Event_Type");
+            entity.Property(e => e.OldStatus)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Old_Status");
+            entity.Property(e => e.NewStatus)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("New_Status");
+            entity.Property(e => e.Source)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Message)
+                .HasMaxLength(1000);
+            entity.Property(e => e.RawPayload)
+                .HasColumnName("Raw_Payload");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+
+            entity.HasIndex(e => e.PaymentId);
+            entity.HasIndex(e => e.EventType);
+            entity.HasIndex(e => e.Source);
+            entity.HasIndex(e => e.CreatedAt);
+            entity.HasIndex(e => new { e.PaymentId, e.CreatedAt });
+
+            entity.HasOne(d => d.Payment).WithMany(p => p.PaymentEvents)
+                .HasForeignKey(d => d.PaymentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Payment_Events_Payment");
         });
 
         modelBuilder.Entity<Student>(entity =>

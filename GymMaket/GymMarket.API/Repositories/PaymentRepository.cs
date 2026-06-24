@@ -4,6 +4,7 @@ using GymMarket.API.DTOs.Payment;
 using GymMarket.API.DTOs.Response;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using GymMarket.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Repositories
@@ -12,10 +13,16 @@ namespace GymMarket.API.Repositories
     {
         private readonly GymMarketContext _context;
         private readonly INotificationRepository _notificationRepository;
-        public PaymentRepository(GymMarketContext context, IMapper mapper, INotificationRepository notificationRepository) : base(context, mapper)
+        private readonly IPaymentEventService _paymentEventService;
+        public PaymentRepository(
+            GymMarketContext context,
+            IMapper mapper,
+            INotificationRepository notificationRepository,
+            IPaymentEventService paymentEventService) : base(context, mapper)
         {
             _context = context;
             _notificationRepository = notificationRepository;
+            _paymentEventService = paymentEventService;
         }
 
         // Resolves the AppUser id of a payment's student so a notification can target them.
@@ -67,15 +74,11 @@ namespace GymMarket.API.Repositories
                     CreatedAt = p.CreatedAt,
                     CourseTitle = p.Course!.Title,
                     FullName = p.Student!.Name,
-                    UserId = p.Student!.UserId
+                    UserId = p.Student!.UserId,
                 })
                 .ToListAsync();
 
-            // Collapse any legacy "COMPLETED" rows to the canonical "Paid" the client understands.
-            foreach (var dto in list)
-            {
-                dto.PaymentStatus = PaymentStatus.Normalize(dto.PaymentStatus);
-            }
+            await EnrichPaymentActionFlagsAsync(list);
 
             return list;
         }
@@ -191,9 +194,11 @@ namespace GymMarket.API.Repositories
                     CreatedAt = p.CreatedAt,
                     CourseTitle = p.Course != null ? p.Course.Title : null,
                     FullName = p.Student != null ? p.Student.Name : null,
-                    UserId = p.Student != null ? p.Student.UserId : null
+                    UserId = p.Student != null ? p.Student.UserId : null,
                 })
                 .ToListAsync();
+
+            await EnrichPaymentActionFlagsAsync(items);
 
             return new PagedResult<GetPaymentDto>
             {
@@ -204,57 +209,104 @@ namespace GymMarket.API.Repositories
             };
         }
 
-        public async Task<Payment?> OkPayment(string paymentId)
+        public async Task<PaymentActionResultDto> OkPayment(string paymentId)
         {
             var payment = await _context.Payments.Where(p => p.PaymentId == paymentId).FirstOrDefaultAsync();
-            if (payment != null)
+            if (payment == null)
             {
-                payment.PaymentStatus = PaymentStatus.Paid;
-                payment.PaymentDate ??= DateTime.UtcNow;
-                payment.UpdatedAt = DateTime.UtcNow;
-                await SyncRegistrationStatusAsync(payment.StudentId, payment.CourseId, PaymentStatus.Paid);
-                await _context.SaveChangesAsync();
-
-                var userId = await GetUserIdOfStudent(payment.StudentId);
-                if (userId != null)
-                {
-                    var courseTitle = await GetCourseTitle(payment.CourseId);
-                    await _notificationRepository.NotifyUser(
-                        userId,
-                        NotificationTypes.Payment,
-                        "Payment confirmed",
-                        $"Your payment for \"{courseTitle ?? "a course"}\" has been confirmed. You now have full access.",
-                        "/client/course-registration");
-                }
+                return PaymentActionResultDto.Failure(
+                    PaymentErrorCode.PaymentNotFound,
+                    "Payment was not found.");
             }
-            return payment;
+
+            var validation = await ValidateManualApprovalAsync(payment);
+            if (validation != null)
+            {
+                return validation;
+            }
+
+            var oldStatus = payment.PaymentStatus;
+            payment.PaymentStatus = PaymentStatus.Paid;
+            payment.PaymentDate ??= DateTime.UtcNow;
+            payment.UpdatedAt = DateTime.UtcNow;
+            await CancelOtherPendingPaymentsAsync(payment);
+            await SyncRegistrationStatusAsync(payment.StudentId, payment.CourseId, PaymentStatus.Paid);
+            await _paymentEventService.AddPaymentEventAsync(
+                payment.PaymentId,
+                PaymentEventType.ManualApproved,
+                oldStatus,
+                payment.PaymentStatus,
+                PaymentEventSource.Trainer,
+                "Trainer manually approved the payment.");
+            await _context.SaveChangesAsync();
+
+            var userId = await GetUserIdOfStudent(payment.StudentId);
+            if (userId != null)
+            {
+                var courseTitle = await GetCourseTitle(payment.CourseId);
+                await _notificationRepository.NotifyUser(
+                    userId,
+                    NotificationTypes.Payment,
+                    "Payment confirmed",
+                    $"Your payment for \"{courseTitle ?? "a course"}\" has been confirmed. You now have full access.",
+                    "/client/course-registration");
+            }
+
+            return PaymentActionResultDto.Success(payment);
         }
 
-        public async Task<Payment?> CancelPayment(CancelPayment model)
+        public async Task<PaymentActionResultDto> CancelPayment(CancelPayment model)
         {
             var payment = await _context.Payments.Where(p => p.PaymentId == model.PaymentId).FirstOrDefaultAsync();
-            if (payment != null)
+            if (payment == null)
             {
-                payment.PaymentStatus = PaymentStatus.Canceled;
-                payment.Note = model.Note;
-                payment.UpdatedAt = DateTime.UtcNow;
-                await SyncRegistrationStatusAsync(payment.StudentId, payment.CourseId, PaymentStatus.Canceled);
-                await _context.SaveChangesAsync();
-
-                var userId = await GetUserIdOfStudent(payment.StudentId);
-                if (userId != null)
-                {
-                    var courseTitle = await GetCourseTitle(payment.CourseId);
-                    var reason = string.IsNullOrWhiteSpace(model.Note) ? "" : $" Reason: {model.Note}";
-                    await _notificationRepository.NotifyUser(
-                        userId,
-                        NotificationTypes.Payment,
-                        "Payment canceled",
-                        $"Your payment for \"{courseTitle ?? "a course"}\" was canceled.{reason}",
-                        "/client/course-registration");
-                }
+                return PaymentActionResultDto.Failure(
+                    PaymentErrorCode.PaymentNotFound,
+                    "Payment was not found.");
             }
-            return payment;
+
+            if (!IsCancelable(payment.PaymentStatus))
+            {
+                return PaymentActionResultDto.Failure(
+                    PaymentErrorCode.PaymentAlreadyFinalized,
+                    "Only pending payments can be canceled.",
+                    payment);
+            }
+
+            var oldStatus = payment.PaymentStatus;
+            payment.PaymentStatus = PaymentStatus.Canceled;
+            payment.Note = model.Note;
+            payment.UpdatedAt = DateTime.UtcNow;
+
+            var hasPaidPayment = await HasOtherPaidPaymentAsync(payment);
+            if (!hasPaidPayment)
+            {
+                await SyncRegistrationStatusAsync(payment.StudentId, payment.CourseId, PaymentStatus.Canceled);
+            }
+
+            await _paymentEventService.AddPaymentEventAsync(
+                payment.PaymentId,
+                PaymentEventType.ManualCanceled,
+                oldStatus,
+                payment.PaymentStatus,
+                PaymentEventSource.Trainer,
+                string.IsNullOrWhiteSpace(model.Note) ? "Trainer manually canceled the payment." : model.Note);
+            await _context.SaveChangesAsync();
+
+            var userId = await GetUserIdOfStudent(payment.StudentId);
+            if (userId != null)
+            {
+                var courseTitle = await GetCourseTitle(payment.CourseId);
+                var reason = string.IsNullOrWhiteSpace(model.Note) ? "" : $" Reason: {model.Note}";
+                await _notificationRepository.NotifyUser(
+                    userId,
+                    NotificationTypes.Payment,
+                    "Payment canceled",
+                    $"Your payment for \"{courseTitle ?? "a course"}\" was canceled.{reason}",
+                    "/client/course-registration");
+            }
+
+            return PaymentActionResultDto.Success(payment);
         }
 
         public async Task<Payment?> ConfirmCoursePayment(string studentId, string courseId, string paymentType)
@@ -284,14 +336,29 @@ namespace GymMarket.API.Repositories
                     CreatedAt = DateTime.UtcNow,
                 };
                 _context.Payments.Add(payment);
+                await _paymentEventService.AddPaymentEventAsync(
+                    payment.PaymentId,
+                    PaymentEventType.Created,
+                    null,
+                    payment.PaymentStatus,
+                    PaymentEventSource.System,
+                    "Direct course payment record created before confirmation.");
             }
 
+            var oldStatus = payment.PaymentStatus;
             payment.PaymentStatus = PaymentStatus.Paid;
             payment.PaymentType = paymentType;
             payment.PaymentDate = DateTime.UtcNow;
             payment.UpdatedAt = DateTime.UtcNow;
 
             await SyncRegistrationStatusAsync(studentId, courseId, PaymentStatus.Paid);
+            await _paymentEventService.AddPaymentEventAsync(
+                payment.PaymentId,
+                PaymentEventType.Paid,
+                oldStatus,
+                payment.PaymentStatus,
+                paymentType == PaymentType.Momo ? PaymentEventSource.Momo : PaymentEventSource.System,
+                "Course payment was confirmed.");
             await _context.SaveChangesAsync();
             return payment;
         }
@@ -304,6 +371,7 @@ namespace GymMarket.API.Repositories
 
             if (!PaymentStatus.IsPaid(payment.PaymentStatus))
             {
+                var oldStatus = payment.PaymentStatus;
                 payment.PaymentStatus = PaymentStatus.Paid;
                 payment.PaymentType = paymentType;
                 payment.PaymentDate = DateTime.UtcNow;
@@ -311,6 +379,13 @@ namespace GymMarket.API.Repositories
 
                 await CancelOtherPendingPaymentsAsync(payment);
                 await SyncRegistrationStatusAsync(payment.StudentId, payment.CourseId, PaymentStatus.Paid);
+                await _paymentEventService.AddPaymentEventAsync(
+                    payment.PaymentId,
+                    PaymentEventType.Paid,
+                    oldStatus,
+                    payment.PaymentStatus,
+                    paymentType == PaymentType.Momo ? PaymentEventSource.Momo : PaymentEventSource.System,
+                    "Gateway confirmed the payment.");
                 await _context.SaveChangesAsync();
             }
 
@@ -326,6 +401,7 @@ namespace GymMarket.API.Repositories
             if (PaymentStatus.IsPaid(payment.PaymentStatus))
                 return payment;
 
+            var oldStatus = payment.PaymentStatus;
             payment.PaymentStatus = PaymentStatus.Canceled;
             payment.Note = string.IsNullOrWhiteSpace(note) ? payment.Note : note;
             payment.UpdatedAt = DateTime.UtcNow;
@@ -342,6 +418,13 @@ namespace GymMarket.API.Repositories
                 await SyncRegistrationStatusAsync(payment.StudentId, payment.CourseId, PaymentStatus.Canceled);
             }
 
+            await _paymentEventService.AddPaymentEventAsync(
+                payment.PaymentId,
+                PaymentEventType.Canceled,
+                oldStatus,
+                payment.PaymentStatus,
+                PaymentEventSource.Momo,
+                string.IsNullOrWhiteSpace(note) ? "Gateway canceled or failed the payment." : note);
             await _context.SaveChangesAsync();
             return payment;
         }
@@ -383,11 +466,101 @@ namespace GymMarket.API.Repositories
 
             foreach (var pending in pendingPayments)
             {
+                var oldStatus = pending.PaymentStatus;
                 pending.PaymentStatus = PaymentStatus.Canceled;
                 pending.Note = string.IsNullOrWhiteSpace(pending.Note)
                     ? "Canceled because another payment method completed."
                     : pending.Note;
                 pending.UpdatedAt = DateTime.UtcNow;
+
+                await _paymentEventService.AddPaymentEventAsync(
+                    pending.PaymentId,
+                    PaymentEventType.ReplacedBySuccessfulPayment,
+                    oldStatus,
+                    pending.PaymentStatus,
+                    PaymentEventSource.System,
+                    "Canceled because another payment attempt completed.");
+            }
+        }
+
+        private static bool IsPending(string? status) =>
+            status == PaymentStatus.Pending || status == PaymentStatus.NotStarted || status == PaymentStatus.PendingPayment;
+
+        private static bool IsManualApprovalCandidate(string? status, string? paymentType) =>
+            IsPending(status) && paymentType != PaymentType.Momo;
+
+        private static bool IsCancelable(string? status) => IsPending(status);
+
+        private static string? GetActionBlockedReason(string? status, string? paymentType)
+        {
+            if (PaymentStatus.IsPaid(status))
+                return "Payment is already paid.";
+            if (status == PaymentStatus.Canceled || status == PaymentStatus.Expired)
+                return "Payment is no longer active.";
+            if (paymentType == PaymentType.Momo)
+                return "Momo payments are confirmed by the gateway callback.";
+            return null;
+        }
+
+        private async Task<PaymentActionResultDto?> ValidateManualApprovalAsync(Payment payment)
+        {
+            if (!IsPending(payment.PaymentStatus))
+            {
+                return PaymentActionResultDto.Failure(
+                    PaymentErrorCode.PaymentAlreadyFinalized,
+                    "Only pending payments can be approved.",
+                    payment);
+            }
+
+            if (payment.PaymentType == PaymentType.Momo)
+            {
+                return PaymentActionResultDto.Failure(
+                    PaymentErrorCode.GatewayPaymentManualApprovalNotAllowed,
+                    "Momo payments must be confirmed by Momo callback.",
+                    payment);
+            }
+
+            if (await HasOtherPaidPaymentAsync(payment))
+            {
+                return PaymentActionResultDto.Failure(
+                    PaymentErrorCode.PaymentObsolete,
+                    "This payment attempt was replaced by another successful payment.",
+                    payment);
+            }
+
+            return null;
+        }
+
+        private Task<bool> HasOtherPaidPaymentAsync(Payment payment)
+        {
+            return _context.Payments.AnyAsync(p =>
+                p.PaymentId != payment.PaymentId
+                && p.StudentId == payment.StudentId
+                && p.CourseId == payment.CourseId
+                && (p.PaymentStatus == PaymentStatus.Paid || p.PaymentStatus == PaymentStatus.Completed));
+        }
+
+        private async Task EnrichPaymentActionFlagsAsync(IEnumerable<GetPaymentDto> payments)
+        {
+            foreach (var dto in payments)
+            {
+                dto.PaymentStatus = PaymentStatus.Normalize(dto.PaymentStatus);
+                var isObsolete = false;
+
+                if (IsPending(dto.PaymentStatus) && !string.IsNullOrEmpty(dto.StudentId) && !string.IsNullOrEmpty(dto.CourseId))
+                {
+                    isObsolete = await _context.Payments.AnyAsync(p =>
+                        p.PaymentId != dto.PaymentId
+                        && p.StudentId == dto.StudentId
+                        && p.CourseId == dto.CourseId
+                        && (p.PaymentStatus == PaymentStatus.Paid || p.PaymentStatus == PaymentStatus.Completed));
+                }
+
+                dto.CanApprove = IsManualApprovalCandidate(dto.PaymentStatus, dto.PaymentType) && !isObsolete;
+                dto.CanCancel = IsCancelable(dto.PaymentStatus) && !isObsolete;
+                dto.ActionBlockedReason = isObsolete
+                    ? "This payment attempt was replaced by another successful payment."
+                    : GetActionBlockedReason(dto.PaymentStatus, dto.PaymentType);
             }
         }
     }

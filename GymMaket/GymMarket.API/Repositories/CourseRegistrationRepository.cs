@@ -5,7 +5,10 @@ using GymMarket.API.DTOs.CourseRegistration;
 using GymMarket.API.DTOs.FileMinIO;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using GymMarket.API.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace GymMarket.API.Repositories
 {
@@ -14,17 +17,53 @@ namespace GymMarket.API.Repositories
         private readonly GymMarketContext _context;
         private readonly IMapper _mapper;
         private readonly INotificationRepository _notificationRepository;
+        private readonly IRegistrationExpiryService _registrationExpiryService;
+        private readonly IPaymentEventService _paymentEventService;
 
-        public CourseRegistrationRepository(GymMarketContext context, IMapper mapper, INotificationRepository notificationRepository) : base(context, mapper)
+        public CourseRegistrationRepository(
+            GymMarketContext context,
+            IMapper mapper,
+            INotificationRepository notificationRepository,
+            IRegistrationExpiryService registrationExpiryService,
+            IPaymentEventService paymentEventService) : base(context, mapper)
         {
             _context = context;
             _mapper = mapper;
             _notificationRepository = notificationRepository;
+            _registrationExpiryService = registrationExpiryService;
+            _paymentEventService = paymentEventService;
         }
 
         // Registers a course for a student and initializes status as 'Pending Payment'
         public async Task<RegisterCourseResultDto> RegisterCourseAsync(RegisterCourseDto dto, string studentId)
         {
+            await _registrationExpiryService.ExpireStalePendingRegistrationsAsync(dto.CourseId);
+
+            if (_context.Database.IsRelational())
+            {
+                await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+                await AcquireCourseRegistrationLockAsync(dto.CourseId);
+
+                var result = await RegisterCourseCoreAsync(dto, studentId);
+                if (result.Success)
+                {
+                    await transaction.CommitAsync();
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                }
+
+                return result;
+            }
+
+            return await RegisterCourseCoreAsync(dto, studentId);
+        }
+
+        private async Task<RegisterCourseResultDto> RegisterCourseCoreAsync(RegisterCourseDto dto, string studentId)
+        {
+            _context.ChangeTracker.Clear();
+
             var courseExists = await _context.CourseRegistrations
                 .Where(cr => cr.StudentId == studentId && cr.CourseId == dto.CourseId)
                 .OrderByDescending(cr => cr.UpdatedAt ?? cr.CreatedAt)
@@ -88,9 +127,53 @@ namespace GymMarket.API.Repositories
             };
 
             _context.Payments.Add(payment);
+            await _paymentEventService.AddPaymentEventAsync(
+                payment.PaymentId,
+                PaymentEventType.Created,
+                null,
+                payment.PaymentStatus,
+                PaymentEventSource.Student,
+                "Course registration created a bank-transfer payment attempt.");
             await _context.SaveChangesAsync();
 
             return RegisterCourseResultDto.Ok(registration);
+        }
+
+        private async Task AcquireCourseRegistrationLockAsync(string courseId)
+        {
+            if (!_context.Database.IsSqlServer())
+                return;
+
+            var transaction = _context.Database.CurrentTransaction;
+            if (transaction == null)
+                return;
+
+            var connection = _context.Database.GetDbConnection();
+            if (connection.State != ConnectionState.Open)
+            {
+                await connection.OpenAsync();
+            }
+
+            await using var command = connection.CreateCommand();
+            command.Transaction = transaction.GetDbTransaction();
+            command.CommandText = @"
+DECLARE @result int;
+EXEC @result = sp_getapplock
+    @Resource = @resource,
+    @LockMode = 'Exclusive',
+    @LockOwner = 'Transaction',
+    @LockTimeout = 10000;
+IF @result < 0
+BEGIN
+    THROW 51000, 'Could not acquire course registration lock.', 1;
+END";
+
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = "@resource";
+            parameter.Value = $"course-registration:{courseId}";
+            command.Parameters.Add(parameter);
+
+            await command.ExecuteNonQueryAsync();
         }
 
         // Initializes the payment, setting a timestamp for tracking the 5-minute window.
@@ -119,7 +202,7 @@ namespace GymMarket.API.Repositories
         {
             var registration = await _context.CourseRegistrations.FindAsync(registrationId);
 
-            if (registration == null || registration.StudentId != studentId || registration.PaymentStatus != PaymentStatus.Pending)
+            if (registration == null || registration.StudentId != studentId || !PaymentStatus.IsOpen(registration.PaymentStatus))
                 return false;
 
             // Check if more than 5 minutes have passed since payment initialization
@@ -132,6 +215,8 @@ namespace GymMarket.API.Repositories
                 registration.PaymentStatus = PaymentStatus.Expired;
                 registration.UpdatedAt = currentTime;
 
+                await ExpireOpenPaymentsAsync(registration.StudentId, registration.CourseId, currentTime);
+
                 _context.CourseRegistrations.Update(registration);
                 await _context.SaveChangesAsync();
 
@@ -142,6 +227,8 @@ namespace GymMarket.API.Repositories
 
         public async Task<List<GetCourseDto>> GetCourseRegistrations(string studentId)
         {
+            await _registrationExpiryService.ExpireStalePendingRegistrationsAsync(studentId: studentId);
+
             var registrations = await _context.CourseRegistrations
                 .Where(cr => cr.StudentId == studentId)
                 .Include(cr => cr.Course!)
@@ -182,6 +269,8 @@ namespace GymMarket.API.Repositories
         // — a student can never read payment info for a course they didn't register for.
         public async Task<CoursePaymentInfoDto?> GetCoursePaymentInfo(string studentId, string courseId)
         {
+            await _registrationExpiryService.ExpireStalePendingRegistrationsAsync(courseId, studentId);
+
             var registration = await _context.CourseRegistrations
                 .FirstOrDefaultAsync(cr => cr.StudentId == studentId && cr.CourseId == courseId);
 
@@ -265,6 +354,8 @@ namespace GymMarket.API.Repositories
         // null when the caller has no registration for the course (controller 404s).
         public async Task<CoursePaymentInfoDto?> ConfirmPaymentByStudent(string studentId, string courseId)
         {
+            await _registrationExpiryService.ExpireStalePendingRegistrationsAsync(courseId, studentId);
+
             var registration = await _context.CourseRegistrations
                 .FirstOrDefaultAsync(cr => cr.StudentId == studentId && cr.CourseId == courseId);
 
@@ -289,7 +380,8 @@ namespace GymMarket.API.Repositories
             // them to confirm something already paid or canceled.
             var isOpen = payment != null
                 && (payment.PaymentStatus == PaymentStatus.Pending
-                 || payment.PaymentStatus == PaymentStatus.NotStarted);
+                 || payment.PaymentStatus == PaymentStatus.NotStarted
+                 || payment.PaymentStatus == PaymentStatus.PendingPayment);
 
             var trainerUserId = course.Trainer?.UserId;
             if (isOpen && !string.IsNullOrEmpty(trainerUserId))
@@ -329,6 +421,8 @@ namespace GymMarket.API.Repositories
 
         private async Task<bool> IsCourseFullAsync(string courseId)
         {
+            await _registrationExpiryService.ExpireStalePendingRegistrationsAsync(courseId);
+
             var course = await _context.Courses
                 .Where(c => c.CourseId == courseId)
                 .Select(c => new { c.MaxParticipants })
@@ -346,6 +440,37 @@ namespace GymMarket.API.Repositories
                 .CountAsync();
 
             return activeRegistrations >= course.MaxParticipants;
+        }
+
+        private async Task ExpireOpenPaymentsAsync(string? studentId, string? courseId, DateTime now)
+        {
+            if (string.IsNullOrWhiteSpace(studentId) || string.IsNullOrWhiteSpace(courseId))
+                return;
+
+            var openStatuses = PaymentStatus.OpenStatuses();
+            var payments = await _context.Payments
+                .Where(p => p.StudentId == studentId
+                    && p.CourseId == courseId
+                    && openStatuses.Contains(p.PaymentStatus!))
+                .ToListAsync();
+
+            foreach (var payment in payments)
+            {
+                var oldStatus = payment.PaymentStatus;
+                payment.PaymentStatus = PaymentStatus.Expired;
+                payment.Note = string.IsNullOrWhiteSpace(payment.Note)
+                    ? "Expired because payment was not completed in time."
+                    : payment.Note;
+                payment.UpdatedAt = now;
+
+                await _paymentEventService.AddPaymentEventAsync(
+                    payment.PaymentId,
+                    PaymentEventType.Expired,
+                    oldStatus,
+                    payment.PaymentStatus,
+                    PaymentEventSource.System,
+                    "Payment expired when the registration timeout elapsed.");
+            }
         }
 
     }
