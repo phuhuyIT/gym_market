@@ -21,6 +21,7 @@ namespace GymMarket.API.Repositories.IRepositories
             bool includeAllCourses = false);
         Task<PaymentActionResultDto> OkPayment(string paymentId);
         Task<PaymentActionResultDto> CancelPayment(CancelPayment model);
+        Task<List<PaymentEventDto>> GetPaymentEventsAsync(string paymentId);
 
         // Single success path used by every payment flow (manual QR approval, Momo,
         // future banking API): marks the student's payment for the course as Paid,

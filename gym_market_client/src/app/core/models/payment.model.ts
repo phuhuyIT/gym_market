@@ -21,3 +21,14 @@ export interface CancelPaymentDto {
   paymentId: string;
   note: string;
 }
+
+export interface PaymentEvent {
+  paymentEventId: string;
+  paymentId: string;
+  eventType: string;
+  oldStatus?: string | null;
+  newStatus?: string | null;
+  source: string;
+  message?: string | null;
+  createdAt: string;
+}

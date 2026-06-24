@@ -309,6 +309,27 @@ namespace GymMarket.API.Repositories
             return PaymentActionResultDto.Success(payment);
         }
 
+        public async Task<List<PaymentEventDto>> GetPaymentEventsAsync(string paymentId)
+        {
+            return await _context.PaymentEvents
+                .AsNoTracking()
+                .Where(e => e.PaymentId == paymentId)
+                .OrderBy(e => e.CreatedAt)
+                .ThenBy(e => e.PaymentEventId)
+                .Select(e => new PaymentEventDto
+                {
+                    PaymentEventId = e.PaymentEventId,
+                    PaymentId = e.PaymentId,
+                    EventType = e.EventType,
+                    OldStatus = e.OldStatus,
+                    NewStatus = e.NewStatus,
+                    Source = e.Source,
+                    Message = e.Message,
+                    CreatedAt = e.CreatedAt
+                })
+                .ToListAsync();
+        }
+
         public async Task<Payment?> ConfirmCoursePayment(string studentId, string courseId, string paymentType)
         {
             // Reuse the pending payment created at registration instead of inserting a

@@ -6,7 +6,7 @@ import { NoticeModalStore } from '../../stores/notice.store';
 import { patchState } from '@ngrx/signals';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CancelPaymentDto, Payment } from '../../core/models/payment.model';
+import { CancelPaymentDto, Payment, PaymentEvent } from '../../core/models/payment.model';
 import { paymentActionErrorMessage } from '../payment-action-error.util';
 
 @Component({
@@ -25,8 +25,12 @@ export class ListPaymentsComponent implements OnInit {
 	private activatedRoute = inject(ActivatedRoute);
 
 	showCancel: boolean = false;
+	showHistory = false;
 	paymentNote: string = '';
 	paymentId: string | null = null;
+	historyPayment: Payment | null = null;
+	paymentEvents: PaymentEvent[] = [];
+	isHistoryLoading = false;
 	courseId = '';
 	searchString = '';
 	pageIndex = 1;
@@ -133,6 +137,47 @@ export class ListPaymentsComponent implements OnInit {
 	onShowCancelNote(flag: boolean, paymentId: string | null) {
 		this.showCancel = flag;
 		this.paymentId = paymentId;
+	}
+
+	openPaymentHistory(payment: Payment) {
+		this.showHistory = true;
+		this.historyPayment = payment;
+		this.paymentEvents = [];
+		this.isHistoryLoading = true;
+		this.paymentService.getPaymentEvents(payment.paymentId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: events => {
+				this.paymentEvents = events;
+				this.isHistoryLoading = false;
+				this.cdr.markForCheck();
+			},
+			error: () => {
+				this.paymentEvents = [];
+				this.isHistoryLoading = false;
+				patchState(this.notice, { message: 'Failed to load payment history', isShow: true });
+				this.cdr.markForCheck();
+			}
+		});
+	}
+
+	closePaymentHistory() {
+		this.showHistory = false;
+		this.historyPayment = null;
+		this.paymentEvents = [];
+		this.isHistoryLoading = false;
+	}
+
+	eventLabel(eventType: string): string {
+		return eventType
+			.replace(/([a-z])([A-Z])/g, '$1 $2')
+			.replace(/^./, value => value.toUpperCase());
+	}
+
+	eventTransition(event: PaymentEvent): string {
+		if (event.oldStatus && event.newStatus && event.oldStatus !== event.newStatus) {
+			return `${event.oldStatus} to ${event.newStatus}`;
+		}
+
+		return event.newStatus || event.oldStatus || 'No status change';
 	}
 
 	cancelPayment() {

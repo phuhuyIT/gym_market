@@ -66,6 +66,9 @@
           </td>
           <td>
             <div class="action-buttons">
+              <button (click)="openPaymentHistory(item)" class="action-btn" title="View payment history">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+              </button>
               @if (item.canCancel) {
               <button (click)="onShowDelete(true, item)" class="action-btn delete" title="Cancel payment">
                 <i class="fa-solid fa-trash-can"></i>
@@ -123,6 +126,45 @@
         Cancel
       </button>
     </div>
+  </div>
+</div>
+}
+
+@if(showHistory) {
+<div class="modal-backdrop">
+  <div class="modal history-modal" appReveal>
+    <div class="modal__close" (click)="closePaymentHistory()">
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+
+    <h3 class="modal__title">Payment History</h3>
+    <p class="history-subtitle">
+      {{ historyPayment?.fullName || 'Student' }}
+    </p>
+
+    @if (isHistoryLoading) {
+      <div class="history-empty">Loading history...</div>
+    } @else if (paymentEvents.length === 0) {
+      <div class="history-empty">No history recorded for this payment.</div>
+    } @else {
+      <div class="history-list">
+        @for (event of paymentEvents; track event.paymentEventId) {
+          <div class="history-item">
+            <div class="history-item__top">
+              <strong>{{ eventLabel(event.eventType) }}</strong>
+              <span>{{ event.createdAt | date:'medium' }}</span>
+            </div>
+            <div class="history-item__meta">
+              <span>{{ event.source }}</span>
+              <span>{{ eventTransition(event) }}</span>
+            </div>
+            @if (event.message) {
+              <p>{{ event.message }}</p>
+            }
+          </div>
+        }
+      </div>
+    }
   </div>
 </div>
 }

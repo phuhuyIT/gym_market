@@ -89,6 +89,20 @@ namespace GymMarket.API.Controllers
             return ToPaymentActionResponse(result);
         }
 
+        [HttpGet("{paymentId}/events")]
+        public async Task<IActionResult> GetPaymentEvents(string paymentId)
+        {
+            var payment = await _paymentRepository.GetByIdAsync(paymentId);
+            if (payment?.CourseId == null)
+                return NotFound();
+
+            if (!await _courseAccessService.CanManageCourseAsync(User, payment.CourseId))
+                return Forbid();
+
+            var events = await _paymentRepository.GetPaymentEventsAsync(paymentId);
+            return Ok(events);
+        }
+
         private IActionResult ToPaymentActionResponse(PaymentActionResultDto result)
         {
             if (result.Succeeded)

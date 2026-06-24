@@ -72,6 +72,76 @@ public class PaymentsAuthorizationTests : BaseIntegrationTests
     }
 
     [Fact]
+    public async Task GetPaymentEvents_OwnerTrainer_ReturnsSortedHistory()
+    {
+        var courseId = await CreateOwnedCourseAsync("events_owner@example.com");
+        var paymentId = await SeedPendingPaymentAsync(courseId);
+        await SeedPaymentEventAsync(
+            paymentId,
+            PaymentEventType.Paid,
+            PaymentStatus.Pending,
+            PaymentStatus.Paid,
+            PaymentEventSource.Trainer,
+            DateTime.UtcNow.AddMinutes(1));
+        await SeedPaymentEventAsync(
+            paymentId,
+            PaymentEventType.Created,
+            null,
+            PaymentStatus.Pending,
+            PaymentEventSource.Student,
+            DateTime.UtcNow);
+
+        await AuthenticateAsync(email: "events_owner@example.com", role: "Trainer");
+        var response = await Client.GetAsync($"/api/Payments/{paymentId}/events");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var events = await response.Content.ReadFromJsonAsync<List<PaymentEventDto>>();
+        Assert.NotNull(events);
+        Assert.Equal([PaymentEventType.Created, PaymentEventType.Paid], events!.Select(e => e.EventType).ToArray());
+        Assert.All(events, e => Assert.Equal(paymentId, e.PaymentId));
+    }
+
+    [Fact]
+    public async Task GetPaymentEvents_OtherTrainersCourse_ReturnsForbidden()
+    {
+        var courseId = await CreateOwnedCourseAsync("events_forbid_owner@example.com");
+        var paymentId = await SeedPendingPaymentAsync(courseId);
+        await SeedPaymentEventAsync(
+            paymentId,
+            PaymentEventType.Created,
+            null,
+            PaymentStatus.Pending,
+            PaymentEventSource.Student,
+            DateTime.UtcNow);
+
+        await AuthenticateAsync(email: "events_forbid_other@example.com", role: "Trainer");
+        var response = await Client.GetAsync($"/api/Payments/{paymentId}/events");
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetPaymentEvents_Admin_ReturnsHistoryForAnyCourse()
+    {
+        var courseId = await CreateOwnedCourseAsync("events_admin_owner@example.com");
+        var paymentId = await SeedPendingPaymentAsync(courseId);
+        await SeedPaymentEventAsync(
+            paymentId,
+            PaymentEventType.Created,
+            null,
+            PaymentStatus.Pending,
+            PaymentEventSource.Student,
+            DateTime.UtcNow);
+
+        await AuthenticateAsAdminAsync("events_admin@example.com");
+        var response = await Client.GetAsync($"/api/Payments/{paymentId}/events");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var events = await response.Content.ReadFromJsonAsync<List<PaymentEventDto>>();
+        Assert.Single(events!);
+    }
+
+    [Fact]
     public async Task OkPayment_CanceledPayment_ReturnsConflictAndDoesNotApprove()
     {
         var courseId = await CreateOwnedCourseAsync("okpay_canceled_owner@example.com");
@@ -238,6 +308,30 @@ public class PaymentsAuthorizationTests : BaseIntegrationTests
         context.Payments.Add(payment);
         await context.SaveChangesAsync();
         return payment.PaymentId;
+    }
+
+    private async Task SeedPaymentEventAsync(
+        string paymentId,
+        string eventType,
+        string? oldStatus,
+        string? newStatus,
+        string source,
+        DateTime createdAt)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+        context.PaymentEvents.Add(new PaymentEvent
+        {
+            PaymentEventId = Guid.NewGuid().ToString(),
+            PaymentId = paymentId,
+            EventType = eventType,
+            OldStatus = oldStatus,
+            NewStatus = newStatus,
+            Source = source,
+            Message = $"{eventType} event",
+            CreatedAt = createdAt
+        });
+        await context.SaveChangesAsync();
     }
 
     private class PaymentActionResponse
