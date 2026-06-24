@@ -90,6 +90,7 @@ namespace GymMarket.API.Repositories
                 return RegisterCourseResultDto.Fail(CourseRegistrationErrorCode.CourseFull);
             }
 
+            var isRetry = courseExists != null;
             var now = DateTime.UtcNow;
             var registration = courseExists ?? new CourseRegistration
             {
@@ -135,6 +136,7 @@ namespace GymMarket.API.Repositories
                 PaymentEventSource.Student,
                 "Course registration created a bank-transfer payment attempt.");
             await _context.SaveChangesAsync();
+            await NotifyTrainerBankTransferStartedAsync(course.CourseId, course.Title, studentId, isRetry);
 
             return RegisterCourseResultDto.Ok(registration);
         }
@@ -219,6 +221,7 @@ END";
 
                 _context.CourseRegistrations.Update(registration);
                 await _context.SaveChangesAsync();
+                await NotifyStudentPaymentExpiredAsync(registration.StudentId, registration.CourseId);
 
                 return true;
             }
@@ -471,6 +474,57 @@ END";
                     PaymentEventSource.System,
                     "Payment expired when the registration timeout elapsed.");
             }
+        }
+
+        private async Task NotifyTrainerBankTransferStartedAsync(string courseId, string? courseTitle, string studentId, bool isRetry)
+        {
+            var trainerUserId = await _context.Courses
+                .Where(c => c.CourseId == courseId)
+                .Select(c => c.Trainer != null ? c.Trainer.UserId : null)
+                .FirstOrDefaultAsync();
+
+            if (string.IsNullOrWhiteSpace(trainerUserId))
+                return;
+
+            var studentName = await _context.Students
+                .Where(s => s.StudentId == studentId)
+                .Select(s => s.Name)
+                .FirstOrDefaultAsync();
+
+            var title = isRetry ? "Payment restarted" : "New payment pending";
+            var action = isRetry ? "restarted payment" : "started a bank-transfer payment";
+            await _notificationRepository.NotifyUserUpsert(
+                trainerUserId,
+                NotificationTypes.Payment,
+                title,
+                $"{studentName ?? "A student"} {action} for \"{courseTitle ?? "a course"}\".",
+                $"/agency/payments?studentId={studentId}");
+        }
+
+        private async Task NotifyStudentPaymentExpiredAsync(string? studentId, string? courseId)
+        {
+            if (string.IsNullOrWhiteSpace(studentId) || string.IsNullOrWhiteSpace(courseId))
+                return;
+
+            var details = await _context.CourseRegistrations
+                .AsNoTracking()
+                .Where(r => r.StudentId == studentId && r.CourseId == courseId)
+                .Select(r => new
+                {
+                    StudentUserId = r.Student != null ? r.Student.UserId : null,
+                    CourseTitle = r.Course != null ? r.Course.Title : null
+                })
+                .FirstOrDefaultAsync();
+
+            if (string.IsNullOrWhiteSpace(details?.StudentUserId))
+                return;
+
+            await _notificationRepository.NotifyUser(
+                details.StudentUserId,
+                NotificationTypes.Payment,
+                "Payment expired",
+                $"Your payment window for \"{details.CourseTitle ?? "a course"}\" expired. Restart payment to reserve a seat again.",
+                $"/client/course-payment/{courseId}");
         }
 
     }

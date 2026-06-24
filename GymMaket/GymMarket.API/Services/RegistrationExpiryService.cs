@@ -1,4 +1,6 @@
 using GymMarket.API.Data;
+using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymMarket.API.Services
@@ -7,11 +9,16 @@ namespace GymMarket.API.Services
     {
         private readonly GymMarketContext _context;
         private readonly IPaymentEventService _paymentEventService;
+        private readonly INotificationRepository _notificationRepository;
 
-        public RegistrationExpiryService(GymMarketContext context, IPaymentEventService paymentEventService)
+        public RegistrationExpiryService(
+            GymMarketContext context,
+            IPaymentEventService paymentEventService,
+            INotificationRepository notificationRepository)
         {
             _context = context;
             _paymentEventService = paymentEventService;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<int> ExpireStalePendingRegistrationsAsync(
@@ -83,7 +90,38 @@ namespace GymMarket.API.Services
             }
 
             await _context.SaveChangesAsync(cancellationToken);
+            foreach (var registration in registrations)
+            {
+                await NotifyStudentPaymentExpiredAsync(registration, cancellationToken);
+            }
+
             return registrations.Count;
+        }
+
+        private async Task NotifyStudentPaymentExpiredAsync(CourseRegistration registration, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(registration.StudentId) || string.IsNullOrWhiteSpace(registration.CourseId))
+                return;
+
+            var details = await _context.CourseRegistrations
+                .AsNoTracking()
+                .Where(r => r.RegistrationId == registration.RegistrationId)
+                .Select(r => new
+                {
+                    StudentUserId = r.Student != null ? r.Student.UserId : null,
+                    CourseTitle = r.Course != null ? r.Course.Title : null
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (string.IsNullOrWhiteSpace(details?.StudentUserId))
+                return;
+
+            await _notificationRepository.NotifyUser(
+                details.StudentUserId,
+                NotificationTypes.Payment,
+                "Payment expired",
+                $"Your payment window for \"{details.CourseTitle ?? "a course"}\" expired. Restart payment to reserve a seat again.",
+                $"/client/course-payment/{registration.CourseId}");
         }
     }
 }

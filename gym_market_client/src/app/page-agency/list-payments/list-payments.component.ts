@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, effect, inject, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { PaymentService } from '../payment.service';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CancelPaymentDto, Payment, PaymentEvent } from '../../core/models/payment.model';
 import { paymentActionErrorMessage } from '../payment-action-error.util';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
     selector: 'app-list-payments',
@@ -23,6 +24,7 @@ export class ListPaymentsComponent implements OnInit {
 	private cdr = inject(ChangeDetectorRef);
 	private paymentService = inject(PaymentService);
 	private activatedRoute = inject(ActivatedRoute);
+	private notificationService = inject(NotificationService);
 
 	showCancel: boolean = false;
 	showHistory = false;
@@ -39,6 +41,16 @@ export class ListPaymentsComponent implements OnInit {
 	totalPages = 0;
 	hasPreviousPage = false;
 	hasNextPage = false;
+	private paymentsCueCleared = false;
+
+	constructor() {
+		effect(() => {
+			if (this.notificationService.unreadPaymentCount() > 0 && !this.paymentsCueCleared) {
+				this.paymentsCueCleared = true;
+				this.notificationService.markTypeRead('payment');
+			}
+		});
+	}
 
 	ngOnInit() {
 		this.getPayments();

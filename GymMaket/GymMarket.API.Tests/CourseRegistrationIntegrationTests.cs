@@ -58,6 +58,17 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
         Assert.Equal(PaymentEventType.Created, paymentEvent.EventType);
         Assert.Equal(PaymentEventSource.Student, paymentEvent.Source);
         Assert.Equal(PaymentStatus.Pending, paymentEvent.NewStatus);
+
+        var trainerUserId = await db.Courses
+            .Where(c => c.CourseId == "CRS_REG_001")
+            .Select(c => c.Trainer!.UserId)
+            .SingleAsync();
+        var notification = await db.Notifications.SingleAsync(n =>
+            n.UserId == trainerUserId
+            && n.Type == NotificationTypes.Payment
+            && n.Link == $"/agency/payments?studentId={body.Registration.StudentId}");
+        Assert.Equal("New payment pending", notification.Title);
+        Assert.False(notification.IsRead);
     }
 
     [Fact]
@@ -303,6 +314,16 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             Assert.Equal(PaymentStatus.NotStarted, registrations.Single().PaymentStatus);
             Assert.Equal(2, payments.Count);
             Assert.Contains(payments, p => p.PaymentStatus == PaymentStatus.Pending);
+
+            var trainerUserId = await db.Courses
+                .Where(c => c.CourseId == "CRS_RETRY_001")
+                .Select(c => c.Trainer!.UserId)
+                .SingleAsync();
+            var notification = await db.Notifications.SingleAsync(n =>
+                n.UserId == trainerUserId
+                && n.Type == NotificationTypes.Payment
+                && n.Link!.StartsWith("/agency/payments?studentId="));
+            Assert.Equal("Payment restarted", notification.Title);
         }
     }
 
@@ -447,6 +468,16 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
 
             Assert.Equal(PaymentStatus.Expired, registration.PaymentStatus);
             Assert.Equal(PaymentStatus.Expired, payment.PaymentStatus);
+
+            var studentUserId = await db.Students
+                .Where(s => s.StudentId == registration.StudentId)
+                .Select(s => s.UserId)
+                .SingleAsync();
+            var notification = await db.Notifications.SingleAsync(n =>
+                n.UserId == studentUserId
+                && n.Type == NotificationTypes.Payment
+                && n.Link == "/client/course-payment/CRS_PAYMENT_EXPIRED_001");
+            Assert.Equal("Payment expired", notification.Title);
         }
     }
 
