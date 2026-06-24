@@ -69,6 +69,19 @@ namespace GymMarket.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("metrics")]
+        public async Task<IActionResult> GetMetrics([FromQuery] int recentCount = 5)
+        {
+            var isAdmin = User.IsInRole(ApplicationRoles.Admin);
+            var trainerId = User.FindFirstValue("trainerId");
+            var result = await _paymentRepository.GetPaymentMetricsAsync(
+                trainerId,
+                includeAllCourses: isAdmin,
+                recentCount);
+
+            return Ok(result);
+        }
+
         [HttpPost("ok-payment/{paymentId}")]
         public async Task<IActionResult> OkPayment(string paymentId)
         {

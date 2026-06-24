@@ -209,6 +209,85 @@ namespace GymMarket.API.Repositories
             };
         }
 
+        public async Task<PaymentMetricsDto> GetPaymentMetricsAsync(
+            string? trainerId = null,
+            bool includeAllCourses = false,
+            int recentCount = 5)
+        {
+            trainerId = trainerId?.Trim();
+            if (!includeAllCourses && string.IsNullOrWhiteSpace(trainerId))
+                return new PaymentMetricsDto();
+
+            if (recentCount < 1) recentCount = 5;
+            if (recentCount > 20) recentCount = 20;
+
+            var query = _context.Payments
+                .AsNoTracking()
+                .Where(p => p.CourseId != null)
+                .AsQueryable();
+
+            if (!includeAllCourses)
+            {
+                query = query.Where(p => p.Course != null && p.Course.TrainerId == trainerId);
+            }
+
+            var paidQuery = query.Where(p => p.PaymentStatus == PaymentStatus.Paid || p.PaymentStatus == PaymentStatus.Completed);
+            var pendingStatuses = PaymentStatus.OpenStatuses();
+            var pendingQuery = query.Where(p => pendingStatuses.Contains(p.PaymentStatus!));
+
+            var revenueByCourse = await paidQuery
+                .GroupBy(p => new
+                {
+                    CourseId = p.CourseId!,
+                    CourseTitle = p.Course != null ? p.Course.Title : null
+                })
+                .Select(g => new CourseRevenueDto
+                {
+                    CourseId = g.Key.CourseId,
+                    CourseTitle = g.Key.CourseTitle,
+                    PaidRevenue = g.Sum(p => p.PaymentAmount ?? 0),
+                    PaidCount = g.Count()
+                })
+                .OrderByDescending(c => c.PaidRevenue)
+                .ThenBy(c => c.CourseTitle)
+                .ToListAsync();
+
+            var recentPaidPayments = await paidQuery
+                .OrderByDescending(p => p.PaymentDate ?? p.CreatedAt)
+                .ThenByDescending(p => p.CreatedAt)
+                .Take(recentCount)
+                .Select(p => new RecentPaidPaymentDto
+                {
+                    PaymentId = p.PaymentId,
+                    CourseId = p.CourseId,
+                    CourseTitle = p.Course != null ? p.Course.Title : null,
+                    StudentId = p.StudentId,
+                    StudentName = p.Student != null ? p.Student.Name : null,
+                    UserId = p.Student != null ? p.Student.UserId : null,
+                    PaymentAmount = p.PaymentAmount ?? 0,
+                    PaymentStatus = PaymentStatus.Paid,
+                    PaidAt = p.PaymentDate ?? p.CreatedAt
+                })
+                .ToListAsync();
+
+            return new PaymentMetricsDto
+            {
+                TotalPaidRevenue = await paidQuery.SumAsync(p => p.PaymentAmount ?? 0),
+                PendingAmount = await pendingQuery.SumAsync(p => p.PaymentAmount ?? 0),
+                PaidCount = await paidQuery.CountAsync(),
+                PendingCount = await pendingQuery.CountAsync(),
+                CanceledCount = await query.CountAsync(p => p.PaymentStatus == PaymentStatus.Canceled),
+                ExpiredCount = await query.CountAsync(p => p.PaymentStatus == PaymentStatus.Expired),
+                UniquePaidStudentCount = await paidQuery
+                    .Where(p => p.StudentId != null)
+                    .Select(p => p.StudentId!)
+                    .Distinct()
+                    .CountAsync(),
+                RevenueByCourse = revenueByCourse,
+                RecentPaidPayments = recentPaidPayments
+            };
+        }
+
         public async Task<PaymentActionResultDto> OkPayment(string paymentId)
         {
             var payment = await _context.Payments.Where(p => p.PaymentId == paymentId).FirstOrDefaultAsync();

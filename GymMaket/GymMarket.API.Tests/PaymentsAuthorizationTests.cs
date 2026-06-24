@@ -228,6 +228,61 @@ public class PaymentsAuthorizationTests : BaseIntegrationTests
     }
 
     [Fact]
+    public async Task GetPaymentMetrics_Trainer_OnlyIncludesOwnedCoursePayments()
+    {
+        var ownerCourseId = await CreateOwnedCourseAsync("metrics_owner@example.com");
+        var otherCourseId = await CreateOwnedCourseAsync("metrics_other_owner@example.com");
+
+        await SeedPaymentAsync(ownerCourseId, PaymentStatus.Paid, "STU_METRICS_1", 100);
+        await SeedPaymentAsync(ownerCourseId, PaymentStatus.Completed, "STU_METRICS_2", 75);
+        await SeedPaymentAsync(ownerCourseId, PaymentStatus.Pending, "STU_METRICS_3", 25);
+        await SeedPaymentAsync(ownerCourseId, PaymentStatus.Canceled, "STU_METRICS_4", 40);
+        await SeedPaymentAsync(ownerCourseId, PaymentStatus.Expired, "STU_METRICS_5", 50);
+        await SeedPaymentAsync(otherCourseId, PaymentStatus.Paid, "STU_METRICS_OTHER", 999);
+
+        await AuthenticateAsync(email: "metrics_owner@example.com", role: "Trainer");
+        var response = await Client.GetAsync("/api/Payments/metrics?recentCount=10");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var metrics = await response.Content.ReadFromJsonAsync<PaymentMetricsDto>();
+
+        Assert.Equal(175, metrics!.TotalPaidRevenue);
+        Assert.Equal(25, metrics.PendingAmount);
+        Assert.Equal(2, metrics.PaidCount);
+        Assert.Equal(1, metrics.PendingCount);
+        Assert.Equal(1, metrics.CanceledCount);
+        Assert.Equal(1, metrics.ExpiredCount);
+        Assert.Equal(2, metrics.UniquePaidStudentCount);
+        Assert.Single(metrics.RevenueByCourse);
+        Assert.Equal(ownerCourseId, metrics.RevenueByCourse.Single().CourseId);
+        Assert.All(metrics.RecentPaidPayments, p => Assert.Equal(ownerCourseId, p.CourseId));
+    }
+
+    [Fact]
+    public async Task GetPaymentMetrics_Admin_IncludesAllCourses()
+    {
+        var firstCourseId = await CreateOwnedCourseAsync("metrics_admin_first_owner@example.com");
+        var secondCourseId = await CreateOwnedCourseAsync("metrics_admin_second_owner@example.com");
+
+        await SeedPaymentAsync(firstCourseId, PaymentStatus.Paid, "STU_ADMIN_METRICS_1", 100);
+        await SeedPaymentAsync(secondCourseId, PaymentStatus.Paid, "STU_ADMIN_METRICS_2", 250);
+        await SeedPaymentAsync(secondCourseId, PaymentStatus.Expired, "STU_ADMIN_METRICS_3", 300);
+
+        await AuthenticateAsAdminAsync("metrics_admin@example.com");
+        var response = await Client.GetAsync("/api/Payments/metrics");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var metrics = await response.Content.ReadFromJsonAsync<PaymentMetricsDto>();
+
+        Assert.Equal(350, metrics!.TotalPaidRevenue);
+        Assert.Equal(2, metrics.PaidCount);
+        Assert.Equal(1, metrics.ExpiredCount);
+        Assert.Equal(2, metrics.RevenueByCourse.Count);
+        Assert.Contains(metrics.RevenueByCourse, c => c.CourseId == firstCourseId && c.PaidRevenue == 100);
+        Assert.Contains(metrics.RevenueByCourse, c => c.CourseId == secondCourseId && c.PaidRevenue == 250);
+    }
+
+    [Fact]
     public async Task UpdateCourse_OtherTrainersCourse_ReturnsForbidden()
     {
         // Arrange — trainer A owns the course.
@@ -289,7 +344,11 @@ public class PaymentsAuthorizationTests : BaseIntegrationTests
         return await SeedPaymentAsync(courseId, PaymentStatus.Pending);
     }
 
-    private async Task<string> SeedPaymentAsync(string courseId, string status, string studentId = "STU_PAYMENT_AUTH")
+    private async Task<string> SeedPaymentAsync(
+        string courseId,
+        string status,
+        string studentId = "STU_PAYMENT_AUTH",
+        decimal amount = 100)
     {
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
@@ -298,7 +357,7 @@ public class PaymentsAuthorizationTests : BaseIntegrationTests
             PaymentId = Guid.NewGuid().ToString(),
             CourseId = courseId,
             StudentId = studentId,
-            PaymentAmount = 100,
+            PaymentAmount = amount,
             PaymentStatus = status,
             PaymentType = "",
             CreatedAt = DateTime.UtcNow,

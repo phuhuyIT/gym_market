@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CancelPaymentDto, Payment, PaymentEvent } from '../core/models/payment.model';
+import { CancelPaymentDto, Payment, PaymentEvent, PaymentMetrics } from '../core/models/payment.model';
 import { PagedResult } from '../core/models/paged-result.model';
 
 @Injectable({
@@ -53,5 +53,10 @@ export class PaymentService {
 
 	getPaymentEvents(paymentId: string): Observable<PaymentEvent[]> {
 		return this.http.get<PaymentEvent[]>(`${environment.baseApi}/Payments/${paymentId}/events`);
+	}
+
+	getPaymentMetrics(recentCount = 5): Observable<PaymentMetrics> {
+		const params = new HttpParams().set('recentCount', recentCount);
+		return this.http.get<PaymentMetrics>(`${environment.baseApi}/Payments/metrics`, { params });
 	}
 }

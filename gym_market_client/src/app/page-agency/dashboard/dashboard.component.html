@@ -13,7 +13,7 @@
   </div>
 
   <!-- Stats Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
     <!-- Stat 1 -->
     <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow">
       <div class="flex justify-between items-start">
@@ -62,7 +62,25 @@
         </div>
       </div>
       <p class="text-xs text-neutral-400 dark:text-neutral-500 font-semibold mt-3 flex items-center gap-1">
-        <span>Total course earnings</span>
+        <span>{{ metrics.paidCount }} paid payments</span>
+      </p>
+    </div>
+
+    <!-- Stat 4 -->
+    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Pending Amount</p>
+          <h3 class="text-3xl font-black mt-2 text-neutral-950 dark:text-white">${{ metrics.pendingAmount | number:'1.0-0' }}</h3>
+        </div>
+        <div class="p-3 bg-orange-500/10 text-orange-500 rounded-2xl">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-xs text-neutral-400 dark:text-neutral-500 font-semibold mt-3 flex items-center gap-1">
+        <span>{{ metrics.pendingCount }} pending · {{ metrics.expiredCount }} expired · {{ metrics.canceledCount }} canceled</span>
       </p>
     </div>
   </div>
@@ -73,35 +91,40 @@
     <div class="lg:col-span-1 bg-[#ECFDF5] dark:bg-[#081E15] border border-emerald-100 dark:border-emerald-950/20 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
       <div>
         <h3 class="font-extrabold text-[#065F46] dark:text-[#A7F3D0] text-lg mb-4 flex items-center gap-2">
-          <span>Popular Course</span>
+          <span>Revenue by Course</span>
         </h3>
         
         <div class="space-y-3">
-          @for (course of popularCourses; track course.title) {
+          @for (course of popularCourses; track course.courseId) {
             <div class="bg-white dark:bg-[#161618]/60 border border-emerald-500/5 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:translate-x-0.5 transition-transform">
               <div class="flex items-center gap-3">
                 <div class="h-9 w-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm">
-                  🏋️
+                  $
                 </div>
                 <div>
-                  <h4 class="font-bold text-sm text-neutral-800 dark:text-neutral-200 line-clamp-1 max-w-[150px]">{{ course.title }}</h4>
-                  <p class="text-[10px] text-neutral-400 dark:text-neutral-500 uppercase tracking-wider font-semibold">{{ course.category }}</p>
+                  <h4 class="font-bold text-sm text-neutral-800 dark:text-neutral-200 line-clamp-1 max-w-[150px]">{{ course.courseTitle || 'Course' }}</h4>
+                  <p class="text-[10px] text-neutral-400 dark:text-neutral-500 uppercase tracking-wider font-semibold">{{ course.paidCount }} paid</p>
                 </div>
               </div>
               <span class="text-xs font-bold px-2.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-                {{ course.progress }}%
+                ${{ course.paidRevenue | number:'1.0-0' }}
               </span>
+            </div>
+          }
+          @if (popularCourses.length === 0) {
+            <div class="bg-white dark:bg-[#161618]/60 border border-emerald-500/5 rounded-2xl p-4 text-sm font-semibold text-neutral-500 dark:text-neutral-400">
+              No paid revenue yet.
             </div>
           }
         </div>
       </div>
     </div>
 
-    <!-- Recent Students Table (Col span 2) -->
+    <!-- Recent Payments Table (Col span 2) -->
     <div class="lg:col-span-2 bg-[#F0F7FF] dark:bg-[#07132B] border border-blue-100 dark:border-blue-950/20 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between mb-4">
-          <h3 class="font-extrabold text-[#1E40AF] dark:text-[#BFDBFE] text-lg">Recent Students</h3>
+          <h3 class="font-extrabold text-[#1E40AF] dark:text-[#BFDBFE] text-lg">Recent Paid Payments</h3>
         </div>
 
         <div class="bg-white dark:bg-[#161618]/60 border border-blue-500/5 rounded-2xl overflow-hidden shadow-sm">
@@ -116,40 +139,50 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
-              @for (student of displayEnrollments; track student.studentName) {
+              @for (student of displayEnrollments; track student.paymentId) {
                 <tr class="hover:bg-neutral-50/40 dark:hover:bg-neutral-800/10 transition-colors">
                   <!-- Name & Avatar -->
                   <td class="py-3.5 px-4">
                     <div class="flex items-center gap-2.5">
                       <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-[#007AFF] to-blue-400 flex items-center justify-center text-white font-bold text-xs shadow-sm">
-                        {{ student.studentName.substring(0,1).toUpperCase() }}
+                        {{ (student.studentName || 'Student').substring(0,1).toUpperCase() }}
                       </div>
-                      <span class="font-semibold text-xs text-neutral-800 dark:text-neutral-200">{{ student.studentName }}</span>
+                      <span class="font-semibold text-xs text-neutral-800 dark:text-neutral-200">{{ student.studentName || 'Student' }}</span>
                     </div>
                   </td>
                   <!-- Course title -->
                   <td class="py-3.5 px-4">
-                    <span class="text-xs text-neutral-600 dark:text-neutral-400 font-medium line-clamp-1 max-w-[150px] md:max-w-[200px]" [title]="student.courseTitle">
-                      {{ student.courseTitle }}
+                    <span class="text-xs text-neutral-600 dark:text-neutral-400 font-medium line-clamp-1 max-w-[150px] md:max-w-[200px]" [title]="student.courseTitle || 'Course'">
+                      {{ student.courseTitle || 'Course' }}
                     </span>
                   </td>
                   <!-- Payment amount -->
                   <td class="py-3.5 px-4 text-right">
-                    <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">${{ student.paymentAmount }}</span>
+                    <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">${{ student.paymentAmount | number:'1.0-0' }}</span>
                   </td>
                   <!-- Status -->
                   <td class="py-3.5 px-4 text-right">
                     <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide bg-emerald-100 text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400">
                       {{ student.paymentStatus }}
                     </span>
+                    <div class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1">{{ student.paidAt | date:'shortDate' }}</div>
                   </td>
                   <!-- Action Link to Chat -->
                   <td class="py-3.5 px-4 text-right">
-                    <a [routerLink]="['/agency/chat']" [queryParams]="{ userId: student.studentId }" class="inline-flex items-center justify-center p-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-600 text-[#007AFF] hover:text-white transition-colors shadow-sm" title="Chat with student">
+                    @if (student.userId) {
+                    <a [routerLink]="['/agency/chat']" [queryParams]="{ userId: student.userId }" class="inline-flex items-center justify-center p-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-600 text-[#007AFF] hover:text-white transition-colors shadow-sm" title="Chat with student">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
                       </svg>
                     </a>
+                    }
+                  </td>
+                </tr>
+              }
+              @if (displayEnrollments.length === 0) {
+                <tr>
+                  <td colspan="5" class="py-8 text-center text-sm text-neutral-400 dark:text-neutral-500">
+                    No paid payments yet.
                   </td>
                 </tr>
               }

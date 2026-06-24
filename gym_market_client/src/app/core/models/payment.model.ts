@@ -32,3 +32,34 @@ export interface PaymentEvent {
   message?: string | null;
   createdAt: string;
 }
+
+export interface CourseRevenue {
+  courseId: string;
+  courseTitle?: string | null;
+  paidRevenue: number;
+  paidCount: number;
+}
+
+export interface RecentPaidPayment {
+  paymentId: string;
+  courseId?: string | null;
+  courseTitle?: string | null;
+  studentId?: string | null;
+  studentName?: string | null;
+  userId?: string | null;
+  paymentAmount: number;
+  paymentStatus: string;
+  paidAt?: string | null;
+}
+
+export interface PaymentMetrics {
+  totalPaidRevenue: number;
+  pendingAmount: number;
+  paidCount: number;
+  pendingCount: number;
+  canceledCount: number;
+  expiredCount: number;
+  uniquePaidStudentCount: number;
+  revenueByCourse: CourseRevenue[];
+  recentPaidPayments: RecentPaidPayment[];
+}

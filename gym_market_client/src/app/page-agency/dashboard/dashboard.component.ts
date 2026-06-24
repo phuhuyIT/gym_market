@@ -10,6 +10,7 @@ import { PaymentService } from '../payment.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { PaymentMetrics } from '../../core/models/payment.model';
 
 @Component({
     selector: 'app-dashboard',
@@ -27,132 +28,71 @@ export class DashboardComponent implements OnInit {
 
 	userStore = inject(UserStore);
 
-	recentEnrollments: any[] = [];
-
-	mockEnrollments = [
-		{ studentId: '2f0df4d2-9e63-4ff6-a8d2-96617f115f59', studentName: 'Bertha Zemlak', courseTitle: 'Hypertrophy Training', paymentAmount: 150, paymentStatus: 'Paid', date: '2026-06-01T12:00:00Z' },
-		{ studentId: 'bed0536f-6c4f-4c00-babd-98eb676aedba', studentName: 'Brandi Hettinger', courseTitle: 'Cardio Endurance', paymentAmount: 120, paymentStatus: 'Paid', date: '2026-05-28T09:30:00Z' },
-		{ studentId: '5b832f49-f67f-49d5-b3a3-1252a21cb38e', studentName: 'Jenna Sawayn', courseTitle: 'Strength Fundamentals', paymentAmount: 200, paymentStatus: 'Paid', date: '2026-05-25T14:45:00Z' },
-		{ studentId: '2c67dfea-8fec-4c6f-b4ef-a887bd41f008', studentName: 'Casey Dooley', courseTitle: 'Yoga Flow & Flexibility', paymentAmount: 90, paymentStatus: 'Paid', date: '2026-05-24T08:15:00Z' }
-	];
+	metrics: PaymentMetrics = this.emptyMetrics();
 
 	constructor(private courseAgencyService: CourseAgencyService) {}
 
 	ngOnInit() {
-		this.loadCourses();
+		this.loadDashboard();
 	}
 
-	loadCourses() {
+	loadDashboard() {
 		patchState(this.loaderStore, { isShow: true });
-		this.courseAgencyService
-			.getCoursesOfTrainer(this.userStore.trainerId() ?? '')
+		const trainerId = this.userStore.trainerId();
+		const courses$ = trainerId
+			? this.courseAgencyService.getCoursesOfTrainer(trainerId).pipe(catchError(() => of([] as Course[])))
+			: of([] as Course[]);
+
+		forkJoin({
+			courses: courses$,
+			metrics: this.paymentService.getPaymentMetrics(6).pipe(catchError(() => of(this.emptyMetrics())))
+		})
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: res => {
-					this.courses = res;
-					this.loadRecentEnrollments();
+					this.courses = res.courses;
+					this.metrics = res.metrics;
 					patchState(this.loaderStore, { isShow: false });
 					this.cdr.markForCheck();
 				},
 				error: () => {
 					patchState(this.loaderStore, { isShow: false });
+					this.cdr.markForCheck();
 				},
 			});
 	}
 
-	loadRecentEnrollments() {
-		if (this.courses.length === 0) {
-			this.recentEnrollments = [];
-			this.cdr.markForCheck();
-			return;
-		}
-
-		// Load payments for all courses of the trainer
-		const requests = this.courses.map(c =>
-			this.paymentService.getPayments(c.courseId).pipe(
-				catchError(() => of([]))
-			)
-		);
-
-		forkJoin(requests).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-			next: (results) => {
-				const list: any[] = [];
-				results.forEach((payments, idx) => {
-					const course = this.courses[idx];
-					payments.forEach(p => {
-						list.push({
-							studentId: p.studentId,
-							studentName: p.fullName || 'Student',
-							courseTitle: course.title,
-							paymentAmount: p.paymentAmount || course.price,
-							paymentStatus: p.paymentStatus || 'Paid',
-							date: p.createdAt || p.paymentDate || new Date().toISOString()
-						});
-					});
-				});
-
-				// Sort by date desc
-				list.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-				this.recentEnrollments = list;
-				this.cdr.markForCheck();
-			},
-			error: () => {
-				this.recentEnrollments = [];
-				this.cdr.markForCheck();
-			}
-		});
+	private emptyMetrics(): PaymentMetrics {
+		return {
+			totalPaidRevenue: 0,
+			pendingAmount: 0,
+			paidCount: 0,
+			pendingCount: 0,
+			canceledCount: 0,
+			expiredCount: 0,
+			uniquePaidStudentCount: 0,
+			revenueByCourse: [],
+			recentPaidPayments: []
+		};
 	}
 
 	get displayEnrollments() {
-		return this.recentEnrollments.length > 0 ? this.recentEnrollments : this.mockEnrollments;
+		return this.metrics.recentPaidPayments;
 	}
 
 	get popularCourses() {
-		if (this.courses.length === 0) {
-			return [
-				{ title: 'Hypertrophy Training', category: 'Strength & Conditioning', progress: 85 },
-				{ title: 'Cardio Endurance', category: 'Cardio Endurance', progress: 72 },
-				{ title: 'Yoga Flow & Flexibility', category: 'Yoga & Flexibility', progress: 64 },
-				{ title: 'Strength Fundamentals', category: 'Strength & Conditioning', progress: 58 }
-			];
+		if (this.metrics.revenueByCourse.length > 0) {
+			return this.metrics.revenueByCourse.slice(0, 4);
 		}
-		return this.courses
-			.map(c => ({
-				title: c.title,
-				category: c.category || 'General Fitness',
-				progress: this.getEnrollmentProgress(c.courseId)
-			}))
-			.sort((a, b) => b.progress - a.progress)
-			.slice(0, 4);
+
+		return [];
 	}
 
 	get computedEarnings(): number {
-		if (this.recentEnrollments.length > 0) {
-			return this.recentEnrollments
-				.filter(p => p.paymentStatus === 'Paid')
-				.reduce((sum, p) => sum + p.paymentAmount, 0);
-		}
-		// Fallback to mock data total
-		return this.mockEnrollments
-			.filter(p => p.paymentStatus === 'Paid')
-			.reduce((sum, p) => sum + p.paymentAmount, 0);
+		return this.metrics.totalPaidRevenue;
 	}
 
 	get computedStudents(): number {
-		if (this.recentEnrollments.length > 0) {
-			const uniqueStudents = new Set(this.recentEnrollments.map(p => p.studentId));
-			return uniqueStudents.size;
-		}
-		// Fallback to mock data unique count
-		const uniqueMock = new Set(this.mockEnrollments.map(p => p.studentId));
-		return uniqueMock.size;
-	}
-
-	getEnrollmentProgress(courseId: string): number {
-		let sum = 0;
-		for (let i = 0; i < courseId.length; i++) {
-			sum += courseId.charCodeAt(i);
-		}
-		return 35 + (sum % 51); // Returns a stable value between 35% and 85%
+		return this.metrics.uniquePaidStudentCount;
 	}
 }
