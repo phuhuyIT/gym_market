@@ -40,8 +40,8 @@ export interface CourseRatingCreateDto {
 
 export interface CourseOption {
   optionId: string;
+  courseId: string;
   optionName: string;
   description: string;
   price: number;
-  courseId?: string;
 }

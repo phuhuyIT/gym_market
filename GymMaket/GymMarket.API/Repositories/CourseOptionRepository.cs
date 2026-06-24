@@ -17,14 +17,23 @@ namespace GymMarket.API.Repositories
 
         public async Task<IEnumerable<CourseOption>> GetByCourseIdAsync(string courseId)
         {
-            var courseOptions = await (from c in _context.Courses
-                                       join cor in _context.CourseRegistrations on c.CourseId equals cor.CourseId
-                                       join cop in _context.CourseRegistrationOptions on cor.RegistrationId equals cop.RegistrationId
-                                       join op in _context.CourseOptions on cop.OptionId equals op.OptionId
-                                       where c.CourseId == courseId
-                                       select op).ToListAsync();
+            var courseOptions = await _context.CourseOptions
+                .AsNoTracking()
+                .Where(op => op.CourseId == courseId)
+                .OrderBy(op => op.OptionName)
+                .ToListAsync();
 
             return courseOptions;
+        }
+
+        public async Task<IEnumerable<CourseOption>> GetByTrainerIdAsync(string trainerId)
+        {
+            return await _context.CourseOptions
+                .AsNoTracking()
+                .Where(op => op.Course != null && op.Course.TrainerId == trainerId)
+                .OrderBy(op => op.Course!.Title)
+                .ThenBy(op => op.OptionName)
+                .ToListAsync();
         }
     }
 }

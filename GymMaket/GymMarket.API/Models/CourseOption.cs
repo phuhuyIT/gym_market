@@ -7,11 +7,15 @@ public partial class CourseOption
 {
     public string OptionId { get; set; } = null!;
 
+    public string? CourseId { get; set; }
+
     public string? OptionName { get; set; }
 
     public string? Description { get; set; }
 
     public decimal? Price { get; set; }
+
+    public virtual Course? Course { get; set; }
 
     public virtual ICollection<CourseRegistrationOption> CourseRegistrationOptions { get; set; } = new List<CourseRegistrationOption>();
     public virtual ICollection<CourseRating> CourseRatings { get; set; } = new List<CourseRating>();

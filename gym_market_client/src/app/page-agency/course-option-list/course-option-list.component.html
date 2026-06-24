@@ -11,6 +11,13 @@
     </div>
     
     <div class="flex flex-wrap items-center gap-3">
+      <select [(ngModel)]="selectedCourseFilter" (change)="onCourseFilterChange()" class="w-full sm:w-56 bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 px-4 py-2.5 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 transition-all shadow-sm">
+        <option value="">All courses</option>
+        @for (course of courses; track course.courseId) {
+          <option [value]="course.courseId">{{ course.title }}</option>
+        }
+      </select>
+
       <!-- Search bar -->
       <div class="relative w-full sm:w-64">
         <input type="text" [(ngModel)]="searchString" (keyup.enter)="search()" placeholder="Search options..." class="w-full bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 pl-4 pr-10 py-2.5 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 transition-all shadow-sm">
@@ -38,6 +45,7 @@
         <tr class="border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#161618]/30">
           <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider w-16"></th>
           <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Name</th>
+          <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Course</th>
           <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Description</th>
           <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider text-right">Price</th>
           <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider text-right">Actions</th>
@@ -55,6 +63,10 @@
             <!-- Name -->
             <td class="py-4 px-6 font-bold text-neutral-800 dark:text-neutral-200 text-sm">
               {{ item.optionName }}
+            </td>
+            <!-- Course -->
+            <td class="py-4 px-6 text-neutral-600 dark:text-neutral-300 text-xs font-semibold">
+              {{ getCourseTitle(item.courseId) }}
             </td>
             <!-- Description -->
             <td class="py-4 px-6 text-neutral-500 dark:text-neutral-400 text-xs max-w-md">
@@ -131,6 +143,20 @@
     </div>
 
     <form [formGroup]="addCourseOptionForm" class="space-y-4">
+      <!-- course -->
+      <div class="flex flex-col gap-2">
+        <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Khóa học</label>
+        <select formControlName="courseId" class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all" required>
+          <option value="">Select a course</option>
+          @for (course of courses; track course.courseId) {
+            <option [value]="course.courseId">{{ course.title }}</option>
+          }
+        </select>
+        @if(addCourseOptionForm.controls['courseId'].value === '') {
+          <small class="text-red-500 text-xs font-semibold">Vui lòng chọn khóa học</small>
+        }
+      </div>
+
       <!-- optionName -->
       <div class="flex flex-col gap-2">
         <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Tên tùy chọn</label>
@@ -189,6 +215,20 @@
     </div>
 
     <form [formGroup]="updateCourseOptionForm" class="space-y-4">
+      <!-- course -->
+      <div class="flex flex-col gap-2">
+        <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Khóa học</label>
+        <select formControlName="courseId" class="w-full bg-[#F7F6F3] dark:bg-[#252528] text-neutral-800 dark:text-neutral-200 border-none rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all" required>
+          <option value="">Select a course</option>
+          @for (course of courses; track course.courseId) {
+            <option [value]="course.courseId">{{ course.title }}</option>
+          }
+        </select>
+        @if(updateCourseOptionForm.controls['courseId'].value === '') {
+          <small class="text-red-500 text-xs font-semibold">Vui lòng chọn khóa học</small>
+        }
+      </div>
+
       <!-- optionName -->
       <div class="flex flex-col gap-2">
         <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Tên tùy chọn</label>

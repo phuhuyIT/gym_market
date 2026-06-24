@@ -12,10 +12,12 @@ import {
 	Validators,
 } from '@angular/forms';
 import { CourseOptionService } from '../course-option.service';
-import { CourseOption } from '../../core/models/course.model';
+import { Course, CourseOption } from '../../core/models/course.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { matchesSearch } from '../../shared/utils/search.util';
+import { CourseAgencyService } from '../course-agency.service';
+import { UserStore } from '../../stores/user.store';
 
 @Component({
     selector: 'app-course-option-list',
@@ -27,6 +29,7 @@ import { matchesSearch } from '../../shared/utils/search.util';
 export class CourseOptionListComponent implements OnInit {
 	courseOptions: CourseOption[] = [];
 	courseOptionTemps: CourseOption[] = [];
+	courses: Course[] = [];
 
 	// store
 	loaderStore = inject(LoaderModalStore);
@@ -49,15 +52,20 @@ export class CourseOptionListComponent implements OnInit {
 
 	// search
 	searchString: string = '';
+	selectedCourseFilter: string = '';
+
+	userStore = inject(UserStore);
 
 	constructor(
 		private courseOptionService: CourseOptionService,
+		private courseAgencyService: CourseAgencyService,
 		private formBuilder: FormBuilder
 	) {}
 
 	ngOnInit() {
 		this.addCourseOptionForm = this.formBuilder.group({
 			optionId: [''],
+			courseId: ['', [Validators.required]],
 			optionName: ['abc', [Validators.required]],
 			description: ['abc', [Validators.required]],
 			price: [1000000, [Validators.required]],
@@ -65,19 +73,47 @@ export class CourseOptionListComponent implements OnInit {
 
 		this.updateCourseOptionForm = this.formBuilder.group({
 			optionId: [''],
+			courseId: ['', [Validators.required]],
 			optionName: ['', [Validators.required]],
 			description: ['', [Validators.required]],
 			price: [0, [Validators.required]],
 		});
 
-		patchState(this.loaderStore, { isShow: true });
+		this.loadCourses();
+		this.loadOptions();
+	}
 
+	private loadCourses() {
+		const trainerId = this.userStore.trainerId() ?? '';
+		if (!trainerId) {
+			return;
+		}
+		this.courseAgencyService
+			.getCoursesOfTrainer(trainerId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.courses = res;
+					if (!this.addCourseOptionForm.controls['courseId'].value && res.length > 0) {
+						this.addCourseOptionForm.controls['courseId'].setValue(res[0].courseId);
+					}
+					this.cdr.markForCheck();
+				},
+			});
+	}
+
+	private loadOptions() {
+		patchState(this.loaderStore, { isShow: true });
 		this.courseOptionService.getAllCourseOptions().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: (res: CourseOption[]) => {
 				this.courseOptions = res;
-				this.courseOptionTemps = this.courseOptions;
+				this.applyFilters();
 				patchState(this.loaderStore, { isShow: false });
 				this.cdr.markForCheck();
+			},
+			error: err => {
+				patchState(this.loaderStore, { isShow: false });
+				patchState(this.errorModalStore, { errors: err.error?.errors, isShow: true });
 			},
 		});
 	}
@@ -106,6 +142,7 @@ export class CourseOptionListComponent implements OnInit {
 						this.courseOptions.splice(index, 1);
 					}
 					this.courseOptionIdToDelete = '';
+					this.applyFilters();
 					this.cdr.markForCheck();
 				},
 				error: err => {
@@ -116,15 +153,37 @@ export class CourseOptionListComponent implements OnInit {
 	}
 
 	search() {
-		if (this.searchString === '') {
-			this.courseOptionTemps = this.courseOptions;
-			return;
+		this.applyFilters();
+	}
+
+	onCourseFilterChange() {
+		this.applyFilters();
+	}
+
+	private applyFilters() {
+		let result = this.courseOptions;
+		if (this.selectedCourseFilter) {
+			result = result.filter(c => c.courseId === this.selectedCourseFilter);
 		}
-		this.courseOptionTemps = this.courseOptions.filter((c) => matchesSearch(this.searchString, [c.optionName]));
+		if (this.searchString.trim()) {
+			result = result.filter(c =>
+				matchesSearch(this.searchString, [
+					c.optionName,
+					c.description,
+					this.getCourseTitle(c.courseId),
+				])
+			);
+		}
+		this.courseOptionTemps = result;
 	}
 
 	onShowAddModal(flag: boolean) {
 		this.isShowAddCourseOptionModal = flag;
+		if (flag === true) {
+			this.addCourseOptionForm.controls['courseId'].setValue(
+				this.selectedCourseFilter || this.courses[0]?.courseId || ''
+			);
+		}
 		if (flag === false) {
 			this.resetAddForm();
 		}
@@ -134,6 +193,8 @@ export class CourseOptionListComponent implements OnInit {
 		const optionId = crypto.randomUUID();
 
 		if (this.addCourseOptionForm.valid === false) {
+			return;
+		} else if (this.addCourseOptionForm.controls['courseId'].value === '') {
 			return;
 		} else if (this.addCourseOptionForm.controls['optionName'].value === '') {
 			return;
@@ -151,7 +212,7 @@ export class CourseOptionListComponent implements OnInit {
 			next: (_res) => {
 				patchState(this.loaderStore, { isShow: false });
 				this.courseOptions.push(model);
-				this.courseOptionTemps = this.courseOptions;
+				this.applyFilters();
 				this.isShowAddCourseOptionModal = false;
 				this.resetAddForm();
 				this.cdr.markForCheck();
@@ -170,6 +231,7 @@ export class CourseOptionListComponent implements OnInit {
 			this.resetUpdateForm();
 		} else {
 			this.updateCourseOptionForm.controls['optionId'].setValue(option.optionId);
+			this.updateCourseOptionForm.controls['courseId'].setValue(option.courseId);
 			this.updateCourseOptionForm.controls['optionName'].setValue(option.optionName);
 			this.updateCourseOptionForm.controls['description'].setValue(option.description);
 			this.updateCourseOptionForm.controls['price'].setValue(option.price);
@@ -178,6 +240,8 @@ export class CourseOptionListComponent implements OnInit {
 
 	updateCourseOptionSubmit() {
 		if (this.updateCourseOptionForm.valid === false) {
+			return;
+		} else if (this.updateCourseOptionForm.controls['courseId'].value === '') {
 			return;
 		} else if (this.updateCourseOptionForm.controls['optionName'].value === '') {
 			return;
@@ -202,10 +266,12 @@ export class CourseOptionListComponent implements OnInit {
 						x.optionId === this.updateCourseOptionForm.controls['optionId'].value
 				);
 				if (option) {
+					option.courseId = this.updateCourseOptionForm.controls['courseId'].value;
 					option.optionName = this.updateCourseOptionForm.controls['optionName'].value;
 					option.description = this.updateCourseOptionForm.controls['description'].value;
 					option.price = this.updateCourseOptionForm.controls['price'].value;
 				}
+				this.applyFilters();
 				this.resetUpdateForm();
 				this.cdr.markForCheck();
 			},
@@ -218,6 +284,7 @@ export class CourseOptionListComponent implements OnInit {
 
 	private resetAddForm() {
 		this.addCourseOptionForm.controls['optionId'].setValue('');
+		this.addCourseOptionForm.controls['courseId'].setValue(this.courses[0]?.courseId || '');
 		this.addCourseOptionForm.controls['optionName'].setValue('');
 		this.addCourseOptionForm.controls['description'].setValue('');
 		this.addCourseOptionForm.controls['price'].setValue(0);
@@ -225,8 +292,13 @@ export class CourseOptionListComponent implements OnInit {
 
 	private resetUpdateForm() {
 		this.updateCourseOptionForm.controls['optionId'].setValue('');
+		this.updateCourseOptionForm.controls['courseId'].setValue('');
 		this.updateCourseOptionForm.controls['optionName'].setValue('');
 		this.updateCourseOptionForm.controls['description'].setValue('');
 		this.updateCourseOptionForm.controls['price'].setValue(0);
+	}
+
+	getCourseTitle(courseId: string): string {
+		return this.courses.find(c => c.courseId === courseId)?.title || 'Unassigned course';
 	}
 }

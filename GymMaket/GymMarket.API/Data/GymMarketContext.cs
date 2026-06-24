@@ -134,6 +134,10 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
             entity.ToTable("Course_Options");
 
+            entity.Property(e => e.CourseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Course_ID");
             entity.Property(e => e.OptionId)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -145,6 +149,12 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.Price)
                 .HasDefaultValue(0.00m)
                 .HasColumnType("decimal(10, 2)");
+
+            entity.HasIndex(e => e.CourseId);
+
+            entity.HasOne(d => d.Course).WithMany(p => p.CourseOptions)
+                .HasForeignKey(d => d.CourseId)
+                .HasConstraintName("FK_Course_Options_Course");
         });
 
         modelBuilder.Entity<CourseRating>(entity =>
