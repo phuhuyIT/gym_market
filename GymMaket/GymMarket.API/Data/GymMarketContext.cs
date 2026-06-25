@@ -27,6 +27,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<LectureMaterial> LectureMaterials { get; set; }
 
+    public virtual DbSet<LectureProgress> LectureProgresses { get; set; }
+
     public virtual DbSet<Message> Messages { get; set; }
 
     public virtual DbSet<Notification> Notifications { get; set; }
@@ -397,6 +399,51 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasOne(d => d.Lecture).WithMany(p => p.LectureMaterials)
                 .HasForeignKey(d => d.LectureId)
                 .HasConstraintName("FK_Lecture_Materials_Lecture");
+        });
+
+        modelBuilder.Entity<LectureProgress>(entity =>
+        {
+            entity.HasKey(e => e.LectureProgressId).HasName("PK_Lecture_Progress");
+
+            entity.ToTable("Lecture_Progress");
+
+            entity.Property(e => e.LectureProgressId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Lecture_Progress_ID");
+            entity.Property(e => e.StudentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Student_ID");
+            entity.Property(e => e.LectureId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Lecture_ID");
+            entity.Property(e => e.IsCompleted).HasColumnName("Is_Completed");
+            entity.Property(e => e.CompletedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Completed_At");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => new { e.StudentId, e.LectureId }).IsUnique();
+            entity.HasIndex(e => e.LectureId);
+
+            entity.HasOne(d => d.Lecture).WithMany(p => p.LectureProgresses)
+                .HasForeignKey(d => d.LectureId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Lecture_Progress_Lecture");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.LectureProgresses)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Lecture_Progress_Student");
         });
 
         modelBuilder.Entity<Message>(entity =>

@@ -18,4 +18,6 @@ public partial class Lecture
     public virtual Course? Course { get; set; }
 
     public virtual ICollection<LectureMaterial> LectureMaterials { get; set; } = new List<LectureMaterial>();
+
+    public virtual ICollection<LectureProgress> LectureProgresses { get; set; } = new List<LectureProgress>();
 }

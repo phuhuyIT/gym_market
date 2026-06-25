@@ -4,6 +4,14 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { Lecture, LectureMaterial } from '../core/models/lecture.model';
 
+export interface CourseProgress {
+	courseId: string;
+	totalLectures: number;
+	completedLectures: number;
+	progressPercent: number;
+	completedLectureIds: string[];
+}
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -47,5 +55,19 @@ export class CourseMaterialService {
 
 	removeMaterial(materialId: string): Observable<void> {
 		return this.http.delete<void>(`${environment.baseApi}/lecturematerial/${materialId}`);
+	}
+
+	// ----- Student progress -----
+	getCourseProgress(courseId: string): Observable<CourseProgress> {
+		return this.http.get<CourseProgress>(
+			`${environment.baseApi}/lectureprogress/course/${courseId}`
+		);
+	}
+
+	updateLectureProgress(lectureId: string, isCompleted: boolean): Observable<void> {
+		return this.http.put<void>(
+			`${environment.baseApi}/lectureprogress/lecture/${lectureId}`,
+			{ isCompleted }
+		);
 	}
 }

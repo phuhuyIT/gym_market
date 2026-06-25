@@ -35,5 +35,7 @@ public partial class Student
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
+    public virtual ICollection<LectureProgress> LectureProgresses { get; set; } = new List<LectureProgress>();
+
     public virtual AppUser? AppUser { get; set; }
 }

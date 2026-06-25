@@ -34,13 +34,11 @@ export class CourseLearnComponent implements OnInit {
 	selectedLecture: Lecture | null = null;
 	materials: LectureMaterial[] = [];
 
-	// The backend payment-gates lecture access and returns 403 for students
-	// who have not paid; we surface that as a friendly locked state.
-	accessDenied = false;
+		// The backend payment-gates lecture access and returns 403 for students
+		// who have not paid; we surface that as a friendly locked state.
+		accessDenied = false;
 
-	// Completion is tracked client-side only — the API has no progress model
-	// yet — so it is an honest local convenience, not authoritative data.
-	private completedLectureIds = new Set<string>();
+		private completedLectureIds = new Set<string>();
 
 	loader = inject(LoaderModalStore);
 	toastService = inject(ToastService);
@@ -53,12 +51,12 @@ export class CourseLearnComponent implements OnInit {
 
 	ngOnInit() {
 		this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-			next: params => {
-				this.courseId = params['courseId'];
-				this.completedLectureIds = this.readCompleted(this.courseId);
-				this.loadCourse();
-				this.loadLectures();
-			},
+				next: params => {
+					this.courseId = params['courseId'];
+					this.completedLectureIds = this.readCompleted(this.courseId);
+					this.loadCourse();
+					this.loadLectures();
+				},
 		});
 	}
 
@@ -81,14 +79,15 @@ export class CourseLearnComponent implements OnInit {
 			.getLecturesByCourse(this.courseId)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: res => {
-					this.lectures = res.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-					if (this.lectures.length > 0) {
-						this.selectLecture(this.lectures[0]);
-					}
-					patchState(this.loader, { isShow: false });
-					this.cdr.markForCheck();
-				},
+					next: res => {
+						this.lectures = res.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+						if (this.lectures.length > 0) {
+							this.selectLecture(this.lectures[0]);
+						}
+						this.loadProgress();
+						patchState(this.loader, { isShow: false });
+						this.cdr.markForCheck();
+					},
 				error: err => {
 					patchState(this.loader, { isShow: false });
 					if (err.status === 403) {
@@ -96,6 +95,23 @@ export class CourseLearnComponent implements OnInit {
 					} else {
 						this.toastService.show('Failed to load course content', 'error');
 					}
+					this.cdr.markForCheck();
+				},
+			});
+	}
+
+	private loadProgress() {
+		this.courseMaterialService
+			.getCourseProgress(this.courseId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.completedLectureIds = new Set(res.completedLectureIds ?? []);
+					this.writeCompleted(this.courseId, this.completedLectureIds);
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					// Keep the local cache as a non-authoritative offline fallback.
 					this.cdr.markForCheck();
 				},
 			});
@@ -133,6 +149,7 @@ export class CourseLearnComponent implements OnInit {
 	}
 
 	toggleCompleted(lecture: Lecture) {
+		const wasCompleted = this.completedLectureIds.has(lecture.lectureId);
 		if (this.completedLectureIds.has(lecture.lectureId)) {
 			this.completedLectureIds.delete(lecture.lectureId);
 		} else {
@@ -140,6 +157,23 @@ export class CourseLearnComponent implements OnInit {
 		}
 		this.writeCompleted(this.courseId, this.completedLectureIds);
 		this.cdr.markForCheck();
+
+		this.courseMaterialService
+			.updateLectureProgress(lecture.lectureId, !wasCompleted)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {},
+				error: () => {
+					if (wasCompleted) {
+						this.completedLectureIds.add(lecture.lectureId);
+					} else {
+						this.completedLectureIds.delete(lecture.lectureId);
+					}
+					this.writeCompleted(this.courseId, this.completedLectureIds);
+					this.toastService.show('Failed to update progress', 'error');
+					this.cdr.markForCheck();
+				},
+			});
 	}
 
 	get completedCount(): number {
