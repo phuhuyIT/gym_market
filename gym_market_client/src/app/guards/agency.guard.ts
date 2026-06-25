@@ -12,7 +12,7 @@ export const agencyGuard: CanActivateFn = (route, state) => {
 	}
 
 	const role = accountService.getRole();
-	if (role === ROLES.TRAINER || role === ROLES.ADMIN) {
+	if (role === ROLES.TRAINER) {
 		return true;
 	}
 

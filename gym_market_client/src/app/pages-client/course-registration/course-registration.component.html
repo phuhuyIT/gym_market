@@ -116,8 +116,9 @@
           <section class="section-recommended">
             <h2 class="section-title-text mb-6">Recommended Courses</h2>
             
-            <div class="recommended-grid">
-              @for (item of recommendedCourses; track item.courseId) {
+            @if (recommendedCourses.length > 0) {
+              <div class="recommended-grid">
+                @for (item of recommendedCourses; track item.courseId) {
                 <div class="recommended-card" [routerLink]="['/client/course-details', item.courseId]">
                   <div class="recommended-card-img-wrap">
                     <img 
@@ -126,7 +127,7 @@
                       alt="Recommended cover" 
                     />
                     <div class="duration-badge">
-                      <span>⏱️ {{ item.duration || 8 }} hr 12 mins</span>
+                      <span>⏱️ {{ item.duration || 0 }} hrs</span>
                     </div>
                   </div>
                   
@@ -137,17 +138,22 @@
                     
                     <div class="recommended-footer">
                       <div class="stars-rating">
-                        <span class="rating-number">{{ item.rating || 4.5 }}</span>
+                        <span class="rating-number">{{ item.rating || 0 }}</span>
                         <div class="stars-gold">
                           ⭐⭐⭐⭐⭐
                         </div>
-                        <span class="rating-count">({{ 10000 + (item.price * 5) }})</span>
                       </div>
                     </div>
                   </div>
                 </div>
-              }
-            </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-state-card glass-card">
+                <p class="empty-text">No recommended courses are available yet.</p>
+                <gm-button variant="primary" routerLink="/client/course-search" class="mt-4">EXPLORE COURSES</gm-button>
+              </div>
+            }
           </section>
 
         </div>

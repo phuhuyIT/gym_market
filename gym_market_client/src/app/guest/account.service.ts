@@ -248,7 +248,8 @@ export class AccountService {
 	defaultLandingUrl(): string {
 		const role = this.getRole();
 		if (role === ROLES.TRAINER) return '/agency';
-		if (role === ROLES.STUDENT || role === ROLES.ADMIN) return '/client';
+		if (role === ROLES.ADMIN) return '/admin';
+		if (role === ROLES.STUDENT) return '/client';
 		return '/access-denied';
 	}
 

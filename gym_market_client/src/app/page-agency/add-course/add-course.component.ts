@@ -115,7 +115,7 @@ export class AddCourseComponent {
 					this.loading = false;
 					patchState(this.loaderStore, { isShow: false });
 					this.toastService.show('Course created successfully');
-					this.router.navigateByUrl('/agency/courses');
+					this.router.navigateByUrl(this.coursesUrl());
 				},
 				error: err => {
 					this.loading = false;
@@ -124,5 +124,9 @@ export class AddCourseComponent {
 					this.cdr.markForCheck();
 				},
 			});
+	}
+
+	private coursesUrl(): string {
+		return this.router.url.startsWith('/admin') ? '/admin/courses' : '/agency/courses';
 	}
 }

@@ -7,6 +7,7 @@ import { CheckBmiComponent } from './check-bmi/check-bmi.component';
 import { guestGuard } from '../guards/guest.guard';
 import { preventTrainerGuard } from '../guards/prevent-trainer.guard';
 import { PredictBodyFatByImageComponent } from './predict-body-fat-by-image/predict-body-fat-by-image.component';
+import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
 
 export const routes: Routes = [
 	{
@@ -17,6 +18,7 @@ export const routes: Routes = [
 			{ path: 'home', component: HomeComponent, title: 'guest', canActivate: [guestGuard] },
 			{ path: 'login', component: LoginComponent, title: 'Login',canActivate: [guestGuard], },
 			{ path: 'sign-up', component: SignupComponent, title: 'Sign up',canActivate: [guestGuard], },
+			{ path: 'confirm-email', component: ConfirmEmailComponent, title: 'Confirm email' },
 			{ path: 'check-bmi', component: CheckBmiComponent, title: 'Check BMI', canActivate: [preventTrainerGuard] },
 			{ path: 'predict-body-fat', component: PredictBodyFatByImageComponent, title: 'Predict Body Fat', canActivate: [preventTrainerGuard] },
 		],

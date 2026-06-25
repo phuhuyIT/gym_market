@@ -1,0 +1,24 @@
+<main class="min-h-[70vh] flex items-center justify-center px-4 py-12">
+	<section class="w-full max-w-md rounded-2xl bg-white dark:bg-[#161618] border border-neutral-200/70 dark:border-neutral-800/70 p-8 shadow-sm text-center">
+		<div
+			class="mx-auto mb-5 h-12 w-12 rounded-full flex items-center justify-center text-xl font-bold"
+			[ngClass]="{
+				'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-300': status === 'loading',
+				'bg-green-50 text-green-600 dark:bg-green-950/30 dark:text-green-300': status === 'success',
+				'bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-300': status === 'error'
+			}"
+		>
+			@if (status === 'loading') { ... }
+			@if (status === 'success') { ✓ }
+			@if (status === 'error') { ! }
+		</div>
+		<h1 class="text-2xl font-bold text-neutral-900 dark:text-white mb-3">Email confirmation</h1>
+		<p class="text-sm leading-6 text-neutral-600 dark:text-neutral-300">{{ message }}</p>
+		<a
+			routerLink="/login"
+			class="mt-6 inline-flex items-center justify-center rounded-xl bg-[#007AFF] px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-600 transition-colors"
+		>
+			Go to login
+		</a>
+	</section>
+</main>

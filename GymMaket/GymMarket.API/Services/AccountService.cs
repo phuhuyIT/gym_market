@@ -5,6 +5,7 @@ using GymMarket.API.DTOs.Response.Account;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Identity;
+using System.Net;
 
 namespace GymMarket.API.Services
 {
@@ -16,6 +17,7 @@ namespace GymMarket.API.Services
         private readonly IConfiguration _configuration;
         private readonly ILogger<AccountService> _logger;
         private readonly MinIOService _minIOService;
+        private readonly IEmailSender _emailSender;
 
         public AccountService(
             IAccountRepository accountRepository,
@@ -23,7 +25,8 @@ namespace GymMarket.API.Services
             IPasswordSignInService passwordSignInService,
             IConfiguration configuration,
             ILogger<AccountService> logger,
-            MinIOService minIOService)
+            MinIOService minIOService,
+            IEmailSender emailSender)
         {
             _accountRepository = accountRepository;
             _jwtService = jwtService;
@@ -31,6 +34,7 @@ namespace GymMarket.API.Services
             _configuration = configuration;
             _logger = logger;
             _minIOService = minIOService;
+            _emailSender = emailSender;
         }
 
         // ── Auth ──────────────────────────────────────────────────────
@@ -303,10 +307,28 @@ namespace GymMarket.API.Services
             }
 
             var token = await _accountRepository.GenerateEmailConfirmationTokenAsync(user);
+            var clientBaseUrl = _configuration["App:ClientBaseUrl"]?.TrimEnd('/') ?? "http://localhost:4200";
+            var confirmationUrl =
+                $"{clientBaseUrl}/confirm-email?userId={WebUtility.UrlEncode(user.Id)}&token={WebUtility.UrlEncode(token)}";
 
-            // TODO: Send confirmation email with token via an email service.
-            // For now, the token is returned in the response for testing purposes.
-            return new ApiResponse { StatusCode = 200, Success = true, Message = token };
+            var body = $"""
+                <p>Hello {WebUtility.HtmlEncode(user.FullName ?? user.Email)},</p>
+                <p>Please confirm your GymMarket account email by opening this link:</p>
+                <p><a href="{confirmationUrl}">Confirm email</a></p>
+                <p>If you did not request this email, you can ignore it.</p>
+                """;
+
+            try
+            {
+                await _emailSender.SendEmailAsync(user.Email!, "Confirm your GymMarket email", body);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send email confirmation for user {UserId}", user.Id);
+                return new ApiResponse { StatusCode = 500, Success = false, Errors = ["EMAIL_SEND_FAILED"] };
+            }
+
+            return new ApiResponse { StatusCode = 200, Success = true, Message = "EMAIL_CONFIRMATION_SENT" };
         }
 
         public async Task<ApiResponse> ConfirmEmail(ConfirmEmailDto model)

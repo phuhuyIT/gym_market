@@ -126,7 +126,7 @@ export class UpdateCourseComponent implements OnInit {
 			error: () => {
 				patchState(this.loaderStore, { isShow: false });
 				this.toastService.show('Course not found', 'error');
-				this.router.navigateByUrl('/agency/courses');
+				this.router.navigateByUrl(this.coursesUrl());
 			},
 		});
 	}
@@ -213,7 +213,7 @@ export class UpdateCourseComponent implements OnInit {
 				this.loading = false;
 				patchState(this.loaderStore, { isShow: false });
 				this.toastService.show('Course updated successfully');
-				this.router.navigateByUrl('/agency/courses');
+				this.router.navigateByUrl(this.coursesUrl());
 			},
 			error: err => {
 				this.loading = false;
@@ -225,6 +225,10 @@ export class UpdateCourseComponent implements OnInit {
 				this.toastService.show(message, 'error');
 			},
 		});
+	}
+
+	private coursesUrl(): string {
+		return this.router.url.startsWith('/admin') ? '/admin/courses' : '/agency/courses';
 	}
 
     showImage(url: string | null) {

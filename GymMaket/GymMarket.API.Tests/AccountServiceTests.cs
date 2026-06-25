@@ -210,7 +210,13 @@ public class AccountServiceTests
             signInService ?? new RecordingPasswordSignInService(),
             new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger<AccountService>.Instance,
-            null!);
+            null!,
+            new RecordingEmailSender());
+    }
+
+    private sealed class RecordingEmailSender : IEmailSender
+    {
+        public Task SendEmailAsync(string toEmail, string subject, string htmlBody) => Task.CompletedTask;
     }
 
     private sealed class RecordingAccountRepository : IAccountRepository

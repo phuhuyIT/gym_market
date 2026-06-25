@@ -1,0 +1,42 @@
+<section class="space-y-6">
+	<div>
+		<p class="text-sm font-semibold uppercase text-neutral-400">System overview</p>
+		<h1 class="text-3xl font-bold text-neutral-950 dark:text-white">Admin dashboard</h1>
+	</div>
+
+	<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+		<div class="rounded-2xl bg-white dark:bg-[#161618] border border-neutral-200/70 dark:border-neutral-800/70 p-5">
+			<p class="text-sm text-neutral-500">Courses</p>
+			<p class="mt-2 text-3xl font-bold">{{ courseCount }}</p>
+		</div>
+		<div class="rounded-2xl bg-white dark:bg-[#161618] border border-neutral-200/70 dark:border-neutral-800/70 p-5">
+			<p class="text-sm text-neutral-500">Paid revenue</p>
+			<p class="mt-2 text-3xl font-bold">{{ metrics.totalPaidRevenue | number:'1.0-0' }}</p>
+		</div>
+		<div class="rounded-2xl bg-white dark:bg-[#161618] border border-neutral-200/70 dark:border-neutral-800/70 p-5">
+			<p class="text-sm text-neutral-500">Paid students</p>
+			<p class="mt-2 text-3xl font-bold">{{ metrics.uniquePaidStudentCount }}</p>
+		</div>
+		<div class="rounded-2xl bg-white dark:bg-[#161618] border border-neutral-200/70 dark:border-neutral-800/70 p-5">
+			<p class="text-sm text-neutral-500">Pending payments</p>
+			<p class="mt-2 text-3xl font-bold">{{ metrics.pendingCount }}</p>
+		</div>
+	</div>
+
+	<div class="rounded-2xl bg-white dark:bg-[#161618] border border-neutral-200/70 dark:border-neutral-800/70 p-5">
+		<h2 class="text-lg font-bold mb-4">Recent paid payments</h2>
+		@if (metrics.recentPaidPayments.length > 0) {
+			<div class="divide-y divide-neutral-200/70 dark:divide-neutral-800/70">
+				@for (payment of metrics.recentPaidPayments; track payment.paymentId) {
+					<div class="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+						<span class="font-semibold">{{ payment.courseTitle || 'Course' }}</span>
+						<span class="text-neutral-500">{{ payment.studentName || 'Student' }}</span>
+						<span class="font-bold">{{ payment.paymentAmount | number:'1.0-0' }}</span>
+					</div>
+				}
+			</div>
+		} @else {
+			<p class="text-sm text-neutral-500">No paid payments yet.</p>
+		}
+	</div>
+</section>

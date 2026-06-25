@@ -1,9 +1,9 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { ROLES } from '../utilities/roles.const';
 import { AccountService } from '../guest/account.service';
+import { ROLES } from '../utilities/roles.const';
 
-export const clientGuard: CanActivateFn = (route, state) => {
+export const adminGuard: CanActivateFn = (route, state) => {
 	const accountService = inject(AccountService);
 	const router = inject(Router);
 
@@ -11,10 +11,7 @@ export const clientGuard: CanActivateFn = (route, state) => {
 		return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
 	}
 
-	const role = accountService.getRole();
-	if (role === ROLES.STUDENT) {
-		return true;
-	}
-
-	return router.parseUrl(accountService.defaultLandingUrl());
+	return accountService.getRole() === ROLES.ADMIN
+		? true
+		: router.parseUrl(accountService.defaultLandingUrl());
 };

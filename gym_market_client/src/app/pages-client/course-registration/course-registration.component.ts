@@ -10,7 +10,7 @@ import { patchState } from '@ngrx/signals';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Course } from '../../core/models/course.model';
 import { GmButtonComponent } from '../../shared/components/gm-button/gm-button.component';
-import { ACTIVITY_DAYS, RECOMMENDED_COURSES_FALLBACK } from '../../utilities/mock-data.const';
+import { ACTIVITY_DAYS } from '../../utilities/mock-data.const';
 import { DEFAULT_COURSE_THUMBNAIL_URL } from '../../utilities/defaults.const';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
 import { matchesSearch } from '../../shared/utils/search.util';
@@ -93,25 +93,15 @@ export class CourseRegistrationComponent implements OnInit {
 	}
 
 	private getRecommendedCourses() {
-		const fallbacks = RECOMMENDED_COURSES_FALLBACK;
-
 		this.courseService.getCourses(1, 3, '', '').pipe(
 			takeUntilDestroyed(this.destroyRef)
 		).subscribe({
 			next: res => {
-				if (res && res.length > 0) {
-					const apiCourses = [...res];
-					while (apiCourses.length < 3) {
-						apiCourses.push(fallbacks[apiCourses.length]);
-					}
-					this.recommendedCourses = apiCourses.slice(0, 3);
-				} else {
-					this.recommendedCourses = fallbacks;
-				}
+				this.recommendedCourses = (res ?? []).slice(0, 3);
 				this.cdr.markForCheck();
 			},
 			error: () => {
-				this.recommendedCourses = fallbacks;
+				this.recommendedCourses = [];
 				this.cdr.markForCheck();
 			}
 		});

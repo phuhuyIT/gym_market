@@ -15,7 +15,10 @@ export const guestGuard: CanActivateFn = () => {
 	if (role === ROLES.TRAINER) {
 		return router.createUrlTree(['/agency']);
 	}
-	if (role === ROLES.STUDENT || role === ROLES.ADMIN) {
+	if (role === ROLES.ADMIN) {
+		return router.createUrlTree(['/admin']);
+	}
+	if (role === ROLES.STUDENT) {
 		return router.createUrlTree(['/client']);
 	}
 	return router.createUrlTree(['/access-denied']);

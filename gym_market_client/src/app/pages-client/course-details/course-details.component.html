@@ -357,25 +357,6 @@
             </div>
           </gm-card>
 
-          <!-- Friends Widget -->
-          <gm-card class="sidebar-card friends-card gl-2">
-            <h4 class="sidebar-title">MY FRIENDS</h4>
-            <div class="friends-container">
-              <div class="friends-avatars">
-                @for (friend of mockFriends; track friend.name) {
-                  <div class="friend-avatar-wrapper" [title]="friend.name">
-                    <img [src]="friend.avatar || DEFAULT_AVATAR_IMAGE_URL" [fallbackSrc]="DEFAULT_AVATAR_IMAGE_URL" alt="">
-                  </div>
-                }
-                <div class="friend-avatar-more">
-                  <span>+10</span>
-                </div>
-              </div>
-              <button class="add-friend-btn">
-                <i class="fa-solid fa-user-plus"></i>
-              </button>
-            </div>
-          </gm-card>
         </aside>
       </div>
     </main>

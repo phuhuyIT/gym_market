@@ -15,7 +15,7 @@
         </p>
       </div>
 
-      <button routerLink="/agency/add-course" class="flex items-center gap-2 bg-white/95 hover:bg-white text-[#1d4ed8] text-sm font-extrabold px-5 py-3 rounded-2xl shadow-lg shadow-black/10 hover:-translate-y-0.5 transition-all w-fit whitespace-nowrap">
+      <button routerLink="../add-course" class="flex items-center gap-2 bg-white/95 hover:bg-white text-[#1d4ed8] text-sm font-extrabold px-5 py-3 rounded-2xl shadow-lg shadow-black/10 hover:-translate-y-0.5 transition-all w-fit whitespace-nowrap">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
         </svg>
@@ -128,21 +128,21 @@
               <!-- Actions -->
               <td class="py-4 px-6 text-right space-x-1.5 whitespace-nowrap">
                 <!-- View Enrollments / Payments -->
-                <a [routerLink]="['/agency/payments']" [queryParams]="{ courseId: course.courseId }" class="inline-flex items-center justify-center p-2 rounded-xl bg-green-500/10 hover:bg-green-600 text-green-600 dark:text-green-400 hover:text-white transition-colors shadow-sm" title="View Payments">
+                <a [routerLink]="['../payments']" [queryParams]="{ courseId: course.courseId }" class="inline-flex items-center justify-center p-2 rounded-xl bg-green-500/10 hover:bg-green-600 text-green-600 dark:text-green-400 hover:text-white transition-colors shadow-sm" title="View Payments">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
                   </svg>
                 </a>
 
                 <!-- View Materials -->
-                <a [routerLink]="['/agency/course-materials', course.courseId]" class="inline-flex items-center justify-center p-2 rounded-xl bg-amber-500/10 hover:bg-amber-600 text-amber-500 dark:text-amber-400 hover:text-white transition-colors shadow-sm" title="View Materials">
+                <a [routerLink]="['../course-materials', course.courseId]" class="inline-flex items-center justify-center p-2 rounded-xl bg-amber-500/10 hover:bg-amber-600 text-amber-500 dark:text-amber-400 hover:text-white transition-colors shadow-sm" title="View Materials">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 9.75v4.5M6.75 6.75v10.5M17.25 6.75v10.5M21 9.75v4.5M6.75 12h10.5" />
                   </svg>
                 </a>
 
                 <!-- Edit Course -->
-                <a [routerLink]="['/agency/update-course', course.courseId]" class="inline-flex items-center justify-center p-2 rounded-xl bg-blue-500/10 hover:bg-blue-600 text-[#007AFF] dark:text-blue-400 hover:text-white transition-colors shadow-sm" title="Edit Course">
+                <a [routerLink]="['../update-course', course.courseId]" class="inline-flex items-center justify-center p-2 rounded-xl bg-blue-500/10 hover:bg-blue-600 text-[#007AFF] dark:text-blue-400 hover:text-white transition-colors shadow-sm" title="Edit Course">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                   </svg>
@@ -163,7 +163,7 @@
                 <div class="text-4xl mb-3">🗂️</div>
                 <p class="text-sm font-bold text-neutral-600 dark:text-neutral-300">No courses found</p>
                 <p class="text-xs text-neutral-400 dark:text-neutral-500 mt-1">Try a different search, or create your first course.</p>
-                <button routerLink="/agency/add-course" class="mt-4 inline-flex items-center gap-2 bg-gradient-to-tr from-[#007AFF] to-[#5856D6] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-blue-500/25 hover:-translate-y-0.5 transition-all">
+                <button routerLink="../add-course" class="mt-4 inline-flex items-center gap-2 bg-gradient-to-tr from-[#007AFF] to-[#5856D6] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-blue-500/25 hover:-translate-y-0.5 transition-all">
                   + New course
                 </button>
               </td>

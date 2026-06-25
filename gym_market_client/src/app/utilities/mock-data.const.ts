@@ -1,13 +1,3 @@
-import { Course } from '../core/models/course.model';
-
-export const MOCK_FRIENDS = [
-	{ name: 'Alice', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150' },
-	{ name: 'Bob', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150' },
-	{ name: 'Charlie', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150' },
-	{ name: 'Diana', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150' },
-	{ name: 'Evan', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150' }
-];
-
 export const ACTIVITY_DAYS = [
 	{ day: 'S', hours: 1, label: '1hr' },
 	{ day: 'M', hours: 1.5, label: '1hr 30m' },
@@ -16,57 +6,6 @@ export const ACTIVITY_DAYS = [
 	{ day: 'Th', hours: 3.5, label: '3hr 30min' },
 	{ day: 'F', hours: 3, label: '3hr' },
 	{ day: 'S', hours: 0.8, label: '48m' }
-];
-
-export const RECOMMENDED_COURSES_FALLBACK: Course[] = [
-	{
-		courseId: 'rec-1',
-		trainerId: 'trainer-1',
-		title: 'Fundamental of UIUX Design',
-		description: 'Use Figma to get a job in UI design, UX design any where in the world',
-		type: 'Design',
-		category: 'Design & Creativity',
-		price: 99,
-		additionalPrice: 0,
-		startDate: '',
-		endDate: '',
-		duration: 8,
-		maxParticipants: 100,
-		rating: 4.8,
-		getFileDtos: [{ fileId: 'f1', courseId: 'rec-1', url: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=600&q=80', typeFile: 'IMAGE' }]
-	},
-	{
-		courseId: 'rec-2',
-		trainerId: 'trainer-2',
-		title: 'Figma UIUX Design Masterclass',
-		description: 'Use Figma to get a job in UI design, UX design any where in the world',
-		type: 'Design',
-		category: 'Data and Technology',
-		price: 129,
-		additionalPrice: 0,
-		startDate: '',
-		endDate: '',
-		duration: 12,
-		maxParticipants: 150,
-		rating: 4.5,
-		getFileDtos: [{ fileId: 'f2', courseId: 'rec-2', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80', typeFile: 'IMAGE' }]
-	},
-	{
-		courseId: 'rec-3',
-		trainerId: 'trainer-3',
-		title: 'Advanced Graphics & Visual Design',
-		description: 'Use Figma to get a job in UI design, UX design any where in the world',
-		type: 'Design',
-		category: 'Software Development',
-		price: 149,
-		additionalPrice: 0,
-		startDate: '',
-		endDate: '',
-		duration: 15,
-		maxParticipants: 80,
-		rating: 4.9,
-		getFileDtos: [{ fileId: 'f3', courseId: 'rec-3', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=600&q=80', typeFile: 'IMAGE' }]
-	}
 ];
 
 export const RECIPES_LIST = [

@@ -20,7 +20,6 @@ import {
 	CourseRating,
 	CourseRatingCreateDto,
 } from '../../core/models/course.model';
-import { MOCK_FRIENDS } from '../../utilities/mock-data.const';
 import { generateWorkoutPlans } from '../../utilities/workout-plans.const';
 import { DEFAULT_AVATAR_IMAGE_URL, DEFAULT_COURSE_THUMBNAIL_URL, DEFAULT_IMAGE_URL } from '../../utilities/defaults.const';
 import { FallbackSrcDirective } from '../../shared/directives/fallback-src.directive';
@@ -81,7 +80,6 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 	volumeLevel: number = 80;
 	isMuted: boolean = false;
 
-	readonly mockFriends = MOCK_FRIENDS;
 	readonly DEFAULT_AVATAR_IMAGE_URL = DEFAULT_AVATAR_IMAGE_URL;
 	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
 	readonly DEFAULT_IMAGE_URL = DEFAULT_IMAGE_URL;
