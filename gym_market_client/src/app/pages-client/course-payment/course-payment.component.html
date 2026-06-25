@@ -64,6 +64,18 @@
             <gm-card class="details-card gl">
               <h3 class="details-card__title">Or transfer manually</h3>
               <ul class="bank-details">
+                @if (info.options && info.options.length > 0) {
+                  <li>
+                    <span class="bank-details__label">Course</span>
+                    <span class="bank-details__value">{{ info.courseAmount | number:'1.0-0' }} VND</span>
+                  </li>
+                  @for (option of info.options; track option.optionId) {
+                    <li>
+                      <span class="bank-details__label">{{ option.optionName || 'Add-on' }}</span>
+                      <span class="bank-details__value">+ {{ option.price | number:'1.0-0' }} VND</span>
+                    </li>
+                  }
+                }
                 <li>
                   <span class="bank-details__label">Amount</span>
                   <span class="bank-details__value">

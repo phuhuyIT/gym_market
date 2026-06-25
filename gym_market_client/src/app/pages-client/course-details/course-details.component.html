@@ -33,8 +33,11 @@
             <gm-card class="enroll-card gl-2">
               <div class="enroll-card__price">
                 <span class="currency">$</span>
-                <span class="amount">{{course.price | number:'1.0-0'}}</span>
+                <span class="amount">{{enrollmentTotal | number:'1.0-0'}}</span>
               </div>
+              @if (selectedOptionsTotal > 0) {
+                <p class="enroll-card__status-note">Includes {{ selectedOptionsTotal | number:'1.0-0' }} in selected add-ons.</p>
+              }
               <div class="enroll-card__stats">
                 <div class="stat-item">
                   <span class="stat-item__label">DURATION</span>
@@ -235,9 +238,17 @@
               <h2 class="section-title">ENROLLMENT OPTIONS</h2>
               <div class="options-list">
                 @for (op of courseOptions; track op) {
-                  <gm-card class="option-card">
+                  <gm-card class="option-card" [class.option-card--selected]="isOptionSelected(op.optionId)" (click)="toggleOption(op.optionId)">
                     <div class="option-card__header">
-                      <h3>{{op.optionName}}</h3>
+                      <h3>
+                        <input
+                          type="checkbox"
+                          [checked]="isOptionSelected(op.optionId)"
+                          [disabled]="isPendingPayment || hasPaidAccess"
+                          (click)="$event.stopPropagation(); toggleOption(op.optionId)"
+                        />
+                        {{op.optionName}}
+                      </h3>
                       <span class="option-card__price">+ ${{op.price}}</span>
                     </div>
                     <p class="option-card__text">{{op.description}}</p>

@@ -79,24 +79,27 @@ namespace GymMarket.API.Repositories
             mapEntity.TrainerId = currentCourse.TrainerId;
             mapEntity.Status = CourseStatus.Normalize(courseUpdateDTO.Status ?? currentCourse.Status);
 
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            var useTransaction = _context.Database.IsRelational();
+            await using var transaction = useTransaction
+                ? await _context.Database.BeginTransactionAsync()
+                : null;
             try
             {
-                if (courseUpdateDTO.Images.Count > 0)
-                {
-                    var oldImageFiles = await _context.FileCourses
-                              .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == FileType.Image)
-                              .ToListAsync();
-                    _context.FileCourses.RemoveRange(oldImageFiles);
-                }
+                var retainedImageIds = courseUpdateDTO.RetainedImageObjectIds.ToHashSet(StringComparer.Ordinal);
+                var oldImageFiles = await _context.FileCourses
+                          .Where(c => c.CourseId == courseUpdateDTO.CourseId
+                              && c.TypeFile == FileType.Image
+                              && !retainedImageIds.Contains(c.ObjectId))
+                          .ToListAsync();
+                _context.FileCourses.RemoveRange(oldImageFiles);
 
-                if (courseUpdateDTO.Videos.Count > 0)
-                {
-                    var oldVideoFiles = await _context.FileCourses
-                              .Where(c => c.CourseId == courseUpdateDTO.CourseId && c.TypeFile == FileType.Video)
-                              .ToListAsync();
-                    _context.FileCourses.RemoveRange(oldVideoFiles);
-                }
+                var retainedVideoIds = courseUpdateDTO.RetainedVideoObjectIds.ToHashSet(StringComparer.Ordinal);
+                var oldVideoFiles = await _context.FileCourses
+                          .Where(c => c.CourseId == courseUpdateDTO.CourseId
+                              && c.TypeFile == FileType.Video
+                              && !retainedVideoIds.Contains(c.ObjectId))
+                          .ToListAsync();
+                _context.FileCourses.RemoveRange(oldVideoFiles);
 
                 await _minioService.UploadFiles(new DTOs.FileMinIO.FileAdd
                 {
@@ -112,7 +115,6 @@ namespace GymMarket.API.Repositories
                 // payments are never touched — a settled amount must not change when the
                 // price changes. This mirrors the lazy re-sync in
                 // CourseRegistrationRepository.GetCoursePaymentInfo.
-                var newPrice = (mapEntity.Price ?? 0) + (mapEntity.AdditionalPrice ?? 0);
                 var openPayments = await _context.Payments
                     .Where(p => p.CourseId == courseUpdateDTO.CourseId
                              && (p.PaymentStatus == PaymentStatus.Pending
@@ -120,6 +122,12 @@ namespace GymMarket.API.Repositories
                     .ToListAsync();
                 foreach (var payment in openPayments)
                 {
+                    var optionsAmount = await _context.CourseRegistrationOptions
+                        .Where(ro => ro.Registration != null
+                            && ro.Registration.StudentId == payment.StudentId
+                            && ro.Registration.CourseId == courseUpdateDTO.CourseId)
+                        .SumAsync(ro => ro.Option != null ? ro.Option.Price ?? 0 : 0);
+                    var newPrice = (mapEntity.Price ?? 0) + (mapEntity.AdditionalPrice ?? 0) + optionsAmount;
                     if (payment.PaymentAmount != newPrice)
                     {
                         payment.PaymentAmount = newPrice;
@@ -128,7 +136,10 @@ namespace GymMarket.API.Repositories
                 }
 
                 var r = await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                if (transaction != null)
+                {
+                    await transaction.CommitAsync();
+                }
 
                 if (r > 0)
                 {
@@ -149,7 +160,10 @@ namespace GymMarket.API.Repositories
             }
             catch
             {
-                await transaction.RollbackAsync();
+                if (transaction != null)
+                {
+                    await transaction.RollbackAsync();
+                }
                 throw;
             }
         }

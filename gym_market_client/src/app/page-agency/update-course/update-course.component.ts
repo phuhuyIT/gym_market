@@ -5,7 +5,7 @@ import { patchState } from '@ngrx/signals';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { LoaderModalStore } from '../../stores/loader.store';
-import { Course } from '../../core/models/course.model';
+import { Course, CourseFile } from '../../core/models/course.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GmButtonComponent } from '../../shared';
 import { ToastService } from '../../shared/services/toast.service';
@@ -18,6 +18,12 @@ interface CourseTypeOption {
 	label: string;
 	icon: string;
 	gradient: string;
+}
+
+interface MediaPreview {
+	url: string;
+	objectId?: string;
+	file?: File;
 }
 
 @Component({
@@ -72,10 +78,8 @@ export class UpdateCourseComponent implements OnInit {
 	private router = inject(Router);
 	private renderer = inject(Renderer2);
 
-	dataImages: string[] = [];
-	private imagesAdd: File[] = [];
-	dataVideos: string[] = [];
-	private videosAdd: File[] = [];
+	dataImages: MediaPreview[] = [];
+	dataVideos: MediaPreview[] = [];
     url: string | null = null;
 
 	get selectedType(): CourseTypeOption {
@@ -114,8 +118,8 @@ export class UpdateCourseComponent implements OnInit {
 					startDate: formatDateToInput(new Date(res.startDate)),
 					endDate: formatDateToInput(new Date(res.endDate)),
 				};
-				this.dataImages = res.getFileDtos ? res.getFileDtos.filter((c) => c.typeFile === 'IMAGE').map((c) => c.url) : [];
-				this.dataVideos = res.getFileDtos ? res.getFileDtos.filter((c) => c.typeFile === 'VIDEO').map((c) => c.url) : [];
+				this.dataImages = this.toMediaPreviews(res.getFileDtos, 'IMAGE');
+				this.dataVideos = this.toMediaPreviews(res.getFileDtos, 'VIDEO');
 				patchState(this.loaderStore, { isShow: false });
 				this.cdr.markForCheck();
 			},
@@ -132,12 +136,11 @@ export class UpdateCourseComponent implements OnInit {
 		if (input.files && input.files.length > 0) {
 			for (let i = 0; i < input.files.length; i++) {
 				const file = input.files[i];
-				this.imagesAdd.push(file);
 				const reader = new FileReader();
 				reader.readAsDataURL(file);
 				reader.onload = e => {
 					const data = e.target?.result;
-					if (typeof data === 'string') this.dataImages.push(data);
+					if (typeof data === 'string') this.dataImages.push({ url: data, file });
 				};
 			}
 		}
@@ -145,13 +148,11 @@ export class UpdateCourseComponent implements OnInit {
 
 	onClearImages(input: HTMLInputElement) {
 		this.dataImages = [];
-		this.imagesAdd = [];
 		input.value = '';
 	}
 
 	onClearVideo(input: HTMLInputElement) {
 		this.dataVideos = [];
-		this.videosAdd = [];
 		input.value = '';
 	}
 
@@ -167,12 +168,19 @@ export class UpdateCourseComponent implements OnInit {
 					);
 					continue;
 				}
-				this.videosAdd.push(file);
 				const videoUrl = URL.createObjectURL(file);
-				this.dataVideos.push(videoUrl);
+				this.dataVideos.push({ url: videoUrl, file });
 			}
 			input.value = '';
 		}
+	}
+
+	removeImage(index: number) {
+		this.dataImages.splice(index, 1);
+	}
+
+	removeVideo(index: number) {
+		this.dataVideos.splice(index, 1);
 	}
 
 	submit() {
@@ -192,8 +200,10 @@ export class UpdateCourseComponent implements OnInit {
 		// No TrainerId: ownership never changes on update and the backend
 		// keeps the current owner.
 
-		for (let file of this.imagesAdd) form.append('Images', file);
-		for (let file of this.videosAdd) form.append('Videos', file);
+		for (let id of this.retainedImageObjectIds()) form.append('RetainedImageObjectIds', id);
+		for (let id of this.retainedVideoObjectIds()) form.append('RetainedVideoObjectIds', id);
+		for (let file of this.newImageFiles()) form.append('Images', file);
+		for (let file of this.newVideoFiles()) form.append('Videos', file);
 
 		this.loading = true;
 		patchState(this.loaderStore, { isShow: true });
@@ -221,5 +231,29 @@ export class UpdateCourseComponent implements OnInit {
 		this.url = url;
 		if (url) this.renderer.addClass(document.body, 'no-scroll');
 		else this.renderer.removeClass(document.body, 'no-scroll');
+	}
+
+	private toMediaPreviews(files: CourseFile[] | undefined, type: 'IMAGE' | 'VIDEO'): MediaPreview[] {
+		return files
+			? files
+				.filter(file => file.typeFile === type)
+				.map(file => ({ url: file.url, objectId: file.objectId }))
+			: [];
+	}
+
+	private retainedImageObjectIds(): string[] {
+		return this.dataImages.map(img => img.objectId).filter((id): id is string => !!id);
+	}
+
+	private retainedVideoObjectIds(): string[] {
+		return this.dataVideos.map(video => video.objectId).filter((id): id is string => !!id);
+	}
+
+	private newImageFiles(): File[] {
+		return this.dataImages.map(img => img.file).filter((file): file is File => !!file);
+	}
+
+	private newVideoFiles(): File[] {
+		return this.dataVideos.map(video => video.file).filter((file): file is File => !!file);
 	}
 }

@@ -4,6 +4,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 	COURSE_NOT_FOUND: 'This course is no longer available.',
 	COURSE_NOT_PUBLISHED: 'This course is not open for enrollment yet.',
 	COURSE_FULL: 'This course is full. Please choose another course.',
+	INVALID_COURSE_OPTION: 'One of the selected add-ons is no longer available.',
 	REGISTRATION_NOT_FOUND: 'Please enroll in this course before paying.',
 	REGISTRATION_CANCELED: 'This payment was canceled. Restart payment before choosing Momo.',
 	MOMO_NOT_CONFIGURED: 'Momo payment is not configured yet. Please use bank transfer.',

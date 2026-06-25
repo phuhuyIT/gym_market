@@ -20,9 +20,10 @@ export class CourseRegistrationService {
 
 	// The acting student is derived from the JWT on the backend, so no
 	// studentId is ever sent.
-	registerCourse(courseId: string): Observable<RegisterCourseResponse> {
+	registerCourse(courseId: string, optionIds: string[] = []): Observable<RegisterCourseResponse> {
 		return this.http.post<RegisterCourseResponse>(`${environment.baseApi}/CourseRegistration/register-course`, {
 			courseId,
+			optionIds,
 		});
 	}
 

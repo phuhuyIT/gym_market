@@ -35,6 +35,7 @@ import { coursePaymentErrorMessage } from '../course-payment-error.util';
 })
 export class CourseDetailsComponent implements OnInit, OnDestroy {
 	courseOptions: CourseOption[] = [];
+	selectedOptionIds = new Set<string>();
 	course: Course | null = null;
 	loader = inject(LoaderModalStore);
 	courseId: string = '';
@@ -248,6 +249,33 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 		this.addToCard(this.courseId);
 	}
 
+	toggleOption(optionId: string) {
+		if (this.isPendingPayment || this.hasPaidAccess) {
+			return;
+		}
+		if (this.selectedOptionIds.has(optionId)) {
+			this.selectedOptionIds.delete(optionId);
+		} else {
+			this.selectedOptionIds.add(optionId);
+		}
+		this.cdr.markForCheck();
+	}
+
+	isOptionSelected(optionId: string): boolean {
+		return this.selectedOptionIds.has(optionId);
+	}
+
+	get selectedOptionsTotal(): number {
+		return this.courseOptions
+			.filter(option => this.selectedOptionIds.has(option.optionId))
+			.reduce((sum, option) => sum + (option.price || 0), 0);
+	}
+
+	get enrollmentTotal(): number {
+		if (!this.course) return this.selectedOptionsTotal;
+		return (this.course.price || 0) + (this.course.additionalPrice || 0) + this.selectedOptionsTotal;
+	}
+
 	preventInvalidInput(event: KeyboardEvent): void {
 		if (['e', 'E', '+', '-'].includes(event.key)) {
 			event.preventDefault();
@@ -315,7 +343,7 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
 		this.courseId = courseId;
 		patchState(this.loader, { isShow: true });
 		this.courseRegistrationService
-			.registerCourse(this.courseId)
+			.registerCourse(this.courseId, Array.from(this.selectedOptionIds))
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: () => {

@@ -8,6 +8,9 @@ namespace GymMarket.API.DTOs.CourseRegistration
         public string CourseId { get; set; } = string.Empty;
         public string? CourseTitle { get; set; }
         public decimal Amount { get; set; }
+        public decimal CourseAmount { get; set; }
+        public decimal OptionsAmount { get; set; }
+        public List<CoursePaymentOptionDto> Options { get; set; } = [];
 
         // Normalized payment status: Pending / Paid / Canceled / Not Started.
         public string? Status { get; set; }
@@ -22,5 +25,12 @@ namespace GymMarket.API.DTOs.CourseRegistration
         public string? BankAccountName { get; set; }
         public string? TrainerName { get; set; }
         public bool BankConfigured { get; set; }
+    }
+
+    public class CoursePaymentOptionDto
+    {
+        public string OptionId { get; set; } = string.Empty;
+        public string? OptionName { get; set; }
+        public decimal Price { get; set; }
     }
 }

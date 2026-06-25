@@ -63,7 +63,10 @@ namespace GymMarket.API.Services
             }
 
             string paymentId = Guid.NewGuid().ToString("N");
-            double paymentAmount = (double)((course.Price ?? 0) + (course.AdditionalPrice ?? 0));
+            var optionsAmount = await _context.CourseRegistrationOptions
+                .Where(ro => ro.RegistrationId == registration.RegistrationId)
+                .SumAsync(ro => ro.Option != null ? ro.Option.Price ?? 0 : 0);
+            double paymentAmount = (double)((course.Price ?? 0) + (course.AdditionalPrice ?? 0) + optionsAmount);
 
             // Store studentId and courseId in extraData as JSON so the signed
             // callback/IPN can tell which student paid for which course.

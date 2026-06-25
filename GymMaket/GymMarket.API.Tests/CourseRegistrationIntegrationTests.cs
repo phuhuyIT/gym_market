@@ -155,6 +155,95 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
     }
 
     [Fact]
+    public async Task RegisterCourse_WithSelectedOptions_IncludesOptionsInPaymentAmount()
+    {
+        await AuthenticateAsync(email: "option_pay_trainer@example.com", role: "Trainer");
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_OPTION_PAY_001",
+            Title = "Option Payment Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50,
+            AdditionalPrice = 5
+        });
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            db.CourseOptions.Add(new CourseOption
+            {
+                OptionId = "CRS_OPTION_ADDON_001",
+                CourseId = "CRS_OPTION_PAY_001",
+                OptionName = "Coaching Call",
+                Price = 20
+            });
+            await db.SaveChangesAsync();
+        }
+
+        await AuthenticateAsync(email: "student_option_pay@example.com");
+        var registerResponse = await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_OPTION_PAY_001",
+            OptionIds = ["CRS_OPTION_ADDON_001"]
+        });
+        Assert.Equal(HttpStatusCode.OK, registerResponse.StatusCode);
+
+        var info = await Client.GetFromJsonAsync<CoursePaymentInfoDto>("/api/CourseRegistration/payment-info/CRS_OPTION_PAY_001");
+
+        Assert.NotNull(info);
+        Assert.Equal(75, info!.Amount);
+        Assert.Equal(55, info.CourseAmount);
+        Assert.Equal(20, info.OptionsAmount);
+        Assert.Single(info.Options);
+        Assert.Equal("CRS_OPTION_ADDON_001", info.Options[0].OptionId);
+    }
+
+    [Fact]
+    public async Task RegisterCourse_WithOptionFromAnotherCourse_ReturnsConflict()
+    {
+        await AuthenticateAsync(email: "option_invalid_trainer@example.com", role: "Trainer");
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_OPTION_VALID",
+            Title = "Valid Option Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50
+        });
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_OPTION_OTHER",
+            Title = "Other Option Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50
+        });
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            db.CourseOptions.Add(new CourseOption
+            {
+                OptionId = "CRS_OPTION_WRONG_COURSE",
+                CourseId = "CRS_OPTION_OTHER",
+                OptionName = "Wrong Course Option",
+                Price = 20
+            });
+            await db.SaveChangesAsync();
+        }
+
+        await AuthenticateAsync(email: "student_invalid_option@example.com");
+        var response = await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_OPTION_VALID",
+            OptionIds = ["CRS_OPTION_WRONG_COURSE"]
+        });
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
     public async Task GetPaymentInfo_ForUnregisteredCourse_ReturnsNotFound()
     {
         // Arrange — a trainer creates a course the student never registers for.

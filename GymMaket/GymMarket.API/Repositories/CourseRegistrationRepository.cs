@@ -90,6 +90,12 @@ namespace GymMarket.API.Repositories
                 return RegisterCourseResultDto.Fail(CourseRegistrationErrorCode.CourseFull);
             }
 
+            var selectedOptions = await GetSelectedCourseOptionsAsync(dto.CourseId, dto.OptionIds);
+            if (selectedOptions == null)
+            {
+                return RegisterCourseResultDto.Fail(CourseRegistrationErrorCode.InvalidCourseOption);
+            }
+
             var isRetry = courseExists != null;
             var now = DateTime.UtcNow;
             var registration = courseExists ?? new CourseRegistration
@@ -109,12 +115,32 @@ namespace GymMarket.API.Repositories
             {
                 _context.CourseRegistrations.Add(registration);
             }
+            else
+            {
+                var previousOptions = await _context.CourseRegistrationOptions
+                    .Where(o => o.RegistrationId == registration.RegistrationId)
+                    .ToListAsync();
+                _context.CourseRegistrationOptions.RemoveRange(previousOptions);
+            }
+
+            foreach (var option in selectedOptions)
+            {
+                _context.CourseRegistrationOptions.Add(new CourseRegistrationOption
+                {
+                    RegistrationOptionId = Guid.NewGuid().ToString(),
+                    RegistrationId = registration.RegistrationId,
+                    OptionId = option.OptionId
+                });
+            }
+
+            var optionAmount = selectedOptions.Sum(o => o.Price ?? 0);
+            var paymentAmount = (course.Price ?? 0) + (course.AdditionalPrice ?? 0) + optionAmount;
 
             var paymentId = Guid.NewGuid().ToString();
             var payment = new Payment()
             {
                 CourseId = dto.CourseId,
-                PaymentAmount = course.Price + course.AdditionalPrice,
+                PaymentAmount = paymentAmount,
                 CreatedAt = now,
                 PaymentDate = now,
                 PaymentId = paymentId,
@@ -300,8 +326,10 @@ END";
                 && !string.IsNullOrWhiteSpace(trainer.BankBin)
                 && !string.IsNullOrWhiteSpace(trainer.BankAccountNo);
 
-            // The course price the student should pay right now.
-            var currentPrice = (course.Price ?? 0) + (course.AdditionalPrice ?? 0);
+            var selectedOptions = await GetRegistrationOptionsAsync(registration.RegistrationId);
+            var courseAmount = (course.Price ?? 0) + (course.AdditionalPrice ?? 0);
+            var optionsAmount = selectedOptions.Sum(o => o.Price);
+            var currentPrice = courseAmount + optionsAmount;
 
             // The amount snapshot is locked once the student has paid (they owe exactly
             // what they paid). While the payment is still open, keep it in sync with the
@@ -340,6 +368,9 @@ END";
                 CourseId = courseId,
                 CourseTitle = course.Title,
                 Amount = amount,
+                CourseAmount = courseAmount,
+                OptionsAmount = optionsAmount,
+                Options = selectedOptions,
                 Status = PaymentStatus.Normalize(payment?.PaymentStatus),
                 Reference = payment?.Note,
                 BankBin = trainer?.BankBin,
@@ -420,6 +451,36 @@ END";
         {
             var status = PaymentStatus.Normalize(registration.PaymentStatus);
             return status == PaymentStatus.Canceled || status == PaymentStatus.Expired;
+        }
+
+        private async Task<List<CourseOption>?> GetSelectedCourseOptionsAsync(string courseId, IEnumerable<string>? optionIds)
+        {
+            var selectedIds = (optionIds ?? [])
+                .Where(id => !string.IsNullOrWhiteSpace(id))
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+
+            if (selectedIds.Count == 0)
+                return [];
+
+            var options = await _context.CourseOptions
+                .Where(o => selectedIds.Contains(o.OptionId) && o.CourseId == courseId)
+                .ToListAsync();
+
+            return options.Count == selectedIds.Count ? options : null;
+        }
+
+        private async Task<List<CoursePaymentOptionDto>> GetRegistrationOptionsAsync(string registrationId)
+        {
+            return await _context.CourseRegistrationOptions
+                .Where(ro => ro.RegistrationId == registrationId)
+                .Select(ro => new CoursePaymentOptionDto
+                {
+                    OptionId = ro.OptionId ?? string.Empty,
+                    OptionName = ro.Option != null ? ro.Option.OptionName : null,
+                    Price = ro.Option != null ? ro.Option.Price ?? 0 : 0
+                })
+                .ToListAsync();
         }
 
         private async Task<bool> IsCourseFullAsync(string courseId)

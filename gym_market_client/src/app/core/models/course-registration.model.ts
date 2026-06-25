@@ -11,7 +11,13 @@ export interface CourseRegistration {
 
 export interface RegisterCourseDto {
   courseId: string;
-  studentId: string;
+  optionIds?: string[];
+}
+
+export interface CoursePaymentOption {
+  optionId: string;
+  optionName?: string;
+  price: number;
 }
 
 // Bank-transfer payment details for one registered course (see backend
@@ -21,6 +27,9 @@ export interface CoursePaymentInfo {
   courseId: string;
   courseTitle?: string;
   amount: number;
+  courseAmount: number;
+  optionsAmount: number;
+  options: CoursePaymentOption[];
   status?: string;
   reference?: string;
   bankBin?: string;

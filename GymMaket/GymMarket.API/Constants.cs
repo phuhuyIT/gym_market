@@ -56,6 +56,7 @@ namespace GymMarket.API
         public const string CourseNotFound = "COURSE_NOT_FOUND";
         public const string CourseNotPublished = "COURSE_NOT_PUBLISHED";
         public const string CourseFull = "COURSE_FULL";
+        public const string InvalidCourseOption = "INVALID_COURSE_OPTION";
         public const string RegistrationNotFound = "REGISTRATION_NOT_FOUND";
         public const string RegistrationCanceled = "REGISTRATION_CANCELED";
         public const string MomoNotConfigured = "MOMO_NOT_CONFIGURED";

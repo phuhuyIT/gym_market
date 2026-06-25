@@ -5,5 +5,6 @@
     public class RegisterCourseDto
     {
         public string CourseId { get; set; } = string.Empty;
+        public List<string> OptionIds { get; set; } = [];
     }
 }

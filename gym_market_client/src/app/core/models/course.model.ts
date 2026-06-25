@@ -19,6 +19,7 @@ export interface Course {
 
 export interface CourseFile {
   fileId: string;
+  objectId?: string;
   courseId: string;
   url: string;
   typeFile: 'IMAGE' | 'VIDEO';

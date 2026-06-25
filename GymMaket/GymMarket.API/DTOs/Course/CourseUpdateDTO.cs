@@ -41,6 +41,11 @@ namespace GymMarket.API.DTOs.Course
 
         public DateTime? UpdatedAt { get; set; }
 
+        // Existing uploaded objects the trainer chose to keep. Omitted/empty means
+        // remove existing files of that type; new uploads below are then added.
+        public List<string> RetainedImageObjectIds { get; set; } = [];
+        public List<string> RetainedVideoObjectIds { get; set; } = [];
+
         public List<IFormFile> Images { get; set; } = [];
         public List<IFormFile> Videos { get; set; } = [];
     }

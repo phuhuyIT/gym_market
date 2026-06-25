@@ -42,6 +42,7 @@ namespace GymMarket.API.Controllers
                 CourseRegistrationErrorCode.CourseNotFound => NotFound(new { Message = result.ErrorCode }),
                 CourseRegistrationErrorCode.CourseNotPublished => Conflict(new { Message = result.ErrorCode }),
                 CourseRegistrationErrorCode.CourseFull => Conflict(new { Message = result.ErrorCode }),
+                CourseRegistrationErrorCode.InvalidCourseOption => Conflict(new { Message = result.ErrorCode }),
                 _ => BadRequest(new { Message = result.ErrorCode ?? "COURSE_REGISTRATION_FAILED" })
             };
         }

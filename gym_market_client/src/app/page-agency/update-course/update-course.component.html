@@ -235,12 +235,13 @@
 
             <!-- Image Previews -->
             <div class="grid grid-cols-3 gap-3">
-              @for (img of dataImages; track img) {
-                <div class="group relative aspect-video rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 cursor-pointer" (click)="showImage(img)">
-                  <img [src]="img || DEFAULT_COURSE_THUMBNAIL_URL" [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL" alt="Course image" class="h-full w-full object-cover transition-transform group-hover:scale-105">
+              @for (img of dataImages; track img.url; let idx = $index) {
+                <div class="group relative aspect-video rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 cursor-pointer" (click)="showImage(img.url)">
+                  <img [src]="img.url || DEFAULT_COURSE_THUMBNAIL_URL" [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL" alt="Course image" class="h-full w-full object-cover transition-transform group-hover:scale-105">
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                     <span class="text-white text-xs font-bold">Preview</span>
                   </div>
+                  <button type="button" class="absolute top-1 right-1 h-6 w-6 rounded-full bg-black/70 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity" (click)="$event.stopPropagation(); removeImage(idx)">×</button>
                 </div>
               }
             </div>
@@ -264,9 +265,10 @@
 
             <!-- Video Previews -->
             <div class="grid grid-cols-3 gap-3">
-              @for (vid of dataVideos; track vid) {
+              @for (vid of dataVideos; track vid.url; let idx = $index) {
                 <div class="relative aspect-video rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-900">
-                  <video [src]="vid" class="h-full w-full object-cover"></video>
+                  <video [src]="vid.url" class="h-full w-full object-cover"></video>
+                  <button type="button" class="absolute top-1 right-1 h-6 w-6 rounded-full bg-black/70 text-white text-xs" (click)="removeVideo(idx)">×</button>
                 </div>
               }
             </div>
@@ -300,7 +302,7 @@
         <!-- cover: first real image when available, otherwise the type gradient -->
         @if (dataImages.length > 0) {
           <div class="relative h-36">
-            <img [src]="dataImages[0] || DEFAULT_COURSE_THUMBNAIL_URL" [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL" alt="Course cover" class="h-full w-full object-cover">
+            <img [src]="dataImages[0].url || DEFAULT_COURSE_THUMBNAIL_URL" [fallbackSrc]="DEFAULT_COURSE_THUMBNAIL_URL" alt="Course cover" class="h-full w-full object-cover">
             <span class="absolute top-3 right-3 bg-white/90 dark:bg-black/60 backdrop-blur text-[11px] font-extrabold text-neutral-800 dark:text-white px-3 py-1 rounded-full">
               {{ model.price | number }}$
             </span>
