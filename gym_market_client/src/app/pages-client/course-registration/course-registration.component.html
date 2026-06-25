@@ -67,8 +67,8 @@
                     
                     <ul class="course-card-bullets">
                       @if (isPaid(item)) {
-                        <li>• {{ getCourseModules(item.courseId) }} Modules Left</li>
-                        <li>• {{ getCourseVideos(item.courseId) }} Videos Left</li>
+                        <li>• {{ getCourseModulesLeft(item.courseId) }} {{ getCourseModulesLabel(item.courseId) }}</li>
+                        <li>• {{ getCourseVideos(item.courseId) }} {{ getCourseVideosLabel(item.courseId) }}</li>
                       } @else {
                         <li>• {{ statusHelp(item) }}</li>
                         <li>• Course access unlocks after payment confirmation</li>
@@ -214,7 +214,7 @@
 
             <!-- Upcoming Events List -->
             <div class="upcoming-events-list">
-              @for (event of getUpcomingEvents(); track $index) {
+              @for (event of getUpcomingEvents(); track event.title) {
                 <div class="upcoming-event-row">
                   <div class="event-icon-circle">
                     <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="clock-svg">
@@ -229,6 +229,19 @@
                   <button class="event-dots-btn">
                     •••
                   </button>
+                </div>
+              } @empty {
+                <div class="upcoming-event-row">
+                  <div class="event-icon-circle">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="clock-svg">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </div>
+                  <div class="event-details">
+                    <h4 class="event-title">No upcoming paid courses</h4>
+                    <span class="event-time">Explore courses to add one</span>
+                  </div>
                 </div>
               }
             </div>

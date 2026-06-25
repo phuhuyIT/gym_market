@@ -16,6 +16,19 @@ import { FallbackSrcDirective } from '../../shared/directives/fallback-src.direc
 import { matchesSearch } from '../../shared/utils/search.util';
 import { ToastService } from '../../shared/services/toast.service';
 import { coursePaymentErrorMessage } from '../course-payment-error.util';
+import { CourseMaterialService } from '../../page-agency/course-material.service';
+
+interface CourseDashboardStats {
+	progressPercent: number;
+	totalLectures: number;
+	completedLectures: number;
+	totalVideos: number;
+}
+
+interface UpcomingCourseEvent {
+	title: string;
+	time: string;
+}
 
 @Component({
     selector: 'app-course-registration',
@@ -29,6 +42,7 @@ export class CourseRegistrationComponent implements OnInit {
 	searchString: string | null = null;
 	courseSearchs: Course[] = [];
 	recommendedCourses: Course[] = [];
+	courseStats: Record<string, CourseDashboardStats> = {};
 	activeTab: string = 'overview';
 	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
 
@@ -48,6 +62,7 @@ export class CourseRegistrationComponent implements OnInit {
 	constructor(
 		private courseRegistrationService: CourseRegistrationService,
 		private courseService: CourseAgencyService,
+		private courseMaterialService: CourseMaterialService,
 		private router: Router
 	) {}
 
@@ -67,6 +82,7 @@ export class CourseRegistrationComponent implements OnInit {
 					patchState(this.loader, { isShow: false });
 					this.courses = data as unknown as Course[];
 					this.courseSearchs = data as unknown as Course[];
+					this.loadCourseStats();
 					this.cdr.markForCheck();
 				},
 				error: () => {
@@ -107,6 +123,68 @@ export class CourseRegistrationComponent implements OnInit {
 			return;
 		}
 		this.courseSearchs = this.courses.filter((c: Course) => matchesSearch(this.searchString, [c.title]));
+	}
+
+	private loadCourseStats() {
+		this.courseStats = {};
+		for (const course of this.courses) {
+			this.courseStats[course.courseId] = {
+				progressPercent: 0,
+				totalLectures: 0,
+				completedLectures: 0,
+				totalVideos: 0,
+			};
+
+			if (!this.isPaid(course)) {
+				continue;
+			}
+
+			this.courseMaterialService
+				.getCourseProgress(course.courseId)
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: progress => {
+						this.courseStats[course.courseId] = {
+							...this.courseStats[course.courseId],
+							progressPercent: progress.progressPercent,
+							totalLectures: progress.totalLectures,
+							completedLectures: progress.completedLectures,
+						};
+						this.cdr.markForCheck();
+					},
+				});
+
+			this.courseMaterialService
+				.getLecturesByCourse(course.courseId)
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: lectures => {
+						this.courseStats[course.courseId] = {
+							...this.courseStats[course.courseId],
+							totalLectures: lectures.length,
+							totalVideos: 0,
+						};
+						for (const lecture of lectures) {
+							this.courseMaterialService
+								.getMaterialsByLecture(lecture.lectureId)
+								.pipe(takeUntilDestroyed(this.destroyRef))
+								.subscribe({
+									next: materials => {
+										const videoCount = materials.filter(
+											m => (m.materialType ?? '').trim().toUpperCase() === 'VIDEO'
+										).length;
+										this.courseStats[course.courseId] = {
+											...this.courseStats[course.courseId],
+											totalVideos: this.courseStats[course.courseId].totalVideos + videoCount,
+										};
+										this.cdr.markForCheck();
+									},
+								});
+						}
+						this.cdr.markForCheck();
+					},
+				});
+		}
 	}
 
 	// Active tab change handler
@@ -154,34 +232,27 @@ export class CourseRegistrationComponent implements OnInit {
 		return new Date().toLocaleString('default', { month: 'long' });
 	}
 
-	// Helpers for deterministic course info
 	getCourseProgress(courseId: string): number {
-		const course = this.courses.find(c => c.courseId === courseId);
-		if (course && !this.isPaid(course)) {
-			return 0;
-		}
-
-		let sum = 0;
-		for (let i = 0; i < courseId.length; i++) {
-			sum += courseId.charCodeAt(i);
-		}
-		return 15 + (sum % 76); // deterministic 15% to 91%
+		return this.courseStats[courseId]?.progressPercent ?? 0;
 	}
 
-	getCourseModules(courseId: string): number {
-		let sum = 0;
-		for (let i = 0; i < courseId.length; i++) {
-			sum += courseId.charCodeAt(i);
-		}
-		return 1 + (sum % 12); // 1 to 12
+	getCourseModulesLeft(courseId: string): number {
+		const stats = this.courseStats[courseId];
+		return Math.max((stats?.totalLectures ?? 0) - (stats?.completedLectures ?? 0), 0);
 	}
 
 	getCourseVideos(courseId: string): number {
-		let sum = 0;
-		for (let i = 0; i < courseId.length; i++) {
-			sum += courseId.charCodeAt(i);
-		}
-		return 5 + (sum % 40); // 5 to 45
+		return this.courseStats[courseId]?.totalVideos ?? 0;
+	}
+
+	getCourseModulesLabel(courseId: string): string {
+		const left = this.getCourseModulesLeft(courseId);
+		return left === 1 ? 'Module Left' : 'Modules Left';
+	}
+
+	getCourseVideosLabel(courseId: string): string {
+		const count = this.getCourseVideos(courseId);
+		return count === 1 ? 'Video' : 'Videos';
 	}
 
 	getCourseThumbnail(course: Course): string {
@@ -279,20 +350,26 @@ export class CourseRegistrationComponent implements OnInit {
 			});
 	}
 
-	getUpcomingEvents(): { title: string; time: string }[] {
-		if (this.courses.length === 0) {
-			return [
-				{ title: 'Fundamentals of UIUX Design', time: '18th Aug, 2026 09:30AM' },
-				{ title: 'Fundamentals of UIUX Design', time: '18th Aug, 2026 09:30AM' },
-				{ title: 'Fundamentals of UIUX Design', time: '18th Aug, 2026 09:30AM' }
-			];
-		}
-		const days = ['Today', 'Tomorrow', 'Wednesday', 'Thursday', 'Friday'];
-		return this.courses.slice(0, 3).map((c, i) => {
-			return {
-				title: `Fundamentals of ${c.title}`,
-				time: `18th Aug, 2026 09:30AM`
-			};
-		});
+	getUpcomingEvents(): UpcomingCourseEvent[] {
+		const now = new Date();
+		return this.courses
+			.filter(course => this.isPaid(course))
+			.map(course => ({
+				course,
+				start: new Date(course.startDate),
+			}))
+			.filter(item => !Number.isNaN(item.start.getTime()) && item.start >= now)
+			.sort((a, b) => a.start.getTime() - b.start.getTime())
+			.slice(0, 3)
+			.map(item => ({
+				title: item.course.title,
+				time: item.start.toLocaleString(undefined, {
+					month: 'short',
+					day: 'numeric',
+					year: 'numeric',
+					hour: 'numeric',
+					minute: '2-digit',
+				}),
+			}));
 	}
 }
