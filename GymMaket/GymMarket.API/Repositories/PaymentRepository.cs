@@ -141,7 +141,9 @@ namespace GymMarket.API.Repositories
             {
                 query = status == PaymentStatus.Paid
                     ? query.Where(p => p.PaymentStatus == PaymentStatus.Paid || p.PaymentStatus == PaymentStatus.Completed)
-                    : query.Where(p => p.PaymentStatus == status);
+                    : status == PaymentStatus.Pending
+                        ? query.Where(p => ReportablePendingStatuses().Contains(p.PaymentStatus!))
+                        : query.Where(p => p.PaymentStatus == status);
             }
 
             if (!string.IsNullOrWhiteSpace(paymentType))
@@ -232,7 +234,7 @@ namespace GymMarket.API.Repositories
             }
 
             var paidQuery = query.Where(p => p.PaymentStatus == PaymentStatus.Paid || p.PaymentStatus == PaymentStatus.Completed);
-            var pendingStatuses = PaymentStatus.OpenStatuses();
+            var pendingStatuses = ReportablePendingStatuses();
             var pendingQuery = query.Where(p => pendingStatuses.Contains(p.PaymentStatus!));
 
             var revenueByCourse = await paidQuery
@@ -561,7 +563,7 @@ namespace GymMarket.API.Repositories
                 .Where(p => p.PaymentId != paidPayment.PaymentId
                     && p.StudentId == paidPayment.StudentId
                     && p.CourseId == paidPayment.CourseId
-                    && (p.PaymentStatus == PaymentStatus.Pending || p.PaymentStatus == PaymentStatus.NotStarted))
+                    && ReportablePendingStatuses().Contains(p.PaymentStatus!))
                 .ToListAsync();
 
             foreach (var pending in pendingPayments)
@@ -584,7 +586,18 @@ namespace GymMarket.API.Repositories
         }
 
         private static bool IsPending(string? status) =>
-            status == PaymentStatus.Pending || status == PaymentStatus.NotStarted || status == PaymentStatus.PendingPayment;
+            status == PaymentStatus.Pending
+            || status == PaymentStatus.NotStarted
+            || status == PaymentStatus.PendingPayment
+            || status == PaymentStatus.AwaitingConfirmation;
+
+        private static string[] ReportablePendingStatuses() =>
+        [
+            PaymentStatus.Pending,
+            PaymentStatus.NotStarted,
+            PaymentStatus.PendingPayment,
+            PaymentStatus.AwaitingConfirmation
+        ];
 
         private static bool IsManualApprovalCandidate(string? status, string? paymentType) =>
             IsPending(status) && paymentType != PaymentType.Momo;

@@ -4,7 +4,7 @@ export interface Payment {
   studentId: string;
   paymentAmount: number;
   paymentDate: string;
-  paymentStatus: 'Pending' | 'Paid' | 'Canceled' | 'Not Started' | 'Expired';
+  paymentStatus: 'Pending' | 'Awaiting Confirmation' | 'Paid' | 'Canceled' | 'Not Started' | 'Expired';
   paymentType: string;
   note: string;
   fullName?: string;

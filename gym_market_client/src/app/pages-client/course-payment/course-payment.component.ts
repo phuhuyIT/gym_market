@@ -112,6 +112,10 @@ export class CoursePaymentComponent implements OnInit {
 		return this.info?.status === 'Expired';
 	}
 
+	get isAwaitingConfirmation(): boolean {
+		return this.info?.status === 'Awaiting Confirmation';
+	}
+
 	// VietQR image with the amount and transfer reference pre-filled. The student
 	// scans it with any Vietnamese banking app; the trainer confirms the transfer
 	// manually and approves the payment.
@@ -154,32 +158,6 @@ export class CoursePaymentComponent implements OnInit {
 					patchState(this.loader, { isShow: false });
 					this.toastService.show(
 						coursePaymentErrorMessage(err, 'Failed to notify your trainer. Please try again.'),
-						'error'
-					);
-					this.cdr.markForCheck();
-				},
-			});
-	}
-
-	payWithMomo() {
-		patchState(this.loader, { isShow: true });
-		this.registrationService
-			.createMomoPayment(this.courseId)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: res => {
-					patchState(this.loader, { isShow: false });
-					if (res?.payUrl) {
-						window.location.href = res.payUrl;
-					} else {
-						this.toastService.show('Momo payment is not available for this course.', 'error');
-					}
-					this.cdr.markForCheck();
-				},
-				error: err => {
-					patchState(this.loader, { isShow: false });
-					this.toastService.show(
-						coursePaymentErrorMessage(err, 'Failed to start Momo payment. Please try again.'),
 						'error'
 					);
 					this.cdr.markForCheck();

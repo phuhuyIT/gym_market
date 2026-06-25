@@ -205,6 +205,8 @@ export class PaymentsComponent implements OnInit {
 					case 'Pending':
 					case 'Not Started':
 						return 'Pending';
+					case 'Awaiting Confirmation':
+						return 'Awaiting Confirmation';
 					case 'Expired':
 						return 'Expired';
 					case 'Canceled':
@@ -222,6 +224,8 @@ export class PaymentsComponent implements OnInit {
 						return 'Payment was canceled. Seat released unless another payment is paid.';
 					case 'Paid':
 						return 'Payment confirmed. Student has course access.';
+					case 'Awaiting Confirmation':
+						return 'Student marked the bank transfer as paid. Verify your bank account, then approve or cancel.';
 					default:
 						return 'Waiting for payment confirmation.';
 				}
@@ -235,6 +239,8 @@ export class PaymentsComponent implements OnInit {
 					case 'Pending':
 					case 'Not Started':
 						return `${base} bg-amber-100 text-amber-800 dark:bg-amber-950/30 dark:text-amber-400`;
+					case 'Awaiting Confirmation':
+						return `${base} bg-blue-100 text-blue-800 dark:bg-blue-950/30 dark:text-blue-400`;
 					case 'Expired':
 						return `${base} bg-slate-100 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300`;
 					default:

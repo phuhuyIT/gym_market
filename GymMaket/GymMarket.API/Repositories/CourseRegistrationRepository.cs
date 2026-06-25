@@ -410,16 +410,36 @@ END";
                 .ThenByDescending(p => p.CreatedAt)
                 .FirstOrDefault();
 
-            // Only nudge the trainer while the payment is still open — no point asking
-            // them to confirm something already paid or canceled.
+            // Only nudge the trainer while the payment is still active — no point asking
+            // them to confirm something already paid or canceled. When a student says they
+            // transferred money, move the record out of the short checkout expiry window.
             var isOpen = payment != null
                 && (payment.PaymentStatus == PaymentStatus.Pending
                  || payment.PaymentStatus == PaymentStatus.NotStarted
-                 || payment.PaymentStatus == PaymentStatus.PendingPayment);
+                 || payment.PaymentStatus == PaymentStatus.PendingPayment
+                 || payment.PaymentStatus == PaymentStatus.AwaitingConfirmation);
 
             var trainerUserId = course.Trainer?.UserId;
             if (isOpen && !string.IsNullOrEmpty(trainerUserId))
             {
+                if (payment!.PaymentStatus != PaymentStatus.AwaitingConfirmation)
+                {
+                    var oldStatus = payment.PaymentStatus;
+                    payment.PaymentStatus = PaymentStatus.AwaitingConfirmation;
+                    payment.UpdatedAt = DateTime.UtcNow;
+                    registration.PaymentStatus = PaymentStatus.AwaitingConfirmation;
+                    registration.Status = PaymentStatus.AwaitingConfirmation;
+                    registration.UpdatedAt = DateTime.UtcNow;
+
+                    await _paymentEventService.AddPaymentEventAsync(
+                        payment.PaymentId,
+                        PaymentEventType.ManualSubmitted,
+                        oldStatus,
+                        payment.PaymentStatus,
+                        PaymentEventSource.Student,
+                        "Student marked the bank transfer as paid and requested trainer confirmation.");
+                }
+
                 var studentName = await _context.Students
                     .Where(s => s.StudentId == studentId)
                     .Select(s => s.Name)
@@ -434,6 +454,8 @@ END";
                     "Payment awaiting confirmation",
                     $"{studentName ?? "A student"} marked their payment for \"{course.Title ?? "a course"}\" as paid. Please verify the transfer and confirm.",
                     $"/agency/payments?studentId={studentId}");
+
+                await _context.SaveChangesAsync();
             }
 
             return await GetCoursePaymentInfo(studentId, courseId);

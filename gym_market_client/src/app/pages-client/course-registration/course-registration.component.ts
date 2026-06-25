@@ -283,6 +283,8 @@ export class CourseRegistrationComponent implements OnInit {
 			case 'Pending Payment':
 			case 'Pending':
 				return 'Pending';
+			case 'Awaiting Confirmation':
+				return 'Awaiting Confirmation';
 			default:
 				return 'Pending';
 		}
@@ -296,6 +298,8 @@ export class CourseRegistrationComponent implements OnInit {
 				return 'Payment window expired and the seat was released.';
 			case 'Canceled':
 				return 'Payment was canceled. Start a new payment attempt to continue.';
+			case 'Awaiting Confirmation':
+				return 'Your trainer is verifying your bank transfer.';
 			default:
 				return 'Complete payment to unlock this course.';
 		}
@@ -311,6 +315,7 @@ export class CourseRegistrationComponent implements OnInit {
 	primaryActionLabel(course: Course): string {
 		if (this.isPaid(course)) return 'START LEARNING';
 		if (this.isRetryable(course)) return 'RETRY PAYMENT';
+		if (course.statusPayment === 'Awaiting Confirmation') return 'VIEW PAYMENT STATUS';
 		return 'COMPLETE PAYMENT';
 	}
 

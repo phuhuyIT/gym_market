@@ -32,25 +32,19 @@
           <gm-button variant="ghost" (clicked)="goToDetails()">BACK TO COURSE</gm-button>
         </gm-card>
       } @else {
-        <!-- Pending: choose Momo or bank transfer -->
+        <!-- Pending: bank transfer -->
         <div class="pay-layout">
 
-          <gm-card class="details-card gl">
-            <h3 class="details-card__title">Pay online</h3>
-            <p class="details-card__pending">
-              Pay immediately with Momo. Your course unlocks when the gateway confirms the payment.
-            </p>
-            <div class="details-card__actions">
-              <gm-button variant="primary" (clicked)="payWithMomo()">PAY WITH MOMO</gm-button>
-            </div>
-            @if (!info.bankConfigured) {
-              <p class="details-card__warning">
-                Bank transfer is unavailable because {{ info.trainerName || 'this trainer' }} has not set up receiving bank details.
+          @if (!info.bankConfigured) {
+            <gm-card class="state-card gl-2">
+              <div class="state-card__icon">⚠️</div>
+              <h2 class="state-card__title">Payment account unavailable</h2>
+              <p class="state-card__text">
+                {{ info.trainerName || 'This trainer' }} has not set up receiving bank details yet. Please contact the trainer before transferring money.
               </p>
-            }
-          </gm-card>
-
-          @if (info.bankConfigured) {
+              <gm-button variant="ghost" (clicked)="goToDetails()">BACK TO COURSE</gm-button>
+            </gm-card>
+          } @else {
             <gm-card class="qr-card gl-2">
               <h3 class="qr-card__title">Scan to pay by bank</h3>
               <div class="qr-card__img">
@@ -107,9 +101,12 @@
               </p>
 
               <div class="details-card__actions">
-                <gm-button variant="primary" (clicked)="confirmPayment()">I'VE PAID - NOTIFY TRAINER</gm-button>
+                <gm-button variant="primary" (clicked)="confirmPayment()" [disabled]="isAwaitingConfirmation">
+                  {{ isAwaitingConfirmation ? 'WAITING FOR TRAINER' : 'I\'VE PAID - NOTIFY TRAINER' }}
+                </gm-button>
                 <p class="details-card__pending">
-                  Status: <strong>Pending</strong>. Your trainer verifies the transfer and confirms it manually.
+                  Status: <strong>{{ isAwaitingConfirmation ? 'Awaiting trainer confirmation' : 'Pending' }}</strong>.
+                  Your trainer verifies the transfer and confirms it manually.
                 </p>
               </div>
             </gm-card>

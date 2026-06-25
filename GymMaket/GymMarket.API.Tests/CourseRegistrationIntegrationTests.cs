@@ -155,6 +155,56 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
     }
 
     [Fact]
+    public async Task ConfirmPaymentByStudent_MovesBankTransferToTrainerReviewAndPreventsShortExpiry()
+    {
+        await AuthenticateAsync(email: "manual_review_trainer@example.com", role: "Trainer");
+        await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = "CRS_MANUAL_REVIEW_001",
+            Title = "Manual Review Course",
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 50
+        });
+
+        await AuthenticateAsync(email: "student_manual_review@example.com");
+        await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
+        {
+            CourseId = "CRS_MANUAL_REVIEW_001"
+        });
+
+        var confirmResponse = await Client.PostAsync("/api/CourseRegistration/confirm-payment/CRS_MANUAL_REVIEW_001", null);
+
+        Assert.Equal(HttpStatusCode.OK, confirmResponse.StatusCode);
+        var info = await confirmResponse.Content.ReadFromJsonAsync<CoursePaymentInfoDto>();
+        Assert.Equal(PaymentStatus.AwaitingConfirmation, info!.Status);
+
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+        var payment = await db.Payments.SingleAsync(p => p.CourseId == "CRS_MANUAL_REVIEW_001");
+        var registration = await db.CourseRegistrations.SingleAsync(r => r.CourseId == "CRS_MANUAL_REVIEW_001");
+        var submittedEvent = await db.PaymentEvents.SingleAsync(e =>
+            e.PaymentId == payment.PaymentId
+            && e.EventType == PaymentEventType.ManualSubmitted);
+
+        Assert.Equal(PaymentStatus.Pending, submittedEvent.OldStatus);
+        Assert.Equal(PaymentStatus.AwaitingConfirmation, submittedEvent.NewStatus);
+        Assert.Equal(PaymentStatus.AwaitingConfirmation, payment.PaymentStatus);
+        Assert.Equal(PaymentStatus.AwaitingConfirmation, registration.PaymentStatus);
+
+        payment.UpdatedAt = DateTime.UtcNow.AddMinutes(-(Defaults.PaymentTimeoutMinutes + 30));
+        registration.UpdatedAt = payment.UpdatedAt;
+        await db.SaveChangesAsync();
+
+        var expiry = scope.ServiceProvider.GetRequiredService<IRegistrationExpiryService>();
+        var expiredCount = await expiry.ExpireStalePendingRegistrationsAsync("CRS_MANUAL_REVIEW_001", registration.StudentId);
+
+        Assert.Equal(0, expiredCount);
+        Assert.Equal(PaymentStatus.AwaitingConfirmation, payment.PaymentStatus);
+        Assert.Equal(PaymentStatus.AwaitingConfirmation, registration.PaymentStatus);
+    }
+
+    [Fact]
     public async Task RegisterCourse_WithSelectedOptions_IncludesOptionsInPaymentAmount()
     {
         await AuthenticateAsync(email: "option_pay_trainer@example.com", role: "Trainer");
@@ -306,7 +356,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
     }
 
     [Fact]
-    public async Task ConfirmPayment_AsRegisteredStudent_ReturnsPendingInfo()
+    public async Task ConfirmPayment_AsRegisteredStudent_ReturnsAwaitingConfirmationInfo()
     {
         // Arrange — a trainer creates a course and the student registers for it.
         await AuthenticateAsync(email: "confirm_trainer@example.com", role: "Trainer");
@@ -332,7 +382,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var info = await response.Content.ReadFromJsonAsync<CoursePaymentInfoDto>();
         Assert.NotNull(info);
-        Assert.Equal(PaymentStatus.Pending, info!.Status);
+        Assert.Equal(PaymentStatus.AwaitingConfirmation, info!.Status);
     }
 
     [Fact]

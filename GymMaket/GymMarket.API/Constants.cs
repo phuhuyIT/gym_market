@@ -6,6 +6,7 @@ namespace GymMarket.API
         public const string Paid = "Paid";
         public const string Pending = "Pending";
         public const string PendingPayment = "Pending Payment";
+        public const string AwaitingConfirmation = "Awaiting Confirmation";
         public const string NotStarted = "Not Started";
         public const string Canceled = "Canceled";
         public const string Expired = "Expired";
@@ -77,6 +78,7 @@ namespace GymMarket.API
         public const string MomoCreated = "MomoCreated";
         public const string MomoReturned = "MomoReturned";
         public const string MomoIpnReceived = "MomoIpnReceived";
+        public const string ManualSubmitted = "ManualSubmitted";
         public const string Paid = "Paid";
         public const string Canceled = "Canceled";
         public const string Expired = "Expired";
