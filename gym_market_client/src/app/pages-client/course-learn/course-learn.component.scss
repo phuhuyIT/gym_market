@@ -268,3 +268,217 @@
     margin: 0;
   }
 }
+
+.quiz-panel {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__eyebrow {
+    margin: 0 0 0.25rem;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.35rem;
+  }
+
+  &__meta {
+    margin: 0.4rem 0 0;
+    color: var(--text-muted, #888);
+    font-size: 0.86rem;
+  }
+
+  &__score {
+    min-width: 88px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm, 10px);
+    padding: 0.75rem;
+    text-align: center;
+
+    span {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-muted, #888);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    strong {
+      display: block;
+      margin-top: 0.2rem;
+      font-size: 1.2rem;
+    }
+
+    &--pass {
+      border-color: rgba(16, 185, 129, 0.35);
+      background: rgba(16, 185, 129, 0.08);
+    }
+  }
+
+  &__attempt {
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    background: rgba(245, 158, 11, 0.08);
+    color: #92400e;
+    border-radius: var(--radius-sm, 10px);
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+
+    &--pass {
+      border-color: rgba(16, 185, 129, 0.35);
+      background: rgba(16, 185, 129, 0.08);
+      color: #047857;
+    }
+  }
+
+  &__questions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.quiz-question {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm, 10px);
+  padding: 1rem;
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--text-muted, #888);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  &__prompt {
+    margin: 0.65rem 0 0.85rem;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+}
+
+.quiz-options {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm, 10px);
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  &:hover,
+  &--selected {
+    border-color: rgba(0, 122, 255, 0.35);
+    background: rgba(0, 122, 255, 0.08);
+  }
+
+  input {
+    flex: 0 0 auto;
+  }
+}
+
+.certificate-panel {
+  margin-top: 1.25rem;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid var(--glass-border);
+
+  @media (max-width: 720px) {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  &--ready {
+    border-color: rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.06);
+  }
+
+  &__body {
+    min-width: 0;
+  }
+
+  &__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--blue);
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+}
+
+.certificate-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+
+  span {
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 0.35rem 0.7rem;
+    color: var(--text-muted, #888);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  &__item--done {
+    color: #047857 !important;
+    border-color: rgba(16, 185, 129, 0.35) !important;
+    background: rgba(16, 185, 129, 0.08);
+  }
+}
+
+.certificate-code {
+  margin-top: 0.9rem;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  border: 1px dashed rgba(0, 122, 255, 0.4);
+  border-radius: var(--radius-sm, 10px);
+  padding: 0.55rem 0.75rem;
+
+  span {
+    color: var(--text-muted, #888);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  strong {
+    font-family: var(--font-display);
+    letter-spacing: 0.08em;
+  }
+}

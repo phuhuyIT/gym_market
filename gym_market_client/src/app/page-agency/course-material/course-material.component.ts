@@ -21,6 +21,7 @@ import { ErrorModalStore } from '../../stores/error-modal.store';
 import { ToastService } from '../../shared/services/toast.service';
 import { CourseMaterialService } from '../course-material.service';
 import { Lecture, LectureMaterial } from '../../core/models/lecture.model';
+import { QuizAttemptSummary, TrainerQuizQuestion, UpsertCourseQuiz } from '../../core/models/quiz.model';
 
 @Component({
 	selector: 'app-course-material',
@@ -38,6 +39,10 @@ export class CourseMaterialComponent implements OnInit {
 
 	// material types offered to the trainer
 	materialTypes: string[] = ['VIDEO', 'IMAGE', 'PDF', 'TEXT', 'LINK'];
+
+	quizDraft: UpsertCourseQuiz = this.createEmptyQuizDraft();
+	quizGradebook: QuizAttemptSummary[] = [];
+	isQuizLoading = false;
 
 	// lecture modals
 	isShowLectureModal: boolean = false;
@@ -86,6 +91,8 @@ export class CourseMaterialComponent implements OnInit {
 		});
 
 		this.loadLectures();
+		this.loadQuiz();
+		this.loadQuizGradebook();
 	}
 
 	private loadLectures() {
@@ -290,5 +297,162 @@ export class CourseMaterialComponent implements OnInit {
 				patchState(this.errorModalStore, { errors: err.error?.errors, isShow: true });
 			},
 		});
+	}
+
+	private loadQuiz() {
+		if (!this.courseId) return;
+		this.isQuizLoading = true;
+		this.courseMaterialService
+			.getManageQuiz(this.courseId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: quiz => {
+					this.quizDraft = {
+						title: quiz.title,
+						passingScorePercent: quiz.passingScorePercent,
+						isPublished: quiz.isPublished,
+						questions: quiz.questions.map(question => ({
+							questionId: question.questionId,
+							prompt: question.prompt,
+							order: question.order,
+							points: question.points,
+							options: question.options.map(option => ({
+								optionId: option.optionId,
+								text: option.text,
+								isCorrect: option.isCorrect,
+							})),
+						})),
+					};
+					this.isQuizLoading = false;
+					this.cdr.markForCheck();
+				},
+				error: err => {
+					this.isQuizLoading = false;
+					if (err.status !== 404) {
+						this.toastService.show('Failed to load quiz', 'error');
+					}
+					this.cdr.markForCheck();
+				},
+			});
+	}
+
+	private loadQuizGradebook() {
+		if (!this.courseId) return;
+		this.courseMaterialService
+			.getQuizGradebook(this.courseId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: attempts => {
+					this.quizGradebook = attempts;
+					this.cdr.markForCheck();
+				},
+				error: err => {
+					if (err.status !== 404) {
+						this.toastService.show('Failed to load quiz grades', 'error');
+					}
+				},
+			});
+	}
+
+	addQuizQuestion() {
+		this.quizDraft.questions.push({
+			prompt: '',
+			order: this.quizDraft.questions.length + 1,
+			points: 1,
+			options: [
+				{ text: '', isCorrect: true },
+				{ text: '', isCorrect: false },
+			],
+		});
+		this.cdr.markForCheck();
+	}
+
+	removeQuizQuestion(index: number) {
+		this.quizDraft.questions.splice(index, 1);
+		this.quizDraft.questions.forEach((question, idx) => (question.order = idx + 1));
+		this.cdr.markForCheck();
+	}
+
+	addQuizOption(question: TrainerQuizQuestion) {
+		question.options.push({ text: '', isCorrect: false });
+		this.cdr.markForCheck();
+	}
+
+	removeQuizOption(question: TrainerQuizQuestion, index: number) {
+		if (question.options.length <= 2) {
+			this.toastService.show('Each question needs at least two options', 'error');
+			return;
+		}
+		const wasCorrect = question.options[index].isCorrect;
+		question.options.splice(index, 1);
+		if (wasCorrect && question.options.length > 0) {
+			question.options[0].isCorrect = true;
+		}
+		this.cdr.markForCheck();
+	}
+
+	markCorrect(question: TrainerQuizQuestion, optionIndex: number) {
+		question.options.forEach((option, index) => (option.isCorrect = index === optionIndex));
+	}
+
+	saveQuiz() {
+		if (this.quizGradebook.length > 0) {
+			this.toastService.show('This quiz already has attempts, so questions are locked', 'error');
+			return;
+		}
+
+		patchState(this.loaderStore, { isShow: true });
+		this.courseMaterialService
+			.saveQuiz(this.courseId, this.quizDraft)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: quiz => {
+					patchState(this.loaderStore, { isShow: false });
+					this.quizDraft = {
+						title: quiz.title,
+						passingScorePercent: quiz.passingScorePercent,
+						isPublished: quiz.isPublished,
+						questions: quiz.questions.map(question => ({
+							questionId: question.questionId,
+							prompt: question.prompt,
+							order: question.order,
+							points: question.points,
+							options: question.options.map(option => ({
+								optionId: option.optionId,
+								text: option.text,
+								isCorrect: option.isCorrect,
+							})),
+						})),
+					};
+					this.toastService.show('Quiz saved');
+					this.cdr.markForCheck();
+				},
+				error: err => {
+					patchState(this.loaderStore, { isShow: false });
+					const message = err.status === 409
+						? 'This quiz already has attempts, so questions are locked'
+						: 'Failed to save quiz';
+					this.toastService.show(message, 'error');
+				},
+			});
+	}
+
+	private createEmptyQuizDraft(): UpsertCourseQuiz {
+		return {
+			title: 'Course checkpoint',
+			passingScorePercent: 70,
+			isPublished: false,
+			questions: [
+				{
+					prompt: '',
+					order: 1,
+					points: 1,
+					options: [
+						{ text: '', isCorrect: true },
+						{ text: '', isCorrect: false },
+					],
+				},
+			],
+		};
 	}
 }

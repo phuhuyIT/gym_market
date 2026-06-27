@@ -129,6 +129,102 @@
         </section>
 
       </div>
+
+      @if (quiz) {
+        <section class="quiz-panel gl">
+          <div class="quiz-panel__head">
+            <div>
+              <p class="quiz-panel__eyebrow">Course checkpoint</p>
+              <h2 class="quiz-panel__title">{{ quiz.title }}</h2>
+              <p class="quiz-panel__meta">Pass score: {{ quiz.passingScorePercent }}%</p>
+            </div>
+            @if (quiz.bestAttempt) {
+              <div class="quiz-panel__score" [class.quiz-panel__score--pass]="quiz.bestAttempt.passed">
+                <span>Best</span>
+                <strong>{{ quiz.bestAttempt.scorePercent }}%</strong>
+              </div>
+            }
+          </div>
+
+          @if (latestQuizAttempt) {
+            <div class="quiz-panel__attempt" [class.quiz-panel__attempt--pass]="latestQuizAttempt.passed">
+              Latest attempt: {{ latestQuizAttempt.score }} / {{ latestQuizAttempt.totalPoints }} points,
+              {{ latestQuizAttempt.scorePercent }}%.
+              {{ latestQuizAttempt.passed ? 'Passed' : 'Try again when you are ready' }}
+            </div>
+          }
+
+          <div class="quiz-panel__questions">
+            @for (question of quiz.questions; track question.questionId; let questionIndex = $index) {
+              <div class="quiz-question">
+                <div class="quiz-question__top">
+                  <span>Question {{ questionIndex + 1 }}</span>
+                  <span>{{ question.points }} point{{ question.points === 1 ? '' : 's' }}</span>
+                </div>
+                <p class="quiz-question__prompt">{{ question.prompt }}</p>
+                <div class="quiz-options">
+                  @for (option of question.options; track option.optionId) {
+                    <label class="quiz-option" [class.quiz-option--selected]="quizAnswers[question.questionId] === option.optionId">
+                      <input
+                        type="radio"
+                        [name]="'quiz-' + question.questionId"
+                        [checked]="quizAnswers[question.questionId] === option.optionId"
+                        (change)="selectQuizAnswer(question.questionId, option.optionId)"
+                      />
+                      <span>{{ option.text }}</span>
+                    </label>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <gm-button variant="primary" (clicked)="submitQuiz()">
+            {{ isQuizSubmitting ? 'SUBMITTING...' : 'SUBMIT QUIZ' }}
+          </gm-button>
+        </section>
+      }
+
+      @if (completionStatus) {
+        <section class="certificate-panel gl" [class.certificate-panel--ready]="completionStatus.isCompleted">
+          <div class="certificate-panel__body">
+            <p class="certificate-panel__eyebrow">Certificate</p>
+            <h2 class="certificate-panel__title">
+              {{ issuedCertificate ? 'Certificate issued' : completionStatus.isCompleted ? 'Ready to issue' : 'Requirements remaining' }}
+            </h2>
+            <div class="certificate-checks">
+              <span [class.certificate-checks__item--done]="completionStatus.lecturesCompleted">
+                {{ completionStatus.completedLectures }} / {{ completionStatus.totalLectures }} lectures completed
+              </span>
+              <span [class.certificate-checks__item--done]="completionStatus.quizPassed">
+                @if (completionStatus.quizRequired) {
+                  Quiz {{ completionStatus.quizPassed ? 'passed' : 'not passed yet' }}
+                  @if (completionStatus.bestQuizScorePercent !== null && completionStatus.bestQuizScorePercent !== undefined) {
+                    (best {{ completionStatus.bestQuizScorePercent }}%)
+                  }
+                } @else {
+                  No quiz required
+                }
+              </span>
+            </div>
+            @if (issuedCertificate) {
+              <div class="certificate-code">
+                <span>Verification code</span>
+                <strong>{{ issuedCertificate.verificationCode }}</strong>
+              </div>
+            }
+          </div>
+
+          @if (!issuedCertificate) {
+            <gm-button
+              [variant]="completionStatus.isCompleted ? 'primary' : 'secondary'"
+              (clicked)="issueCertificate()"
+            >
+              {{ isCertificateIssuing ? 'ISSUING...' : 'ISSUE CERTIFICATE' }}
+            </gm-button>
+          }
+        </section>
+      }
     }
 
   </div>

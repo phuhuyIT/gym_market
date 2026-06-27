@@ -29,6 +29,8 @@ public partial class Student
 
     public virtual ICollection<CourseRegistration> CourseRegistrations { get; set; } = new List<CourseRegistration>();
 
+    public virtual ICollection<CourseCertificate> CourseCertificates { get; set; } = new List<CourseCertificate>();
+
     public virtual ICollection<HealthDatum> HealthData { get; set; } = new List<HealthDatum>();
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
@@ -36,6 +38,8 @@ public partial class Student
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
     public virtual ICollection<LectureProgress> LectureProgresses { get; set; } = new List<LectureProgress>();
+
+    public virtual ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
 
     public virtual AppUser? AppUser { get; set; }
 }

@@ -13,11 +13,15 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<CourseOption> CourseOptions { get; set; }
 
+    public virtual DbSet<CourseCertificate> CourseCertificates { get; set; }
+
     public virtual DbSet<CourseRating> CourseRatings { get; set; }
 
     public virtual DbSet<CourseRegistration> CourseRegistrations { get; set; }
 
     public virtual DbSet<CourseRegistrationOption> CourseRegistrationOptions { get; set; }
+
+    public virtual DbSet<CourseQuiz> CourseQuizzes { get; set; }
 
     public virtual DbSet<HealthDatum> HealthData { get; set; }
 
@@ -36,6 +40,14 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
     public virtual DbSet<Payment> Payments { get; set; }
 
     public virtual DbSet<PaymentEvent> PaymentEvents { get; set; }
+
+    public virtual DbSet<QuizAttempt> QuizAttempts { get; set; }
+
+    public virtual DbSet<QuizAttemptAnswer> QuizAttemptAnswers { get; set; }
+
+    public virtual DbSet<QuizOption> QuizOptions { get; set; }
+
+    public virtual DbSet<QuizQuestion> QuizQuestions { get; set; }
 
     public virtual DbSet<Student> Students { get; set; }
 
@@ -120,6 +132,47 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasOne(d => d.Trainer).WithMany(p => p.Courses)
                 .HasForeignKey(d => d.TrainerId)
                 .HasConstraintName("FK_Courses_Trainer");
+        });
+
+        modelBuilder.Entity<CourseCertificate>(entity =>
+        {
+            entity.HasKey(e => e.CertificateId);
+
+            entity.ToTable("Course_Certificates");
+
+            entity.Property(e => e.CertificateId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Certificate_ID");
+            entity.Property(e => e.CourseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Course_ID");
+            entity.Property(e => e.StudentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Student_ID");
+            entity.Property(e => e.VerificationCode)
+                .HasMaxLength(32)
+                .IsUnicode(false)
+                .HasColumnName("Verification_Code");
+            entity.Property(e => e.IssuedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Issued_At");
+
+            entity.HasIndex(e => e.VerificationCode).IsUnique();
+            entity.HasIndex(e => new { e.CourseId, e.StudentId }).IsUnique();
+            entity.HasIndex(e => e.StudentId);
+
+            entity.HasOne(d => d.Course).WithMany(p => p.CourseCertificates)
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Course_Certificates_Course");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.CourseCertificates)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Course_Certificates_Student");
         });
 
         modelBuilder.Entity<FileCourse>(entity =>
@@ -444,6 +497,176 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.StudentId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Lecture_Progress_Student");
+        });
+
+        modelBuilder.Entity<CourseQuiz>(entity =>
+        {
+            entity.HasKey(e => e.QuizId);
+
+            entity.ToTable("Course_Quizzes");
+
+            entity.Property(e => e.QuizId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Quiz_ID");
+            entity.Property(e => e.CourseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Course_ID");
+            entity.Property(e => e.Title).HasMaxLength(200);
+            entity.Property(e => e.PassingScorePercent).HasColumnName("Passing_Score_Percent");
+            entity.Property(e => e.IsPublished).HasColumnName("Is_Published");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.CourseId).IsUnique();
+
+            entity.HasOne(d => d.Course).WithMany(p => p.CourseQuizzes)
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Course_Quizzes_Course");
+        });
+
+        modelBuilder.Entity<QuizQuestion>(entity =>
+        {
+            entity.HasKey(e => e.QuestionId);
+
+            entity.ToTable("Quiz_Questions");
+
+            entity.Property(e => e.QuestionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Question_ID");
+            entity.Property(e => e.QuizId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Quiz_ID");
+            entity.Property(e => e.Prompt).HasColumnType("nvarchar(max)");
+
+            entity.HasIndex(e => e.QuizId);
+            entity.HasIndex(e => new { e.QuizId, e.Order }).IsUnique();
+
+            entity.HasOne(d => d.Quiz).WithMany(p => p.Questions)
+                .HasForeignKey(d => d.QuizId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Quiz_Questions_Course_Quiz");
+        });
+
+        modelBuilder.Entity<QuizOption>(entity =>
+        {
+            entity.HasKey(e => e.OptionId);
+
+            entity.ToTable("Quiz_Options");
+
+            entity.Property(e => e.OptionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Option_ID");
+            entity.Property(e => e.QuestionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Question_ID");
+            entity.Property(e => e.Text).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.IsCorrect).HasColumnName("Is_Correct");
+
+            entity.HasIndex(e => e.QuestionId);
+
+            entity.HasOne(d => d.Question).WithMany(p => p.Options)
+                .HasForeignKey(d => d.QuestionId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Quiz_Options_Quiz_Question");
+        });
+
+        modelBuilder.Entity<QuizAttempt>(entity =>
+        {
+            entity.HasKey(e => e.AttemptId);
+
+            entity.ToTable("Quiz_Attempts");
+
+            entity.Property(e => e.AttemptId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Attempt_ID");
+            entity.Property(e => e.QuizId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Quiz_ID");
+            entity.Property(e => e.StudentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Student_ID");
+            entity.Property(e => e.ScorePercent)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("Score_Percent");
+            entity.Property(e => e.TotalPoints).HasColumnName("Total_Points");
+            entity.Property(e => e.SubmittedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Submitted_At");
+
+            entity.HasIndex(e => e.QuizId);
+            entity.HasIndex(e => e.StudentId);
+            entity.HasIndex(e => new { e.QuizId, e.StudentId, e.SubmittedAt });
+
+            entity.HasOne(d => d.Quiz).WithMany(p => p.Attempts)
+                .HasForeignKey(d => d.QuizId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Quiz_Attempts_Course_Quiz");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.QuizAttempts)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Quiz_Attempts_Student");
+        });
+
+        modelBuilder.Entity<QuizAttemptAnswer>(entity =>
+        {
+            entity.HasKey(e => e.AttemptAnswerId);
+
+            entity.ToTable("Quiz_Attempt_Answers");
+
+            entity.Property(e => e.AttemptAnswerId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Attempt_Answer_ID");
+            entity.Property(e => e.AttemptId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Attempt_ID");
+            entity.Property(e => e.QuestionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Question_ID");
+            entity.Property(e => e.SelectedOptionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Selected_Option_ID");
+            entity.Property(e => e.IsCorrect).HasColumnName("Is_Correct");
+            entity.Property(e => e.PointsAwarded).HasColumnName("Points_Awarded");
+
+            entity.HasIndex(e => e.AttemptId);
+            entity.HasIndex(e => e.QuestionId);
+            entity.HasIndex(e => e.SelectedOptionId);
+
+            entity.HasOne(d => d.Attempt).WithMany(p => p.Answers)
+                .HasForeignKey(d => d.AttemptId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Quiz_Attempt_Answers_Quiz_Attempt");
+
+            entity.HasOne(d => d.Question).WithMany(p => p.AttemptAnswers)
+                .HasForeignKey(d => d.QuestionId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_Quiz_Attempt_Answers_Quiz_Question");
+
+            entity.HasOne(d => d.SelectedOption).WithMany(p => p.AttemptAnswers)
+                .HasForeignKey(d => d.SelectedOptionId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_Quiz_Attempt_Answers_Quiz_Option");
         });
 
         modelBuilder.Entity<Message>(entity =>

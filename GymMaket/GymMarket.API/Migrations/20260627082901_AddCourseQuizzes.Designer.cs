@@ -4,6 +4,7 @@ using GymMarket.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymMarket.API.Migrations
 {
     [DbContext(typeof(GymMarketContext))]
-    partial class GymMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20260627082901_AddCourseQuizzes")]
+    partial class AddCourseQuizzes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -269,52 +272,6 @@ namespace GymMarket.API.Migrations
                     b.HasIndex("Type");
 
                     b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.CourseCertificate", b =>
-                {
-                    b.Property<string>("CertificateId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Certificate_ID");
-
-                    b.Property<string>("CourseId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Course_ID");
-
-                    b.Property<DateTime>("IssuedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Issued_At");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Student_ID");
-
-                    b.Property<string>("VerificationCode")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(32)")
-                        .HasColumnName("Verification_Code");
-
-                    b.HasKey("CertificateId");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("VerificationCode")
-                        .IsUnique();
-
-                    b.HasIndex("CourseId", "StudentId")
-                        .IsUnique();
-
-                    b.ToTable("Course_Certificates", (string)null);
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.CourseOption", b =>
@@ -2038,27 +1995,6 @@ namespace GymMarket.API.Migrations
                     b.Navigation("Trainer");
                 });
 
-            modelBuilder.Entity("GymMarket.API.Models.CourseCertificate", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.Course", "Course")
-                        .WithMany("CourseCertificates")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Course_Certificates_Course");
-
-                    b.HasOne("GymMarket.API.Models.Student", "Student")
-                        .WithMany("CourseCertificates")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Course_Certificates_Student");
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("GymMarket.API.Models.CourseOption", b =>
                 {
                     b.HasOne("GymMarket.API.Models.Course", "Course")
@@ -2463,8 +2399,6 @@ namespace GymMarket.API.Migrations
 
             modelBuilder.Entity("GymMarket.API.Models.Course", b =>
                 {
-                    b.Navigation("CourseCertificates");
-
                     b.Navigation("CourseOptions");
 
                     b.Navigation("CourseQuizzes");
@@ -2539,8 +2473,6 @@ namespace GymMarket.API.Migrations
 
             modelBuilder.Entity("GymMarket.API.Models.Student", b =>
                 {
-                    b.Navigation("CourseCertificates");
-
                     b.Navigation("CourseRatings");
 
                     b.Navigation("CourseRegistrations");

@@ -39,6 +39,10 @@ public partial class Course
 
     public virtual ICollection<CourseRegistration> CourseRegistrations { get; set; } = new List<CourseRegistration>();
 
+    public virtual ICollection<CourseCertificate> CourseCertificates { get; set; } = new List<CourseCertificate>();
+
+    public virtual ICollection<CourseQuiz> CourseQuizzes { get; set; } = new List<CourseQuiz>();
+
     public virtual ICollection<HealthDatum> HealthData { get; set; } = new List<HealthDatum>();
 
     public virtual ICollection<Lecture> Lectures { get; set; } = new List<Lecture>();
