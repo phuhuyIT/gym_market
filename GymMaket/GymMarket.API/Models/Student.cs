@@ -39,6 +39,8 @@ public partial class Student
 
     public virtual ICollection<LectureProgress> LectureProgresses { get; set; } = new List<LectureProgress>();
 
+    public virtual ICollection<StudentMembership> StudentMemberships { get; set; } = new List<StudentMembership>();
+
     public virtual ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
 
     public virtual AppUser? AppUser { get; set; }

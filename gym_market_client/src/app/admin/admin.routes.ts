@@ -11,6 +11,7 @@ import { CourseOptionListComponent } from '../page-agency/course-option-list/cou
 import { AccountSettingsComponent } from '../account-settings/account-settings.component';
 import { AdminUsersComponent } from './admin-users/admin-users.component';
 import { AdminCoursesComponent } from './admin-courses/admin-courses.component';
+import { MembershipsComponent } from '../page-agency/memberships/memberships.component';
 
 export const routes: Routes = [
 	{
@@ -21,9 +22,10 @@ export const routes: Routes = [
 				{ path: 'dashboard', component: AdminDashboardComponent, title: 'Admin Dashboard' },
 				{ path: 'users', component: AdminUsersComponent, title: 'Users' },
 				{ path: 'courses', component: AdminCoursesComponent, title: 'Course Review' },
-			{ path: 'students', component: ManageStudentsComponent, title: 'Students' },
-			{ path: 'payments', component: PaymentsComponent, title: 'Payments' },
-			{ path: 'nutrition', component: ManageNutritionComponent, title: 'Food Database' },
+				{ path: 'students', component: ManageStudentsComponent, title: 'Students' },
+				{ path: 'payments', component: PaymentsComponent, title: 'Payments' },
+				{ path: 'memberships', component: MembershipsComponent, title: 'Memberships' },
+				{ path: 'nutrition', component: ManageNutritionComponent, title: 'Food Database' },
 			{ path: 'add-course', component: AddCourseComponent, title: 'Add Course' },
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Edit Course' },
 			{ path: 'course-materials/:courseId', component: CourseMaterialComponent, title: 'Course Materials' },

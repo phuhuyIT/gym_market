@@ -54,6 +54,7 @@ export class CourseAgencyComponent {
 		if (url.includes('/courses')) return 'Manage Courses';
 		if (url.includes('/students')) return 'Manage Students';
 		if (url.includes('/payments')) return 'Payments';
+		if (url.includes('/memberships')) return 'Memberships';
 		if (url.includes('/nutrition')) return 'Food Database';
 		if (url.includes('/your-profile')) return 'Profile Details';
 		if (url.includes('/edit-profile')) return 'Edit Profile';

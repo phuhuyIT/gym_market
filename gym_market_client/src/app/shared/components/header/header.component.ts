@@ -74,6 +74,10 @@ export class HeaderComponent {
 					link: '/client/course-registration',
 					name: 'My Courses',
 				},
+				{
+					link: '/client/membership',
+					name: 'Membership',
+				},
 			];
 		} else {
 			return [

@@ -58,6 +58,14 @@
                 }
               </a>
             </li>
+            <li>
+              <a routerLink="/agency/memberships" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                <span>Memberships</span>
+              </a>
+            </li>
             @if (isAdmin) {
               <li>
                 <a routerLink="/agency/nutrition" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-white transition-all group">
@@ -223,6 +231,14 @@
                     {{ notificationService.unreadPaymentCount() > 99 ? '99+' : notificationService.unreadPaymentCount() }}
                   </span>
                 }
+              </a>
+            </li>
+            <li>
+              <a routerLink="/agency/memberships" (click)="closeMobileMenu()" routerLinkActive="bg-blue-50 text-[#007AFF] font-semibold dark:bg-blue-950/20 dark:text-blue-400" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 opacity-70">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                <span>Memberships</span>
               </a>
             </li>
             @if (isAdmin) {

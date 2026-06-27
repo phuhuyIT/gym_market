@@ -25,6 +25,7 @@ export class AdminComponent {
 		{ label: 'Course Review', path: '/admin/courses' },
 		{ label: 'Students', path: '/admin/students' },
 		{ label: 'Payments', path: '/admin/payments' },
+		{ label: 'Memberships', path: '/admin/memberships' },
 		{ label: 'Food Database', path: '/admin/nutrition' },
 		{ label: 'Course Options', path: '/admin/course-option-list' },
 		{ label: 'Account Settings', path: '/admin/account-settings' },

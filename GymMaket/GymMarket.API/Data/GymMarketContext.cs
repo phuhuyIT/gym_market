@@ -35,6 +35,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<Message> Messages { get; set; }
 
+    public virtual DbSet<MembershipPlan> MembershipPlans { get; set; }
+
     public virtual DbSet<Notification> Notifications { get; set; }
 
     public virtual DbSet<Payment> Payments { get; set; }
@@ -50,6 +52,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
     public virtual DbSet<QuizQuestion> QuizQuestions { get; set; }
 
     public virtual DbSet<Student> Students { get; set; }
+
+    public virtual DbSet<StudentMembership> StudentMemberships { get; set; }
 
     public virtual DbSet<Trainer> Trainers { get; set; }
 
@@ -709,6 +713,96 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasOne(d => d.Trainer).WithMany(p => p.Messages)
                 .HasForeignKey(d => d.TrainerId)
                 .HasConstraintName("FK_Messages_Trainer");
+        });
+
+        modelBuilder.Entity<MembershipPlan>(entity =>
+        {
+            entity.HasKey(e => e.PlanId);
+
+            entity.ToTable("Membership_Plans");
+
+            entity.Property(e => e.PlanId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Plan_ID");
+            entity.Property(e => e.Name)
+                .HasMaxLength(120)
+                .IsUnicode(false);
+            entity.Property(e => e.Description)
+                .HasMaxLength(1000);
+            entity.Property(e => e.DurationDays)
+                .HasColumnName("Duration_Days");
+            entity.Property(e => e.Price)
+                .HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("Is_Active");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.Name);
+            entity.HasIndex(e => e.IsActive);
+            entity.HasIndex(e => new { e.IsActive, e.Price });
+        });
+
+        modelBuilder.Entity<StudentMembership>(entity =>
+        {
+            entity.HasKey(e => e.MembershipId);
+
+            entity.ToTable("Student_Memberships");
+
+            entity.Property(e => e.MembershipId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Membership_ID");
+            entity.Property(e => e.PlanId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Plan_ID");
+            entity.Property(e => e.StudentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Student_ID");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.StartsAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Starts_At");
+            entity.Property(e => e.EndsAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Ends_At");
+            entity.Property(e => e.CancelledAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Cancelled_At");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.PlanId);
+            entity.HasIndex(e => e.StudentId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.EndsAt);
+            entity.HasIndex(e => new { e.StudentId, e.Status, e.EndsAt });
+
+            entity.HasOne(d => d.Plan).WithMany(p => p.StudentMemberships)
+                .HasForeignKey(d => d.PlanId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_Student_Memberships_Membership_Plan");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.StudentMemberships)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Student_Memberships_Student");
         });
 
         modelBuilder.Entity<Notification>(entity =>

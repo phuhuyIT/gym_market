@@ -1,0 +1,98 @@
+<main class="min-h-screen bg-[#F7F6F3] dark:bg-[#0E0E10] px-4 py-8 md:px-8">
+  <div class="max-w-6xl mx-auto space-y-6">
+    <section class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-stretch">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-wider text-blue-500 dark:text-blue-400 mb-2">My membership</p>
+          <h1 class="text-3xl md:text-4xl font-black tracking-tight text-neutral-900 dark:text-white">Gym access pass</h1>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-3 max-w-2xl">
+            Keep an active membership for gym services, class bookings, and attendance-based features as they come online.
+          </p>
+        </div>
+        <div class="rounded-3xl p-5 bg-[#101828] text-white flex flex-col justify-between min-h-40">
+          <div class="flex items-center justify-between gap-4">
+            <p class="text-xs font-extrabold uppercase tracking-wider text-white/50">Status</p>
+            <span class="px-3 py-1 rounded-full text-[11px] font-extrabold" [ngClass]="status?.hasActiveMembership ? 'bg-emerald-400/20 text-emerald-200' : 'bg-white/10 text-white/70'">
+              {{ status?.hasActiveMembership ? 'Active' : 'No active pass' }}
+            </span>
+          </div>
+          @if (status?.currentMembership) {
+            <div>
+              <p class="text-2xl font-black mt-6">{{ status?.currentMembership?.planName }}</p>
+              <p class="text-sm text-white/60 mt-1">Ends {{ status?.currentMembership?.endsAt | date:'mediumDate' }}</p>
+            </div>
+          } @else {
+            <div>
+              <p class="text-2xl font-black mt-6">Choose a plan</p>
+              <p class="text-sm text-white/60 mt-1">Activate access before booking gym sessions.</p>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    @if (status?.currentMembership) {
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-5 shadow-sm">
+          <p class="text-[10px] uppercase font-extrabold text-neutral-400">Days remaining</p>
+          <p class="text-3xl font-black text-neutral-900 dark:text-white mt-2">{{ daysRemaining() }}</p>
+        </div>
+        <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-5 shadow-sm">
+          <p class="text-[10px] uppercase font-extrabold text-neutral-400">Started</p>
+          <p class="text-lg font-black text-neutral-900 dark:text-white mt-2">{{ status?.currentMembership?.startsAt | date:'mediumDate' }}</p>
+        </div>
+        <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-5 shadow-sm flex items-center justify-between gap-4">
+          <div>
+            <p class="text-[10px] uppercase font-extrabold text-neutral-400">Plan value</p>
+            <p class="text-lg font-black text-neutral-900 dark:text-white mt-2">{{ status?.currentMembership?.price | currency:'USD':'symbol':'1.0-0' }}</p>
+          </div>
+          <button (click)="cancelMembership()" class="px-4 py-2.5 rounded-2xl bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white text-sm font-extrabold transition-colors">
+            Cancel
+          </button>
+        </div>
+      </section>
+    }
+
+    <section>
+      <div class="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-xl font-black text-neutral-900 dark:text-white">Available plans</h2>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">Renewals start after your current active membership ends.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        @for (plan of status?.availablePlans || []; track plan.planId) {
+          <article (click)="selectPlan(plan)" class="cursor-pointer bg-white dark:bg-[#161618] border rounded-3xl p-5 shadow-sm transition-all" [ngClass]="selectedPlanId === plan.planId ? 'border-[#007AFF] ring-4 ring-blue-500/10' : 'border-neutral-200/60 dark:border-neutral-800/60 hover:border-blue-300'">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h3 class="text-lg font-black text-neutral-900 dark:text-white">{{ plan.name }}</h3>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1 min-h-10">{{ plan.description || 'Gym access membership' }}</p>
+              </div>
+              <span class="h-5 w-5 rounded-full border-2 flex-shrink-0 mt-1" [ngClass]="selectedPlanId === plan.planId ? 'border-[#007AFF] bg-[#007AFF]' : 'border-neutral-300 dark:border-neutral-700'"></span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-5">
+              <div class="rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3">
+                <p class="text-[10px] uppercase font-extrabold text-neutral-400">Duration</p>
+                <p class="text-base font-black text-neutral-900 dark:text-white">{{ plan.durationDays }} days</p>
+              </div>
+              <div class="rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3">
+                <p class="text-[10px] uppercase font-extrabold text-neutral-400">Price</p>
+                <p class="text-base font-black text-neutral-900 dark:text-white">{{ plan.price | currency:'USD':'symbol':'1.0-0' }}</p>
+              </div>
+            </div>
+            <button (click)="subscribe(plan); $event.stopPropagation()" class="w-full mt-5 bg-[#007AFF] hover:bg-blue-600 text-white font-extrabold text-sm px-4 py-3 rounded-2xl transition-colors">
+              {{ status?.hasActiveMembership ? 'Renew with this plan' : 'Activate this plan' }}
+            </button>
+          </article>
+        }
+        @if ((status?.availablePlans || []).length === 0) {
+          <div class="md:col-span-2 xl:col-span-3 bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-10 text-center">
+            <p class="text-sm font-bold text-neutral-600 dark:text-neutral-300">No membership plans are available</p>
+            <p class="text-xs text-neutral-400 mt-1">Check back after the gym publishes plans.</p>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+</main>

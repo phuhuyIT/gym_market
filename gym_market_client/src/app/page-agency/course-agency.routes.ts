@@ -13,6 +13,7 @@ import { ManageCoursesComponent } from './manage-courses/manage-courses.componen
 import { ManageStudentsComponent } from './manage-students/manage-students.component';
 import { PaymentsComponent } from './payments/payments.component';
 import { ManageNutritionComponent } from './manage-nutrition/manage-nutrition.component';
+import { MembershipsComponent } from './memberships/memberships.component';
 
 export const routes: Routes = [
 	{
@@ -24,6 +25,7 @@ export const routes: Routes = [
 			{ path: 'courses', component: ManageCoursesComponent, title: 'Quản lý khóa học' },
 				{ path: 'students', component: ManageStudentsComponent, title: 'Quản lý học viên' },
 				{ path: 'payments', component: PaymentsComponent, title: 'Payments' },
+				{ path: 'memberships', component: MembershipsComponent, title: 'Memberships' },
 				{ path: 'nutrition', component: ManageNutritionComponent, title: 'Food Database' },
 				{ path: 'add-course', component: AddCourseComponent, title: 'Thêm course' },
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Cập nhật course' },

@@ -12,6 +12,7 @@ import { UpdateProfileComponent } from './update-profile/update-profile.componen
 import { CourseRegistrationComponent } from './course-registration/course-registration.component';
 import { FoodNutritionCalculatorComponent } from './food-nutrition-calculator/food-nutrition-calculator.component';
 import { AccountSettingsComponent } from '../account-settings/account-settings.component';
+import { MembershipComponent } from './membership/membership.component';
 
 export const routes: Routes = [
 	{
@@ -29,8 +30,9 @@ export const routes: Routes = [
 			{ path: 'course-details/:id', component: CourseDetailsComponent, title: 'Course details' },
 			{ path: 'course-learn/:courseId', component: CourseLearnComponent, title: 'Course content' },
 			{ path: 'course-payment/:courseId', component: CoursePaymentComponent, title: 'Course payment' },
-			{ path: 'course-registration', component: CourseRegistrationComponent, title: 'Course Registration' },
-			{ path: 'food-nutrition-calculator', component: FoodNutritionCalculatorComponent, title: 'Food Nutrition Calculator' },
+				{ path: 'course-registration', component: CourseRegistrationComponent, title: 'Course Registration' },
+				{ path: 'membership', component: MembershipComponent, title: 'My Membership' },
+				{ path: 'food-nutrition-calculator', component: FoodNutritionCalculatorComponent, title: 'Food Nutrition Calculator' },
 		],
 	},
 ];
