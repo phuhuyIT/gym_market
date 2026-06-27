@@ -4,4 +4,9 @@ export interface SignUp {
     password: string;
     confirmPassword: string;
     role: string;
+    healthStatus?: string;
+    certification?: string;
+    category?: string;
+    bio?: string;
+    experience?: number;
 }

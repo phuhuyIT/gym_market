@@ -59,6 +59,7 @@ namespace GymMarket.API.Services
                             Bio = "Professional fitness instructor.",
                             Experience = 0,
                             Rating = Defaults.DefaultRating,
+                            ApprovalStatus = TrainerApprovalStatus.PendingReview,
                             Description = ""
                         };
                         await _context.Trainers.AddAsync(trainer);
@@ -113,6 +114,7 @@ namespace GymMarket.API.Services
                 new Claim("trainerId", string.IsNullOrEmpty(trainerId) == false ? trainerId : ""),
                 new Claim("studentId", string.IsNullOrEmpty(studentId) == false ? studentId : ""),
                 new Claim("avatar", string.IsNullOrEmpty(user.Avatar) == false ? user.Avatar : Defaults.AvatarUrl),
+                new Claim("securityStamp", user.SecurityStamp ?? ""),
             };
 
             foreach (var role in userRoles)

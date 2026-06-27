@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { AdminComponent } from './admin.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
-import { ManageCoursesComponent } from '../page-agency/manage-courses/manage-courses.component';
 import { ManageStudentsComponent } from '../page-agency/manage-students/manage-students.component';
 import { PaymentsComponent } from '../page-agency/payments/payments.component';
 import { ManageNutritionComponent } from '../page-agency/manage-nutrition/manage-nutrition.component';
@@ -10,15 +9,18 @@ import { UpdateCourseComponent } from '../page-agency/update-course/update-cours
 import { CourseMaterialComponent } from '../page-agency/course-material/course-material.component';
 import { CourseOptionListComponent } from '../page-agency/course-option-list/course-option-list.component';
 import { AccountSettingsComponent } from '../account-settings/account-settings.component';
+import { AdminUsersComponent } from './admin-users/admin-users.component';
+import { AdminCoursesComponent } from './admin-courses/admin-courses.component';
 
 export const routes: Routes = [
 	{
 		path: '',
 		component: AdminComponent,
 		children: [
-			{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-			{ path: 'dashboard', component: AdminDashboardComponent, title: 'Admin Dashboard' },
-			{ path: 'courses', component: ManageCoursesComponent, title: 'Courses' },
+				{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+				{ path: 'dashboard', component: AdminDashboardComponent, title: 'Admin Dashboard' },
+				{ path: 'users', component: AdminUsersComponent, title: 'Users' },
+				{ path: 'courses', component: AdminCoursesComponent, title: 'Course Review' },
 			{ path: 'students', component: ManageStudentsComponent, title: 'Students' },
 			{ path: 'payments', component: PaymentsComponent, title: 'Payments' },
 			{ path: 'nutrition', component: ManageNutritionComponent, title: 'Food Database' },

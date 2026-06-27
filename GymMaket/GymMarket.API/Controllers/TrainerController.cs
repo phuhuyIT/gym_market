@@ -2,7 +2,10 @@
 using GymMarket.API.DTOs.Trainer;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using GymMarket.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GymMarket.API.Controllers
 {
@@ -15,6 +18,80 @@ namespace GymMarket.API.Controllers
         public TrainerController(ITrainerRepository repository, IMapper mapper) : base(repository, mapper)
         {
             _trainerRepository = repository;
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public override Task<IActionResult> GetAll()
+        {
+            return base.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        [Authorize]
+        public override async Task<IActionResult> GetById(string id)
+        {
+            var trainer = await _repository.GetByIdAsync(id);
+            if (trainer == null)
+                return NotFound();
+
+            if (CanManageTrainer(id))
+                return Ok(trainer);
+
+            return Ok(new
+            {
+                trainer.TrainerId,
+                trainer.UserId,
+                trainer.Name,
+                trainer.Email,
+                trainer.Certification,
+                trainer.Category,
+                trainer.Bio,
+                trainer.Description,
+                trainer.Experience,
+                trainer.Rating,
+                trainer.ProfilePicture,
+                trainer.CreatedAt,
+                trainer.UpdatedAt
+            });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public override Task<IActionResult> Create([FromBody] TrainerCreateDTO createDto)
+        {
+            return base.Create(createDto);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Trainer,Admin")]
+        public override async Task<IActionResult> Update(string id, [FromBody] TrainerUpdateDTO updateDto)
+        {
+            if (!CanManageTrainer(id))
+                return Forbid();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var existingEntity = await _repository.GetByIdAsync(id);
+            if (existingEntity == null)
+                return NotFound();
+
+            var existingUserId = existingEntity.UserId;
+
+            _mapper.Map(updateDto, existingEntity);
+            existingEntity.TrainerId = id;
+            existingEntity.UserId = existingUserId;
+
+            await _repository.Update(existingEntity);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public override Task<IActionResult> Delete(string id)
+        {
+            return base.Delete(id);
         }
 
         [HttpGet("search")]
@@ -47,6 +124,17 @@ namespace GymMarket.API.Controllers
         protected override string GetEntityId(Trainer entity)
         {
             return entity.TrainerId;
+        }
+
+        private bool CanManageTrainer(string trainerId)
+        {
+            return User.IsInRole(ApplicationRoles.Admin) ||
+                   string.Equals(CurrentTrainerId(), trainerId, StringComparison.Ordinal);
+        }
+
+        private string? CurrentTrainerId()
+        {
+            return User.FindFirstValue("trainerId");
         }
     }
 }

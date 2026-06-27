@@ -8,8 +8,6 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Login } from './models/login.model';
 import { SignUp } from './models/signup.model';
-import { StudentSignup } from './models/student-sign-up.model';
-import { TrainerSignup } from './models/trainer-sign-up.model';
 import {
 	ApiResponse,
 	AvatarUploadResponse,
@@ -171,14 +169,6 @@ export class AccountService {
 			script.onload = () => resolve();
 			document.head.appendChild(script);
 		});
-	}
-
-	studentSignup(model: StudentSignup): Observable<void> {
-		return this.http.post<void>(`${environment.baseApi}/student`, model);
-	}
-
-	trainerSignup(model: TrainerSignup): Observable<void> {
-		return this.http.post<void>(`${environment.baseApi}/trainer`, model);
 	}
 
 	// ── Token Management ──────────────────────────────────────────

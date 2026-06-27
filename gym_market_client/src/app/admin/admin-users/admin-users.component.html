@@ -1,0 +1,242 @@
+<section class="mx-auto max-w-7xl space-y-5">
+	<div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+		<div>
+			<h1 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Users</h1>
+			<p class="text-sm text-neutral-500 dark:text-neutral-400">Manage account status, confirmation, and lockout recovery.</p>
+		</div>
+		<div class="text-sm font-semibold text-neutral-500 dark:text-neutral-400">{{ totalCount }} accounts</div>
+	</div>
+
+	<div class="grid gap-3 rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-[#161618] md:grid-cols-[minmax(220px,1fr)_150px_150px_180px_180px_auto]">
+		<input
+			[(ngModel)]="search"
+			(keyup.enter)="applyFilters()"
+			type="search"
+			placeholder="Search name, email, phone"
+			class="min-h-10 rounded-md border border-neutral-200 bg-neutral-50 px-3 text-sm outline-none focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-900"
+		/>
+		<select [(ngModel)]="role" class="min-h-10 rounded-md border border-neutral-200 bg-neutral-50 px-3 text-sm dark:border-neutral-700 dark:bg-neutral-900">
+			<option value="">All roles</option>
+			<option value="Admin">Admin</option>
+			<option value="Trainer">Trainer</option>
+			<option value="Student">Student</option>
+		</select>
+		<select [(ngModel)]="status" class="min-h-10 rounded-md border border-neutral-200 bg-neutral-50 px-3 text-sm dark:border-neutral-700 dark:bg-neutral-900">
+			<option value="">All status</option>
+			<option value="Active">Active</option>
+			<option value="Suspended">Suspended</option>
+		</select>
+		<select [(ngModel)]="trainerApprovalStatus" class="min-h-10 rounded-md border border-neutral-200 bg-neutral-50 px-3 text-sm dark:border-neutral-700 dark:bg-neutral-900">
+			<option value="">Any trainer review</option>
+			<option value="PendingReview">Pending review</option>
+			<option value="Approved">Approved</option>
+			<option value="Rejected">Rejected</option>
+		</select>
+		<select [(ngModel)]="emailConfirmed" class="min-h-10 rounded-md border border-neutral-200 bg-neutral-50 px-3 text-sm dark:border-neutral-700 dark:bg-neutral-900">
+			<option value="">Any confirmation</option>
+			<option value="true">Confirmed</option>
+			<option value="false">Unconfirmed</option>
+		</select>
+		<div class="flex gap-2">
+			<button (click)="applyFilters()" class="min-h-10 rounded-md bg-[#007AFF] px-4 text-sm font-semibold text-white hover:bg-blue-600">Search</button>
+			<button (click)="clearFilters()" class="min-h-10 rounded-md border border-neutral-200 px-4 text-sm font-semibold hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">Reset</button>
+		</div>
+	</div>
+
+	<div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+		<div class="overflow-hidden rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-[#161618]">
+			<div class="overflow-x-auto">
+				<table class="w-full min-w-[1040px] text-left text-sm">
+					<thead class="border-b border-neutral-200 bg-neutral-50 text-xs uppercase text-neutral-500 dark:border-neutral-800 dark:bg-neutral-900/70">
+						<tr>
+							<th class="px-4 py-3">User</th>
+							<th class="px-4 py-3">Role</th>
+							<th class="px-4 py-3">Status</th>
+							<th class="px-4 py-3">Email</th>
+							<th class="px-4 py-3">Profile</th>
+							<th class="px-4 py-3 text-right">Actions</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
+						@if (loading) {
+							<tr>
+								<td colspan="6" class="px-4 py-8 text-center text-sm text-neutral-500">Loading users...</td>
+							</tr>
+						} @else if (users.length === 0) {
+							<tr>
+								<td colspan="6" class="px-4 py-8 text-center text-sm text-neutral-500">No users match the current filters.</td>
+							</tr>
+						} @else {
+							@for (user of users; track user.id) {
+								<tr class="hover:bg-neutral-50/80 dark:hover:bg-neutral-900/60">
+									<td class="px-4 py-3">
+										<button (click)="selectUser(user)" class="text-left">
+											<span class="block font-semibold text-neutral-900 dark:text-neutral-100">{{ user.fullName || 'Unnamed user' }}</span>
+											<span class="block text-xs text-neutral-500">{{ user.email || user.id }}</span>
+										</button>
+									</td>
+									<td class="px-4 py-3 text-neutral-600 dark:text-neutral-300">{{ user.roles.join(', ') || 'None' }}</td>
+									<td class="px-4 py-3">
+										<span
+											class="inline-flex rounded-full px-2.5 py-1 text-xs font-bold"
+											[class.bg-green-50]="user.status === 'Active'"
+											[class.text-green-700]="user.status === 'Active'"
+											[class.bg-red-50]="user.status === 'Suspended'"
+											[class.text-red-700]="user.status === 'Suspended'"
+										>
+											{{ user.status }}
+										</span>
+										@if (user.isLockedOut) {
+											<span class="ml-2 inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700">Locked</span>
+										}
+									</td>
+									<td class="px-4 py-3">
+										@if (user.emailConfirmed) {
+											<span class="text-sm font-semibold text-green-600">Confirmed</span>
+										} @else {
+											<span class="text-sm font-semibold text-amber-600">Unconfirmed</span>
+										}
+									</td>
+									<td class="px-4 py-3 text-xs text-neutral-500">
+										@if (user.trainerId) {
+											<div class="flex flex-col items-start gap-1">
+												<span>Trainer</span>
+												<span
+													class="inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold"
+													[class.bg-green-50]="user.trainerApprovalStatus === 'Approved'"
+													[class.text-green-700]="user.trainerApprovalStatus === 'Approved'"
+													[class.bg-red-50]="user.trainerApprovalStatus === 'Rejected'"
+													[class.text-red-700]="user.trainerApprovalStatus === 'Rejected'"
+													[class.bg-amber-50]="user.trainerApprovalStatus === 'PendingReview'"
+													[class.text-amber-700]="user.trainerApprovalStatus === 'PendingReview'"
+												>
+													{{ trainerApprovalLabel(user.trainerApprovalStatus) }}
+												</span>
+											</div>
+										} @else if (user.studentId) {
+											<span>Student</span>
+										} @else {
+											<span>No profile</span>
+										}
+									</td>
+									<td class="px-4 py-3">
+										<div class="flex justify-end gap-2">
+											<button (click)="selectUser(user)" class="rounded-md border border-neutral-200 px-3 py-1.5 text-xs font-semibold hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">View</button>
+											@if (user.status === 'Suspended') {
+												<button (click)="setStatus(user, 'Active')" [disabled]="actionUserId === user.id" class="rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50">Activate</button>
+											} @else {
+												<button (click)="setStatus(user, 'Suspended')" [disabled]="actionUserId === user.id" class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50">Suspend</button>
+											}
+										</div>
+									</td>
+								</tr>
+							}
+						}
+					</tbody>
+				</table>
+			</div>
+			<div class="flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm dark:border-neutral-800">
+				<span class="text-neutral-500">Page {{ pageIndex }} of {{ totalPages || 1 }}</span>
+				<div class="flex gap-2">
+					<button (click)="previousPage()" [disabled]="pageIndex <= 1" class="rounded-md border border-neutral-200 px-3 py-1.5 font-semibold disabled:opacity-40 dark:border-neutral-700">Previous</button>
+					<button (click)="nextPage()" [disabled]="pageIndex >= totalPages" class="rounded-md border border-neutral-200 px-3 py-1.5 font-semibold disabled:opacity-40 dark:border-neutral-700">Next</button>
+				</div>
+			</div>
+		</div>
+
+		<aside class="rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-[#161618]">
+			@if (selectedUser) {
+				<div class="space-y-4">
+					<div>
+						<h2 class="text-lg font-bold">{{ selectedUser.fullName || 'Unnamed user' }}</h2>
+						<p class="text-sm text-neutral-500">{{ selectedUser.email }}</p>
+					</div>
+
+					<div class="grid grid-cols-2 gap-3 text-sm">
+						<div>
+							<p class="text-xs font-semibold uppercase text-neutral-400">Status</p>
+							<p class="font-semibold">{{ selectedUser.status }}</p>
+						</div>
+						<div>
+							<p class="text-xs font-semibold uppercase text-neutral-400">Email</p>
+							<p class="font-semibold">{{ selectedUser.emailConfirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
+						</div>
+						<div>
+							<p class="text-xs font-semibold uppercase text-neutral-400">Roles</p>
+							<p class="font-semibold">{{ selectedUser.roles.join(', ') || 'None' }}</p>
+						</div>
+						<div>
+							<p class="text-xs font-semibold uppercase text-neutral-400">2FA</p>
+							<p class="font-semibold">{{ selectedUser.twoFactorEnabled ? 'Enabled' : 'Off' }}</p>
+						</div>
+						@if (selectedUser.trainerId) {
+							<div>
+								<p class="text-xs font-semibold uppercase text-neutral-400">Trainer Review</p>
+								<p class="font-semibold">{{ trainerApprovalLabel(selectedUser.trainerApprovalStatus) }}</p>
+							</div>
+						}
+						<div>
+							<p class="text-xs font-semibold uppercase text-neutral-400">Failed Logins</p>
+							<p class="font-semibold">{{ selectedUser.accessFailedCount }}</p>
+						</div>
+						<div>
+							<p class="text-xs font-semibold uppercase text-neutral-400">Lockout</p>
+							<p class="font-semibold">{{ selectedUser.isLockedOut ? 'Locked' : 'Clear' }}</p>
+						</div>
+					</div>
+
+					<div class="space-y-2 border-t border-neutral-200 pt-4 dark:border-neutral-800">
+						@if (selectedUser.trainerId) {
+							<div class="grid grid-cols-3 gap-2">
+								<button
+									(click)="setTrainerApproval(selectedUser, 'Approved')"
+									[disabled]="selectedUser.trainerApprovalStatus === 'Approved' || actionUserId === selectedUser.id"
+									class="rounded-md bg-green-600 px-2 py-2 text-xs font-semibold text-white disabled:opacity-40"
+								>
+									Approve
+								</button>
+								<button
+									(click)="setTrainerApproval(selectedUser, 'PendingReview')"
+									[disabled]="selectedUser.trainerApprovalStatus === 'PendingReview' || actionUserId === selectedUser.id"
+									class="rounded-md border border-neutral-200 px-2 py-2 text-xs font-semibold disabled:opacity-40 dark:border-neutral-700"
+								>
+									Pending
+								</button>
+								<button
+									(click)="setTrainerApproval(selectedUser, 'Rejected')"
+									[disabled]="selectedUser.trainerApprovalStatus === 'Rejected' || actionUserId === selectedUser.id"
+									class="rounded-md bg-red-600 px-2 py-2 text-xs font-semibold text-white disabled:opacity-40"
+								>
+									Reject
+								</button>
+							</div>
+						}
+						<button
+							(click)="resendConfirmation(selectedUser)"
+							[disabled]="selectedUser.emailConfirmed || actionUserId === selectedUser.id"
+							class="w-full rounded-md border border-neutral-200 px-3 py-2 text-sm font-semibold disabled:opacity-40 dark:border-neutral-700"
+						>
+							Resend confirmation
+						</button>
+						<button
+							(click)="unlock(selectedUser)"
+							[disabled]="!selectedUser.isLockedOut || actionUserId === selectedUser.id"
+							class="w-full rounded-md border border-neutral-200 px-3 py-2 text-sm font-semibold disabled:opacity-40 dark:border-neutral-700"
+						>
+							Unlock account
+						</button>
+						@if (selectedUser.status === 'Suspended') {
+							<button (click)="setStatus(selectedUser, 'Active')" [disabled]="actionUserId === selectedUser.id" class="w-full rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white disabled:opacity-40">Activate user</button>
+						} @else {
+							<button (click)="setStatus(selectedUser, 'Suspended')" [disabled]="actionUserId === selectedUser.id" class="w-full rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white disabled:opacity-40">Suspend user</button>
+						}
+					</div>
+				</div>
+			} @else {
+				<div class="flex min-h-64 items-center justify-center text-center text-sm text-neutral-500">
+					Select a user to inspect account details.
+				</div>
+			}
+		</aside>
+	</div>
+</section>

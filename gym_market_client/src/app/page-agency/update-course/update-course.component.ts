@@ -47,13 +47,13 @@ export class UpdateCourseComponent implements OnInit {
 		endDate: '',
 		duration: 0,
 		maxParticipants: 0,
-		status: 'Published',
+		status: 'PendingReview',
 		rating: 0,
 		getFileDtos: [],
 	};
 
 	readonly descriptionLimit = 500;
-	readonly courseStatuses = ['Draft', 'Published', 'Archived'] as const;
+	readonly courseStatuses = ['Draft', 'PendingReview', 'Archived'] as const;
 	readonly DEFAULT_COURSE_THUMBNAIL_URL = DEFAULT_COURSE_THUMBNAIL_URL;
 	readonly DEFAULT_IMAGE_URL = DEFAULT_IMAGE_URL;
 
@@ -84,6 +84,10 @@ export class UpdateCourseComponent implements OnInit {
 
 	get selectedType(): CourseTypeOption {
 		return this.courseTypes.find(t => t.value === this.model.type) ?? this.courseTypes[0];
+	}
+
+	statusLabel(status: string): string {
+		return status === 'PendingReview' ? 'Submit for review' : status;
 	}
 
 	// Days between the chosen start and end dates (inclusive), for the schedule hint.
@@ -196,7 +200,7 @@ export class UpdateCourseComponent implements OnInit {
 		form.append('EndDate', this.model.endDate);
 		form.append('Duration', this.model.duration.toString());
 		form.append('MaxParticipants', this.model.maxParticipants.toString());
-		form.append('Status', this.model.status || 'Published');
+		form.append('Status', this.model.status || 'PendingReview');
 		// No TrainerId: ownership never changes on update and the backend
 		// keeps the current owner.
 

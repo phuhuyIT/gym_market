@@ -45,11 +45,53 @@ namespace GymMarket.API
     public static class CourseStatus
     {
         public const string Draft = "Draft";
+        public const string PendingReview = "PendingReview";
         public const string Published = "Published";
+        public const string Rejected = "Rejected";
         public const string Archived = "Archived";
+
+        public static readonly string[] All = [Draft, PendingReview, Published, Rejected, Archived];
+        public static readonly string[] TrainerWritable = [Draft, PendingReview, Archived];
+        public static readonly string[] ModerationStatuses = [PendingReview, Published, Rejected, Archived, Draft];
 
         public static string Normalize(string? status) =>
             string.IsNullOrWhiteSpace(status) ? Published : status.Trim();
+
+        public static string? TryNormalize(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return null;
+
+            return All.FirstOrDefault(
+                supported => string.Equals(supported, status.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static bool IsTrainerWritable(string status) =>
+            TrainerWritable.Contains(status);
+    }
+
+    public static class TrainerApprovalStatus
+    {
+        public const string PendingReview = "PendingReview";
+        public const string Approved = "Approved";
+        public const string Rejected = "Rejected";
+
+        public static readonly string[] All = [PendingReview, Approved, Rejected];
+
+        public static string NormalizeStored(string? status) =>
+            string.IsNullOrWhiteSpace(status) ? PendingReview : status.Trim();
+
+        public static string? TryNormalize(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return null;
+
+            return All.FirstOrDefault(
+                supported => string.Equals(supported, status.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static bool IsApproved(string? status) =>
+            string.Equals(NormalizeStored(status), Approved, StringComparison.OrdinalIgnoreCase);
     }
 
     public static class CourseRegistrationErrorCode

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment.development';
 import { PagedResult } from '../core/models/paged-result.model';
 import { Trainer, TrainerSearch, UpdateTrainerProfileDto } from '../core/models/trainer.model';
@@ -20,7 +21,24 @@ export class TrainerService {
 	}
 
 	getTrainers(): Observable<Trainer[]> {
-		return this.http.get<Trainer[]>(`${environment.baseApi}/trainer`);
+		return this.searchTrainersPaged('', 1, 50).pipe(
+			map(result =>
+				result.items.map(item => ({
+					trainerId: item.trainerId,
+					userId: item.userId ?? '',
+					name: item.name ?? item.fullName ?? '',
+					email: item.email ?? '',
+					profilePicture: item.profilePicture ?? '',
+					bio: item.bio ?? '',
+					certification: item.certification ?? '',
+					category: item.category ?? '',
+					experience: item.experience ?? 0,
+					rating: item.rating ?? 0,
+					createdAt: item.createdAt ?? '',
+					updatedAt: '',
+				}))
+			)
+		);
 	}
 
 	searchTrainersPaged(

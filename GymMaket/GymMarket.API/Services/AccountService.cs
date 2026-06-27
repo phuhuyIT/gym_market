@@ -11,6 +11,7 @@ namespace GymMarket.API.Services
 {
     public class AccountService : IAccountService
     {
+        private static readonly string[] TrainerCategories = ["Yoga", "Cardio", "Strength", "Crossfit"];
         private readonly IAccountRepository _accountRepository;
         private readonly IJwtService _jwtService;
         private readonly IPasswordSignInService _passwordSignInService;
@@ -46,6 +47,12 @@ namespace GymMarket.API.Services
                 return new SignupResponse { StatusCode = 400, Errors = ["INVALID_ROLE"], Success = false };
             }
 
+            var validationErrors = ValidateSignupProfile(model, role);
+            if (validationErrors.Count > 0)
+            {
+                return new SignupResponse { StatusCode = 400, Errors = validationErrors, Success = false };
+            }
+
             var userExist = await _accountRepository.FindByEmail(model.Email);
             if (userExist != null)
             {
@@ -72,6 +79,19 @@ namespace GymMarket.API.Services
                 return new SignupResponse { StatusCode = 400, Errors = ["ROLE_ASSIGNMENT_FAILED"], Success = false };
             }
 
+            await CreateProfileForRole(user, role, model);
+
+            var emailResponse = await SendEmailConfirmationForUser(user);
+            if (!emailResponse.Success)
+            {
+                return new SignupResponse
+                {
+                    StatusCode = emailResponse.StatusCode,
+                    Success = false,
+                    Errors = emailResponse.Errors
+                };
+            }
+
             return new SignupResponse { StatusCode = 200, Success = true, Message = "SUCCESS", UserId = user.Id };
         }
 
@@ -91,6 +111,16 @@ namespace GymMarket.API.Services
                     return new LoginResponse { StatusCode = 400, Success = false, Errors = ["ACCOUNT_LOCKED"] };
                 }
                 return new LoginResponse { StatusCode = 400, Success = false, Errors = ["INVALID_CREDENTIALS"] };
+            }
+
+            if (string.Equals(user.Status, "Suspended", StringComparison.OrdinalIgnoreCase))
+            {
+                return new LoginResponse { StatusCode = 400, Success = false, Errors = ["ACCOUNT_SUSPENDED"] };
+            }
+
+            if (!await _accountRepository.IsEmailConfirmedAsync(user))
+            {
+                return new LoginResponse { StatusCode = 400, Success = false, Errors = ["EMAIL_NOT_CONFIRMED"] };
             }
 
             var token = await _jwtService.CreateJWT(user);
@@ -160,6 +190,7 @@ namespace GymMarket.API.Services
                                 UpdatedAt = DateTime.UtcNow,
                                 Rating = Defaults.DefaultRating,
                                 Experience = 0,
+                                ApprovalStatus = TrainerApprovalStatus.PendingReview,
                                 UserId = user.Id
                             };
                             await _accountRepository.CreateTrainerAsync(trainer);
@@ -306,6 +337,11 @@ namespace GymMarket.API.Services
                 return new ApiResponse { StatusCode = 400, Success = false, Errors = ["EMAIL_ALREADY_CONFIRMED"] };
             }
 
+            return await SendEmailConfirmationForUser(user);
+        }
+
+        private async Task<ApiResponse> SendEmailConfirmationForUser(AppUser user)
+        {
             var token = await _accountRepository.GenerateEmailConfirmationTokenAsync(user);
             var clientBaseUrl = _configuration["App:ClientBaseUrl"]?.TrimEnd('/') ?? "http://localhost:4200";
             var confirmationUrl =
@@ -473,6 +509,90 @@ namespace GymMarket.API.Services
 
             await _accountRepository.SaveRefreshTokenAsync(refreshToken);
             return refreshTokenValue;
+        }
+
+        private async Task CreateProfileForRole(AppUser user, string role, SignUpDto model)
+        {
+            if (role == ApplicationRoles.Trainer)
+            {
+                var trainer = new Trainer
+                {
+                    TrainerId = Guid.NewGuid().ToString(),
+                    Name = model.FullName.Trim(),
+                    Email = model.Email.Trim(),
+                    Certification = string.IsNullOrWhiteSpace(model.Certification) ? "General Fitness Trainer" : model.Certification.Trim(),
+                    Category = NormalizeTrainerCategory(model.Category),
+                    Bio = string.IsNullOrWhiteSpace(model.Bio) ? "Professional fitness instructor." : model.Bio.Trim(),
+                    Experience = model.Experience ?? 0,
+                    Rating = Defaults.DefaultRating,
+                    ProfilePicture = Defaults.AvatarUrl,
+                    Description = string.Empty,
+                    ApprovalStatus = TrainerApprovalStatus.PendingReview,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    UserId = user.Id
+                };
+
+                await _accountRepository.CreateTrainerAsync(trainer);
+                return;
+            }
+
+            var student = new Student
+            {
+                StudentId = Guid.NewGuid().ToString(),
+                Name = model.FullName.Trim(),
+                Email = model.Email.Trim(),
+                HealthStatus = string.IsNullOrWhiteSpace(model.HealthStatus) ? "Good" : model.HealthStatus.Trim(),
+                ProfilePicture = Defaults.StudentAvatarUrl,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                UserId = user.Id
+            };
+
+            await _accountRepository.CreateStudentAsync(student);
+        }
+
+        private static List<string> ValidateSignupProfile(SignUpDto model, string role)
+        {
+            if (role != ApplicationRoles.Trainer)
+            {
+                return [];
+            }
+
+            var errors = new List<string>();
+
+            if (model.Experience is < 0 or > 50)
+            {
+                errors.Add("INVALID_TRAINER_EXPERIENCE");
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.Category) && NormalizeTrainerCategory(model.Category) is null)
+            {
+                errors.Add("INVALID_TRAINER_CATEGORY");
+            }
+
+            if (model.Certification?.Length > 200)
+            {
+                errors.Add("TRAINER_CERTIFICATION_TOO_LONG");
+            }
+
+            if (model.Bio?.Length > 500)
+            {
+                errors.Add("TRAINER_BIO_TOO_LONG");
+            }
+
+            return errors;
+        }
+
+        private static string? NormalizeTrainerCategory(string? category)
+        {
+            if (string.IsNullOrWhiteSpace(category))
+            {
+                return null;
+            }
+
+            return TrainerCategories.FirstOrDefault(
+                supported => string.Equals(supported, category.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
         private string GenerateQrCodeUri(string email, string key)

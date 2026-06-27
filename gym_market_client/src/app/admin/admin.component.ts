@@ -21,7 +21,8 @@ export class AdminComponent {
 
 	navItems = [
 		{ label: 'Overview', path: '/admin/dashboard' },
-		{ label: 'Courses', path: '/admin/courses' },
+		{ label: 'Users', path: '/admin/users' },
+		{ label: 'Course Review', path: '/admin/courses' },
 		{ label: 'Students', path: '/admin/students' },
 		{ label: 'Payments', path: '/admin/payments' },
 		{ label: 'Food Database', path: '/admin/nutrition' },

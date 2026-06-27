@@ -39,11 +39,11 @@ export class AddCourseComponent {
 		endDate: formatDateToInput(new Date()),
 		duration: 0,
 		maxParticipants: 0,
-		status: 'Published' as 'Draft' | 'Published' | 'Archived',
+		status: 'PendingReview' as 'Draft' | 'PendingReview',
 	};
 
 	readonly descriptionLimit = 500;
-	readonly courseStatuses = ['Draft', 'Published', 'Archived'] as const;
+	readonly courseStatuses = ['Draft', 'PendingReview'] as const;
 
 	// Full Tailwind class strings kept literal so the JIT compiler picks them up.
 	readonly courseTypes: CourseTypeOption[] = [
@@ -69,6 +69,10 @@ export class AddCourseComponent {
 
 	get selectedType(): CourseTypeOption {
 		return this.courseTypes.find(t => t.value === this.model.type) ?? this.courseTypes[0];
+	}
+
+	statusLabel(status: string): string {
+		return status === 'PendingReview' ? 'Submit for review' : status;
 	}
 
 	// Days between the chosen start and end dates (inclusive), for the schedule hint.
@@ -114,7 +118,7 @@ export class AddCourseComponent {
 				next: () => {
 					this.loading = false;
 					patchState(this.loaderStore, { isShow: false });
-					this.toastService.show('Course created successfully');
+					this.toastService.show('Course submitted successfully');
 					this.router.navigateByUrl(this.coursesUrl());
 				},
 				error: err => {

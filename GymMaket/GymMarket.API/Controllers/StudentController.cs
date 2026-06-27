@@ -23,10 +23,35 @@ namespace GymMarket.API.Controllers
             _studentRepository = repository;
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public override Task<IActionResult> GetAll()
+        {
+            return base.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Student,Admin")]
+        public override async Task<IActionResult> GetById(string id)
+        {
+            if (!CanAccessStudent(id))
+                return Forbid();
+
+            return await base.GetById(id);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public override Task<IActionResult> Create([FromBody] StudentCreateDTO createDto)
+        {
+            return base.Create(createDto);
+        }
+
         // A profile contains PII (email, phone, address, health status), so these
         // endpoints only ever serve the authenticated user's own record — the user
         // id comes from the JWT, never from the client.
         [HttpGet("profile")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> GetProfile()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -37,8 +62,12 @@ namespace GymMarket.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Student,Admin")]
         public override async Task<IActionResult> Update(string id, [FromBody] StudentUpdateDTO updateDto)
         {
+            if (!CanAccessStudent(id))
+                return Forbid();
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -81,6 +110,7 @@ namespace GymMarket.API.Controllers
         }
 
         [HttpGet("by-user")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> GetByUserId()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -117,9 +147,27 @@ namespace GymMarket.API.Controllers
             return Ok(result);
         }
 
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public override Task<IActionResult> Delete(string id)
+        {
+            return base.Delete(id);
+        }
+
         protected override string GetEntityId(Student entity)
         {
             return entity.StudentId;
+        }
+
+        private bool CanAccessStudent(string studentId)
+        {
+            return User.IsInRole(ApplicationRoles.Admin) ||
+                   string.Equals(CurrentStudentId(), studentId, StringComparison.Ordinal);
+        }
+
+        private string? CurrentStudentId()
+        {
+            return User.FindFirstValue("studentId");
         }
     }
 }

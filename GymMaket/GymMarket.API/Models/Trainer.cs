@@ -31,6 +31,8 @@ public partial class Trainer
     [Column("Desciption")]
     public string Description { get; set; } = string.Empty;
 
+    public string ApprovalStatus { get; set; } = TrainerApprovalStatus.PendingReview;
+
     // Receiving bank account for course payments. Students pay via a VietQR built
     // from these, and the trainer reconciles transfers against their own bank.
     public string? BankBin { get; set; }

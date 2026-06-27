@@ -33,6 +33,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             Price = 50
         };
         await Client.PostAsJsonAsync("/api/Course", courseCreate);
+        await PublishCourseAsync("CRS_REG_001");
 
         // …and a student registers for it. The student id comes from the JWT,
         // not the request body.
@@ -100,6 +101,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             EndDate = DateTime.Now.AddDays(30),
             Price = 50
         });
+        await PublishCourseAsync("CRS_REG_002");
 
         await AuthenticateAsync(email: "student_a@example.com");
         await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
@@ -133,6 +135,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             EndDate = DateTime.Now.AddDays(30),
             Price = 50
         });
+        await PublishCourseAsync("CRS_PAY_001");
 
         await AuthenticateAsync(email: "student_pay@example.com");
         await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
@@ -166,6 +169,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             EndDate = DateTime.Now.AddDays(30),
             Price = 50
         });
+        await PublishCourseAsync("CRS_MANUAL_REVIEW_001");
 
         await AuthenticateAsync(email: "student_manual_review@example.com");
         await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
@@ -217,6 +221,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             Price = 50,
             AdditionalPrice = 5
         });
+        await PublishCourseAsync("CRS_OPTION_PAY_001");
 
         using (var scope = Factory.Services.CreateScope())
         {
@@ -261,6 +266,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             EndDate = DateTime.Now.AddDays(30),
             Price = 50
         });
+        await PublishCourseAsync("CRS_OPTION_VALID");
         await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
         {
             CourseId = "CRS_OPTION_OTHER",
@@ -329,6 +335,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             EndDate = DateTime.Now.AddDays(30),
             Price = 50
         });
+        await PublishCourseAsync("CRS_REPRICE_001");
 
         await AuthenticateAsync(email: "student_reprice@example.com");
         await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
@@ -368,6 +375,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             EndDate = DateTime.Now.AddDays(30),
             Price = 50
         });
+        await PublishCourseAsync("CRS_CONFIRM_001");
 
         await AuthenticateAsync(email: "student_confirm@example.com");
         await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
@@ -419,6 +427,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             EndDate = DateTime.Now.AddDays(30),
             Price = 50
         });
+        await PublishCourseAsync("CRS_RETRY_001");
 
         await AuthenticateAsync(email: "student_retry@example.com");
         await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
@@ -479,6 +488,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             Price = 50,
             MaxParticipants = 1
         });
+        await PublishCourseAsync("CRS_CAPACITY_001");
 
         await AuthenticateAsync(email: "student_capacity_a@example.com");
         var first = await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
@@ -511,6 +521,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             Price = 50,
             MaxParticipants = 1
         });
+        await PublishCourseAsync("CRS_CAPACITY_EXPIRED_001");
 
         await AuthenticateAsync(email: "student_capacity_expired_a@example.com");
         var first = await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
@@ -571,6 +582,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             EndDate = DateTime.Now.AddDays(30),
             Price = 50
         });
+        await PublishCourseAsync("CRS_PAYMENT_EXPIRED_001");
 
         await AuthenticateAsync(email: "student_payment_expired@example.com");
         await Client.PostAsJsonAsync("/api/CourseRegistration/register-course", new RegisterCourseDto
@@ -708,6 +720,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             EndDate = DateTime.Now.AddDays(30),
             Price = 50
         });
+        await PublishCourseAsync("CRS_MOMO_SUCCESS_001");
 
         await AuthenticateAsync(email: "student_momo_success@example.com");
         var studentId = GetTokenClaim("studentId")!;
@@ -773,6 +786,7 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
             EndDate = DateTime.Now.AddDays(30),
             Price = 50
         });
+        await PublishCourseAsync("CRS_MOMO_CANCEL_001");
 
         await AuthenticateAsync(email: "student_momo_cancel@example.com");
         var studentId = GetTokenClaim("studentId")!;
@@ -826,5 +840,14 @@ public class CourseRegistrationIntegrationTests : BaseIntegrationTests
     {
         public string? Message { get; set; }
         public CourseRegistration? Registration { get; set; }
+    }
+
+    private async Task PublishCourseAsync(string courseId)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+        var course = await db.Courses.FirstAsync(c => c.CourseId == courseId);
+        course.Status = CourseStatus.Published;
+        await db.SaveChangesAsync();
     }
 }

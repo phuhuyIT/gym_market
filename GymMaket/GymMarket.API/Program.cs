@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Minio;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -98,6 +99,36 @@ builder.Services.AddAuthentication(options =>
 
     options.Events = new JwtBearerEvents
     {
+        OnTokenValidated = async context =>
+        {
+            var userId = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+            var tokenSecurityStamp = context.Principal?.FindFirstValue("securityStamp");
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(tokenSecurityStamp))
+            {
+                context.Fail("INVALID_TOKEN_STAMP");
+                return;
+            }
+
+            var userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<AppUser>>();
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                context.Fail("USER_NOT_FOUND");
+                return;
+            }
+
+            if (string.Equals(user.Status, "Suspended", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Fail("ACCOUNT_SUSPENDED");
+                return;
+            }
+
+            var currentSecurityStamp = await userManager.GetSecurityStampAsync(user);
+            if (!string.Equals(currentSecurityStamp, tokenSecurityStamp, StringComparison.Ordinal))
+            {
+                context.Fail("STALE_TOKEN");
+            }
+        },
         OnMessageReceived = context =>
         {
             var accessToken = context.Request.Query["access_token"];

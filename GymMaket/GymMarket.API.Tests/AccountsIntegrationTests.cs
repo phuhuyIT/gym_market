@@ -2,6 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Account;
+using GymMarket.API.Models;
+using GymMarket.API.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +31,12 @@ public class AccountsIntegrationTests : IClassFixture<WebApplicationFactory<Prog
                 {
                     options.UseInMemoryDatabase("InMemoryDbForTesting");
                 });
+
+                foreach (var emailSender in services.Where(s => s.ServiceType == typeof(IEmailSender)).ToList())
+                {
+                    services.Remove(emailSender);
+                }
+                services.AddSingleton<IEmailSender, NoopEmailSender>();
             });
         });
 
@@ -72,6 +81,7 @@ public class AccountsIntegrationTests : IClassFixture<WebApplicationFactory<Prog
             ConfirmPassword = password,
             Role = "Student"
         });
+        await ConfirmUserEmailAsync(email);
 
         var loginModel = new LoginDto
         {
@@ -86,6 +96,32 @@ public class AccountsIntegrationTests : IClassFixture<WebApplicationFactory<Prog
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<dynamic>();
         Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task Login_WithUnconfirmedEmail_ReturnsBadRequest()
+    {
+        var email = "unconfirmed_login@example.com";
+        var password = "Password123";
+
+        await _client.PostAsJsonAsync("/api/Accounts/sign-up", new SignUpDto
+        {
+            FullName = "Unconfirmed Login User",
+            Email = email,
+            Password = password,
+            ConfirmPassword = password,
+            Role = "Student"
+        });
+
+        var response = await _client.PostAsJsonAsync("/api/Accounts/login", new LoginDto
+        {
+            Email = email,
+            Password = password
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("EMAIL_NOT_CONFIRMED", body);
     }
 
     [Fact]
@@ -113,5 +149,24 @@ public class AccountsIntegrationTests : IClassFixture<WebApplicationFactory<Prog
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    private async Task ConfirmUserEmailAsync(string email)
+    {
+        using var scope = _factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            return;
+        }
+
+        user.EmailConfirmed = true;
+        await userManager.UpdateAsync(user);
+    }
+
+    private sealed class NoopEmailSender : IEmailSender
+    {
+        public Task SendEmailAsync(string toEmail, string subject, string htmlBody) => Task.CompletedTask;
     }
 }

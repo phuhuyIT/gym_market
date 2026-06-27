@@ -663,6 +663,10 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.Category)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.ApprovalStatus)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(TrainerApprovalStatus.PendingReview);
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -681,6 +685,7 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasIndex(e => e.Email);
             entity.HasIndex(e => e.Category);
             entity.HasIndex(e => e.Certification);
+            entity.HasIndex(e => e.ApprovalStatus);
             entity.HasIndex(e => e.UserId);
             entity.HasIndex(e => new { e.Category, e.Experience });
             entity.HasIndex(e => new { e.Category, e.Rating });

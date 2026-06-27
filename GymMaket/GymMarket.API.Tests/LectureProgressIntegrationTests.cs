@@ -67,7 +67,7 @@ public class LectureProgressIntegrationTests : BaseIntegrationTests
             Price = 100,
             MaxParticipants = 10,
             Duration = 10,
-            Status = CourseStatus.Published
+            Status = CourseStatus.PendingReview
         });
 
         var lectureId = "PROGRESS_LECTURE_" + Guid.NewGuid().ToString("N")[..8];

@@ -105,7 +105,7 @@
           </div>
 
           <div class="flex flex-col gap-2">
-            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Publish Status</label>
+            <label class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Review Status</label>
             <div class="grid grid-cols-3 gap-2">
               @for (status of courseStatuses; track status) {
                 <button
@@ -116,7 +116,7 @@
                     ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-md'
                     : 'bg-[#F7F6F3] dark:bg-[#252528] text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'"
                 >
-                  {{ status }}
+                  {{ statusLabel(status) }}
                 </button>
               }
             </div>
@@ -228,7 +228,7 @@
           CANCEL
         </gm-button>
         <gm-button variant="primary" [loading]="loading" (clicked)="submit()" class="bg-gradient-to-tr from-[#007AFF] to-[#5856D6] hover:from-[#007AFF]/90 hover:to-[#5856D6]/90 text-white font-bold px-8 py-2.5 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all">
-          🚀 PUBLISH COURSE
+          SUBMIT COURSE
         </gm-button>
       </div>
     </div>

@@ -3,17 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { patchState } from '@ngrx/signals';
 import { ToastService } from '../../shared/services/toast.service';
-import { TrainerSignup } from '../models/trainer-sign-up.model';
-import { StudentSignup } from '../models/student-sign-up.model';
 import { LoaderModalStore } from '../../stores/loader.store';
 import { AccountService } from '../account.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SignupResponse, LoginResponse } from '../../core/models/auth.model';
+import { LoginResponse } from '../../core/models/auth.model';
 
 import { GmInputComponent, GmButtonComponent } from '../../shared';
 import { environment } from '../../../environments/environment.development';
 import { ROLES } from '../../utilities/roles.const';
-import { DEFAULT_AVATAR_URL } from '../../utilities/defaults.const';
 
 @Component({
     selector: 'app-signup',
@@ -139,89 +136,29 @@ export class SignupComponent implements OnInit, AfterViewInit {
 			email: this.model.email,
 			password: this.model.password,
 			confirmPassword: this.model.confirmPassword,
-			role: this.model.role
+			role: this.model.role,
+			healthStatus: this.model.healthStatus,
+			certification: this.model.specialization,
+			category: this.model.category,
+			bio: this.model.bio,
+			experience: Number(this.model.experience) || 0,
 		};
 
 		this.accountService
 			.signUp(signupData)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: (res: SignupResponse) => {
-					if (this.model.role === ROLES.TRAINER) {
-						this.trainerSignup(res);
-					} else if (this.model.role === ROLES.STUDENT) {
-						this.studentSignup(res);
-					}
+				next: () => {
+					this.loading = false;
+					patchState(this.loaderStore, { isShow: false });
+					this.toastService.show('Account created. Please check your email to confirm your account.', 'success');
+					this.router.navigateByUrl('/login');
 				},
 				error: err => {
 					this.loading = false;
 					patchState(this.loaderStore, { isShow: false });
 					const errors = err.error?.errors || ['Signup failed'];
 					this.toastService.show(errors instanceof Array ? errors.join(', ') : errors, 'error');
-				},
-			});
-	}
-
-	private trainerSignup(res: SignupResponse) {
-		const trainerModel: TrainerSignup = {
-			bio: this.model.bio,
-			certification: this.model.specialization,
-			category: this.model.category,
-			createdAt: new Date(),
-			email: this.model.email,
-			experience: Number(this.model.experience),
-			name: this.model.fullName,
-			password: this.model.password,
-			profilePicture: DEFAULT_AVATAR_URL,
-			rating: 0,
-			updatedAt: new Date(),
-			trainerId: crypto.randomUUID(),
-			userId: res.userId,
-		};
-
-		this.accountService
-			.trainerSignup(trainerModel)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: () => {
-					this.loading = false;
-					patchState(this.loaderStore, { isShow: false });
-					this.router.navigateByUrl('/login');
-				},
-				error: err => {
-					this.loading = false;
-					patchState(this.loaderStore, { isShow: false });
-					this.toastService.show('Trainer signup details failed', 'error');
-				},
-			});
-	}
-
-	private studentSignup(res: SignupResponse) {
-		const studentModel: StudentSignup = {
-			createdAt: new Date(),
-			email: this.model.email,
-			name: this.model.fullName,
-			password: this.model.password,
-			profilePicture: DEFAULT_AVATAR_URL,
-			updatedAt: new Date(),
-			healthStatus: this.model.healthStatus,
-			studentId: crypto.randomUUID(),
-			userId: res.userId,
-		};
-
-		this.accountService
-			.studentSignup(studentModel)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: () => {
-					this.loading = false;
-					patchState(this.loaderStore, { isShow: false });
-					this.router.navigateByUrl('/login');
-				},
-				error: err => {
-					this.loading = false;
-					patchState(this.loaderStore, { isShow: false });
-					this.toastService.show('Student signup details failed', 'error');
 				},
 			});
 	}

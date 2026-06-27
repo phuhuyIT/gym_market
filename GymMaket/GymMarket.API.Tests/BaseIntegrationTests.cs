@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Account;
 using GymMarket.API.Models;
+using GymMarket.API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,12 @@ public class BaseIntegrationTests : IClassFixture<WebApplicationFactory<Program>
                 {
                     options.UseInMemoryDatabase(dbName);
                 });
+
+                foreach (var emailSender in services.Where(s => s.ServiceType == typeof(IEmailSender)).ToList())
+                {
+                    services.Remove(emailSender);
+                }
+                services.AddSingleton<IEmailSender, NoopEmailSender>();
             });
         });
 
@@ -48,6 +55,12 @@ public class BaseIntegrationTests : IClassFixture<WebApplicationFactory<Program>
             ConfirmPassword = password,
             Role = role
         });
+
+        await ConfirmUserEmailAsync(email);
+        if (string.Equals(role, "Trainer", StringComparison.OrdinalIgnoreCase))
+        {
+            await ApproveTrainerByEmailAsync(email);
+        }
 
         var loginResponse = await Client.PostAsJsonAsync("/api/Accounts/login", new LoginDto
         {
@@ -91,6 +104,42 @@ public class BaseIntegrationTests : IClassFixture<WebApplicationFactory<Program>
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result!.Token);
     }
 
+    protected async Task ConfirmUserEmailAsync(string email)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            return;
+        }
+
+        user.EmailConfirmed = true;
+        await userManager.UpdateAsync(user);
+    }
+
+    protected async Task ApproveTrainerByEmailAsync(string email)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            return;
+        }
+
+        var trainer = await db.Trainers.FirstOrDefaultAsync(t => t.UserId == user.Id || t.Email == email);
+        if (trainer == null)
+        {
+            return;
+        }
+
+        trainer.ApprovalStatus = TrainerApprovalStatus.Approved;
+        trainer.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync();
+    }
+
     // Reads a claim out of the bearer token currently on the client (e.g. "trainerId",
     // "studentId"). Used so tests can act as the owner of the resources they create.
     protected string? GetTokenClaim(string claimType)
@@ -127,5 +176,10 @@ public class BaseIntegrationTests : IClassFixture<WebApplicationFactory<Program>
         public bool Success { get; set; }
         public string? Message { get; set; }
         public List<string>? Errors { get; set; }
+    }
+
+    private sealed class NoopEmailSender : IEmailSender
+    {
+        public Task SendEmailAsync(string toEmail, string subject, string htmlBody) => Task.CompletedTask;
     }
 }

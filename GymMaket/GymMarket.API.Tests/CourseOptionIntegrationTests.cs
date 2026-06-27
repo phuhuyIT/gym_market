@@ -95,7 +95,7 @@ public class CourseOptionIntegrationTests : BaseIntegrationTests
             Price = 50,
             MaxParticipants = 10,
             Duration = 10,
-            Status = CourseStatus.Published
+            Status = CourseStatus.PendingReview
         });
     }
 }

@@ -94,7 +94,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 					this.loading = false;
 					patchState(this.loader, { isShow: false });
 					const errors = err.error?.errors || ['Google login failed'];
-					this.toastService.show(errors.join(', '), 'error');
+					this.toastService.show(this.formatErrors(errors), 'error');
 				},
 			});
 	}
@@ -123,8 +123,29 @@ export class LoginComponent implements OnInit, AfterViewInit {
 					this.loading = false;
 					patchState(this.loader, { isShow: false });
 					const errors = err.error?.errors || ['Login failed'];
-					this.toastService.show(errors.join(', '), 'error');
+					this.toastService.show(this.formatErrors(errors), 'error');
 				},
 			});
+	}
+
+	private formatErrors(errors: string[] | string): string {
+		const list = Array.isArray(errors) ? errors : [errors];
+		return list
+			.map(error => {
+				if (error === 'EMAIL_NOT_CONFIRMED') {
+					return 'Please confirm your email before signing in.';
+				}
+				if (error === 'INVALID_CREDENTIALS') {
+					return 'Invalid email or password.';
+				}
+				if (error === 'ACCOUNT_LOCKED') {
+					return 'This account is locked. Please try again later.';
+				}
+				if (error === 'ACCOUNT_SUSPENDED') {
+					return 'This account has been suspended. Please contact support.';
+				}
+				return error;
+			})
+			.join(', ');
 	}
 }

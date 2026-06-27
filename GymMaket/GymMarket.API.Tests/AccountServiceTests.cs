@@ -79,6 +79,125 @@ public class AccountServiceTests
     }
 
     [Fact]
+    public async Task SignUp_creates_student_profile_for_student_role()
+    {
+        var repository = new RecordingAccountRepository
+        {
+            CreateResult = IdentityResult.Success,
+            AddToRoleResult = IdentityResult.Success
+        };
+        var service = CreateService(repository);
+
+        var response = await service.SignUp(new SignUpDto
+        {
+            FullName = "Student User",
+            Email = "student@example.com",
+            Password = "password123",
+            ConfirmPassword = "password123",
+            Role = "Student",
+            HealthStatus = "Active"
+        });
+
+        Assert.True(response.Success);
+        Assert.Equal(1, repository.CreateStudentCallCount);
+        Assert.Equal(0, repository.CreateTrainerCallCount);
+        Assert.Equal("Student User", repository.CreatedStudent!.Name);
+        Assert.Equal("student@example.com", repository.CreatedStudent.Email);
+        Assert.Equal("Active", repository.CreatedStudent.HealthStatus);
+    }
+
+    [Fact]
+    public async Task SignUp_creates_trainer_profile_for_trainer_role()
+    {
+        var repository = new RecordingAccountRepository
+        {
+            CreateResult = IdentityResult.Success,
+            AddToRoleResult = IdentityResult.Success
+        };
+        var service = CreateService(repository);
+
+        var response = await service.SignUp(new SignUpDto
+        {
+            FullName = "Trainer User",
+            Email = "trainer@example.com",
+            Password = "password123",
+            ConfirmPassword = "password123",
+            Role = "Trainer",
+            Certification = "Strength Coach",
+            Category = "Strength",
+            Bio = "Builds strength programs.",
+            Experience = 7
+        });
+
+        Assert.True(response.Success);
+        Assert.Equal(0, repository.CreateStudentCallCount);
+        Assert.Equal(1, repository.CreateTrainerCallCount);
+        Assert.Equal("Trainer User", repository.CreatedTrainer!.Name);
+        Assert.Equal("trainer@example.com", repository.CreatedTrainer.Email);
+        Assert.Equal("Strength Coach", repository.CreatedTrainer.Certification);
+        Assert.Equal("Strength", repository.CreatedTrainer.Category);
+        Assert.Equal("Builds strength programs.", repository.CreatedTrainer.Bio);
+        Assert.Equal(7, repository.CreatedTrainer.Experience);
+    }
+
+    [Fact]
+    public async Task SignUp_normalizes_trainer_category()
+    {
+        var repository = new RecordingAccountRepository
+        {
+            CreateResult = IdentityResult.Success,
+            AddToRoleResult = IdentityResult.Success
+        };
+        var service = CreateService(repository);
+
+        var response = await service.SignUp(new SignUpDto
+        {
+            FullName = "Trainer User",
+            Email = "trainer@example.com",
+            Password = "password123",
+            ConfirmPassword = "password123",
+            Role = "Trainer",
+            Category = "strength"
+        });
+
+        Assert.True(response.Success);
+        Assert.Equal("Strength", repository.CreatedTrainer!.Category);
+    }
+
+    [Fact]
+    public async Task SignUp_rejects_invalid_trainer_fields_without_creating_user()
+    {
+        var repository = new RecordingAccountRepository
+        {
+            CreateResult = IdentityResult.Success,
+            AddToRoleResult = IdentityResult.Success
+        };
+        var service = CreateService(repository);
+
+        var response = await service.SignUp(new SignUpDto
+        {
+            FullName = "Trainer User",
+            Email = "trainer@example.com",
+            Password = "password123",
+            ConfirmPassword = "password123",
+            Role = "Trainer",
+            Category = "Pilates",
+            Experience = 51,
+            Certification = new string('c', 201),
+            Bio = new string('b', 501)
+        });
+
+        Assert.False(response.Success);
+        Assert.Equal(400, response.StatusCode);
+        Assert.Contains("INVALID_TRAINER_CATEGORY", response.Errors);
+        Assert.Contains("INVALID_TRAINER_EXPERIENCE", response.Errors);
+        Assert.Contains("TRAINER_CERTIFICATION_TOO_LONG", response.Errors);
+        Assert.Contains("TRAINER_BIO_TOO_LONG", response.Errors);
+        Assert.Equal(0, repository.CreateUserCallCount);
+        Assert.Equal(0, repository.CreateTrainerCallCount);
+    }
+
+    [Fact]
     public async Task SignUp_returns_error_when_role_assignment_fails()
     {
         var repository = new RecordingAccountRepository
@@ -100,6 +219,56 @@ public class AccountServiceTests
         Assert.False(response.Success);
         Assert.Equal(400, response.StatusCode);
         Assert.Contains("ROLE_ASSIGNMENT_FAILED", response.Errors);
+    }
+
+    [Fact]
+    public async Task SignUp_sends_email_confirmation()
+    {
+        var repository = new RecordingAccountRepository
+        {
+            CreateResult = IdentityResult.Success,
+            AddToRoleResult = IdentityResult.Success
+        };
+        var emailSender = new RecordingEmailSender();
+        var service = CreateService(repository, emailSender: emailSender);
+
+        var response = await service.SignUp(new SignUpDto
+        {
+            FullName = "Student User",
+            Email = "student@example.com",
+            Password = "password123",
+            ConfirmPassword = "password123",
+            Role = "Student"
+        });
+
+        Assert.True(response.Success);
+        Assert.Equal(1, emailSender.SendCallCount);
+        Assert.Equal("student@example.com", emailSender.ToEmail);
+        Assert.Contains("confirm-email", emailSender.HtmlBody);
+    }
+
+    [Fact]
+    public async Task SignUp_returns_error_when_confirmation_email_fails()
+    {
+        var repository = new RecordingAccountRepository
+        {
+            CreateResult = IdentityResult.Success,
+            AddToRoleResult = IdentityResult.Success
+        };
+        var service = CreateService(repository, emailSender: new FailingEmailSender());
+
+        var response = await service.SignUp(new SignUpDto
+        {
+            FullName = "Student User",
+            Email = "student@example.com",
+            Password = "password123",
+            ConfirmPassword = "password123",
+            Role = "Student"
+        });
+
+        Assert.False(response.Success);
+        Assert.Equal(500, response.StatusCode);
+        Assert.Contains("EMAIL_SEND_FAILED", response.Errors);
     }
 
     [Fact]
@@ -163,7 +332,7 @@ public class AccountServiceTests
     public async Task Login_returns_token_when_credentials_are_valid()
     {
         var user = new AppUser { Id = "user-id", Email = "test@example.com" };
-        var repository = new RecordingAccountRepository { ExistingUser = user };
+        var repository = new RecordingAccountRepository { ExistingUser = user, EmailConfirmed = true };
         var signInService = new RecordingPasswordSignInService { Result = SignInResult.Success };
         var jwtService = new RecordingJwtService { Token = "jwt-token" };
         var service = CreateService(repository, signInService, jwtService);
@@ -179,6 +348,49 @@ public class AccountServiceTests
         Assert.Equal("jwt-token", response.Token);
         Assert.Same(user, jwtService.User);
     }
+
+    [Fact]
+    public async Task Login_rejects_unconfirmed_email_after_valid_password()
+    {
+        var user = new AppUser { Id = "user-id", Email = "test@example.com" };
+        var repository = new RecordingAccountRepository { ExistingUser = user, EmailConfirmed = false };
+        var signInService = new RecordingPasswordSignInService { Result = SignInResult.Success };
+        var jwtService = new RecordingJwtService { Token = "jwt-token" };
+        var service = CreateService(repository, signInService, jwtService);
+
+        var response = await service.Login(new LoginDto
+        {
+            Email = "test@example.com",
+            Password = "password123"
+        });
+
+        Assert.False(response.Success);
+        Assert.Equal(400, response.StatusCode);
+        Assert.Contains("EMAIL_NOT_CONFIRMED", response.Errors);
+        Assert.Null(jwtService.User);
+    }
+
+    [Fact]
+    public async Task Login_rejects_suspended_account_after_valid_password()
+    {
+        var user = new AppUser { Id = "user-id", Email = "test@example.com", Status = "Suspended" };
+        var repository = new RecordingAccountRepository { ExistingUser = user, EmailConfirmed = true };
+        var signInService = new RecordingPasswordSignInService { Result = SignInResult.Success };
+        var jwtService = new RecordingJwtService { Token = "jwt-token" };
+        var service = CreateService(repository, signInService, jwtService);
+
+        var response = await service.Login(new LoginDto
+        {
+            Email = "test@example.com",
+            Password = "password123"
+        });
+
+        Assert.False(response.Success);
+        Assert.Equal(400, response.StatusCode);
+        Assert.Contains("ACCOUNT_SUSPENDED", response.Errors);
+        Assert.Null(jwtService.User);
+    }
+
 
     [Fact]
     public async Task GoogleLogin_returns_error_for_invalid_token()
@@ -202,7 +414,8 @@ public class AccountServiceTests
     private static AccountService CreateService(
         IAccountRepository repository,
         IPasswordSignInService? signInService = null,
-        IJwtService? jwtService = null)
+        IJwtService? jwtService = null,
+        IEmailSender? emailSender = null)
     {
         return new AccountService(
             repository,
@@ -211,12 +424,30 @@ public class AccountServiceTests
             new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger<AccountService>.Instance,
             null!,
-            new RecordingEmailSender());
+            emailSender ?? new RecordingEmailSender());
     }
 
     private sealed class RecordingEmailSender : IEmailSender
     {
-        public Task SendEmailAsync(string toEmail, string subject, string htmlBody) => Task.CompletedTask;
+        public int SendCallCount { get; private set; }
+        public string? ToEmail { get; private set; }
+        public string? HtmlBody { get; private set; }
+
+        public Task SendEmailAsync(string toEmail, string subject, string htmlBody)
+        {
+            SendCallCount++;
+            ToEmail = toEmail;
+            HtmlBody = htmlBody;
+            return Task.CompletedTask;
+        }
+    }
+
+    private sealed class FailingEmailSender : IEmailSender
+    {
+        public Task SendEmailAsync(string toEmail, string subject, string htmlBody)
+        {
+            throw new InvalidOperationException("SMTP unavailable");
+        }
     }
 
     private sealed class RecordingAccountRepository : IAccountRepository
@@ -224,10 +455,13 @@ public class AccountServiceTests
         public AppUser? ExistingUser { get; init; }
         public IdentityResult CreateResult { get; init; } = IdentityResult.Success;
         public IdentityResult AddToRoleResult { get; init; } = IdentityResult.Success;
+        public bool EmailConfirmed { get; init; }
         public string? AssignedRole { get; private set; }
         public int CreateUserCallCount { get; private set; }
         public int CreateStudentCallCount { get; private set; }
         public int CreateTrainerCallCount { get; private set; }
+        public Student? CreatedStudent { get; private set; }
+        public Trainer? CreatedTrainer { get; private set; }
  
         public Task<AppUser?> FindByEmail(string email)
         {
@@ -264,12 +498,14 @@ public class AccountServiceTests
         public Task CreateStudentAsync(Student student)
         {
             CreateStudentCallCount++;
+            CreatedStudent = student;
             return Task.CompletedTask;
         }
 
         public Task CreateTrainerAsync(Trainer trainer)
         {
             CreateTrainerCallCount++;
+            CreatedTrainer = trainer;
             return Task.CompletedTask;
         }
 
@@ -279,7 +515,7 @@ public class AccountServiceTests
         public Task<bool> HasPasswordAsync(AppUser user) => Task.FromResult(true);
         public Task<string> GenerateEmailConfirmationTokenAsync(AppUser user) => Task.FromResult("token");
         public Task<IdentityResult> ConfirmEmailAsync(AppUser user, string token) => Task.FromResult(IdentityResult.Success);
-        public Task<bool> IsEmailConfirmedAsync(AppUser user) => Task.FromResult(false);
+        public Task<bool> IsEmailConfirmedAsync(AppUser user) => Task.FromResult(EmailConfirmed);
         public Task<string?> GetAuthenticatorKeyAsync(AppUser user) => Task.FromResult<string?>("key");
         public Task ResetAuthenticatorKeyAsync(AppUser user) => Task.CompletedTask;
         public Task<bool> SetTwoFactorEnabledAsync(AppUser user, bool enabled) => Task.FromResult(true);

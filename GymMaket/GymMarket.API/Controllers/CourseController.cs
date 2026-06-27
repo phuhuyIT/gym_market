@@ -1,10 +1,14 @@
 using AutoMapper;
+using GymMarket.API.Data;
+using GymMarket.API.DTOs.Admin;
 using GymMarket.API.DTOs.Course;
+using GymMarket.API.DTOs.Response;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace GymMarket.API.Controllers
@@ -15,14 +19,17 @@ namespace GymMarket.API.Controllers
     {
         private readonly ICourseRepository _courseRepository;
         private readonly ICourseAccessService _courseAccessService;
+        private readonly GymMarketContext _context;
 
         public CourseController(IGenericRepository<Course, string> repository,
             IMapper mapper, ICourseRepository courseRepository,
-            ICourseAccessService courseAccessService
+            ICourseAccessService courseAccessService,
+            GymMarketContext context
             ) : base(repository, mapper)
         {
             _courseRepository = courseRepository;
             _courseAccessService = courseAccessService;
+            _context = context;
         }
 
         protected override string GetEntityId(Course entity)
@@ -44,7 +51,29 @@ namespace GymMarket.API.Controllers
             {
                 createDto.TrainerId = trainerId;
             }
-            createDto.Status = CourseStatus.Normalize(createDto.Status);
+            var normalizedStatus = NormalizeCreateStatus(createDto.Status);
+            if (normalizedStatus == null)
+                return BadRequest(new { success = false, errors = new[] { "INVALID_COURSE_STATUS" } });
+
+            if (!User.IsInRole(ApplicationRoles.Admin) &&
+                !await IsTrainerApprovedAsync(createDto.TrainerId))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { success = false, errors = new[] { "TRAINER_NOT_APPROVED" } });
+            }
+
+            if (!User.IsInRole(ApplicationRoles.Admin) &&
+                !CourseStatus.IsTrainerWritable(normalizedStatus))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { success = false, errors = new[] { "COURSE_REVIEW_REQUIRED" } });
+            }
+
+            createDto.Status = normalizedStatus;
+
+            if (createDto.Status == CourseStatus.Published &&
+                !await IsTrainerApprovedAsync(createDto.TrainerId))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { success = false, errors = new[] { "TRAINER_NOT_APPROVED" } });
+            }
 
             return await base.Create(createDto);
         }
@@ -57,7 +86,26 @@ namespace GymMarket.API.Controllers
                 return Forbid();
 
             if (updateDto.Status != null)
-                updateDto.Status = CourseStatus.Normalize(updateDto.Status);
+            {
+                var normalizedStatus = CourseStatus.TryNormalize(updateDto.Status);
+                if (normalizedStatus == null)
+                    return BadRequest(new { success = false, errors = new[] { "INVALID_COURSE_STATUS" } });
+
+                if (!User.IsInRole(ApplicationRoles.Admin) &&
+                    !CourseStatus.IsTrainerWritable(normalizedStatus))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden, new { success = false, errors = new[] { "COURSE_REVIEW_REQUIRED" } });
+                }
+
+                updateDto.Status = normalizedStatus;
+            }
+
+            if (updateDto.Status == CourseStatus.Published &&
+                !await IsCourseTrainerApprovedAsync(id))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { success = false, errors = new[] { "TRAINER_NOT_APPROVED" } });
+            }
+
             return await base.Update(id, updateDto);
         }
 
@@ -95,7 +143,26 @@ namespace GymMarket.API.Controllers
                 return Forbid();
 
             if (courseUpdate.Status != null)
-                courseUpdate.Status = CourseStatus.Normalize(courseUpdate.Status);
+            {
+                var normalizedStatus = CourseStatus.TryNormalize(courseUpdate.Status);
+                if (normalizedStatus == null)
+                    return BadRequest(new { success = false, errors = new[] { "INVALID_COURSE_STATUS" } });
+
+                if (!User.IsInRole(ApplicationRoles.Admin) &&
+                    !CourseStatus.IsTrainerWritable(normalizedStatus))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden, new { success = false, errors = new[] { "COURSE_REVIEW_REQUIRED" } });
+                }
+
+                courseUpdate.Status = normalizedStatus;
+            }
+
+            if (courseUpdate.Status == CourseStatus.Published &&
+                !await IsCourseTrainerApprovedAsync(courseUpdate.CourseId))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { success = false, errors = new[] { "TRAINER_NOT_APPROVED" } });
+            }
+
             var res = await _courseRepository.UpdateCourse(courseUpdate);
             return StatusCode(res.StatusCode, new { res.Message, res.Errors });
         }
@@ -139,5 +206,139 @@ namespace GymMarket.API.Controllers
             return Ok(courses);
         }
 
+        [HttpGet("admin-review")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetCoursesForReview(
+            [FromQuery] string? status,
+            [FromQuery] string? search,
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = Defaults.PageSize)
+        {
+            if (pageIndex < 1) pageIndex = 1;
+            if (pageSize < 1) pageSize = Defaults.PageSize;
+            if (pageSize > 100) pageSize = 100;
+
+            var normalizedStatus = CourseStatus.TryNormalize(status);
+            if (!string.IsNullOrWhiteSpace(status) && normalizedStatus == null)
+                return BadRequest(new { success = false, errors = new[] { "INVALID_COURSE_STATUS_FILTER" } });
+
+            search = search?.Trim();
+
+            var query = _context.Courses
+                .AsNoTracking()
+                .Include(c => c.Trainer)
+                .AsQueryable();
+
+            if (normalizedStatus != null)
+            {
+                query = normalizedStatus == CourseStatus.Published
+                    ? query.Where(c => c.Status == CourseStatus.Published || c.Status == null || c.Status == "")
+                    : query.Where(c => c.Status == normalizedStatus);
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(c =>
+                    (c.Title != null && c.Title.Contains(search)) ||
+                    (c.Category != null && c.Category.Contains(search)) ||
+                    (c.Trainer != null && c.Trainer.Name != null && c.Trainer.Name.Contains(search)) ||
+                    (c.Trainer != null && c.Trainer.Email != null && c.Trainer.Email.Contains(search)));
+            }
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .OrderBy(c => c.Status == CourseStatus.PendingReview ? 0 : 1)
+                .ThenBy(c => c.Title)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .Select(c => new AdminCourseListItemDto
+                {
+                    CourseId = c.CourseId,
+                    Title = c.Title,
+                    Description = c.Description,
+                    Type = c.Type,
+                    Category = c.Category,
+                    Price = c.Price,
+                    StartDate = c.StartDate,
+                    EndDate = c.EndDate,
+                    Status = string.IsNullOrWhiteSpace(c.Status) ? CourseStatus.Published : c.Status!,
+                    TrainerId = c.TrainerId,
+                    TrainerName = c.Trainer != null ? c.Trainer.Name : null,
+                    TrainerEmail = c.Trainer != null ? c.Trainer.Email : null,
+                    TrainerApprovalStatus = c.Trainer == null
+                        ? null
+                        : TrainerApprovalStatus.NormalizeStored(c.Trainer.ApprovalStatus)
+                })
+                .ToListAsync();
+
+            return Ok(new PagedResult<AdminCourseListItemDto>
+            {
+                Items = items,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            });
+        }
+
+        [HttpPut("{id}/moderation")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ModerateCourse(string id, UpdateCourseModerationDto model)
+        {
+            var normalizedStatus = CourseStatus.TryNormalize(model.Status);
+            if (normalizedStatus == null || !CourseStatus.ModerationStatuses.Contains(normalizedStatus))
+                return BadRequest(new { success = false, errors = new[] { "INVALID_COURSE_STATUS" } });
+
+            var course = await _context.Courses
+                .Include(c => c.Trainer)
+                .FirstOrDefaultAsync(c => c.CourseId == id);
+            if (course == null)
+                return NotFound(new { success = false, errors = new[] { "COURSE_NOT_FOUND" } });
+
+            if (normalizedStatus == CourseStatus.Published &&
+                !TrainerApprovalStatus.IsApproved(course.Trainer?.ApprovalStatus))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { success = false, errors = new[] { "TRAINER_NOT_APPROVED" } });
+            }
+
+            course.Status = normalizedStatus;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "COURSE_MODERATION_UPDATED" });
+        }
+
+        private string? NormalizeCreateStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return User.IsInRole(ApplicationRoles.Admin)
+                    ? CourseStatus.Published
+                    : CourseStatus.PendingReview;
+
+            return CourseStatus.TryNormalize(status);
+        }
+
+        private async Task<bool> IsCourseTrainerApprovedAsync(string courseId)
+        {
+            var trainerId = await _context.Courses
+                .AsNoTracking()
+                .Where(c => c.CourseId == courseId)
+                .Select(c => c.TrainerId)
+                .FirstOrDefaultAsync();
+
+            return await IsTrainerApprovedAsync(trainerId);
+        }
+
+        private async Task<bool> IsTrainerApprovedAsync(string? trainerId)
+        {
+            if (string.IsNullOrWhiteSpace(trainerId))
+                return false;
+
+            var status = await _context.Trainers
+                .AsNoTracking()
+                .Where(t => t.TrainerId == trainerId)
+                .Select(t => t.ApprovalStatus)
+                .FirstOrDefaultAsync();
+
+            return TrainerApprovalStatus.IsApproved(status);
+        }
     }
 }
