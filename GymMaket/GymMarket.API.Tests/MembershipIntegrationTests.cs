@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using GymMarket.API.DTOs.Membership;
+using GymMarket.API.DTOs.Notifications;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace GymMarket.API.Tests;
@@ -48,6 +49,35 @@ public class MembershipIntegrationTests : BaseIntegrationTests
         Assert.NotNull(status);
         Assert.True(status!.HasActiveMembership);
         Assert.Equal(membership.MembershipId, status.CurrentMembership!.MembershipId);
+
+        var notifications = await Client.GetFromJsonAsync<List<NotificationDto>>("/api/Notifications/get-notifications");
+        Assert.Contains(notifications!, n =>
+            n.Type == "membership"
+            && n.Title == "Membership active"
+            && n.Link == "/client/membership"
+            && n.Content!.Contains(plan.Name));
+    }
+
+    [Fact]
+    public async Task GetMyStatus_WhenMembershipExpiresSoon_AddsReminderNotification()
+    {
+        var plan = await CreatePlan("Seven Day Access", 7, 19);
+        await AuthenticateAsync(email: "membership-expiring-student@example.com", role: "Student");
+        var subscribeResponse = await Client.PostAsJsonAsync("/api/Memberships/subscribe", new SubscribeMembershipDto
+        {
+            PlanId = plan.PlanId
+        });
+        subscribeResponse.EnsureSuccessStatusCode();
+
+        var status = await Client.GetFromJsonAsync<MembershipStatusDto>("/api/Memberships/me/status");
+
+        Assert.NotNull(status);
+        Assert.True(status!.HasActiveMembership);
+        var notifications = await Client.GetFromJsonAsync<List<NotificationDto>>("/api/Notifications/get-notifications");
+        Assert.Contains(notifications!, n =>
+            n.Type == "membership"
+            && n.Title == "Membership expiring soon"
+            && n.Link == "/client/membership");
     }
 
     [Fact]

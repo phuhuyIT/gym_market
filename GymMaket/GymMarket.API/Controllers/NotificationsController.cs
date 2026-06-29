@@ -18,9 +18,13 @@ namespace GymMarket.API.Controllers
         }
 
         [HttpGet("get-notifications")]
-        public async Task<IActionResult> GetNotifications([FromQuery] int take = 50)
+        public async Task<IActionResult> GetNotifications(
+            [FromQuery] int take = 50,
+            [FromQuery] int skip = 0,
+            [FromQuery] string? type = null,
+            [FromQuery] bool? isRead = null)
         {
-            var notifications = await _notificationRepository.GetNotificationsOfUser(GetUserId(), take);
+            var notifications = await _notificationRepository.GetNotificationsOfUser(GetUserId(), take, skip, type, isRead);
             return Ok(notifications);
         }
 
@@ -42,6 +46,13 @@ namespace GymMarket.API.Controllers
         public async Task<IActionResult> MarkAllAsRead()
         {
             await _notificationRepository.MarkAllAsRead(GetUserId());
+            return Ok();
+        }
+
+        [HttpPost("mark-type-read/{type}")]
+        public async Task<IActionResult> MarkTypeAsRead(string type)
+        {
+            await _notificationRepository.MarkTypeAsRead(GetUserId(), type);
             return Ok();
         }
 

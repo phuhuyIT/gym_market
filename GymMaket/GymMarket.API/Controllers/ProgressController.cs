@@ -2,6 +2,7 @@ using System.Security.Claims;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Progress;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace GymMarket.API.Controllers;
 public class ProgressController : ControllerBase
 {
     private readonly GymMarketContext _context;
+    private readonly INotificationRepository _notificationRepository;
 
-    public ProgressController(GymMarketContext context)
+    public ProgressController(GymMarketContext context, INotificationRepository notificationRepository)
     {
         _context = context;
+        _notificationRepository = notificationRepository;
     }
 
     [HttpGet("me/logs")]
@@ -82,6 +85,12 @@ public class ProgressController : ControllerBase
         _context.StudentProgressLogs.Add(log);
         await _context.SaveChangesAsync();
 
+        await NotifyAssignedTrainers(
+            studentId,
+            "Progress log added",
+            $"{student.Name ?? "A student"} added a new progress check-in.",
+            "/agency/progress");
+
         return Ok(ToLogDto(log));
     }
 
@@ -144,6 +153,17 @@ public class ProgressController : ControllerBase
         goal.UpdatedAt = now;
 
         await _context.SaveChangesAsync();
+
+        var studentName = await _context.Students
+            .Where(s => s.StudentId == studentId)
+            .Select(s => s.Name)
+            .FirstOrDefaultAsync();
+
+        await NotifyAssignedTrainers(
+            studentId,
+            "Progress goal updated",
+            $"{studentName ?? "A student"} updated their progress goal.",
+            "/agency/progress");
 
         return Ok(ToGoalDto(goal));
     }
@@ -370,6 +390,22 @@ public class ProgressController : ControllerBase
             ProgressGoalStatus.Cancelled => ProgressGoalStatus.Cancelled,
             _ => ProgressGoalStatus.Active
         };
+    }
+
+    private async Task NotifyAssignedTrainers(string studentId, string title, string content, string link)
+    {
+        var trainerUserIds = await _context.StudentWorkoutAssignments
+            .Where(a => a.StudentId == studentId && a.Trainer != null && a.Trainer.UserId != null)
+            .Select(a => a.Trainer!.UserId!)
+            .Distinct()
+            .ToListAsync();
+
+        await _notificationRepository.NotifyUsers(
+            trainerUserIds,
+            NotificationTypes.Progress,
+            title,
+            content,
+            link);
     }
 
     private string CurrentStudentId()

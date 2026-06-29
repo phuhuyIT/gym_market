@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, HostListener, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Input, OnInit, signal } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AppNotification } from '../../../core/models/notification.model';
+import { AccountService } from '../../../guest/account.service';
+import { ROLES } from '../../../utilities/roles.const';
 
 @Component({
 	selector: 'app-notification-bell',
@@ -24,9 +26,33 @@ export class NotificationBellComponent implements OnInit {
 
 	notificationService = inject(NotificationService);
 	private router = inject(Router);
+	private accountService = inject(AccountService);
 
 	showPanel = false;
 	panelStyle: Record<string, string> = {};
+	selectedType = signal('all');
+	readonly categories = [
+		{ type: 'all', label: 'All' },
+		{ type: 'class', label: 'Class' },
+		{ type: 'workout', label: 'Workout' },
+		{ type: 'progress', label: 'Progress' },
+		{ type: 'membership', label: 'Membership' },
+		{ type: 'payment', label: 'Payment' },
+		{ type: 'course', label: 'Course' },
+		{ type: 'chat', label: 'Chat' },
+		{ type: 'system', label: 'System' },
+	];
+	readonly visibleNotifications = computed(() => {
+		const selected = this.selectedType();
+		const list = this.notificationService.notifications();
+		return selected === 'all' ? list : list.filter(n => n.type === selected);
+	});
+	readonly selectedUnreadCount = computed(() => {
+		const selected = this.selectedType();
+		return this.notificationService
+			.notifications()
+			.filter(n => !n.isRead && (selected === 'all' || n.type === selected)).length;
+	});
 
 	ngOnInit() {
 		this.notificationService.init();
@@ -66,7 +92,60 @@ export class NotificationBellComponent implements OnInit {
 
 	markAllRead(event: MouseEvent) {
 		event.stopPropagation();
-		this.notificationService.markAllRead();
+		const selected = this.selectedType();
+		if (selected === 'all') {
+			this.notificationService.markAllRead();
+			return;
+		}
+
+		this.notificationService.markTypeRead(selected);
+	}
+
+	viewAll(event: MouseEvent) {
+		event.stopPropagation();
+		this.showPanel = false;
+		this.router.navigateByUrl(this.notificationCenterUrl());
+	}
+
+	selectType(type: string, event: MouseEvent) {
+		event.stopPropagation();
+		this.selectedType.set(type);
+	}
+
+	categoryUnreadCount(type: string): number {
+		return this.notificationService
+			.notifications()
+			.filter(n => !n.isRead && (type === 'all' || n.type === type)).length;
+	}
+
+	categoryLabel(type: string): string {
+		return this.categories.find(category => category.type === type)?.label ?? this.toTitleCase(type);
+	}
+
+	private toTitleCase(value: string): string {
+		return value ? value.charAt(0).toUpperCase() + value.slice(1) : 'Notification';
+	}
+
+	private notificationCenterUrl(): string {
+		const url = this.router.url;
+		if (url.startsWith('/admin')) {
+			return '/admin/notifications';
+		}
+		if (url.startsWith('/agency')) {
+			return '/agency/notifications';
+		}
+		if (url.startsWith('/client')) {
+			return '/client/notifications';
+		}
+
+		const role = this.accountService.getRole();
+		if (role === ROLES.ADMIN) {
+			return '/admin/notifications';
+		}
+		if (role === ROLES.TRAINER) {
+			return '/agency/notifications';
+		}
+		return '/client/notifications';
 	}
 
 	timeAgo(dateStr: string): string {

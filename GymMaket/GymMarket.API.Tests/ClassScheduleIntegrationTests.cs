@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using GymMarket.API.DTOs.ClassSchedule;
 using GymMarket.API.DTOs.Membership;
+using GymMarket.API.DTOs.Notifications;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace GymMarket.API.Tests;
@@ -41,6 +42,13 @@ public class ClassScheduleIntegrationTests : BaseIntegrationTests
 
         var sessions = await Client.GetFromJsonAsync<List<ClassSessionDto>>("/api/ClassSchedule/sessions");
         Assert.Contains(sessions!, s => s.ClassSessionId == session.ClassSessionId && s.IsBooked);
+
+        var notifications = await Client.GetFromJsonAsync<List<NotificationDto>>("/api/Notifications/get-notifications");
+        Assert.Contains(notifications!, n =>
+            n.Type == "class"
+            && n.Title == "Class booked"
+            && n.Link == "/client/classes"
+            && n.Content!.Contains(session.Title));
     }
 
     [Fact]

@@ -83,13 +83,35 @@ namespace GymMarket.API.Repositories
             await _hub.Clients.User(userId).SendAsync("ReceiveNotification", ToDto(existing));
         }
 
-        public async Task<List<NotificationDto>> GetNotificationsOfUser(string userId, int take = 50)
+        public async Task<List<NotificationDto>> GetNotificationsOfUser(
+            string userId,
+            int take = 50,
+            int skip = 0,
+            string? type = null,
+            bool? isRead = null)
         {
-            var notifications = await _context.Notifications
+            var safeTake = Math.Clamp(take, 1, 100);
+            var safeSkip = Math.Max(skip, 0);
+            var normalizedType = type?.Trim();
+
+            var query = _context.Notifications
                 .AsNoTracking()
-                .Where(n => n.UserId == userId)
+                .Where(n => n.UserId == userId);
+
+            if (!string.IsNullOrWhiteSpace(normalizedType))
+            {
+                query = query.Where(n => n.Type == normalizedType);
+            }
+
+            if (isRead.HasValue)
+            {
+                query = query.Where(n => n.IsRead == isRead.Value);
+            }
+
+            var notifications = await query
                 .OrderByDescending(n => n.CreatedAt)
-                .Take(take)
+                .Skip(safeSkip)
+                .Take(safeTake)
                 .Select(n => new NotificationDto
                 {
                     Id = n.Id,
@@ -131,9 +153,46 @@ namespace GymMarket.API.Repositories
 
         public async Task MarkAllAsRead(string userId)
         {
-            await _context.Notifications
+            var notifications = await _context.Notifications
                 .Where(n => n.UserId == userId && !n.IsRead)
-                .ExecuteUpdateAsync(s => s.SetProperty(n => n.IsRead, true));
+                .ToListAsync();
+
+            if (notifications.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var notification in notifications)
+            {
+                notification.IsRead = true;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task MarkTypeAsRead(string userId, string type)
+        {
+            var normalizedType = type.Trim();
+            if (string.IsNullOrWhiteSpace(normalizedType))
+            {
+                return;
+            }
+
+            var notifications = await _context.Notifications
+                .Where(n => n.UserId == userId && n.Type == normalizedType && !n.IsRead)
+                .ToListAsync();
+
+            if (notifications.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var notification in notifications)
+            {
+                notification.IsRead = true;
+            }
+
+            await _context.SaveChangesAsync();
         }
 
         private static NotificationDto ToDto(Notification n)

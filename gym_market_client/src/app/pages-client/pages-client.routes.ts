@@ -16,6 +16,7 @@ import { MembershipComponent } from './membership/membership.component';
 import { ClassBookingComponent } from './class-booking/class-booking.component';
 import { MyWorkoutsComponent } from './my-workouts/my-workouts.component';
 import { ProgressComponent } from './progress/progress.component';
+import { NotificationCenterComponent } from '../shared/components/notification-center/notification-center.component';
 
 export const routes: Routes = [
 	{
@@ -36,9 +37,10 @@ export const routes: Routes = [
 				{ path: 'course-registration', component: CourseRegistrationComponent, title: 'Course Registration' },
 				{ path: 'membership', component: MembershipComponent, title: 'My Membership' },
 				{ path: 'classes', component: ClassBookingComponent, title: 'Class Booking' },
-				{ path: 'workouts', component: MyWorkoutsComponent, title: 'My Workouts' },
-				{ path: 'progress', component: ProgressComponent, title: 'My Progress' },
-				{ path: 'food-nutrition-calculator', component: FoodNutritionCalculatorComponent, title: 'Food Nutrition Calculator' },
-		],
-	},
+					{ path: 'workouts', component: MyWorkoutsComponent, title: 'My Workouts' },
+					{ path: 'progress', component: ProgressComponent, title: 'My Progress' },
+					{ path: 'notifications', component: NotificationCenterComponent, title: 'Notifications' },
+					{ path: 'food-nutrition-calculator', component: FoodNutritionCalculatorComponent, title: 'Food Nutrition Calculator' },
+			],
+		},
 ];

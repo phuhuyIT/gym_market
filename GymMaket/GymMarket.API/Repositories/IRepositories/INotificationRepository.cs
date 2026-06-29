@@ -14,9 +14,15 @@ namespace GymMarket.API.Repositories.IRepositories
         // refreshed in place instead of stacking a new row per event.
         Task NotifyUserUpsert(string userId, string type, string title, string? content = null, string? link = null);
 
-        Task<List<NotificationDto>> GetNotificationsOfUser(string userId, int take = 50);
+        Task<List<NotificationDto>> GetNotificationsOfUser(
+            string userId,
+            int take = 50,
+            int skip = 0,
+            string? type = null,
+            bool? isRead = null);
         Task<int> GetUnreadCount(string userId);
         Task MarkAsRead(int id, string userId);
         Task MarkAllAsRead(string userId);
+        Task MarkTypeAsRead(string userId, string type);
     }
 }

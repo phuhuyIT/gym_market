@@ -2,6 +2,7 @@ using System.Security.Claims;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Workout;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace GymMarket.API.Controllers;
 public class WorkoutPlansController : ControllerBase
 {
     private readonly GymMarketContext _context;
+    private readonly INotificationRepository _notificationRepository;
 
-    public WorkoutPlansController(GymMarketContext context)
+    public WorkoutPlansController(GymMarketContext context, INotificationRepository notificationRepository)
     {
         _context = context;
+        _notificationRepository = notificationRepository;
     }
 
     [HttpGet("plans")]
@@ -238,6 +241,16 @@ public class WorkoutPlansController : ControllerBase
         _context.StudentWorkoutAssignments.Add(assignment);
         await _context.SaveChangesAsync();
 
+        if (!string.IsNullOrWhiteSpace(student.UserId))
+        {
+            await _notificationRepository.NotifyUser(
+                student.UserId,
+                NotificationTypes.Workout,
+                "Workout plan assigned",
+                $"{plan.Name} is ready in your workout plan.",
+                "/client/workouts");
+        }
+
         return Ok(ToAssignmentDto(assignment));
     }
 
@@ -329,6 +342,7 @@ public class WorkoutPlansController : ControllerBase
             return NotFound(new { Message = "WORKOUT_EXERCISE_NOT_FOUND" });
         }
 
+        var wasCompleted = assignment.Status == WorkoutAssignmentStatus.Completed;
         var completion = assignment.Completions.FirstOrDefault(c => c.ExerciseId == exerciseId);
         if (completion == null)
         {
@@ -360,6 +374,16 @@ public class WorkoutPlansController : ControllerBase
         assignment.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
 
+        if (!wasCompleted && assignment.Status == WorkoutAssignmentStatus.Completed)
+        {
+            await NotifyTrainer(
+                assignment.TrainerId,
+                NotificationTypes.Workout,
+                "Workout completed",
+                $"{assignment.Student?.Name ?? "A student"} completed {assignment.WorkoutPlan?.Name ?? "a workout plan"}.",
+                "/agency/workouts");
+        }
+
         assignment = await AssignmentQuery().FirstAsync(a => a.AssignmentId == assignmentId);
         return Ok(ToAssignmentDto(assignment));
     }
@@ -368,7 +392,10 @@ public class WorkoutPlansController : ControllerBase
     [Authorize(Roles = "Trainer,Admin")]
     public async Task<IActionResult> CancelAssignment(string assignmentId)
     {
-        var assignment = await _context.StudentWorkoutAssignments.FirstOrDefaultAsync(a => a.AssignmentId == assignmentId);
+        var assignment = await _context.StudentWorkoutAssignments
+            .Include(a => a.Student)
+            .Include(a => a.WorkoutPlan)
+            .FirstOrDefaultAsync(a => a.AssignmentId == assignmentId);
         if (assignment == null)
         {
             return NotFound(new { Message = "WORKOUT_ASSIGNMENT_NOT_FOUND" });
@@ -383,6 +410,16 @@ public class WorkoutPlansController : ControllerBase
         assignment.CancelledAt = DateTime.UtcNow;
         assignment.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+
+        if (!string.IsNullOrWhiteSpace(assignment.Student?.UserId))
+        {
+            await _notificationRepository.NotifyUser(
+                assignment.Student.UserId,
+                NotificationTypes.Workout,
+                "Workout plan cancelled",
+                $"{assignment.WorkoutPlan?.Name ?? "Your workout plan"} was cancelled.",
+                "/client/workouts");
+        }
 
         return Ok(new { Message = "WORKOUT_ASSIGNMENT_CANCELLED" });
     }
@@ -601,6 +638,24 @@ public class WorkoutPlansController : ControllerBase
             "Advanced" => "Advanced",
             _ => "Beginner"
         };
+    }
+
+    private async Task NotifyTrainer(string? trainerId, string type, string title, string content, string link)
+    {
+        if (string.IsNullOrWhiteSpace(trainerId))
+        {
+            return;
+        }
+
+        var userId = await _context.Trainers
+            .Where(t => t.TrainerId == trainerId)
+            .Select(t => t.UserId)
+            .FirstOrDefaultAsync();
+
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            await _notificationRepository.NotifyUser(userId, type, title, content, link);
+        }
     }
 
     private string CurrentStudentId()

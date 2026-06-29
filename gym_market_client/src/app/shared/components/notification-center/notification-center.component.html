@@ -1,0 +1,100 @@
+<section class="notification-center">
+	<header class="notification-head">
+		<div>
+			<p class="notification-kicker">Notification center</p>
+			<h1>{{ selectedLabel() }} feed</h1>
+		</div>
+		<div class="notification-metrics" aria-label="Notification summary">
+			<div>
+				<strong>{{ notificationService.unreadCount() }}</strong>
+				<span>Unread</span>
+			</div>
+			<div>
+				<strong>{{ unreadInView() }}</strong>
+				<span>In view</span>
+			</div>
+		</div>
+	</header>
+
+	<div class="notification-workspace">
+		<nav class="notification-rail" aria-label="Notification categories">
+			@for (category of categories; track category.type) {
+				<button
+					type="button"
+					class="category-button"
+					[class.category-button--active]="selectedType() === category.type"
+					(click)="selectCategory(category.type)"
+				>
+					<span>{{ category.label }}</span>
+					@if (categoryUnreadCount(category.type) > 0) {
+						<strong>{{ categoryUnreadCount(category.type) > 99 ? '99+' : categoryUnreadCount(category.type) }}</strong>
+					}
+				</button>
+			}
+		</nav>
+
+		<section class="notification-board" aria-label="Notifications">
+			<div class="notification-toolbar">
+				<div class="read-tabs" aria-label="Read status">
+					@for (filter of readFilters; track filter.value) {
+						<button
+							type="button"
+							[class.read-tabs__button--active]="readFilter() === filter.value"
+							(click)="selectReadFilter(filter.value)"
+						>
+							{{ filter.label }}
+						</button>
+					}
+				</div>
+
+				<button type="button" class="mark-button" [disabled]="!canMarkScopeRead()" (click)="markScopeRead()">
+					{{ selectedType() === 'all' ? 'Mark all read' : 'Mark category read' }}
+				</button>
+			</div>
+
+			<div class="notification-list">
+				@if (loading() && notifications().length === 0) {
+					@for (row of [1, 2, 3, 4]; track row) {
+						<div class="notification-skeleton"></div>
+					}
+				} @else {
+					@for (item of notifications(); track item.id) {
+						<button
+							type="button"
+							class="notification-row"
+							[class.notification-row--unread]="!item.isRead"
+							(click)="openNotification(item)"
+						>
+							<span class="notification-status" aria-hidden="true"></span>
+							<span class="notification-content">
+								<span class="notification-row__top">
+									<strong>{{ item.title }}</strong>
+									<span>{{ categoryLabel(item.type) }}</span>
+								</span>
+								@if (item.content) {
+									<span class="notification-copy">{{ item.content }}</span>
+								}
+								<time [attr.datetime]="item.createdAt">{{ item.createdAt | date: 'medium' }}</time>
+							</span>
+						</button>
+					}
+
+					@if (notifications().length === 0) {
+						<div class="notification-empty">
+							<strong>No notifications</strong>
+							<span>{{ readFilter() === 'unread' ? 'Unread items will appear here.' : 'New activity will appear here.' }}</span>
+						</div>
+					}
+				}
+			</div>
+
+			@if (hasMore()) {
+				<div class="load-more">
+					<button type="button" [disabled]="loading()" (click)="load()">
+						{{ loading() ? 'Loading...' : 'Load more' }}
+					</button>
+				</div>
+			}
+		</section>
+	</div>
+</section>

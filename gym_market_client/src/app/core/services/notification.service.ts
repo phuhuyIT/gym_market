@@ -1,9 +1,16 @@
 import { computed, inject, Injectable, NgZone, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../environments/environment.development';
 import { AccountService } from '../../guest/account.service';
 import { AppNotification } from '../models/notification.model';
+
+export interface NotificationQuery {
+	take?: number;
+	skip?: number;
+	type?: string;
+	isRead?: boolean | null;
+}
 
 @Injectable({
 	providedIn: 'root',
@@ -79,9 +86,27 @@ export class NotificationService {
 	}
 
 	private load() {
-		this.http.get<AppNotification[]>(`${this.base}/get-notifications`).subscribe({
+		this.getNotifications().subscribe({
 			next: res => this.notifications.set(res),
 		});
+	}
+
+	getNotifications(query: NotificationQuery = {}) {
+		let params = new HttpParams();
+		if (query.take !== undefined) {
+			params = params.set('take', query.take);
+		}
+		if (query.skip !== undefined) {
+			params = params.set('skip', query.skip);
+		}
+		if (query.type) {
+			params = params.set('type', query.type);
+		}
+		if (query.isRead !== undefined && query.isRead !== null) {
+			params = params.set('isRead', query.isRead);
+		}
+
+		return this.http.get<AppNotification[]>(`${this.base}/get-notifications`, { params });
 	}
 
 	markRead(id: number) {
@@ -110,6 +135,6 @@ export class NotificationService {
 			return;
 		}
 		this.notifications.update(list => list.map(n => (n.type === type ? { ...n, isRead: true } : n)));
-		unread.forEach(n => this.http.post<void>(`${this.base}/mark-read/${n.id}`, {}).subscribe());
+		this.http.post<void>(`${this.base}/mark-type-read/${encodeURIComponent(type)}`, {}).subscribe();
 	}
 }

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using GymMarket.API.DTOs.Notifications;
 using GymMarket.API.DTOs.Progress;
 using GymMarket.API.DTOs.Workout;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -110,6 +111,12 @@ public class ProgressIntegrationTests : BaseIntegrationTests
 
         Assert.Single(logs!);
         Assert.Equal(76, logs![0].WeightKg);
+
+        var notifications = await Client.GetFromJsonAsync<List<NotificationDto>>("/api/Notifications/get-notifications");
+        Assert.Contains(notifications!, n =>
+            n.Type == "progress"
+            && n.Title == "Progress log added"
+            && n.Link == "/agency/progress");
     }
 
     private async Task<string> CreateStudent(string email)

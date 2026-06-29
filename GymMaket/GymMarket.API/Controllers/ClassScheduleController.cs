@@ -2,6 +2,7 @@ using System.Security.Claims;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.ClassSchedule;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace GymMarket.API.Controllers;
 public class ClassScheduleController : ControllerBase
 {
     private readonly GymMarketContext _context;
+    private readonly INotificationRepository _notificationRepository;
 
-    public ClassScheduleController(GymMarketContext context)
+    public ClassScheduleController(GymMarketContext context, INotificationRepository notificationRepository)
     {
         _context = context;
+        _notificationRepository = notificationRepository;
     }
 
     [HttpGet("sessions")]
@@ -119,6 +122,16 @@ public class ClassScheduleController : ControllerBase
             ? null
             : await _context.Trainers.FirstOrDefaultAsync(t => t.TrainerId == session.TrainerId);
 
+        if (!string.IsNullOrWhiteSpace(session.Trainer?.UserId))
+        {
+            await _notificationRepository.NotifyUser(
+                session.Trainer.UserId,
+                NotificationTypes.Class,
+                "Class scheduled",
+                $"You have a new class: {session.Title} on {FormatDateTime(session.StartsAt)}.",
+                "/agency/classes");
+        }
+
         return Ok(ToSessionDto(session));
     }
 
@@ -191,6 +204,12 @@ public class ClassScheduleController : ControllerBase
         }
 
         var now = DateTime.UtcNow;
+        var bookedStudentIds = session.Bookings
+            .Where(b => b.Status == ClassBookingStatus.Booked)
+            .Select(b => b.StudentId)
+            .Distinct()
+            .ToList();
+
         session.Status = ClassSessionStatus.Cancelled;
         session.UpdatedAt = now;
 
@@ -202,6 +221,21 @@ public class ClassScheduleController : ControllerBase
         }
 
         await _context.SaveChangesAsync();
+
+        if (bookedStudentIds.Count > 0)
+        {
+            var studentUserIds = await _context.Students
+                .Where(s => bookedStudentIds.Contains(s.StudentId) && s.UserId != null)
+                .Select(s => s.UserId!)
+                .ToListAsync();
+
+            await _notificationRepository.NotifyUsers(
+                studentUserIds,
+                NotificationTypes.Class,
+                "Class cancelled",
+                $"{session.Title} on {FormatDateTime(session.StartsAt)} was cancelled.",
+                "/client/classes");
+        }
 
         return Ok(new { Message = "CLASS_SESSION_CANCELLED" });
     }
@@ -293,6 +327,22 @@ public class ClassScheduleController : ControllerBase
         booking.ClassSession = session;
         booking.Student = await _context.Students.FirstOrDefaultAsync(s => s.StudentId == studentId);
 
+        if (!string.IsNullOrWhiteSpace(booking.Student?.UserId))
+        {
+            await _notificationRepository.NotifyUser(
+                booking.Student.UserId,
+                NotificationTypes.Class,
+                "Class booked",
+                $"You're booked for {session.Title} on {FormatDateTime(session.StartsAt)}.",
+                "/client/classes");
+        }
+
+        await NotifyTrainerOfClassActivity(
+            session.TrainerId,
+            "New class booking",
+            $"{booking.Student?.Name ?? "A student"} booked {session.Title}.",
+            "/agency/classes");
+
         return Ok(ToBookingDto(booking));
     }
 
@@ -325,6 +375,19 @@ public class ClassScheduleController : ControllerBase
         booking.CancelledAt = now;
         booking.UpdatedAt = now;
         await _context.SaveChangesAsync();
+
+        await NotifyStudent(
+            studentId,
+            NotificationTypes.Class,
+            "Booking cancelled",
+            $"Your booking for {booking.ClassSession?.Title ?? "a class"} was cancelled.",
+            "/client/classes");
+
+        await NotifyTrainerOfClassActivity(
+            booking.ClassSession?.TrainerId,
+            "Class booking cancelled",
+            $"A student cancelled their booking for {booking.ClassSession?.Title ?? "a class"}.",
+            "/agency/classes");
 
         return Ok(new { Message = "CLASS_BOOKING_CANCELLED" });
     }
@@ -364,6 +427,17 @@ public class ClassScheduleController : ControllerBase
         booking.AttendanceMarkedAt = now;
         booking.UpdatedAt = now;
         await _context.SaveChangesAsync();
+
+        if (!string.IsNullOrWhiteSpace(booking.Student?.UserId))
+        {
+            var title = status == ClassBookingStatus.Attended ? "Attendance marked" : "Marked as no-show";
+            await _notificationRepository.NotifyUser(
+                booking.Student.UserId,
+                NotificationTypes.Class,
+                title,
+                $"{booking.ClassSession?.Title ?? "Your class"} was marked as {status}.",
+                "/client/classes");
+        }
 
         return Ok(ToBookingDto(booking));
     }
@@ -522,6 +596,42 @@ public class ClassScheduleController : ControllerBase
             ClassBookingStatus.NoShow => ClassBookingStatus.NoShow,
             _ => null
         };
+    }
+
+    private async Task NotifyStudent(string studentId, string type, string title, string content, string link)
+    {
+        var userId = await _context.Students
+            .Where(s => s.StudentId == studentId)
+            .Select(s => s.UserId)
+            .FirstOrDefaultAsync();
+
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            await _notificationRepository.NotifyUser(userId, type, title, content, link);
+        }
+    }
+
+    private async Task NotifyTrainerOfClassActivity(string? trainerId, string title, string content, string link)
+    {
+        if (string.IsNullOrWhiteSpace(trainerId))
+        {
+            return;
+        }
+
+        var userId = await _context.Trainers
+            .Where(t => t.TrainerId == trainerId)
+            .Select(t => t.UserId)
+            .FirstOrDefaultAsync();
+
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            await _notificationRepository.NotifyUser(userId, NotificationTypes.Class, title, content, link);
+        }
+    }
+
+    private static string FormatDateTime(DateTime dateTime)
+    {
+        return $"{dateTime:MMM d, yyyy h:mm tt} UTC";
     }
 
     private string CurrentStudentId()

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using GymMarket.API.DTOs.Notifications;
 using GymMarket.API.DTOs.Workout;
 using Microsoft.AspNetCore.Mvc.Testing;
 
@@ -44,6 +45,13 @@ public class WorkoutPlansIntegrationTests : BaseIntegrationTests
         await AuthenticateAsync(email: "workout-assigned-student@example.com", role: "Student");
         var mine = await Client.GetFromJsonAsync<List<StudentWorkoutAssignmentDto>>("/api/WorkoutPlans/my-assignments");
         Assert.Contains(mine!, a => a.AssignmentId == assignment.AssignmentId);
+
+        var notifications = await Client.GetFromJsonAsync<List<NotificationDto>>("/api/Notifications/get-notifications");
+        Assert.Contains(notifications!, n =>
+            n.Type == "workout"
+            && n.Title == "Workout plan assigned"
+            && n.Link == "/client/workouts"
+            && n.Content!.Contains(plan.Name));
     }
 
     [Fact]
@@ -79,6 +87,14 @@ public class WorkoutPlansIntegrationTests : BaseIntegrationTests
         Assert.Equal(2, completed.CompletedExercises);
         Assert.Equal(100, completed.CompletionPercent);
         Assert.NotNull(completed.CompletedAt);
+
+        await AuthenticateAsync(email: "workout-complete-trainer@example.com", role: "Trainer");
+        var notifications = await Client.GetFromJsonAsync<List<NotificationDto>>("/api/Notifications/get-notifications");
+        Assert.Contains(notifications!, n =>
+            n.Type == "workout"
+            && n.Title == "Workout completed"
+            && n.Link == "/agency/workouts"
+            && n.Content!.Contains("Finish Plan"));
     }
 
     [Fact]

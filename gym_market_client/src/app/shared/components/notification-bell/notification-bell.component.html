@@ -15,17 +15,42 @@
       [ngStyle]="mode === 'fixed' ? panelStyle : null"
     >
       <div class="notif-panel-header">
-        <h4>Notifications</h4>
-        @if (notificationService.unreadCount() > 0) {
-          <button class="notif-mark-all" (click)="markAllRead($event)">Mark all as read</button>
+        <div>
+          <h4>Notifications</h4>
+          <span class="notif-filter-label">{{ categoryLabel(selectedType()) }}</span>
+        </div>
+        @if (selectedUnreadCount() > 0) {
+          <button class="notif-mark-all" (click)="markAllRead($event)">
+            {{ selectedType() === 'all' ? 'Mark all read' : 'Mark category read' }}
+          </button>
+        }
+      </div>
+
+      <div class="notif-filters" aria-label="Notification categories">
+        @for (category of categories; track category.type) {
+          <button
+            class="notif-filter"
+            [class.notif-filter--active]="selectedType() === category.type"
+            [class.notif-filter--has-unread]="categoryUnreadCount(category.type) > 0"
+            [attr.aria-pressed]="selectedType() === category.type"
+            (click)="selectType(category.type, $event)"
+          >
+            <span>{{ category.label }}</span>
+            @if (categoryUnreadCount(category.type) > 0) {
+              <strong>{{ categoryUnreadCount(category.type) > 99 ? '99+' : categoryUnreadCount(category.type) }}</strong>
+            }
+          </button>
         }
       </div>
 
       <div class="notif-list">
-        @for (item of notificationService.notifications(); track item.id) {
+        @for (item of visibleNotifications(); track item.id) {
           <button class="notif-item" [class.notif-item--unread]="!item.isRead" (click)="onNotificationClick(item)">
             <div class="notif-item-body">
-              <span class="notif-item-title">{{ item.title }}</span>
+              <div class="notif-item-topline">
+                <span class="notif-item-title">{{ item.title }}</span>
+                <span class="notif-type">{{ categoryLabel(item.type) }}</span>
+              </div>
               @if (item.content) {
                 <p class="notif-item-content">{{ item.content }}</p>
               }
@@ -37,14 +62,18 @@
           </button>
         }
 
-        @if (notificationService.notifications().length === 0) {
+        @if (visibleNotifications().length === 0) {
           <div class="notif-empty">
             <svg viewBox="0 0 24 24" width="32" height="32">
               <path fill="currentColor" opacity="0.3" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
             </svg>
-            <p>No notifications yet</p>
+            <p>No {{ selectedType() === 'all' ? '' : categoryLabel(selectedType()).toLowerCase() + ' ' }}notifications</p>
           </div>
         }
+      </div>
+
+      <div class="notif-panel-footer">
+        <button class="notif-view-all" (click)="viewAll($event)">View all notifications</button>
       </div>
     </div>
   }

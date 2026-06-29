@@ -2,6 +2,7 @@ using System.Security.Claims;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Membership;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace GymMarket.API.Controllers;
 public class MembershipsController : ControllerBase
 {
     private readonly GymMarketContext _context;
+    private readonly INotificationRepository _notificationRepository;
 
-    public MembershipsController(GymMarketContext context)
+    public MembershipsController(GymMarketContext context, INotificationRepository notificationRepository)
     {
         _context = context;
+        _notificationRepository = notificationRepository;
     }
 
     [HttpGet("plans")]
@@ -135,6 +138,11 @@ public class MembershipsController : ControllerBase
             .Select(p => ToPlanDto(p))
             .ToListAsync();
 
+        if (current != null)
+        {
+            await NotifyMembershipExpiringSoon(current);
+        }
+
         return Ok(new MembershipStatusDto
         {
             HasActiveMembership = current != null,
@@ -190,6 +198,12 @@ public class MembershipsController : ControllerBase
         current.CancelledAt = now;
         current.UpdatedAt = now;
         await _context.SaveChangesAsync();
+
+        await NotifyStudent(
+            studentId,
+            "Membership cancelled",
+            "Your active membership was cancelled.",
+            "/client/membership");
 
         return Ok(new { Message = "MEMBERSHIP_CANCELLED" });
     }
@@ -281,6 +295,12 @@ public class MembershipsController : ControllerBase
         await _context.SaveChangesAsync();
 
         membership.Student = await _context.Students.FirstOrDefaultAsync(s => s.StudentId == studentId);
+        await NotifyStudent(
+            studentId,
+            "Membership active",
+            $"{plan.Name} is active until {membership.EndsAt:MMM d, yyyy}.",
+            "/client/membership");
+
         return membership;
     }
 
@@ -308,6 +328,70 @@ public class MembershipsController : ControllerBase
         }
 
         await _context.SaveChangesAsync();
+
+        foreach (var membership in memberships)
+        {
+            await NotifyStudent(
+                membership.StudentId,
+                "Membership expired",
+                "Your membership has expired. Renew to keep booking classes.",
+                "/client/membership");
+        }
+    }
+
+    private async Task NotifyMembershipExpiringSoon(StudentMembership membership)
+    {
+        var daysLeft = (membership.EndsAt.Date - DateTime.UtcNow.Date).Days;
+        if (daysLeft < 0 || daysLeft > 7)
+        {
+            return;
+        }
+
+        var userId = membership.Student?.UserId ?? await _context.Students
+            .Where(s => s.StudentId == membership.StudentId)
+            .Select(s => s.UserId)
+            .FirstOrDefaultAsync();
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return;
+        }
+
+        var since = DateTime.UtcNow.AddDays(-1);
+        var alreadySentRecently = await _context.Notifications.AnyAsync(n =>
+            n.UserId == userId
+            && n.Type == NotificationTypes.Membership
+            && n.Title == "Membership expiring soon"
+            && n.CreatedAt >= since);
+
+        if (alreadySentRecently)
+        {
+            return;
+        }
+
+        var copy = daysLeft == 0
+            ? "Your membership expires today."
+            : $"Your membership expires in {daysLeft} day{(daysLeft == 1 ? "" : "s")}.";
+
+        await _notificationRepository.NotifyUser(
+            userId,
+            NotificationTypes.Membership,
+            "Membership expiring soon",
+            $"{copy} Renew to keep booking classes.",
+            "/client/membership");
+    }
+
+    private async Task NotifyStudent(string studentId, string title, string content, string link)
+    {
+        var userId = await _context.Students
+            .Where(s => s.StudentId == studentId)
+            .Select(s => s.UserId)
+            .FirstOrDefaultAsync();
+
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            await _notificationRepository.NotifyUser(userId, NotificationTypes.Membership, title, content, link);
+        }
     }
 
     private string CurrentStudentId()
