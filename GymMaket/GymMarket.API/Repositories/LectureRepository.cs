@@ -17,8 +17,10 @@ namespace GymMarket.API.Repositories
         public async Task<IEnumerable<Lecture>> GetLecturesByCourseIdAsync(string courseId)
         {
             return await _context.Lectures
+                .Include(l => l.Module)
                 .Where(l => l.CourseId == courseId)
-                .OrderBy(l => l.Order)
+                .OrderBy(l => l.Module == null ? int.MaxValue : l.Module.Order ?? int.MaxValue)
+                .ThenBy(l => l.Order)
                 .ToListAsync();
         }
     }

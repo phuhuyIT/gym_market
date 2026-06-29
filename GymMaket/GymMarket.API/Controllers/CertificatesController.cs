@@ -95,7 +95,7 @@ namespace GymMarket.API.Controllers
         {
             var lectureIds = await _context.Lectures
                 .AsNoTracking()
-                .Where(l => l.CourseId == courseId)
+                .Where(l => l.CourseId == courseId && l.IsPublished)
                 .Select(l => l.LectureId)
                 .ToListAsync();
 

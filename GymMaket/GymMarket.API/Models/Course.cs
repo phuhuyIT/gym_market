@@ -43,6 +43,8 @@ public partial class Course
 
     public virtual ICollection<CourseQuiz> CourseQuizzes { get; set; } = new List<CourseQuiz>();
 
+    public virtual ICollection<CourseModule> CourseModules { get; set; } = new List<CourseModule>();
+
     public virtual ICollection<HealthDatum> HealthData { get; set; } = new List<HealthDatum>();
 
     public virtual ICollection<Lecture> Lectures { get; set; } = new List<Lecture>();

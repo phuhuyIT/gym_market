@@ -29,8 +29,9 @@ namespace GymMarket.API.Controllers
         [HttpGet("lecture/{lectureId}")]
         public async Task<IActionResult> GetMaterialsByLectureId(string lectureId)
         {
-            // Students may only study materials of a course they have paid for; trainers, only their own.
-            if (!await _courseAccessService.CanAccessLectureAsync(User, lectureId))
+            // Students may only study materials of an unlocked lesson; trainers, only their own.
+            var unlockState = await _courseAccessService.GetLectureUnlockStateAsync(User, lectureId);
+            if (unlockState.IsLocked)
                 return Forbid();
 
             var materials = await _lectureMaterialRepository.GetMaterialsByLectureIdAsync(lectureId);

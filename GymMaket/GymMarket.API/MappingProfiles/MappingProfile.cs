@@ -1,6 +1,7 @@
 using AutoMapper;
 using GymMarket.API.DTOs.Course;
 using GymMarket.API.DTOs.CourseOption;
+using GymMarket.API.DTOs.CourseModule;
 using GymMarket.API.DTOs.CourseRating;
 using GymMarket.API.DTOs.CourseRegistration;
 using GymMarket.API.DTOs.FileMinIO;
@@ -59,13 +60,21 @@ namespace GymMarket.API.MappingProfiles
                 .ForMember(dest => dest.GetFileDtos, opt => opt.MapFrom(src => src.FileCourses))
                 .ReverseMap();
 
+            CreateMap<CourseModuleCreateDto, CourseModule>();
+            CreateMap<CourseModuleUpdateDto, CourseModule>();
+            CreateMap<CourseModule, CourseModuleDto>();
+
             CreateMap<FileCourse, GetFileDto>()
                 .ReverseMap();
 
             // Lecture mappings
-            CreateMap<LectureCreateDTO, Lecture>().ReverseMap();
-            CreateMap<LectureUpdateDTO, Lecture>().ReverseMap();
-            CreateMap<Lecture, GetLectureDto>().ReverseMap();
+            CreateMap<LectureCreateDTO, Lecture>()
+                .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => LearningActivityType.Normalize(src.ActivityType)));
+            CreateMap<LectureUpdateDTO, Lecture>()
+                .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => LearningActivityType.Normalize(src.ActivityType)));
+            CreateMap<Lecture, GetLectureDto>()
+                .ForMember(dest => dest.ModuleTitle, opt => opt.MapFrom(src => src.Module != null ? src.Module.Title : null))
+                .ForMember(dest => dest.ModuleOrder, opt => opt.MapFrom(src => src.Module != null ? src.Module.Order : null));
 
             // LectureMaterial mappings
             CreateMap<LectureMaterialCreateDTO, LectureMaterial>().ReverseMap();

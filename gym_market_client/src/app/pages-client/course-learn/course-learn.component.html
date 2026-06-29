@@ -45,39 +45,60 @@
 
         <!-- Sidebar: lecture list -->
         <aside class="learn-sidebar gl">
-          <h3 class="learn-sidebar__title">Lectures</h3>
-          <ul class="lecture-list">
-            @for (lecture of lectures; track lecture.lectureId) {
-              <li
-                class="lecture-item"
-                [class.lecture-item--active]="selectedLecture?.lectureId === lecture.lectureId"
-                (click)="selectLecture(lecture)"
-              >
-                <span
-                  class="lecture-item__check"
-                  [class.lecture-item__check--done]="isCompleted(lecture.lectureId)"
-                  (click)="$event.stopPropagation(); toggleCompleted(lecture)"
-                  [title]="isCompleted(lecture.lectureId) ? 'Mark as not done' : 'Mark as done'"
-                >
-                  {{ isCompleted(lecture.lectureId) ? '✓' : '' }}
-                </span>
-                <span class="lecture-item__order">{{ lecture.order }}</span>
-                <span class="lecture-item__body">
-                  <span class="lecture-item__title">{{ lecture.title }}</span>
-                  @if (lecture.duration) {
-                    <span class="lecture-item__duration">⏱️ {{ lecture.duration }} min</span>
+          <h3 class="learn-sidebar__title">Learning path</h3>
+          <div class="module-list">
+            @for (group of groupedLectures(); track group.moduleId) {
+              <section class="module-group">
+                <h4 class="module-group__title">{{ group.title }}</h4>
+                <ul class="lecture-list">
+                  @for (lecture of group.lectures; track lecture.lectureId) {
+                    <li
+                      class="lecture-item"
+                      [class.lecture-item--active]="selectedLecture?.lectureId === lecture.lectureId"
+                      [class.lecture-item--locked]="lecture.isLocked"
+                      (click)="selectLecture(lecture)"
+                    >
+                      <span
+                        class="lecture-item__check"
+                        [class.lecture-item__check--done]="isCompleted(lecture.lectureId)"
+                        [class.lecture-item__check--locked]="lecture.isLocked"
+                        (click)="$event.stopPropagation(); toggleCompleted(lecture)"
+                        [title]="lecture.isLocked ? lockLabel(lecture) : isCompleted(lecture.lectureId) ? 'Mark as not done' : 'Mark as done'"
+                      >
+                        {{ lecture.isLocked ? '•' : isCompleted(lecture.lectureId) ? '✓' : '' }}
+                      </span>
+                      <span class="lecture-item__order">{{ lecture.order }}</span>
+                      <span class="lecture-item__body">
+                        <span class="lecture-item__title">{{ lecture.title }}</span>
+                        <span class="lecture-item__duration">
+                          {{ lecture.activityType || 'Lesson' }}
+                          @if (lecture.duration) {
+                            · {{ lecture.duration }} min
+                          }
+                        </span>
+                        @if (lecture.isLocked) {
+                          <span class="lecture-item__lock">{{ lockLabel(lecture) }}</span>
+                        }
+                      </span>
+                    </li>
                   }
-                </span>
-              </li>
+                </ul>
+              </section>
             }
-          </ul>
+          </div>
         </aside>
 
         <!-- Main panel: materials of the selected lecture -->
         <section class="learn-content">
           @if (selectedLecture) {
             <div class="learn-content__head">
-              <h2 class="learn-content__title">{{ selectedLecture.title }}</h2>
+              <div>
+                <p class="learn-content__eyebrow">{{ selectedLecture.moduleTitle || 'Course lesson' }} · {{ selectedLecture.activityType || 'Lesson' }}</p>
+                <h2 class="learn-content__title">{{ selectedLecture.title }}</h2>
+                @if (selectedLecture.description) {
+                  <p class="learn-content__description">{{ selectedLecture.description }}</p>
+                }
+              </div>
               <gm-button
                 [variant]="isCompleted(selectedLecture.lectureId) ? 'secondary' : 'primary'"
                 (clicked)="toggleCompleted(selectedLecture)"
@@ -86,7 +107,12 @@
               </gm-button>
             </div>
 
-            @if (materials.length === 0) {
+            @if (selectedLecture.isLocked) {
+              <gm-card class="material-card gl material-card--locked">
+                <span class="material-card__type">Locked</span>
+                <p class="material-card__text">{{ lockLabel(selectedLecture) }}</p>
+              </gm-card>
+            } @else if (materials.length === 0) {
               <p class="learn-content__empty">No materials in this lecture yet.</p>
             } @else {
               <div class="material-list">

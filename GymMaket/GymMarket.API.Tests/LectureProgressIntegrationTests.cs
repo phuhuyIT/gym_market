@@ -54,7 +54,33 @@ public class LectureProgressIntegrationTests : BaseIntegrationTests
         Assert.Contains(lectureId, progress.CompletedLectureIds);
     }
 
-    private async Task<(string courseId, string lectureId)> CreateCourseWithLectureAsync(string trainerEmail)
+    [Fact]
+    public async Task UpdateProgress_ForDripLockedLecture_ReturnsConflict()
+    {
+        var (courseId, lectureId) = await CreateCourseWithLectureAsync(
+            "progress_drip_trainer@example.com",
+            unlockAfterDays: 3);
+
+        await AuthenticateAsync(email: "progress_drip_student@example.com", role: "Student");
+        await SeedPaidPaymentAsync(GetTokenClaim("studentId")!, courseId);
+
+        var lectures = await Client.GetFromJsonAsync<List<GetLectureDto>>($"/api/Lecture/course/{courseId}");
+        Assert.NotNull(lectures);
+        var lockedLecture = Assert.Single(lectures!);
+        Assert.True(lockedLecture.IsLocked);
+        Assert.NotNull(lockedLecture.UnlocksAt);
+
+        var updateResponse = await Client.PutAsJsonAsync($"/api/LectureProgress/lecture/{lectureId}", new UpdateLectureProgressDto
+        {
+            IsCompleted = true
+        });
+
+        Assert.Equal(HttpStatusCode.Conflict, updateResponse.StatusCode);
+    }
+
+    private async Task<(string courseId, string lectureId)> CreateCourseWithLectureAsync(
+        string trainerEmail,
+        int? unlockAfterDays = null)
     {
         await AuthenticateAsync(email: trainerEmail, role: "Trainer");
         var courseId = "PROGRESS_COURSE_" + Guid.NewGuid().ToString("N")[..8];
@@ -77,7 +103,8 @@ public class LectureProgressIntegrationTests : BaseIntegrationTests
             CourseId = courseId,
             Title = "Progress Lecture",
             Order = 1,
-            Duration = 30
+            Duration = 30,
+            UnlockAfterDays = unlockAfterDays
         });
 
         return (courseId, lectureId);

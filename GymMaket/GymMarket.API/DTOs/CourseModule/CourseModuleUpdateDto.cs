@@ -1,38 +1,30 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace GymMarket.API.DTOs.Lecture
+namespace GymMarket.API.DTOs.CourseModule
 {
-    public class LectureUpdateDTO
+    public class CourseModuleUpdateDto
     {
-        [Required(ErrorMessage = "LectureId is required.")]
-        public string LectureId { get; set; } = null!;
+        [Required(ErrorMessage = "ModuleId is required.")]
+        public string ModuleId { get; set; } = null!;
 
         public string? CourseId { get; set; }
 
-        public string? ModuleId { get; set; }
-
         [Required(ErrorMessage = "Title is required.")]
-        [StringLength(200, ErrorMessage = "Title cannot exceed 200 characters.")]
-        public string? Title { get; set; }
+        [StringLength(255, ErrorMessage = "Title cannot exceed 255 characters.")]
+        public string Title { get; set; } = null!;
 
         [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
         public string? Description { get; set; }
 
-        public string? ActivityType { get; set; }
-
         public int? Order { get; set; }
 
-        public int? Duration { get; set; }
-
-        public string? PrerequisiteLectureId { get; set; }
+        public string? PrerequisiteModuleId { get; set; }
 
         public int? UnlockAfterDays { get; set; }
 
         public DateTime? AvailableFrom { get; set; }
 
         public DateTime? AvailableUntil { get; set; }
-
-        public bool IsPreview { get; set; }
 
         public bool IsPublished { get; set; } = true;
     }

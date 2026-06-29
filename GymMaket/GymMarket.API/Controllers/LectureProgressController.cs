@@ -35,7 +35,7 @@ namespace GymMarket.API.Controllers
 
             var lectureIds = await _context.Lectures
                 .AsNoTracking()
-                .Where(l => l.CourseId == courseId)
+                .Where(l => l.CourseId == courseId && l.IsPublished)
                 .OrderBy(l => l.Order)
                 .Select(l => l.LectureId)
                 .ToListAsync();
@@ -70,6 +70,10 @@ namespace GymMarket.API.Controllers
 
             if (!await _courseAccessService.CanAccessLectureAsync(User, lectureId))
                 return Forbid();
+
+            var unlockState = await _courseAccessService.GetLectureUnlockStateAsync(User, lectureId);
+            if (unlockState.IsLocked)
+                return Conflict(unlockState);
 
             var lectureExists = await _context.Lectures.AnyAsync(l => l.LectureId == lectureId);
             if (!lectureExists)

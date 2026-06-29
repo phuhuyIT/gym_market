@@ -70,6 +70,25 @@ namespace GymMarket.API
             TrainerWritable.Contains(status);
     }
 
+    public static class LearningActivityType
+    {
+        public const string Lesson = "Lesson";
+        public const string Activity = "Activity";
+        public const string Practice = "Practice";
+        public const string Assessment = "Assessment";
+
+        public static readonly string[] All = [Lesson, Activity, Practice, Assessment];
+
+        public static string Normalize(string? type)
+        {
+            if (string.IsNullOrWhiteSpace(type))
+                return Lesson;
+
+            return All.FirstOrDefault(
+                supported => string.Equals(supported, type.Trim(), StringComparison.OrdinalIgnoreCase)) ?? Lesson;
+        }
+    }
+
     public static class TrainerApprovalStatus
     {
         public const string PendingReview = "PendingReview";

@@ -20,7 +20,7 @@ import { LoaderModalStore } from '../../stores/loader.store';
 import { ErrorModalStore } from '../../stores/error-modal.store';
 import { ToastService } from '../../shared/services/toast.service';
 import { CourseMaterialService } from '../course-material.service';
-import { Lecture, LectureMaterial } from '../../core/models/lecture.model';
+import { CourseModule, Lecture, LectureMaterial } from '../../core/models/lecture.model';
 import { QuizAttemptSummary, TrainerQuizQuestion, UpsertCourseQuiz } from '../../core/models/quiz.model';
 
 @Component({
@@ -34,6 +34,7 @@ export class CourseMaterialComponent implements OnInit {
 	courseId: string = '';
 
 	lectures: Lecture[] = [];
+	modules: CourseModule[] = [];
 	selectedLecture: Lecture | null = null;
 	materials: LectureMaterial[] = [];
 
@@ -47,7 +48,12 @@ export class CourseMaterialComponent implements OnInit {
 	// lecture modals
 	isShowLectureModal: boolean = false;
 	lectureForm!: FormGroup;
-	private editingLectureId: string | null = null;
+	editingLectureId: string | null = null;
+
+	// module modals
+	isShowModuleModal: boolean = false;
+	moduleForm!: FormGroup;
+	editingModuleId: string | null = null;
 
 	// material modals
 	isShowMaterialModal: boolean = false;
@@ -56,7 +62,7 @@ export class CourseMaterialComponent implements OnInit {
 
 	// delete modal
 	isShowDeleteModal: boolean = false;
-	private deleteKind: 'lecture' | 'material' | null = null;
+	private deleteKind: 'module' | 'lecture' | 'material' | null = null;
 	private deleteId: string = '';
 
 	loaderStore = inject(LoaderModalStore);
@@ -72,6 +78,10 @@ export class CourseMaterialComponent implements OnInit {
 		return this.editingLectureId ? 'Edit lecture' : 'Add lecture';
 	}
 
+	get editingModuleLabel(): string {
+		return this.editingModuleId ? 'Edit module' : 'Add module';
+	}
+
 	get editingMaterialLabel(): string {
 		return this.editingMaterialId ? 'Edit material' : 'Add material';
 	}
@@ -80,9 +90,29 @@ export class CourseMaterialComponent implements OnInit {
 		this.courseId = this.route.snapshot.params['courseId'];
 
 		this.lectureForm = this.formBuilder.group({
+			moduleId: [''],
 			title: ['', [Validators.required]],
+			description: [''],
+			activityType: ['Lesson', [Validators.required]],
 			order: [1, [Validators.required, Validators.min(1)]],
 			duration: [0, [Validators.min(0)]],
+			prerequisiteLectureId: [''],
+			unlockAfterDays: [null, [Validators.min(0)]],
+			availableFrom: [''],
+			availableUntil: [''],
+			isPreview: [false],
+			isPublished: [true],
+		});
+
+		this.moduleForm = this.formBuilder.group({
+			title: ['', [Validators.required]],
+			description: [''],
+			order: [1, [Validators.required, Validators.min(1)]],
+			prerequisiteModuleId: [''],
+			unlockAfterDays: [null, [Validators.min(0)]],
+			availableFrom: [''],
+			availableUntil: [''],
+			isPublished: [true],
 		});
 
 		this.materialForm = this.formBuilder.group({
@@ -90,9 +120,24 @@ export class CourseMaterialComponent implements OnInit {
 			materialContent: ['', [Validators.required]],
 		});
 
+		this.loadModules();
 		this.loadLectures();
 		this.loadQuiz();
 		this.loadQuizGradebook();
+	}
+
+	private loadModules() {
+		if (!this.courseId) return;
+		this.courseMaterialService
+			.getModulesByCourse(this.courseId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: res => {
+					this.modules = this.sortModules(res);
+					this.cdr.markForCheck();
+				},
+				error: () => this.toastService.show('Failed to load modules', 'error'),
+			});
 	}
 
 	private loadLectures() {
@@ -103,7 +148,7 @@ export class CourseMaterialComponent implements OnInit {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: res => {
-					this.lectures = res.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+						this.lectures = this.sortLectures(res);
 					patchState(this.loaderStore, { isShow: false });
 					this.cdr.markForCheck();
 				},
@@ -134,24 +179,178 @@ export class CourseMaterialComponent implements OnInit {
 			});
 	}
 
+	lecturesForModule(moduleId: string): Lecture[] {
+		return this.lectures.filter(lecture => lecture.moduleId === moduleId);
+	}
+
+	get unassignedLectures(): Lecture[] {
+		return this.lectures.filter(lecture => !lecture.moduleId);
+	}
+
+	moduleTitle(moduleId?: string | null): string {
+		return this.modules.find(module => module.moduleId === moduleId)?.title || 'Unassigned';
+	}
+
+	lectureTitle(lectureId?: string | null): string {
+		return this.lectures.find(lecture => lecture.lectureId === lectureId)?.title || 'None';
+	}
+
+	private sortModules(modules: CourseModule[]): CourseModule[] {
+		return modules.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+	}
+
+	private sortLectures(lectures: Lecture[]): Lecture[] {
+		return lectures.sort((a, b) => {
+			const moduleOrderA = a.moduleOrder ?? this.modules.find(m => m.moduleId === a.moduleId)?.order ?? 9999;
+			const moduleOrderB = b.moduleOrder ?? this.modules.find(m => m.moduleId === b.moduleId)?.order ?? 9999;
+			return moduleOrderA - moduleOrderB || (a.order ?? 0) - (b.order ?? 0);
+		});
+	}
+
+	// ---------- Module CRUD ----------
+	onShowModuleModal(flag: boolean, module: CourseModule | null = null) {
+		this.isShowModuleModal = flag;
+		if (!flag) {
+			this.editingModuleId = null;
+			this.moduleForm.reset({
+				title: '',
+				description: '',
+				order: 1,
+				prerequisiteModuleId: '',
+				unlockAfterDays: null,
+				availableFrom: '',
+				availableUntil: '',
+				isPublished: true,
+			});
+			return;
+		}
+
+		if (module) {
+			this.editingModuleId = module.moduleId;
+			this.moduleForm.patchValue({
+				title: module.title,
+				description: module.description ?? '',
+				order: module.order,
+				prerequisiteModuleId: module.prerequisiteModuleId ?? '',
+				unlockAfterDays: module.unlockAfterDays ?? null,
+				availableFrom: this.toDateTimeLocal(module.availableFrom),
+				availableUntil: this.toDateTimeLocal(module.availableUntil),
+				isPublished: module.isPublished,
+			});
+		} else {
+			this.editingModuleId = null;
+			this.moduleForm.reset({
+				title: '',
+				description: '',
+				order: this.modules.length + 1,
+				prerequisiteModuleId: '',
+				unlockAfterDays: null,
+				availableFrom: '',
+				availableUntil: '',
+				isPublished: true,
+			});
+		}
+	}
+
+	submitModule() {
+		if (this.moduleForm.invalid) {
+			this.toastService.show('Please fill in the module title', 'error');
+			return;
+		}
+
+		const isEdit = this.editingModuleId !== null;
+		const model: CourseModule = {
+			moduleId: this.editingModuleId ?? crypto.randomUUID(),
+			courseId: this.courseId,
+			title: this.moduleForm.controls['title'].value,
+			description: this.moduleForm.controls['description'].value || null,
+			order: this.moduleForm.controls['order'].value,
+			prerequisiteModuleId: this.moduleForm.controls['prerequisiteModuleId'].value || null,
+			unlockAfterDays: this.moduleForm.controls['unlockAfterDays'].value ?? null,
+			availableFrom: this.moduleForm.controls['availableFrom'].value || null,
+			availableUntil: this.moduleForm.controls['availableUntil'].value || null,
+			isPublished: !!this.moduleForm.controls['isPublished'].value,
+		};
+
+		patchState(this.loaderStore, { isShow: true });
+		const request$ = isEdit
+			? this.courseMaterialService.updateModule(model)
+			: this.courseMaterialService.addModule(model);
+
+		request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+			next: saved => {
+				patchState(this.loaderStore, { isShow: false });
+				if (isEdit) {
+					const idx = this.modules.findIndex(m => m.moduleId === saved.moduleId);
+					if (idx !== -1) this.modules[idx] = saved;
+				} else {
+					this.modules.push(saved);
+				}
+				this.modules = this.sortModules(this.modules);
+				this.toastService.show(isEdit ? 'Module updated' : 'Module added');
+				this.onShowModuleModal(false);
+				this.cdr.markForCheck();
+			},
+			error: err => {
+				patchState(this.loaderStore, { isShow: false });
+				patchState(this.errorModalStore, { errors: err.error?.errors || err.error?.error, isShow: true });
+			},
+		});
+	}
+
 	// ---------- Lecture CRUD ----------
 	onShowLectureModal(flag: boolean, lecture: Lecture | null = null) {
 		this.isShowLectureModal = flag;
 		if (!flag) {
 			this.editingLectureId = null;
-			this.lectureForm.reset({ title: '', order: 1, duration: 0 });
+			this.lectureForm.reset({
+				moduleId: '',
+				title: '',
+				description: '',
+				activityType: 'Lesson',
+				order: 1,
+				duration: 0,
+				prerequisiteLectureId: '',
+				unlockAfterDays: null,
+				availableFrom: '',
+				availableUntil: '',
+				isPreview: false,
+				isPublished: true,
+			});
 			return;
 		}
 		if (lecture) {
 			this.editingLectureId = lecture.lectureId;
 			this.lectureForm.patchValue({
+				moduleId: lecture.moduleId ?? '',
 				title: lecture.title,
+				description: lecture.description ?? '',
+				activityType: lecture.activityType ?? 'Lesson',
 				order: lecture.order,
 				duration: lecture.duration,
+				prerequisiteLectureId: lecture.prerequisiteLectureId ?? '',
+				unlockAfterDays: lecture.unlockAfterDays ?? null,
+				availableFrom: this.toDateTimeLocal(lecture.availableFrom),
+				availableUntil: this.toDateTimeLocal(lecture.availableUntil),
+				isPreview: !!lecture.isPreview,
+				isPublished: lecture.isPublished !== false,
 			});
 		} else {
 			this.editingLectureId = null;
-			this.lectureForm.reset({ title: '', order: this.lectures.length + 1, duration: 0 });
+			this.lectureForm.reset({
+				moduleId: '',
+				title: '',
+				description: '',
+				activityType: 'Lesson',
+				order: this.lectures.length + 1,
+				duration: 0,
+				prerequisiteLectureId: '',
+				unlockAfterDays: null,
+				availableFrom: '',
+				availableUntil: '',
+				isPreview: false,
+				isPublished: true,
+			});
 		}
 	}
 
@@ -162,13 +361,22 @@ export class CourseMaterialComponent implements OnInit {
 		}
 
 		const isEdit = this.editingLectureId !== null;
-		const model: Lecture = {
-			lectureId: this.editingLectureId ?? crypto.randomUUID(),
-			courseId: this.courseId,
-			title: this.lectureForm.controls['title'].value,
-			order: this.lectureForm.controls['order'].value,
-			duration: this.lectureForm.controls['duration'].value,
-		};
+			const model: Lecture = {
+				lectureId: this.editingLectureId ?? crypto.randomUUID(),
+				courseId: this.courseId,
+				moduleId: this.lectureForm.controls['moduleId'].value || null,
+				title: this.lectureForm.controls['title'].value,
+				description: this.lectureForm.controls['description'].value || null,
+				activityType: this.lectureForm.controls['activityType'].value,
+				order: this.lectureForm.controls['order'].value,
+				duration: this.lectureForm.controls['duration'].value,
+				prerequisiteLectureId: this.lectureForm.controls['prerequisiteLectureId'].value || null,
+				unlockAfterDays: this.lectureForm.controls['unlockAfterDays'].value ?? null,
+				availableFrom: this.lectureForm.controls['availableFrom'].value || null,
+				availableUntil: this.lectureForm.controls['availableUntil'].value || null,
+				isPreview: !!this.lectureForm.controls['isPreview'].value,
+				isPublished: !!this.lectureForm.controls['isPublished'].value,
+			};
 
 		patchState(this.loaderStore, { isShow: true });
 		const request$ = isEdit
@@ -180,13 +388,13 @@ export class CourseMaterialComponent implements OnInit {
 				patchState(this.loaderStore, { isShow: false });
 				if (isEdit) {
 					const idx = this.lectures.findIndex(l => l.lectureId === model.lectureId);
-					if (idx !== -1) this.lectures[idx] = model;
-					if (this.selectedLecture?.lectureId === model.lectureId)
-						this.selectedLecture = model;
-				} else {
-					this.lectures.push(model);
-				}
-				this.lectures.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+						if (idx !== -1) this.lectures[idx] = { ...model, moduleTitle: this.moduleTitle(model.moduleId), moduleOrder: this.modules.find(m => m.moduleId === model.moduleId)?.order };
+						if (this.selectedLecture?.lectureId === model.lectureId)
+							this.selectedLecture = this.lectures[idx] ?? model;
+					} else {
+						this.lectures.push({ ...model, moduleTitle: this.moduleTitle(model.moduleId), moduleOrder: this.modules.find(m => m.moduleId === model.moduleId)?.order });
+					}
+					this.lectures = this.sortLectures(this.lectures);
 				this.toastService.show(isEdit ? 'Lecture updated' : 'Lecture added');
 				this.onShowLectureModal(false);
 				this.cdr.markForCheck();
@@ -259,7 +467,7 @@ export class CourseMaterialComponent implements OnInit {
 	}
 
 	// ---------- Delete ----------
-	onShowDeleteModal(flag: boolean, kind: 'lecture' | 'material' | null = null, id: string = '') {
+	onShowDeleteModal(flag: boolean, kind: 'module' | 'lecture' | 'material' | null = null, id: string = '') {
 		this.isShowDeleteModal = flag;
 		this.deleteKind = kind;
 		this.deleteId = id;
@@ -273,15 +481,24 @@ export class CourseMaterialComponent implements OnInit {
 
 		patchState(this.loaderStore, { isShow: true });
 		const request$ =
-			kind === 'lecture'
-				? this.courseMaterialService.removeLecture(id)
-				: this.courseMaterialService.removeMaterial(id);
+			kind === 'module'
+				? this.courseMaterialService.removeModule(id)
+				: kind === 'lecture'
+					? this.courseMaterialService.removeLecture(id)
+					: this.courseMaterialService.removeMaterial(id);
 
 		request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 			next: () => {
 				patchState(this.loaderStore, { isShow: false });
-				if (kind === 'lecture') {
-					this.lectures = this.lectures.filter(l => l.lectureId !== id);
+					if (kind === 'module') {
+						this.modules = this.modules.filter(m => m.moduleId !== id);
+						this.lectures = this.lectures.map(lecture =>
+							lecture.moduleId === id
+								? { ...lecture, moduleId: null, moduleTitle: null, moduleOrder: null }
+								: lecture
+						);
+					} else if (kind === 'lecture') {
+						this.lectures = this.lectures.filter(l => l.lectureId !== id);
 					if (this.selectedLecture?.lectureId === id) {
 						this.selectedLecture = null;
 						this.materials = [];
@@ -454,5 +671,13 @@ export class CourseMaterialComponent implements OnInit {
 				},
 			],
 		};
+	}
+
+	private toDateTimeLocal(value?: string | null): string {
+		if (!value) return '';
+		const date = new Date(value);
+		if (Number.isNaN(date.getTime())) return '';
+		const pad = (part: number) => part.toString().padStart(2, '0');
+		return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 	}
 }

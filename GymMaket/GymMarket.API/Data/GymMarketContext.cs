@@ -27,6 +27,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<CourseQuiz> CourseQuizzes { get; set; }
 
+    public virtual DbSet<CourseModule> CourseModules { get; set; }
+
     public virtual DbSet<HealthDatum> HealthData { get; set; }
 
     public virtual DbSet<HealthIndicator> HealthIndicators { get; set; }
@@ -199,6 +201,66 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.StudentId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Course_Certificates_Student");
+        });
+
+        modelBuilder.Entity<CourseModule>(entity =>
+        {
+            entity.HasKey(e => e.ModuleId);
+
+            entity.ToTable("Course_Modules");
+
+            entity.Property(e => e.ModuleId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Module_ID");
+            entity.Property(e => e.CourseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Course_ID");
+            entity.Property(e => e.Title)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Description)
+                .HasMaxLength(1000);
+            entity.Property(e => e.Order)
+                .HasColumnName("Module_Order");
+            entity.Property(e => e.PrerequisiteModuleId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Prerequisite_Module_ID");
+            entity.Property(e => e.UnlockAfterDays)
+                .HasColumnName("Unlock_After_Days");
+            entity.Property(e => e.AvailableFrom)
+                .HasColumnType("datetime")
+                .HasColumnName("Available_From");
+            entity.Property(e => e.AvailableUntil)
+                .HasColumnType("datetime")
+                .HasColumnName("Available_Until");
+            entity.Property(e => e.IsPublished)
+                .HasDefaultValue(true)
+                .HasColumnName("Is_Published");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.CourseId);
+            entity.HasIndex(e => new { e.CourseId, e.Order });
+            entity.HasIndex(e => e.PrerequisiteModuleId);
+
+            entity.HasOne(d => d.Course).WithMany(p => p.CourseModules)
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Course_Modules_Course");
+
+            entity.HasOne(d => d.PrerequisiteModule).WithMany(p => p.DependentModules)
+                .HasForeignKey(d => d.PrerequisiteModuleId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_Course_Modules_Prerequisite_Module");
         });
 
         modelBuilder.Entity<FileCourse>(entity =>
@@ -852,13 +914,58 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Course_ID");
+            entity.Property(e => e.ModuleId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Module_ID");
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.Description)
+                .HasMaxLength(1000);
+            entity.Property(e => e.ActivityType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Activity_Type")
+                .HasDefaultValue(LearningActivityType.Lesson);
+            entity.Property(e => e.Order)
+                .HasColumnName("Lecture_Order");
+            entity.Property(e => e.PrerequisiteLectureId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Prerequisite_Lecture_ID");
+            entity.Property(e => e.UnlockAfterDays)
+                .HasColumnName("Unlock_After_Days");
+            entity.Property(e => e.AvailableFrom)
+                .HasColumnType("datetime")
+                .HasColumnName("Available_From");
+            entity.Property(e => e.AvailableUntil)
+                .HasColumnType("datetime")
+                .HasColumnName("Available_Until");
+            entity.Property(e => e.IsPreview)
+                .HasDefaultValue(false)
+                .HasColumnName("Is_Preview");
+            entity.Property(e => e.IsPublished)
+                .HasDefaultValue(true)
+                .HasColumnName("Is_Published");
+
+            entity.HasIndex(e => e.ModuleId);
+            entity.HasIndex(e => new { e.CourseId, e.ModuleId, e.Order });
+            entity.HasIndex(e => e.PrerequisiteLectureId);
 
             entity.HasOne(d => d.Course).WithMany(p => p.Lectures)
                 .HasForeignKey(d => d.CourseId)
                 .HasConstraintName("FK_Lectures_Course");
+
+            entity.HasOne(d => d.Module).WithMany(p => p.Lectures)
+                .HasForeignKey(d => d.ModuleId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Lectures_Course_Module");
+
+            entity.HasOne(d => d.PrerequisiteLecture).WithMany(p => p.DependentLectures)
+                .HasForeignKey(d => d.PrerequisiteLectureId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_Lectures_Prerequisite_Lecture");
         });
 
         modelBuilder.Entity<LectureMaterial>(entity =>

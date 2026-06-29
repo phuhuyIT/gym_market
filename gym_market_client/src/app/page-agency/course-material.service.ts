@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
-import { Lecture, LectureMaterial } from '../core/models/lecture.model';
+import { CourseModule, Lecture, LectureMaterial } from '../core/models/lecture.model';
 import {
 	CourseQuiz,
 	QuizAttemptSummary,
@@ -25,6 +25,23 @@ export interface CourseProgress {
 })
 export class CourseMaterialService {
 	constructor(private http: HttpClient) {}
+
+	// ----- Curriculum modules -----
+	getModulesByCourse(courseId: string): Observable<CourseModule[]> {
+		return this.http.get<CourseModule[]>(`${environment.baseApi}/coursemodule/course/${courseId}`);
+	}
+
+	addModule(model: CourseModule): Observable<CourseModule> {
+		return this.http.post<CourseModule>(`${environment.baseApi}/coursemodule`, model);
+	}
+
+	updateModule(model: CourseModule): Observable<CourseModule> {
+		return this.http.put<CourseModule>(`${environment.baseApi}/coursemodule/${model.moduleId}`, model);
+	}
+
+	removeModule(moduleId: string): Observable<void> {
+		return this.http.delete<void>(`${environment.baseApi}/coursemodule/${moduleId}`);
+	}
 
 	// ----- Lectures -----
 	getLecturesByCourse(courseId: string): Observable<Lecture[]> {

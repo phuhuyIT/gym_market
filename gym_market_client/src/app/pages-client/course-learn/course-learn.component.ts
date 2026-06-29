@@ -91,9 +91,9 @@ export class CourseLearnComponent implements OnInit {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 					next: res => {
-						this.lectures = res.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+						this.lectures = this.sortLectures(res);
 						if (this.lectures.length > 0) {
-							this.selectLecture(this.lectures[0]);
+							this.selectLecture(this.lectures.find(lecture => !lecture.isLocked) ?? this.lectures[0]);
 						}
 						this.loadProgress();
 						patchState(this.loader, { isShow: false });
@@ -171,6 +171,13 @@ export class CourseLearnComponent implements OnInit {
 	}
 
 	selectLecture(lecture: Lecture) {
+		if (lecture.isLocked) {
+			this.selectedLecture = lecture;
+			this.materials = [];
+			this.cdr.markForCheck();
+			return;
+		}
+
 		this.selectedLecture = lecture;
 		this.materials = [];
 		patchState(this.loader, { isShow: true });
@@ -202,6 +209,11 @@ export class CourseLearnComponent implements OnInit {
 	}
 
 	toggleCompleted(lecture: Lecture) {
+		if (lecture.isLocked) {
+			this.toastService.show(lecture.lockReason || 'This lesson is locked', 'error');
+			return;
+		}
+
 		const wasCompleted = this.completedLectureIds.has(lecture.lectureId);
 		if (this.completedLectureIds.has(lecture.lectureId)) {
 			this.completedLectureIds.delete(lecture.lectureId);
@@ -237,6 +249,36 @@ export class CourseLearnComponent implements OnInit {
 	get progressPercent(): number {
 		if (this.lectures.length === 0) return 0;
 		return Math.round((this.completedCount / this.lectures.length) * 100);
+	}
+
+	groupedLectures(): { moduleId: string; title: string; lectures: Lecture[] }[] {
+		const groups = new Map<string, { moduleId: string; title: string; lectures: Lecture[] }>();
+		for (const lecture of this.lectures) {
+			const moduleId = lecture.moduleId || 'unassigned';
+			const title = lecture.moduleTitle || 'Unassigned lessons';
+			if (!groups.has(moduleId)) {
+				groups.set(moduleId, { moduleId, title, lectures: [] });
+			}
+			groups.get(moduleId)!.lectures.push(lecture);
+		}
+		return Array.from(groups.values());
+	}
+
+	lockLabel(lecture: Lecture): string {
+		if (!lecture.isLocked) return '';
+		if (lecture.unlocksAt) {
+			const date = new Date(lecture.unlocksAt);
+			if (!Number.isNaN(date.getTime())) {
+				return `${lecture.lockReason || 'Unlocks'} ${date.toLocaleString()}`;
+			}
+		}
+		return lecture.lockReason || 'Locked';
+	}
+
+	private sortLectures(lectures: Lecture[]): Lecture[] {
+		return lectures.sort((a, b) =>
+			(a.moduleOrder ?? 9999) - (b.moduleOrder ?? 9999) || (a.order ?? 0) - (b.order ?? 0)
+		);
 	}
 
 	goToDetails() {

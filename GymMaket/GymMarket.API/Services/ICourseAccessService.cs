@@ -12,9 +12,12 @@ namespace GymMarket.API.Services
         Task<bool> CanAccessCourseAsync(ClaimsPrincipal user, string courseId);
         Task<bool> CanAccessLectureAsync(ClaimsPrincipal user, string lectureId);
         Task<bool> CanAccessMaterialAsync(ClaimsPrincipal user, string materialId);
+        Task<LectureUnlockState> GetLectureUnlockStateAsync(ClaimsPrincipal user, string lectureId);
 
         Task<bool> CanManageCourseAsync(ClaimsPrincipal user, string courseId);
         Task<bool> CanManageLectureAsync(ClaimsPrincipal user, string lectureId);
         Task<bool> CanManageMaterialAsync(ClaimsPrincipal user, string materialId);
     }
+
+    public record LectureUnlockState(bool IsLocked, string? Reason = null, DateTime? UnlocksAt = null);
 }
