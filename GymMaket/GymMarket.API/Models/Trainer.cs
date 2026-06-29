@@ -49,6 +49,12 @@ public partial class Trainer
 
     public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
 
+    public virtual ICollection<GymClassSession> GymClassSessions { get; set; } = new List<GymClassSession>();
+
+    public virtual ICollection<WorkoutPlan> WorkoutPlans { get; set; } = new List<WorkoutPlan>();
+
+    public virtual ICollection<StudentWorkoutAssignment> WorkoutAssignments { get; set; } = new List<StudentWorkoutAssignment>();
+
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
 
     public virtual AppUser? AppUser { get; set; }

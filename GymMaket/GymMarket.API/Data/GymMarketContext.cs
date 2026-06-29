@@ -21,6 +21,10 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<CourseRegistrationOption> CourseRegistrationOptions { get; set; }
 
+    public virtual DbSet<ClassBooking> ClassBookings { get; set; }
+
+    public virtual DbSet<GymClassSession> GymClassSessions { get; set; }
+
     public virtual DbSet<CourseQuiz> CourseQuizzes { get; set; }
 
     public virtual DbSet<HealthDatum> HealthData { get; set; }
@@ -55,7 +59,19 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<StudentMembership> StudentMemberships { get; set; }
 
+    public virtual DbSet<StudentProgressGoal> StudentProgressGoals { get; set; }
+
+    public virtual DbSet<StudentProgressLog> StudentProgressLogs { get; set; }
+
+    public virtual DbSet<StudentWorkoutAssignment> StudentWorkoutAssignments { get; set; }
+
     public virtual DbSet<Trainer> Trainers { get; set; }
+
+    public virtual DbSet<WorkoutExercise> WorkoutExercises { get; set; }
+
+    public virtual DbSet<WorkoutExerciseCompletion> WorkoutExerciseCompletions { get; set; }
+
+    public virtual DbSet<WorkoutPlan> WorkoutPlans { get; set; }
 
     public virtual DbSet<Conversation> Conversations { get; set; }
     public virtual DbSet<UserMessage> UserMessages { get; set; }
@@ -341,6 +357,412 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasOne(d => d.Registration).WithMany(p => p.CourseRegistrationOptions)
                 .HasForeignKey(d => d.RegistrationId)
                 .HasConstraintName("FK_Course_Registration_Options_Registration");
+        });
+
+        modelBuilder.Entity<GymClassSession>(entity =>
+        {
+            entity.HasKey(e => e.ClassSessionId);
+
+            entity.ToTable("Gym_Class_Sessions");
+
+            entity.Property(e => e.ClassSessionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Class_Session_ID");
+            entity.Property(e => e.Title)
+                .HasMaxLength(200);
+            entity.Property(e => e.Description)
+                .HasMaxLength(1000);
+            entity.Property(e => e.TrainerId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Trainer_ID");
+            entity.Property(e => e.StartsAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Starts_At");
+            entity.Property(e => e.EndsAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Ends_At");
+            entity.Property(e => e.Location)
+                .HasMaxLength(200);
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(ClassSessionStatus.Scheduled);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.TrainerId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.StartsAt);
+            entity.HasIndex(e => new { e.Status, e.StartsAt });
+
+            entity.HasOne(d => d.Trainer).WithMany(p => p.GymClassSessions)
+                .HasForeignKey(d => d.TrainerId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Gym_Class_Sessions_Trainer");
+        });
+
+        modelBuilder.Entity<ClassBooking>(entity =>
+        {
+            entity.HasKey(e => e.BookingId);
+
+            entity.ToTable("Class_Bookings");
+
+            entity.Property(e => e.BookingId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Booking_ID");
+            entity.Property(e => e.ClassSessionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Class_Session_ID");
+            entity.Property(e => e.StudentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Student_ID");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(ClassBookingStatus.Booked);
+            entity.Property(e => e.BookedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Booked_At");
+            entity.Property(e => e.CancelledAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Cancelled_At");
+            entity.Property(e => e.AttendanceMarkedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Attendance_Marked_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.ClassSessionId);
+            entity.HasIndex(e => e.StudentId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => new { e.ClassSessionId, e.StudentId });
+            entity.HasIndex(e => new { e.ClassSessionId, e.Status });
+
+            entity.HasOne(d => d.ClassSession).WithMany(p => p.Bookings)
+                .HasForeignKey(d => d.ClassSessionId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Class_Bookings_Class_Session");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.ClassBookings)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Class_Bookings_Student");
+        });
+
+        modelBuilder.Entity<WorkoutPlan>(entity =>
+        {
+            entity.HasKey(e => e.WorkoutPlanId);
+
+            entity.ToTable("Workout_Plans");
+
+            entity.Property(e => e.WorkoutPlanId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Workout_Plan_ID");
+            entity.Property(e => e.TrainerId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Trainer_ID");
+            entity.Property(e => e.Name)
+                .HasMaxLength(160);
+            entity.Property(e => e.Goal)
+                .HasMaxLength(500);
+            entity.Property(e => e.Difficulty)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.DurationWeeks)
+                .HasColumnName("Duration_Weeks");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("Is_Active");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.TrainerId);
+            entity.HasIndex(e => e.IsActive);
+            entity.HasIndex(e => new { e.TrainerId, e.IsActive });
+
+            entity.HasOne(d => d.Trainer).WithMany(p => p.WorkoutPlans)
+                .HasForeignKey(d => d.TrainerId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Workout_Plans_Trainer");
+        });
+
+        modelBuilder.Entity<WorkoutExercise>(entity =>
+        {
+            entity.HasKey(e => e.ExerciseId);
+
+            entity.ToTable("Workout_Exercises");
+
+            entity.Property(e => e.ExerciseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Exercise_ID");
+            entity.Property(e => e.WorkoutPlanId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Workout_Plan_ID");
+            entity.Property(e => e.WeekNumber)
+                .HasColumnName("Week_Number");
+            entity.Property(e => e.DayNumber)
+                .HasColumnName("Day_Number");
+            entity.Property(e => e.Name)
+                .HasMaxLength(160);
+            entity.Property(e => e.Reps)
+                .HasMaxLength(80);
+            entity.Property(e => e.RestSeconds)
+                .HasColumnName("Rest_Seconds");
+            entity.Property(e => e.Notes)
+                .HasMaxLength(1000);
+
+            entity.HasIndex(e => e.WorkoutPlanId);
+            entity.HasIndex(e => new { e.WorkoutPlanId, e.WeekNumber, e.DayNumber, e.Order });
+
+            entity.HasOne(d => d.WorkoutPlan).WithMany(p => p.Exercises)
+                .HasForeignKey(d => d.WorkoutPlanId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Workout_Exercises_Workout_Plan");
+        });
+
+        modelBuilder.Entity<StudentWorkoutAssignment>(entity =>
+        {
+            entity.HasKey(e => e.AssignmentId);
+
+            entity.ToTable("Student_Workout_Assignments");
+
+            entity.Property(e => e.AssignmentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Assignment_ID");
+            entity.Property(e => e.WorkoutPlanId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Workout_Plan_ID");
+            entity.Property(e => e.StudentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Student_ID");
+            entity.Property(e => e.TrainerId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Trainer_ID");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(WorkoutAssignmentStatus.Active);
+            entity.Property(e => e.StartsAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Starts_At");
+            entity.Property(e => e.EndsAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Ends_At");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.CompletedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Completed_At");
+            entity.Property(e => e.CancelledAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Cancelled_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.WorkoutPlanId);
+            entity.HasIndex(e => e.StudentId);
+            entity.HasIndex(e => e.TrainerId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => new { e.StudentId, e.Status });
+            entity.HasIndex(e => new { e.TrainerId, e.Status });
+
+            entity.HasOne(d => d.WorkoutPlan).WithMany(p => p.Assignments)
+                .HasForeignKey(d => d.WorkoutPlanId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Student_Workout_Assignments_Workout_Plan");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.WorkoutAssignments)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Student_Workout_Assignments_Student");
+
+            entity.HasOne(d => d.Trainer).WithMany(p => p.WorkoutAssignments)
+                .HasForeignKey(d => d.TrainerId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Student_Workout_Assignments_Trainer");
+        });
+
+        modelBuilder.Entity<StudentProgressLog>(entity =>
+        {
+            entity.HasKey(e => e.ProgressLogId);
+
+            entity.ToTable("Student_Progress_Logs");
+
+            entity.Property(e => e.ProgressLogId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Progress_Log_ID");
+            entity.Property(e => e.StudentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Student_ID");
+            entity.Property(e => e.LoggedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Logged_At");
+            entity.Property(e => e.WeightKg)
+                .HasColumnType("decimal(6, 2)")
+                .HasColumnName("Weight_Kg");
+            entity.Property(e => e.BodyFatPercent)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("Body_Fat_Percent");
+            entity.Property(e => e.WaistCm)
+                .HasColumnType("decimal(6, 2)")
+                .HasColumnName("Waist_Cm");
+            entity.Property(e => e.ChestCm)
+                .HasColumnType("decimal(6, 2)")
+                .HasColumnName("Chest_Cm");
+            entity.Property(e => e.ArmCm)
+                .HasColumnType("decimal(6, 2)")
+                .HasColumnName("Arm_Cm");
+            entity.Property(e => e.HipCm)
+                .HasColumnType("decimal(6, 2)")
+                .HasColumnName("Hip_Cm");
+            entity.Property(e => e.StrengthNotes)
+                .HasMaxLength(1000)
+                .HasColumnName("Strength_Notes");
+            entity.Property(e => e.Notes)
+                .HasMaxLength(1000);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.StudentId);
+            entity.HasIndex(e => e.LoggedAt);
+            entity.HasIndex(e => new { e.StudentId, e.LoggedAt });
+
+            entity.HasOne(d => d.Student).WithMany(p => p.ProgressLogs)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Student_Progress_Logs_Student");
+        });
+
+        modelBuilder.Entity<StudentProgressGoal>(entity =>
+        {
+            entity.HasKey(e => e.ProgressGoalId);
+
+            entity.ToTable("Student_Progress_Goals");
+
+            entity.Property(e => e.ProgressGoalId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Progress_Goal_ID");
+            entity.Property(e => e.StudentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Student_ID");
+            entity.Property(e => e.TargetWeightKg)
+                .HasColumnType("decimal(6, 2)")
+                .HasColumnName("Target_Weight_Kg");
+            entity.Property(e => e.TargetBodyFatPercent)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("Target_Body_Fat_Percent");
+            entity.Property(e => e.GoalDate)
+                .HasColumnType("datetime")
+                .HasColumnName("Goal_Date");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(ProgressGoalStatus.Active);
+            entity.Property(e => e.Notes)
+                .HasMaxLength(1000);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.StudentId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => new { e.StudentId, e.Status });
+
+            entity.HasOne(d => d.Student).WithMany(p => p.ProgressGoals)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Student_Progress_Goals_Student");
+        });
+
+        modelBuilder.Entity<WorkoutExerciseCompletion>(entity =>
+        {
+            entity.HasKey(e => e.CompletionId);
+
+            entity.ToTable("Workout_Exercise_Completions");
+
+            entity.Property(e => e.CompletionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Completion_ID");
+            entity.Property(e => e.AssignmentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Assignment_ID");
+            entity.Property(e => e.ExerciseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Exercise_ID");
+            entity.Property(e => e.StudentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Student_ID");
+            entity.Property(e => e.CompletedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Completed_At");
+            entity.Property(e => e.Notes)
+                .HasMaxLength(1000);
+
+            entity.HasIndex(e => e.AssignmentId);
+            entity.HasIndex(e => e.ExerciseId);
+            entity.HasIndex(e => e.StudentId);
+            entity.HasIndex(e => new { e.AssignmentId, e.ExerciseId }).IsUnique();
+
+            entity.HasOne(d => d.Assignment).WithMany(p => p.Completions)
+                .HasForeignKey(d => d.AssignmentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Workout_Exercise_Completions_Assignment");
+
+            entity.HasOne(d => d.Exercise).WithMany(p => p.Completions)
+                .HasForeignKey(d => d.ExerciseId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_Workout_Exercise_Completions_Exercise");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.WorkoutExerciseCompletions)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_Workout_Exercise_Completions_Student");
         });
 
         modelBuilder.Entity<HealthDatum>(entity =>

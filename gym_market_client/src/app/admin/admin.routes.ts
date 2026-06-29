@@ -12,6 +12,9 @@ import { AccountSettingsComponent } from '../account-settings/account-settings.c
 import { AdminUsersComponent } from './admin-users/admin-users.component';
 import { AdminCoursesComponent } from './admin-courses/admin-courses.component';
 import { MembershipsComponent } from '../page-agency/memberships/memberships.component';
+import { ClassScheduleComponent } from '../page-agency/class-schedule/class-schedule.component';
+import { WorkoutPlansComponent } from '../page-agency/workout-plans/workout-plans.component';
+import { ProgressReviewComponent } from '../page-agency/progress-review/progress-review.component';
 
 export const routes: Routes = [
 	{
@@ -25,6 +28,9 @@ export const routes: Routes = [
 				{ path: 'students', component: ManageStudentsComponent, title: 'Students' },
 				{ path: 'payments', component: PaymentsComponent, title: 'Payments' },
 				{ path: 'memberships', component: MembershipsComponent, title: 'Memberships' },
+				{ path: 'classes', component: ClassScheduleComponent, title: 'Class Schedule' },
+				{ path: 'workouts', component: WorkoutPlansComponent, title: 'Workout Plans' },
+				{ path: 'progress', component: ProgressReviewComponent, title: 'Progress Review' },
 				{ path: 'nutrition', component: ManageNutritionComponent, title: 'Food Database' },
 			{ path: 'add-course', component: AddCourseComponent, title: 'Add Course' },
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Edit Course' },

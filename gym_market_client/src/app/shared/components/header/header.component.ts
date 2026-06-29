@@ -78,6 +78,18 @@ export class HeaderComponent {
 					link: '/client/membership',
 					name: 'Membership',
 				},
+				{
+					link: '/client/classes',
+					name: 'Classes',
+				},
+				{
+					link: '/client/workouts',
+					name: 'Workouts',
+				},
+				{
+					link: '/client/progress',
+					name: 'Progress',
+				},
 			];
 		} else {
 			return [

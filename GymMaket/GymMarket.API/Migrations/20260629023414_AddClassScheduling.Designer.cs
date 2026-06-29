@@ -4,6 +4,7 @@ using GymMarket.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymMarket.API.Migrations
 {
     [DbContext(typeof(GymMarketContext))]
-    partial class GymMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20260629023414_AddClassScheduling")]
+    partial class AddClassScheduling
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1989,218 +1992,6 @@ namespace GymMarket.API.Migrations
                     b.ToTable("Student_Memberships", (string)null);
                 });
 
-            modelBuilder.Entity("GymMarket.API.Models.StudentProgressGoal", b =>
-                {
-                    b.Property<string>("ProgressGoalId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Progress_Goal_ID");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("Created_At")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<DateTime?>("GoalDate")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Goal_Date");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasDefaultValue("Active");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Student_ID");
-
-                    b.Property<decimal?>("TargetBodyFatPercent")
-                        .HasColumnType("decimal(5, 2)")
-                        .HasColumnName("Target_Body_Fat_Percent");
-
-                    b.Property<decimal?>("TargetWeightKg")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Target_Weight_Kg");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Updated_At");
-
-                    b.HasKey("ProgressGoalId");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("StudentId", "Status");
-
-                    b.ToTable("Student_Progress_Goals", (string)null);
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.StudentProgressLog", b =>
-                {
-                    b.Property<string>("ProgressLogId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Progress_Log_ID");
-
-                    b.Property<decimal?>("ArmCm")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Arm_Cm");
-
-                    b.Property<decimal?>("BodyFatPercent")
-                        .HasColumnType("decimal(5, 2)")
-                        .HasColumnName("Body_Fat_Percent");
-
-                    b.Property<decimal?>("ChestCm")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Chest_Cm");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("Created_At")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<decimal?>("HipCm")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Hip_Cm");
-
-                    b.Property<DateTime>("LoggedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Logged_At");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("StrengthNotes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)")
-                        .HasColumnName("Strength_Notes");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Student_ID");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Updated_At");
-
-                    b.Property<decimal?>("WaistCm")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Waist_Cm");
-
-                    b.Property<decimal?>("WeightKg")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Weight_Kg");
-
-                    b.HasKey("ProgressLogId");
-
-                    b.HasIndex("LoggedAt");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("StudentId", "LoggedAt");
-
-                    b.ToTable("Student_Progress_Logs", (string)null);
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.StudentWorkoutAssignment", b =>
-                {
-                    b.Property<string>("AssignmentId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Assignment_ID");
-
-                    b.Property<DateTime?>("CancelledAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Cancelled_At");
-
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Completed_At");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("Created_At")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<DateTime?>("EndsAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Ends_At");
-
-                    b.Property<DateTime>("StartsAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Starts_At");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasDefaultValue("Active");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Student_ID");
-
-                    b.Property<string>("TrainerId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Trainer_ID");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Updated_At");
-
-                    b.Property<string>("WorkoutPlanId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Workout_Plan_ID");
-
-                    b.HasKey("AssignmentId");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("TrainerId");
-
-                    b.HasIndex("WorkoutPlanId");
-
-                    b.HasIndex("StudentId", "Status");
-
-                    b.HasIndex("TrainerId", "Status");
-
-                    b.ToTable("Student_Workout_Assignments", (string)null);
-                });
-
             modelBuilder.Entity("GymMarket.API.Models.Trainer", b =>
                 {
                     b.Property<string>("TrainerId")
@@ -2343,175 +2134,6 @@ namespace GymMarket.API.Migrations
                     b.HasIndex("AppUserId");
 
                     b.ToTable("UserMessages");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.WorkoutExercise", b =>
-                {
-                    b.Property<string>("ExerciseId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Exercise_ID");
-
-                    b.Property<int>("DayNumber")
-                        .HasColumnType("int")
-                        .HasColumnName("Day_Number");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Reps")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<int>("RestSeconds")
-                        .HasColumnType("int")
-                        .HasColumnName("Rest_Seconds");
-
-                    b.Property<int>("Sets")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WeekNumber")
-                        .HasColumnType("int")
-                        .HasColumnName("Week_Number");
-
-                    b.Property<string>("WorkoutPlanId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Workout_Plan_ID");
-
-                    b.HasKey("ExerciseId");
-
-                    b.HasIndex("WorkoutPlanId");
-
-                    b.HasIndex("WorkoutPlanId", "WeekNumber", "DayNumber", "Order");
-
-                    b.ToTable("Workout_Exercises", (string)null);
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.WorkoutExerciseCompletion", b =>
-                {
-                    b.Property<string>("CompletionId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Completion_ID");
-
-                    b.Property<string>("AssignmentId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Assignment_ID");
-
-                    b.Property<DateTime>("CompletedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("Completed_At")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("ExerciseId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Exercise_ID");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Student_ID");
-
-                    b.HasKey("CompletionId");
-
-                    b.HasIndex("AssignmentId");
-
-                    b.HasIndex("ExerciseId");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("AssignmentId", "ExerciseId")
-                        .IsUnique();
-
-                    b.ToTable("Workout_Exercise_Completions", (string)null);
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.WorkoutPlan", b =>
-                {
-                    b.Property<string>("WorkoutPlanId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Workout_Plan_ID");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("Created_At")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Difficulty")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<int>("DurationWeeks")
-                        .HasColumnType("int")
-                        .HasColumnName("Duration_Weeks");
-
-                    b.Property<string>("Goal")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true)
-                        .HasColumnName("Is_Active");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<string>("TrainerId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Trainer_ID");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Updated_At");
-
-                    b.HasKey("WorkoutPlanId");
-
-                    b.HasIndex("IsActive");
-
-                    b.HasIndex("TrainerId");
-
-                    b.HasIndex("TrainerId", "IsActive");
-
-                    b.ToTable("Workout_Plans", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -3067,59 +2689,6 @@ namespace GymMarket.API.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("GymMarket.API.Models.StudentProgressGoal", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.Student", "Student")
-                        .WithMany("ProgressGoals")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Student_Progress_Goals_Student");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.StudentProgressLog", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.Student", "Student")
-                        .WithMany("ProgressLogs")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Student_Progress_Logs_Student");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.StudentWorkoutAssignment", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.Student", "Student")
-                        .WithMany("WorkoutAssignments")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Student_Workout_Assignments_Student");
-
-                    b.HasOne("GymMarket.API.Models.Trainer", "Trainer")
-                        .WithMany("WorkoutAssignments")
-                        .HasForeignKey("TrainerId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_Student_Workout_Assignments_Trainer");
-
-                    b.HasOne("GymMarket.API.Models.WorkoutPlan", "WorkoutPlan")
-                        .WithMany("Assignments")
-                        .HasForeignKey("WorkoutPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Student_Workout_Assignments_Workout_Plan");
-
-                    b.Navigation("Student");
-
-                    b.Navigation("Trainer");
-
-                    b.Navigation("WorkoutPlan");
-                });
-
             modelBuilder.Entity("GymMarket.API.Models.Trainer", b =>
                 {
                     b.HasOne("GymMarket.API.Models.AppUser", "AppUser")
@@ -3137,59 +2706,6 @@ namespace GymMarket.API.Migrations
                         .HasForeignKey("AppUserId");
 
                     b.Navigation("AppUser");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.WorkoutExercise", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.WorkoutPlan", "WorkoutPlan")
-                        .WithMany("Exercises")
-                        .HasForeignKey("WorkoutPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Workout_Exercises_Workout_Plan");
-
-                    b.Navigation("WorkoutPlan");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.WorkoutExerciseCompletion", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.StudentWorkoutAssignment", "Assignment")
-                        .WithMany("Completions")
-                        .HasForeignKey("AssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Workout_Exercise_Completions_Assignment");
-
-                    b.HasOne("GymMarket.API.Models.WorkoutExercise", "Exercise")
-                        .WithMany("Completions")
-                        .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Workout_Exercise_Completions_Exercise");
-
-                    b.HasOne("GymMarket.API.Models.Student", "Student")
-                        .WithMany("WorkoutExerciseCompletions")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Workout_Exercise_Completions_Student");
-
-                    b.Navigation("Assignment");
-
-                    b.Navigation("Exercise");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.WorkoutPlan", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.Trainer", "Trainer")
-                        .WithMany("WorkoutPlans")
-                        .HasForeignKey("TrainerId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_Workout_Plans_Trainer");
-
-                    b.Navigation("Trainer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -3354,22 +2870,9 @@ namespace GymMarket.API.Migrations
 
                     b.Navigation("Payments");
 
-                    b.Navigation("ProgressGoals");
-
-                    b.Navigation("ProgressLogs");
-
                     b.Navigation("QuizAttempts");
 
                     b.Navigation("StudentMemberships");
-
-                    b.Navigation("WorkoutAssignments");
-
-                    b.Navigation("WorkoutExerciseCompletions");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.StudentWorkoutAssignment", b =>
-                {
-                    b.Navigation("Completions");
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.Trainer", b =>
@@ -3379,22 +2882,6 @@ namespace GymMarket.API.Migrations
                     b.Navigation("GymClassSessions");
 
                     b.Navigation("Messages");
-
-                    b.Navigation("WorkoutAssignments");
-
-                    b.Navigation("WorkoutPlans");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.WorkoutExercise", b =>
-                {
-                    b.Navigation("Completions");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.WorkoutPlan", b =>
-                {
-                    b.Navigation("Assignments");
-
-                    b.Navigation("Exercises");
                 });
 #pragma warning restore 612, 618
         }

@@ -14,6 +14,9 @@ import { ManageStudentsComponent } from './manage-students/manage-students.compo
 import { PaymentsComponent } from './payments/payments.component';
 import { ManageNutritionComponent } from './manage-nutrition/manage-nutrition.component';
 import { MembershipsComponent } from './memberships/memberships.component';
+import { ClassScheduleComponent } from './class-schedule/class-schedule.component';
+import { WorkoutPlansComponent } from './workout-plans/workout-plans.component';
+import { ProgressReviewComponent } from './progress-review/progress-review.component';
 
 export const routes: Routes = [
 	{
@@ -26,6 +29,9 @@ export const routes: Routes = [
 				{ path: 'students', component: ManageStudentsComponent, title: 'Quản lý học viên' },
 				{ path: 'payments', component: PaymentsComponent, title: 'Payments' },
 				{ path: 'memberships', component: MembershipsComponent, title: 'Memberships' },
+				{ path: 'classes', component: ClassScheduleComponent, title: 'Class Schedule' },
+				{ path: 'workouts', component: WorkoutPlansComponent, title: 'Workout Plans' },
+				{ path: 'progress', component: ProgressReviewComponent, title: 'Progress Review' },
 				{ path: 'nutrition', component: ManageNutritionComponent, title: 'Food Database' },
 				{ path: 'add-course', component: AddCourseComponent, title: 'Thêm course' },
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Cập nhật course' },

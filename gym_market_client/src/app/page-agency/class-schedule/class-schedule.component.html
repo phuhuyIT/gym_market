@@ -1,0 +1,191 @@
+<div class="space-y-6 animate-fade-in pb-12">
+  <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+      <div>
+        <p class="text-xs font-extrabold uppercase tracking-wider text-blue-500 dark:text-blue-400 mb-2">Class schedule</p>
+        <h1 class="text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white">Manage gym sessions</h1>
+        <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-2 max-w-2xl">
+          Create bookable sessions, watch capacity, and record attendance from one schedule board.
+        </p>
+      </div>
+      <div class="grid grid-cols-3 gap-3 w-full lg:w-auto">
+        <div class="rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3">
+          <p class="text-[10px] uppercase font-extrabold text-neutral-400">Sessions</p>
+          <p class="text-xl font-black text-neutral-900 dark:text-white">{{ sessions.length }}</p>
+        </div>
+        <div class="rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3">
+          <p class="text-[10px] uppercase font-extrabold text-neutral-400">Bookings</p>
+          <p class="text-xl font-black text-emerald-600">{{ bookings.length }}</p>
+        </div>
+        <div class="rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3">
+          <p class="text-[10px] uppercase font-extrabold text-neutral-400">Open</p>
+          <p class="text-xl font-black text-neutral-900 dark:text-white">{{ sessions[0]?.availableSpots ?? 0 }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 xl:grid-cols-[400px_1fr] gap-6 items-start">
+    <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 shadow-sm">
+      <h2 class="text-lg font-extrabold text-neutral-900 dark:text-white mb-5">{{ editingId ? 'Edit session' : 'Create session' }}</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Title</label>
+          <input [(ngModel)]="form.title" type="text" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Description</label>
+          <textarea [(ngModel)]="form.description" rows="3" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none resize-none"></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Starts</label>
+            <input [(ngModel)]="form.startsAt" type="datetime-local" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Ends</label>
+            <input [(ngModel)]="form.endsAt" type="datetime-local" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Capacity</label>
+            <input [(ngModel)]="form.capacity" type="number" min="1" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Status</label>
+            <select [(ngModel)]="form.status" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+              <option value="Scheduled">Scheduled</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Location</label>
+          <input [(ngModel)]="form.location" type="text" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button (click)="save()" class="flex-1 bg-[#007AFF] hover:bg-blue-600 text-white font-extrabold text-sm px-4 py-3 rounded-2xl transition-colors">
+            {{ editingId ? 'Save changes' : 'Create session' }}
+          </button>
+          <button (click)="cancelEdit()" class="px-4 py-3 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 font-bold text-sm transition-colors">
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl overflow-hidden shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 border-b border-neutral-100 dark:border-neutral-800">
+          <div>
+            <h2 class="text-lg font-extrabold text-neutral-900 dark:text-white">Sessions</h2>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400">Select a session to view bookings and mark attendance.</p>
+          </div>
+          <label class="flex items-center gap-3 rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 text-sm font-bold text-neutral-700 dark:text-neutral-200">
+            <input [(ngModel)]="includeCancelled" (change)="loadSessions()" type="checkbox" class="h-4 w-4 accent-[#007AFF]">
+            Include cancelled
+          </label>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#161618]/30">
+                <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider">Class</th>
+                <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider">Time</th>
+                <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider">Capacity</th>
+                <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider">Status</th>
+                <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
+              @for (session of sessions; track session.classSessionId) {
+                <tr (click)="selectSession(session)" class="cursor-pointer transition-colors" [ngClass]="selectedSessionId === session.classSessionId ? 'bg-blue-50/70 dark:bg-blue-500/10' : 'hover:bg-blue-50/40 dark:hover:bg-blue-500/5'">
+                  <td class="py-4 px-6">
+                    <p class="font-bold text-sm text-neutral-800 dark:text-neutral-200">{{ session.title }}</p>
+                    <p class="text-[11px] text-neutral-400">{{ session.location || 'No location' }}</p>
+                  </td>
+                  <td class="py-4 px-6 text-sm font-bold text-neutral-700 dark:text-neutral-200">
+                    {{ session.startsAt | date:'MMM d, h:mm a' }}
+                  </td>
+                  <td class="py-4 px-6 text-sm font-bold text-neutral-700 dark:text-neutral-200">
+                    {{ session.bookedCount }} / {{ session.capacity }}
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="px-3 py-1 rounded-full text-[11px] font-extrabold" [ngClass]="statusClass(session.status)">
+                      {{ session.status }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-right">
+                    <div class="inline-flex gap-2" (click)="$event.stopPropagation()">
+                      <button (click)="edit(session)" class="px-3 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-600 text-[#007AFF] hover:text-white text-xs font-extrabold transition-colors">Edit</button>
+                      <button (click)="cancelSession(session)" [disabled]="session.status === 'Cancelled'" class="px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-600 disabled:bg-neutral-100 disabled:text-neutral-400 text-red-500 hover:text-white text-xs font-extrabold transition-colors">Cancel</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @if (sessions.length === 0) {
+                <tr>
+                  <td colspan="5" class="py-14 text-center">
+                    <p class="text-sm font-bold text-neutral-600 dark:text-neutral-300">No class sessions found</p>
+                    <p class="text-xs text-neutral-400 mt-1">Create the first gym session to open bookings.</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl overflow-hidden shadow-sm">
+        <div class="p-5 border-b border-neutral-100 dark:border-neutral-800">
+          <h2 class="text-lg font-extrabold text-neutral-900 dark:text-white">Attendance</h2>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">Bookings for the selected session.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#161618]/30">
+                <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider">Student</th>
+                <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider">Booked</th>
+                <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider">Status</th>
+                <th class="py-4 px-6 text-xs font-extrabold text-neutral-400 uppercase tracking-wider text-right">Mark</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
+              @for (booking of bookings; track booking.bookingId) {
+                <tr>
+                  <td class="py-4 px-6">
+                    <p class="font-bold text-sm text-neutral-800 dark:text-neutral-200">{{ booking.studentName || 'Student' }}</p>
+                    <p class="text-[11px] text-neutral-400">{{ booking.studentEmail || booking.studentId }}</p>
+                  </td>
+                  <td class="py-4 px-6 text-sm font-bold text-neutral-700 dark:text-neutral-200">{{ booking.bookedAt | date:'mediumDate' }}</td>
+                  <td class="py-4 px-6">
+                    <span class="px-3 py-1 rounded-full text-[11px] font-extrabold" [ngClass]="statusClass(booking.status)">
+                      {{ booking.status }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-right">
+                    <div class="inline-flex gap-2">
+                      <button (click)="markAttendance(booking, 'Attended')" [disabled]="booking.status === 'Cancelled'" class="px-3 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-600 disabled:bg-neutral-100 disabled:text-neutral-400 text-emerald-600 hover:text-white text-xs font-extrabold transition-colors">Attended</button>
+                      <button (click)="markAttendance(booking, 'NoShow')" [disabled]="booking.status === 'Cancelled'" class="px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-600 disabled:bg-neutral-100 disabled:text-neutral-400 text-red-500 hover:text-white text-xs font-extrabold transition-colors">No-show</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @if (bookings.length === 0) {
+                <tr>
+                  <td colspan="4" class="py-12 text-center">
+                    <p class="text-sm font-bold text-neutral-600 dark:text-neutral-300">No bookings yet</p>
+                    <p class="text-xs text-neutral-400 mt-1">Students with active memberships can book this session.</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<main class="min-h-screen bg-[#F7F6F3] dark:bg-[#0E0E10] px-4 py-8 md:px-8">
+  <div class="max-w-6xl mx-auto space-y-6">
+    <section class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-stretch">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-wider text-blue-500 dark:text-blue-400 mb-2">My workouts</p>
+          <h1 class="text-3xl md:text-4xl font-black tracking-tight text-neutral-900 dark:text-white">Follow your training plan</h1>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-3 max-w-2xl">
+            Complete each assigned exercise as you train so your coach can review adherence and adjust future plans.
+          </p>
+        </div>
+        <div class="rounded-3xl p-5 bg-[#101828] text-white flex flex-col justify-between min-h-40">
+          <div class="flex items-center justify-between gap-4">
+            <p class="text-xs font-extrabold uppercase tracking-wider text-white/50">Programs</p>
+            <span class="px-3 py-1 rounded-full text-[11px] font-extrabold bg-white/10 text-white/70">
+              {{ assignments.length }} assigned
+            </span>
+          </div>
+          <div>
+            <p class="text-2xl font-black mt-6">{{ assignmentSummary().active }} active</p>
+            <p class="text-sm text-white/60 mt-1">{{ assignmentSummary().completed }} completed</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      @for (assignment of assignments; track assignment.assignmentId) {
+        <article class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-5 md:p-6 shadow-sm">
+          <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
+            <div>
+              <div class="flex flex-wrap items-center gap-3">
+                <h2 class="text-xl font-black text-neutral-900 dark:text-white">{{ assignment.planName }}</h2>
+                <span class="px-3 py-1 rounded-full text-[11px] font-extrabold" [ngClass]="statusClass(assignment.status)">
+                  {{ assignment.status }}
+                </span>
+              </div>
+              <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-2 max-w-2xl">{{ assignment.goal || 'Coach-assigned training program' }}</p>
+              <p class="text-xs font-bold text-neutral-400 mt-2">
+                {{ assignment.difficulty }} · {{ assignment.durationWeeks }} weeks · Coach {{ assignment.trainerName || 'Gym trainer' }}
+              </p>
+            </div>
+            <div class="min-w-48">
+              <div class="h-3 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
+                <div class="h-full bg-[#007AFF]" [style.width.%]="assignment.completionPercent"></div>
+              </div>
+              <p class="text-xs font-extrabold text-neutral-500 dark:text-neutral-400 mt-2 text-right">
+                {{ assignment.completedExercises }} / {{ assignment.totalExercises }} complete
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-6">
+            @for (exercise of assignment.exercises; track exercise.exerciseId) {
+              <div class="rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-[10px] uppercase font-extrabold text-neutral-400">Week {{ exercise.weekNumber }} · Day {{ exercise.dayNumber }}</p>
+                    <h3 class="text-base font-black text-neutral-900 dark:text-white mt-1">{{ exercise.name }}</h3>
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+                      {{ exercise.sets }} sets · {{ exercise.reps }} reps · {{ exercise.restSeconds }}s rest
+                    </p>
+                  </div>
+                  <span class="px-3 py-1 rounded-full text-[11px] font-extrabold" [ngClass]="exercise.isCompleted ? 'bg-emerald-500/10 text-emerald-600' : 'bg-neutral-500/10 text-neutral-500'">
+                    {{ exercise.isCompleted ? 'Done' : 'Open' }}
+                  </span>
+                </div>
+                @if (exercise.notes) {
+                  <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-3">{{ exercise.notes }}</p>
+                }
+                <button (click)="completeExercise(assignment, exercise)" [disabled]="exercise.isCompleted || assignment.status !== 'Active'" class="w-full mt-4 bg-[#007AFF] hover:bg-blue-600 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 text-white font-extrabold text-sm px-4 py-3 rounded-2xl transition-colors">
+                  {{ exercise.isCompleted ? 'Completed' : 'Mark complete' }}
+                </button>
+              </div>
+            }
+          </div>
+        </article>
+      }
+
+      @if (assignments.length === 0) {
+        <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-10 text-center">
+          <p class="text-sm font-bold text-neutral-600 dark:text-neutral-300">No workout plans assigned</p>
+          <p class="text-xs text-neutral-400 mt-1">Your coach can assign a training program from the trainer dashboard.</p>
+        </div>
+      }
+    </section>
+  </div>
+</main>

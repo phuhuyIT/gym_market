@@ -1,0 +1,130 @@
+<main class="min-h-screen bg-[#F7F6F3] dark:bg-[#0E0E10] px-4 py-8 md:px-8">
+  <div class="max-w-6xl mx-auto space-y-6">
+    <section class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 md:p-8 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-stretch">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-wider text-blue-500 dark:text-blue-400 mb-2">Progress tracking</p>
+          <h1 class="text-3xl md:text-4xl font-black tracking-tight text-neutral-900 dark:text-white">Log your check-ins</h1>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-3 max-w-2xl">
+            Track body metrics and strength notes so your trainer can compare program adherence with real outcomes.
+          </p>
+        </div>
+        <div class="rounded-3xl p-5 bg-[#101828] text-white flex flex-col justify-between min-h-40">
+          <div class="flex items-center justify-between gap-4">
+            <p class="text-xs font-extrabold uppercase tracking-wider text-white/50">Latest</p>
+            <span class="px-3 py-1 rounded-full text-[11px] font-extrabold bg-white/10 text-white/70">
+              {{ logs.length }} logs
+            </span>
+          </div>
+          <div>
+            <p class="text-2xl font-black mt-6">{{ latestLog()?.weightKg ?? '--' }} kg</p>
+            <p class="text-sm text-white/60 mt-1">{{ latestLog()?.bodyFatPercent ?? '--' }}% body fat</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-5 shadow-sm">
+        <p class="text-[10px] uppercase font-extrabold text-neutral-400">Weight change</p>
+        <p class="text-3xl font-black text-neutral-900 dark:text-white mt-2">{{ weightChange() ?? '--' }} kg</p>
+      </div>
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-5 shadow-sm">
+        <p class="text-[10px] uppercase font-extrabold text-neutral-400">Body fat change</p>
+        <p class="text-3xl font-black text-neutral-900 dark:text-white mt-2">{{ bodyFatChange() ?? '--' }}%</p>
+      </div>
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-5 shadow-sm">
+        <p class="text-[10px] uppercase font-extrabold text-neutral-400">Target</p>
+        <p class="text-lg font-black text-neutral-900 dark:text-white mt-2">
+          {{ goal?.targetWeightKg ? goal?.targetWeightKg + ' kg' : goal?.targetBodyFatPercent ? goal?.targetBodyFatPercent + '%' : 'No active goal' }}
+        </p>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 xl:grid-cols-[380px_1fr] gap-6 items-start">
+      <div class="space-y-6">
+        <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 shadow-sm">
+          <h2 class="text-lg font-extrabold text-neutral-900 dark:text-white mb-5">New check-in</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">Date</label>
+              <input [(ngModel)]="logForm.loggedAt" type="date" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-neutral-800 dark:text-neutral-200 border-none">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <input [(ngModel)]="logForm.weightKg" type="number" placeholder="Weight kg" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none">
+              <input [(ngModel)]="logForm.bodyFatPercent" type="number" placeholder="Body fat %" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <input [(ngModel)]="logForm.waistCm" type="number" placeholder="Waist cm" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none">
+              <input [(ngModel)]="logForm.chestCm" type="number" placeholder="Chest cm" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none">
+              <input [(ngModel)]="logForm.armCm" type="number" placeholder="Arm cm" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none">
+              <input [(ngModel)]="logForm.hipCm" type="number" placeholder="Hip cm" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none">
+            </div>
+            <textarea [(ngModel)]="logForm.strengthNotes" rows="2" placeholder="Strength notes" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none resize-none"></textarea>
+            <textarea [(ngModel)]="logForm.notes" rows="2" placeholder="Other notes" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none resize-none"></textarea>
+            <button (click)="saveLog()" class="w-full bg-[#007AFF] hover:bg-blue-600 text-white font-extrabold text-sm px-4 py-3 rounded-2xl transition-colors">Save check-in</button>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl p-6 shadow-sm">
+          <h2 class="text-lg font-extrabold text-neutral-900 dark:text-white mb-5">Goal</h2>
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+              <input [(ngModel)]="goalForm.targetWeightKg" type="number" placeholder="Target kg" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none">
+              <input [(ngModel)]="goalForm.targetBodyFatPercent" type="number" placeholder="Target %" class="bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none">
+            </div>
+            <input [(ngModel)]="goalForm.goalDate" type="date" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none">
+            <textarea [(ngModel)]="goalForm.notes" rows="2" placeholder="Goal notes" class="w-full bg-[#F7F6F3] dark:bg-[#252528] px-4 py-3 rounded-2xl text-sm text-neutral-800 dark:text-neutral-200 border-none resize-none"></textarea>
+            <button (click)="saveGoal()" class="w-full bg-[#101828] hover:bg-neutral-800 text-white font-extrabold text-sm px-4 py-3 rounded-2xl transition-colors">Save goal</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-[#161618] border border-neutral-200/60 dark:border-neutral-800/60 rounded-3xl overflow-hidden shadow-sm">
+        <div class="p-5 border-b border-neutral-100 dark:border-neutral-800">
+          <h2 class="text-lg font-extrabold text-neutral-900 dark:text-white">Timeline</h2>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">Your latest progress check-ins.</p>
+        </div>
+        <div class="divide-y divide-neutral-100 dark:divide-neutral-800">
+          @for (log of logs; track log.progressLogId) {
+            <article class="p-5">
+              <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                <div>
+                  <p class="text-sm font-black text-neutral-900 dark:text-white">{{ log.loggedAt | date:'mediumDate' }}</p>
+                  <p class="text-xs text-neutral-400 mt-1">{{ log.notes || 'Progress check-in' }}</p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 min-w-0 md:min-w-[420px]">
+                  <div class="rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] px-3 py-2">
+                    <p class="text-[10px] uppercase font-extrabold text-neutral-400">Weight</p>
+                    <p class="text-sm font-black text-neutral-900 dark:text-white">{{ log.weightKg ?? '--' }}</p>
+                  </div>
+                  <div class="rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] px-3 py-2">
+                    <p class="text-[10px] uppercase font-extrabold text-neutral-400">Body fat</p>
+                    <p class="text-sm font-black text-neutral-900 dark:text-white">{{ log.bodyFatPercent ?? '--' }}</p>
+                  </div>
+                  <div class="rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] px-3 py-2">
+                    <p class="text-[10px] uppercase font-extrabold text-neutral-400">Waist</p>
+                    <p class="text-sm font-black text-neutral-900 dark:text-white">{{ log.waistCm ?? '--' }}</p>
+                  </div>
+                  <div class="rounded-2xl bg-[#F7F6F3] dark:bg-[#252528] px-3 py-2">
+                    <p class="text-[10px] uppercase font-extrabold text-neutral-400">Chest</p>
+                    <p class="text-sm font-black text-neutral-900 dark:text-white">{{ log.chestCm ?? '--' }}</p>
+                  </div>
+                </div>
+              </div>
+              @if (log.strengthNotes) {
+                <p class="text-sm text-neutral-600 dark:text-neutral-300 mt-4">{{ log.strengthNotes }}</p>
+              }
+            </article>
+          }
+          @if (logs.length === 0) {
+            <div class="p-10 text-center">
+              <p class="text-sm font-bold text-neutral-600 dark:text-neutral-300">No progress logs yet</p>
+              <p class="text-xs text-neutral-400 mt-1">Save your first check-in to start the timeline.</p>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  </div>
+</main>

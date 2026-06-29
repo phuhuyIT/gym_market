@@ -4,6 +4,7 @@ using GymMarket.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymMarket.API.Migrations
 {
     [DbContext(typeof(GymMarketContext))]
-    partial class GymMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20260629025620_AddWorkoutPlans")]
+    partial class AddWorkoutPlans
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1989,139 +1992,6 @@ namespace GymMarket.API.Migrations
                     b.ToTable("Student_Memberships", (string)null);
                 });
 
-            modelBuilder.Entity("GymMarket.API.Models.StudentProgressGoal", b =>
-                {
-                    b.Property<string>("ProgressGoalId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Progress_Goal_ID");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("Created_At")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<DateTime?>("GoalDate")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Goal_Date");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasDefaultValue("Active");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Student_ID");
-
-                    b.Property<decimal?>("TargetBodyFatPercent")
-                        .HasColumnType("decimal(5, 2)")
-                        .HasColumnName("Target_Body_Fat_Percent");
-
-                    b.Property<decimal?>("TargetWeightKg")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Target_Weight_Kg");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Updated_At");
-
-                    b.HasKey("ProgressGoalId");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("StudentId", "Status");
-
-                    b.ToTable("Student_Progress_Goals", (string)null);
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.StudentProgressLog", b =>
-                {
-                    b.Property<string>("ProgressLogId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Progress_Log_ID");
-
-                    b.Property<decimal?>("ArmCm")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Arm_Cm");
-
-                    b.Property<decimal?>("BodyFatPercent")
-                        .HasColumnType("decimal(5, 2)")
-                        .HasColumnName("Body_Fat_Percent");
-
-                    b.Property<decimal?>("ChestCm")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Chest_Cm");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("Created_At")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<decimal?>("HipCm")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Hip_Cm");
-
-                    b.Property<DateTime>("LoggedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Logged_At");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("StrengthNotes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)")
-                        .HasColumnName("Strength_Notes");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Student_ID");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Updated_At");
-
-                    b.Property<decimal?>("WaistCm")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Waist_Cm");
-
-                    b.Property<decimal?>("WeightKg")
-                        .HasColumnType("decimal(6, 2)")
-                        .HasColumnName("Weight_Kg");
-
-                    b.HasKey("ProgressLogId");
-
-                    b.HasIndex("LoggedAt");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("StudentId", "LoggedAt");
-
-                    b.ToTable("Student_Progress_Logs", (string)null);
-                });
-
             modelBuilder.Entity("GymMarket.API.Models.StudentWorkoutAssignment", b =>
                 {
                     b.Property<string>("AssignmentId")
@@ -3067,30 +2937,6 @@ namespace GymMarket.API.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("GymMarket.API.Models.StudentProgressGoal", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.Student", "Student")
-                        .WithMany("ProgressGoals")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Student_Progress_Goals_Student");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.StudentProgressLog", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.Student", "Student")
-                        .WithMany("ProgressLogs")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Student_Progress_Logs_Student");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("GymMarket.API.Models.StudentWorkoutAssignment", b =>
                 {
                     b.HasOne("GymMarket.API.Models.Student", "Student")
@@ -3353,10 +3199,6 @@ namespace GymMarket.API.Migrations
                     b.Navigation("Messages");
 
                     b.Navigation("Payments");
-
-                    b.Navigation("ProgressGoals");
-
-                    b.Navigation("ProgressLogs");
 
                     b.Navigation("QuizAttempts");
 
