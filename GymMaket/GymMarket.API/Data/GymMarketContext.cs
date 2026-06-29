@@ -43,6 +43,12 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<Notification> Notifications { get; set; }
 
+    public virtual DbSet<NotificationDeliveryLog> NotificationDeliveryLogs { get; set; }
+
+    public virtual DbSet<NotificationPreference> NotificationPreferences { get; set; }
+
+    public virtual DbSet<NotificationTemplate> NotificationTemplates { get; set; }
+
     public virtual DbSet<Payment> Payments { get; set; }
 
     public virtual DbSet<PaymentEvent> PaymentEvents { get; set; }
@@ -1246,6 +1252,82 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Notifications_AspNetUsers");
+        });
+
+        modelBuilder.Entity<NotificationPreference>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.UserId).HasMaxLength(450);
+            entity.Property(e => e.Type).HasMaxLength(50);
+            entity.Property(e => e.InAppEnabled).HasDefaultValue(true);
+            entity.Property(e => e.EmailEnabled).HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasIndex(e => new { e.UserId, e.Type }).IsUnique();
+
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_NotificationPreferences_AspNetUsers");
+        });
+
+        modelBuilder.Entity<NotificationTemplate>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Type).HasMaxLength(50);
+            entity.Property(e => e.SubjectTemplate).HasMaxLength(250);
+            entity.Property(e => e.BodyTemplate).HasMaxLength(4000);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.UpdatedById).HasMaxLength(450);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasIndex(e => e.Type).IsUnique();
+        });
+
+        modelBuilder.Entity<NotificationDeliveryLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.UserId).HasMaxLength(450);
+            entity.Property(e => e.RecipientEmail).HasMaxLength(256);
+            entity.Property(e => e.RecipientName).HasMaxLength(450);
+            entity.Property(e => e.Type).HasMaxLength(50);
+            entity.Property(e => e.Channel).HasMaxLength(30);
+            entity.Property(e => e.Status).HasMaxLength(30);
+            entity.Property(e => e.Subject).HasMaxLength(250);
+            entity.Property(e => e.Content).HasMaxLength(4000);
+            entity.Property(e => e.Link).HasMaxLength(1000);
+            entity.Property(e => e.ErrorMessage).HasMaxLength(1000);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasIndex(e => e.CreatedAt);
+            entity.HasIndex(e => e.Type);
+            entity.HasIndex(e => new { e.Channel, e.Status });
+            entity.HasIndex(e => e.UserId);
+
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_NotificationDeliveryLogs_AspNetUsers");
+
+            entity.HasOne(d => d.Notification).WithMany()
+                .HasForeignKey(d => d.NotificationId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_NotificationDeliveryLogs_Notifications");
         });
 
         modelBuilder.Entity<Payment>(entity =>

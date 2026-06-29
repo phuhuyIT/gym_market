@@ -8,11 +8,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GmButtonComponent } from '../shared';
 import { patchState } from '@ngrx/signals';
 import { DEFAULT_AVATAR_URL } from '../utilities/defaults.const';
+import { NotificationPreferencesComponent } from '../shared/components/notification-preferences/notification-preferences.component';
 
 @Component({
 	selector: 'app-account-settings',
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [FormsModule, GmButtonComponent],
+	imports: [FormsModule, GmButtonComponent, NotificationPreferencesComponent],
 	templateUrl: './account-settings.component.html',
 	styleUrl: './account-settings.component.scss',
 })

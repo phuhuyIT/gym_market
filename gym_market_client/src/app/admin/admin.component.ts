@@ -29,6 +29,7 @@ export class AdminComponent {
 		{ label: 'Class Schedule', path: '/admin/classes' },
 		{ label: 'Workout Plans', path: '/admin/workouts' },
 		{ label: 'Progress Review', path: '/admin/progress' },
+		{ label: 'Notification Ops', path: '/admin/notification-ops' },
 		{ label: 'Food Database', path: '/admin/nutrition' },
 		{ label: 'Course Options', path: '/admin/course-option-list' },
 		{ label: 'Account Settings', path: '/admin/account-settings' },

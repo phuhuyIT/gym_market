@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../environments/environment.development';
 import { AccountService } from '../../guest/account.service';
-import { AppNotification } from '../models/notification.model';
+import { AppNotification, NotificationPreference } from '../models/notification.model';
 
 export interface NotificationQuery {
 	take?: number;
@@ -107,6 +107,20 @@ export class NotificationService {
 		}
 
 		return this.http.get<AppNotification[]>(`${this.base}/get-notifications`, { params });
+	}
+
+	getPreferences() {
+		return this.http.get<NotificationPreference[]>(`${this.base}/preferences`);
+	}
+
+	updatePreferences(preferences: NotificationPreference[]) {
+		return this.http.put<NotificationPreference[]>(`${this.base}/preferences`, {
+				preferences: preferences.map(preference => ({
+					type: preference.type,
+					inAppEnabled: preference.inAppEnabled,
+					emailEnabled: preference.emailEnabled,
+				})),
+			});
 	}
 
 	markRead(id: number) {

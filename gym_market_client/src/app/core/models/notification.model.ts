@@ -7,3 +7,10 @@ export interface AppNotification {
 	isRead: boolean;
 	createdAt: string;
 }
+
+export interface NotificationPreference {
+	type: string;
+	label: string;
+	inAppEnabled: boolean;
+	emailEnabled: boolean;
+}

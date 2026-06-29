@@ -24,5 +24,9 @@ namespace GymMarket.API.Repositories.IRepositories
         Task MarkAsRead(int id, string userId);
         Task MarkAllAsRead(string userId);
         Task MarkTypeAsRead(string userId, string type);
+        Task<List<NotificationPreferenceDto>> GetPreferences(string userId);
+        Task<List<NotificationPreferenceDto>> UpdatePreferences(
+            string userId,
+            IEnumerable<NotificationPreferenceUpdateDto> preferences);
     }
 }

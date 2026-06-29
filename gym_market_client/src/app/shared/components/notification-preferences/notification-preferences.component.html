@@ -1,0 +1,84 @@
+<section class="preference-panel">
+	<header class="preference-header">
+		<div class="preference-icon" aria-hidden="true">
+			<span></span>
+		</div>
+		<div>
+			<h2>Notification preferences</h2>
+			<p>Choose how each alert category reaches you.</p>
+		</div>
+	</header>
+
+	<div class="preference-summary" aria-label="Notification preference summary">
+		<span>
+			<strong>{{ inAppEnabledCount() }}</strong>
+			Feed
+		</span>
+		<span>
+			<strong>{{ emailEnabledCount() }}</strong>
+			Email
+		</span>
+	</div>
+
+	@if (loading()) {
+		<div class="preference-loading">
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+	} @else {
+		<div class="preference-list">
+			@for (preference of preferences(); track preference.type) {
+				<article class="preference-row">
+					<span class="preference-copy">
+						<strong>{{ preference.label }}</strong>
+						<small>
+							@if (preference.inAppEnabled && preference.emailEnabled) {
+								Feed and email
+							} @else if (preference.inAppEnabled) {
+								Feed only
+							} @else if (preference.emailEnabled) {
+								Email only
+							} @else {
+								Muted
+							}
+						</small>
+					</span>
+					<div class="channel-toggles">
+						<label class="channel-toggle">
+							<span>Feed</span>
+							<input
+								type="checkbox"
+								[checked]="preference.inAppEnabled"
+								(change)="toggle(preference.type, 'inAppEnabled', $any($event.target).checked)"
+							/>
+							<i aria-hidden="true"></i>
+						</label>
+						<label class="channel-toggle">
+							<span>Email</span>
+							<input
+								type="checkbox"
+								[checked]="preference.emailEnabled"
+								(change)="toggle(preference.type, 'emailEnabled', $any($event.target).checked)"
+							/>
+							<i aria-hidden="true"></i>
+						</label>
+					</div>
+				</article>
+			}
+		</div>
+
+		<div class="preference-actions">
+			<div class="bulk-actions">
+				<button type="button" (click)="setAll(true)">Enable all</button>
+				<button type="button" (click)="setAll(false)">Mute all</button>
+			</div>
+			<div class="save-actions">
+				<button type="button" class="ghost-button" [disabled]="!hasChanges() || saving()" (click)="reset()">Reset</button>
+				<button type="button" class="save-button" [disabled]="!hasChanges() || saving()" (click)="save()">
+					{{ saving() ? 'Saving...' : 'Save changes' }}
+				</button>
+			</div>
+		</div>
+	}
+</section>

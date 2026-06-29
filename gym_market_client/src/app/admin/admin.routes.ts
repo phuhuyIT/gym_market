@@ -16,6 +16,7 @@ import { ClassScheduleComponent } from '../page-agency/class-schedule/class-sche
 import { WorkoutPlansComponent } from '../page-agency/workout-plans/workout-plans.component';
 import { ProgressReviewComponent } from '../page-agency/progress-review/progress-review.component';
 import { NotificationCenterComponent } from '../shared/components/notification-center/notification-center.component';
+import { AdminNotificationsComponent } from './admin-notifications/admin-notifications.component';
 
 export const routes: Routes = [
 	{
@@ -30,10 +31,11 @@ export const routes: Routes = [
 				{ path: 'payments', component: PaymentsComponent, title: 'Payments' },
 				{ path: 'memberships', component: MembershipsComponent, title: 'Memberships' },
 				{ path: 'classes', component: ClassScheduleComponent, title: 'Class Schedule' },
-					{ path: 'workouts', component: WorkoutPlansComponent, title: 'Workout Plans' },
-					{ path: 'progress', component: ProgressReviewComponent, title: 'Progress Review' },
-					{ path: 'notifications', component: NotificationCenterComponent, title: 'Notifications' },
-					{ path: 'nutrition', component: ManageNutritionComponent, title: 'Food Database' },
+				{ path: 'workouts', component: WorkoutPlansComponent, title: 'Workout Plans' },
+				{ path: 'progress', component: ProgressReviewComponent, title: 'Progress Review' },
+				{ path: 'notifications', component: NotificationCenterComponent, title: 'Notifications' },
+				{ path: 'notification-ops', component: AdminNotificationsComponent, title: 'Notification Operations' },
+				{ path: 'nutrition', component: ManageNutritionComponent, title: 'Food Database' },
 			{ path: 'add-course', component: AddCourseComponent, title: 'Add Course' },
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Edit Course' },
 			{ path: 'course-materials/:courseId', component: CourseMaterialComponent, title: 'Course Materials' },

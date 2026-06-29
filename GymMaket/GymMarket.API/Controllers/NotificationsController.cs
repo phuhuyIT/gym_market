@@ -1,3 +1,5 @@
+using GymMarket.API.DTOs.Notifications;
+using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +56,36 @@ namespace GymMarket.API.Controllers
         {
             await _notificationRepository.MarkTypeAsRead(GetUserId(), type);
             return Ok();
+        }
+
+        [HttpGet("preferences")]
+        public async Task<IActionResult> GetPreferences()
+        {
+            var preferences = await _notificationRepository.GetPreferences(GetUserId());
+            return Ok(preferences);
+        }
+
+        [HttpPut("preferences")]
+        public async Task<IActionResult> UpdatePreferences(UpdateNotificationPreferencesDto model)
+        {
+            if (model.Preferences.Count == 0)
+            {
+                return BadRequest(new { message = "At least one preference is required." });
+            }
+
+            var invalidTypes = model.Preferences
+                .Select(p => p.Type)
+                .Where(type => !NotificationTypes.IsSupported(type))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (invalidTypes.Count > 0)
+            {
+                return BadRequest(new { message = "Unsupported notification type.", types = invalidTypes });
+            }
+
+            var preferences = await _notificationRepository.UpdatePreferences(GetUserId(), model.Preferences);
+            return Ok(preferences);
         }
 
         private string GetUserId()

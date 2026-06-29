@@ -15,6 +15,7 @@ public class BaseIntegrationTests : IClassFixture<WebApplicationFactory<Program>
 {
     protected readonly WebApplicationFactory<Program> Factory;
     protected readonly HttpClient Client;
+    protected RecordingEmailSender EmailSender => (RecordingEmailSender)Factory.Services.GetRequiredService<IEmailSender>();
 
     public BaseIntegrationTests(WebApplicationFactory<Program> factory)
     {
@@ -37,7 +38,7 @@ public class BaseIntegrationTests : IClassFixture<WebApplicationFactory<Program>
                 {
                     services.Remove(emailSender);
                 }
-                services.AddSingleton<IEmailSender, NoopEmailSender>();
+                services.AddSingleton<IEmailSender, RecordingEmailSender>();
             });
         });
 
@@ -178,8 +179,39 @@ public class BaseIntegrationTests : IClassFixture<WebApplicationFactory<Program>
         public List<string>? Errors { get; set; }
     }
 
-    private sealed class NoopEmailSender : IEmailSender
+    protected sealed class RecordingEmailSender : IEmailSender
     {
-        public Task SendEmailAsync(string toEmail, string subject, string htmlBody) => Task.CompletedTask;
+        private readonly List<SentEmail> _sentEmails = [];
+
+        public IReadOnlyList<SentEmail> SentEmails
+        {
+            get
+            {
+                lock (_sentEmails)
+                {
+                    return _sentEmails.ToList();
+                }
+            }
+        }
+
+        public Task SendEmailAsync(string toEmail, string subject, string htmlBody)
+        {
+            lock (_sentEmails)
+            {
+                _sentEmails.Add(new SentEmail(toEmail, subject, htmlBody));
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public void Clear()
+        {
+            lock (_sentEmails)
+            {
+                _sentEmails.Clear();
+            }
+        }
     }
+
+    protected sealed record SentEmail(string ToEmail, string Subject, string HtmlBody);
 }
