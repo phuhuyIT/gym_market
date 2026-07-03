@@ -45,6 +45,8 @@ public partial class Course
 
     public virtual ICollection<CourseAssignment> CourseAssignments { get; set; } = new List<CourseAssignment>();
 
+    public virtual ICollection<CourseDiscussionQuestion> DiscussionQuestions { get; set; } = new List<CourseDiscussionQuestion>();
+
     public virtual ICollection<CourseModule> CourseModules { get; set; } = new List<CourseModule>();
 
     public virtual ICollection<GradeCategory> GradeCategories { get; set; } = new List<GradeCategory>();

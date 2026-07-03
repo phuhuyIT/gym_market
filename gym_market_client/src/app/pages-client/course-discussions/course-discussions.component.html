@@ -1,0 +1,117 @@
+<div class="qa-shell">
+	<header class="qa-header">
+		<div>
+			<a [routerLink]="['/client/course-learn', courseId]" class="back-link">Course content</a>
+			<h1>Course Q&amp;A</h1>
+			<p>Ask questions, follow trainer replies, and mark the answer that solved your issue.</p>
+		</div>
+		<div class="header-links">
+			<a [routerLink]="['/client/course-assignments', courseId]">Assignments</a>
+			<a [routerLink]="['/client/course-grades', courseId]">Grades</a>
+		</div>
+	</header>
+
+	<section class="ask-panel">
+		<div>
+			<h2>Ask a question</h2>
+			<p>Use one thread per question so answers stay easy to find.</p>
+		</div>
+		<div class="ask-form">
+			<input [(ngModel)]="newQuestion.title" placeholder="Question title" />
+			<textarea [(ngModel)]="newQuestion.body" rows="3" placeholder="Add details, lecture name, or what you already tried"></textarea>
+			<button type="button" class="primary" (click)="askQuestion()" [disabled]="isSavingQuestion">
+				{{ isSavingQuestion ? 'Posting...' : 'Post question' }}
+			</button>
+		</div>
+	</section>
+
+	<section class="qa-tools">
+		<select [(ngModel)]="statusFilter" (ngModelChange)="loadQuestions()">
+			<option value="">All questions</option>
+			<option value="Open">Open</option>
+			<option value="Answered">Answered</option>
+			<option value="Closed">Closed</option>
+		</select>
+		<input [(ngModel)]="search" (keyup.enter)="loadQuestions()" placeholder="Search Q&A" />
+		<button type="button" (click)="loadQuestions()">Search</button>
+	</section>
+
+	<section class="qa-layout">
+		<aside class="question-list">
+			@for (question of questions; track question.questionId) {
+				<button type="button" class="question-row" [class.active]="selectedQuestion?.questionId === question.questionId" (click)="selectQuestion(question)">
+					<span class="thread-rail" [class.pinned]="question.isPinned"></span>
+					<span>
+						<strong>{{ question.title }}</strong>
+						<small>{{ question.studentName || 'Student' }} · {{ question.answerCount }} replies</small>
+					</span>
+					<i [ngClass]="statusClass(question.status)">{{ question.status }}</i>
+				</button>
+			}
+			@if (questions.length === 0) {
+				<p class="empty-note">{{ isLoading ? 'Loading Q&A...' : 'No questions yet.' }}</p>
+			}
+		</aside>
+
+		<section class="thread-panel">
+			@if (selectedQuestion) {
+				<div class="thread-head">
+					<div>
+						<div class="badges">
+							<span [ngClass]="statusClass(selectedQuestion.status)">{{ selectedQuestion.status }}</span>
+							@if (selectedQuestion.isPinned) {
+								<span class="pinned">Pinned</span>
+							}
+						</div>
+						<h2>{{ selectedQuestion.title }}</h2>
+						<p>{{ selectedQuestion.studentName || 'Student' }} · {{ selectedQuestion.createdAt | date:'medium' }}</p>
+					</div>
+					@if (selectedQuestion.canAccept) {
+						<button type="button" class="danger-link" (click)="deleteQuestion(selectedQuestion)">Delete question</button>
+					}
+				</div>
+
+				<article class="question-card">
+					{{ selectedQuestion.body }}
+				</article>
+
+				<div class="answer-thread">
+					@for (answer of selectedQuestion.answers; track answer.answerId) {
+						<article class="answer-card" [class.accepted]="answer.isAccepted">
+							<div class="answer-rail"></div>
+							<div>
+								<header>
+									<div>
+										<strong>{{ answer.authorName }}</strong>
+										<span>{{ answer.authorRole }} · {{ answer.createdAt | date:'short' }}</span>
+									</div>
+									@if (answer.isAccepted) {
+										<i>Accepted</i>
+									} @else if (selectedQuestion.canAccept) {
+										<button type="button" (click)="acceptAnswer(answer)">Accept</button>
+									}
+								</header>
+								<p>{{ answer.body }}</p>
+							</div>
+						</article>
+					}
+					@if (selectedQuestion.answers.length === 0) {
+						<p class="empty-note">No replies yet.</p>
+					}
+				</div>
+
+				<div class="reply-box">
+					<textarea [(ngModel)]="replyBody" rows="4" placeholder="Add a follow-up or share what worked"></textarea>
+					<button type="button" class="primary" (click)="reply()" [disabled]="isReplying || selectedQuestion.status === 'Closed'">
+						{{ isReplying ? 'Posting...' : 'Reply' }}
+					</button>
+				</div>
+			} @else {
+				<div class="empty-thread">
+					<h2>Select a question</h2>
+					<p>Threads appear here after you choose one from the list.</p>
+				</div>
+			}
+		</section>
+	</section>
+</div>

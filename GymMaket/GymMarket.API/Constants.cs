@@ -179,6 +179,31 @@ namespace GymMarket.API
         public static readonly string[] All = [Submitted, Graded, Returned];
     }
 
+    public static class DiscussionQuestionStatus
+    {
+        public const string Open = "Open";
+        public const string Answered = "Answered";
+        public const string Closed = "Closed";
+
+        public static readonly string[] All = [Open, Answered, Closed];
+
+        public static string Normalize(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return Open;
+
+            return All.FirstOrDefault(
+                supported => string.Equals(supported, status.Trim(), StringComparison.OrdinalIgnoreCase)) ?? Open;
+        }
+    }
+
+    public static class DiscussionAuthorRole
+    {
+        public const string Student = "Student";
+        public const string Trainer = "Trainer";
+        public const string Admin = "Admin";
+    }
+
     public static class TrainerApprovalStatus
     {
         public const string PendingReview = "PendingReview";

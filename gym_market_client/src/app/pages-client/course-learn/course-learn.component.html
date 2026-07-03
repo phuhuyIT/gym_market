@@ -4,6 +4,7 @@
     <!-- Header -->
     <header class="learn-header">
       <button class="back-link" (click)="goToDetails()">← Course details</button>
+      <a class="back-link" [routerLink]="['/client/course-discussions', courseId]">Q&amp;A</a>
       <a class="back-link" [routerLink]="['/client/course-assignments', courseId]">Assignments</a>
       <a class="back-link" [routerLink]="['/client/course-grades', courseId]">Grades</a>
       <h1 class="learn-header__title section-title">

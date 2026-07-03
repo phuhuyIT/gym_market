@@ -55,5 +55,7 @@ public partial class Student
 
     public virtual ICollection<AssignmentSubmission> AssignmentSubmissions { get; set; } = new List<AssignmentSubmission>();
 
+    public virtual ICollection<CourseDiscussionQuestion> DiscussionQuestions { get; set; } = new List<CourseDiscussionQuestion>();
+
     public virtual AppUser? AppUser { get; set; }
 }
