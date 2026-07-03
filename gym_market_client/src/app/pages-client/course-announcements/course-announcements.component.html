@@ -1,0 +1,38 @@
+<div class="announcement-feed">
+	<header class="feed-header">
+		<div>
+			<a [routerLink]="['/client/course-learn', courseId]" class="back-link">Course content</a>
+			<h1>Announcements</h1>
+			<p>Course updates from your trainer appear here in publish order.</p>
+		</div>
+		<div class="header-actions">
+			<a [routerLink]="['/client/course-discussions', courseId]">Q&amp;A</a>
+			<a [routerLink]="['/client/course-assignments', courseId]">Assignments</a>
+			<a [routerLink]="['/client/course-grades', courseId]">Grades</a>
+		</div>
+	</header>
+
+	<section class="feed-list">
+		@for (announcement of announcements; track announcement.announcementId) {
+			<article class="announcement-card" [class.pinned]="announcement.isPinned">
+				<header>
+					<div>
+						@if (announcement.isPinned) {
+							<span class="pinned-label">Pinned</span>
+						}
+						<h2>{{ announcement.title }}</h2>
+						<p>{{ announcement.createdByName }} · {{ (announcement.publishedAt || announcement.createdAt) | date:'medium' }}</p>
+					</div>
+				</header>
+				<p class="announcement-body">{{ announcement.body }}</p>
+			</article>
+		}
+
+		@if (announcements.length === 0) {
+			<div class="empty-card">
+				<h2>{{ isLoading ? 'Loading announcements...' : 'No announcements yet' }}</h2>
+				<p>Published course updates will appear here.</p>
+			</div>
+		}
+	</section>
+</div>

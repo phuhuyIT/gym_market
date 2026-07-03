@@ -6,6 +6,7 @@ namespace GymMarket.API.Models
         public const string Payment = "payment";
         public const string Chat = "chat";
         public const string Course = "course";
+        public const string Announcement = "announcement";
         public const string Class = "class";
         public const string Workout = "workout";
         public const string Progress = "progress";
@@ -17,6 +18,7 @@ namespace GymMarket.API.Models
             Payment,
             Chat,
             Course,
+            Announcement,
             Class,
             Workout,
             Progress,
@@ -29,6 +31,7 @@ namespace GymMarket.API.Models
             [Payment] = "Payment",
             [Chat] = "Chat",
             [Course] = "Course",
+            [Announcement] = "Course announcement",
             [Class] = "Class",
             [Workout] = "Workout",
             [Progress] = "Progress",

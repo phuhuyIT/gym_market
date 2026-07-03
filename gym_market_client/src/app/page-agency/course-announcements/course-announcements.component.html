@@ -1,0 +1,85 @@
+<div class="announcements-shell">
+	<header class="announcements-header">
+		<div>
+			<a routerLink="../courses" class="back-link">Course list</a>
+			<h1>Course announcements</h1>
+			<p>Publish course updates for enrolled learners and keep drafts ready before they go live.</p>
+		</div>
+		<div class="header-actions">
+			<a [routerLink]="['../discussions', courseId]">Q&amp;A</a>
+			<a [routerLink]="['../assignments', courseId]">Assignments</a>
+			<a [routerLink]="['../gradebook', courseId]">Gradebook</a>
+		</div>
+	</header>
+
+	<section class="announcements-grid">
+		<aside class="announcement-list">
+			<div class="panel-title">
+				<h2>Updates</h2>
+				<button type="button" (click)="newAnnouncement()">New</button>
+			</div>
+
+			@for (announcement of announcements; track announcement.announcementId) {
+				<button type="button" class="announcement-row" [class.active]="selected?.announcementId === announcement.announcementId" (click)="selectAnnouncement(announcement)">
+					<span class="pin-rail" [class.pinned]="announcement.isPinned"></span>
+					<span class="announcement-row__body">
+						<strong>{{ announcement.title }}</strong>
+						<small>{{ announcement.createdByName }} · {{ (announcement.publishedAt || announcement.updatedAt) | date:'mediumDate' }}</small>
+					</span>
+					<i [class.published]="announcement.isPublished" [class.draft]="!announcement.isPublished">{{ statusLabel(announcement) }}</i>
+				</button>
+			}
+
+			@if (announcements.length === 0) {
+				<p class="empty-note">{{ isLoading ? 'Loading announcements...' : 'No announcements yet.' }}</p>
+			}
+		</aside>
+
+		<section class="announcement-editor">
+			<div class="editor-head">
+				<div>
+					<p>{{ selected ? 'Edit announcement' : 'New announcement' }}</p>
+					<h2>{{ selected?.title || 'Write an update' }}</h2>
+				</div>
+				@if (selected) {
+					<button type="button" class="danger-link" (click)="deleteAnnouncement(selected)">Delete</button>
+				}
+			</div>
+
+			<label>
+				<span>Title</span>
+				<input [(ngModel)]="title" placeholder="What changed?" />
+			</label>
+
+			<label>
+				<span>Message</span>
+				<textarea [(ngModel)]="body" rows="10" placeholder="Write the announcement for learners"></textarea>
+			</label>
+
+			<div class="switch-row">
+				<label class="switch">
+					<input type="checkbox" [(ngModel)]="isPinned" />
+					<span>Pin to top</span>
+				</label>
+				<label class="switch">
+					<input type="checkbox" [(ngModel)]="isPublished" />
+					<span>Published</span>
+				</label>
+			</div>
+
+			<div class="editor-actions">
+				<button type="button" (click)="newAnnouncement()">Clear</button>
+				<button type="button" class="primary" (click)="save()" [disabled]="isSaving">
+					{{ isSaving ? 'Saving...' : isPublished ? 'Publish' : 'Save draft' }}
+				</button>
+			</div>
+
+			@if (selected) {
+				<div class="quick-actions">
+					<button type="button" (click)="togglePinned(selected)">{{ selected.isPinned ? 'Unpin' : 'Pin' }}</button>
+					<button type="button" (click)="togglePublished(selected)">{{ selected.isPublished ? 'Unpublish' : 'Publish' }}</button>
+				</div>
+			}
+		</section>
+	</section>
+</div>

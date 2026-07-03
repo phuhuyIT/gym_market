@@ -10,6 +10,7 @@ import { CourseMaterialComponent } from '../page-agency/course-material/course-m
 import { AssignmentsComponent } from '../page-agency/assignments/assignments.component';
 import { GradebookComponent } from '../page-agency/gradebook/gradebook.component';
 import { CourseDiscussionsComponent } from '../page-agency/course-discussions/course-discussions.component';
+import { CourseAnnouncementsComponent } from '../page-agency/course-announcements/course-announcements.component';
 import { CourseOptionListComponent } from '../page-agency/course-option-list/course-option-list.component';
 import { AccountSettingsComponent } from '../account-settings/account-settings.component';
 import { AdminUsersComponent } from './admin-users/admin-users.component';
@@ -43,6 +44,7 @@ export const routes: Routes = [
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Edit Course' },
 			{ path: 'course-materials/:courseId', component: CourseMaterialComponent, title: 'Course Materials' },
 				{ path: 'assignments/:courseId', component: AssignmentsComponent, title: 'Assignments' },
+				{ path: 'announcements/:courseId', component: CourseAnnouncementsComponent, title: 'Course announcements' },
 				{ path: 'discussions/:courseId', component: CourseDiscussionsComponent, title: 'Course Q&A' },
 				{ path: 'gradebook/:courseId', component: GradebookComponent, title: 'Gradebook' },
 			{ path: 'course-option-list', component: CourseOptionListComponent, title: 'Course Options' },

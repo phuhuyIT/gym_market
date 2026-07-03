@@ -13,6 +13,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<CourseAssignment> CourseAssignments { get; set; }
 
+    public virtual DbSet<CourseAnnouncement> CourseAnnouncements { get; set; }
+
     public virtual DbSet<CourseDiscussionQuestion> CourseDiscussionQuestions { get; set; }
 
     public virtual DbSet<CourseDiscussionAnswer> CourseDiscussionAnswers { get; set; }
@@ -275,6 +277,70 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.GradeCategoryId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_Course_Assignments_Grade_Category");
+        });
+
+        modelBuilder.Entity<CourseAnnouncement>(entity =>
+        {
+            entity.HasKey(e => e.AnnouncementId);
+
+            entity.ToTable("Course_Announcements");
+
+            entity.Property(e => e.AnnouncementId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Announcement_ID");
+            entity.Property(e => e.CourseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Course_ID");
+            entity.Property(e => e.CreatedByUserId)
+                .HasMaxLength(450)
+                .HasColumnName("Created_By_User_ID");
+            entity.Property(e => e.CreatedByRole)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Created_By_Role");
+            entity.Property(e => e.CreatedByName)
+                .HasMaxLength(200)
+                .HasColumnName("Created_By_Name");
+            entity.Property(e => e.Title)
+                .HasMaxLength(200);
+            entity.Property(e => e.Body)
+                .HasMaxLength(4000);
+            entity.Property(e => e.IsPinned)
+                .HasDefaultValue(false)
+                .HasColumnName("Is_Pinned");
+            entity.Property(e => e.IsPublished)
+                .HasDefaultValue(false)
+                .HasColumnName("Is_Published");
+            entity.Property(e => e.PublishedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Published_At");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.CourseId);
+            entity.HasIndex(e => e.CreatedByUserId);
+            entity.HasIndex(e => e.IsPublished);
+            entity.HasIndex(e => e.PublishedAt);
+            entity.HasIndex(e => new { e.CourseId, e.IsPublished, e.PublishedAt });
+            entity.HasIndex(e => new { e.CourseId, e.IsPinned, e.PublishedAt });
+
+            entity.HasOne(d => d.Course).WithMany(p => p.CourseAnnouncements)
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Course_Announcements_Course");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany()
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Course_Announcements_AppUser");
         });
 
         modelBuilder.Entity<CourseDiscussionQuestion>(entity =>
