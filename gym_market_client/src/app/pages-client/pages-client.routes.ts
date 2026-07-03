@@ -9,6 +9,7 @@ import { CourseDetailsComponent } from './course-details/course-details.componen
 import { CourseLearnComponent } from './course-learn/course-learn.component';
 import { CourseAssignmentsComponent } from './course-assignments/course-assignments.component';
 import { CourseGradesComponent } from './course-grades/course-grades.component';
+import { CourseProgressDashboardComponent } from './course-progress-dashboard/course-progress-dashboard.component';
 import { CourseDiscussionsComponent } from './course-discussions/course-discussions.component';
 import { CourseAnnouncementsComponent } from './course-announcements/course-announcements.component';
 import { CoursePaymentComponent } from './course-payment/course-payment.component';
@@ -37,6 +38,7 @@ export const routes: Routes = [
 			{ path: 'course-search', component: CourseSearchComponent, title: 'Course search' },
 			{ path: 'course-details/:id', component: CourseDetailsComponent, title: 'Course details' },
 			{ path: 'course-learn/:courseId', component: CourseLearnComponent, title: 'Course content' },
+				{ path: 'course-progress/:courseId', component: CourseProgressDashboardComponent, title: 'Course progress' },
 				{ path: 'course-assignments/:courseId', component: CourseAssignmentsComponent, title: 'Course assignments' },
 				{ path: 'course-announcements/:courseId', component: CourseAnnouncementsComponent, title: 'Course announcements' },
 				{ path: 'course-discussions/:courseId', component: CourseDiscussionsComponent, title: 'Course Q&A' },

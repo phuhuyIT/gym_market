@@ -1,0 +1,121 @@
+<div class="analytics-shell">
+	<header class="analytics-header">
+		<div>
+			<a routerLink="../courses" class="back-link">Course list</a>
+			<h1>{{ dashboard?.courseTitle || 'Course progress' }}</h1>
+			<p>Learner progress, submissions, grades, and risk signals in one view.</p>
+		</div>
+		<div class="header-actions">
+			<a [routerLink]="['../gradebook', courseId]">Gradebook</a>
+			<button type="button" (click)="load()" [disabled]="isLoading">{{ isLoading ? 'Refreshing...' : 'Refresh' }}</button>
+		</div>
+	</header>
+
+	@if (dashboard) {
+		<section class="metric-grid">
+			<div class="metric-card accent-progress">
+				<span>Lesson progress</span>
+				<strong>{{ dashboard.averageLessonProgressPercent | number:'1.0-1' }}%</strong>
+				<small>{{ dashboard.totalLectures }} lessons tracked</small>
+			</div>
+			<div class="metric-card accent-grade">
+				<span>Current grade</span>
+				<strong>{{ (dashboard.averageCurrentGradePercent ?? 0) | number:'1.0-1' }}%</strong>
+				<small>{{ dashboard.totalGradeItems }} grade items</small>
+			</div>
+			<div class="metric-card accent-risk">
+				<span>At risk</span>
+				<strong>{{ dashboard.atRiskLearners }}</strong>
+				<small>{{ dashboard.totalLearners }} paid learners</small>
+			</div>
+			<div class="metric-card accent-complete">
+				<span>Completed</span>
+				<strong>{{ dashboard.completedLearners }}</strong>
+				<small>{{ dashboard.totalAssignments }} assignments</small>
+			</div>
+		</section>
+
+		<section class="learner-panel">
+			<div class="panel-title">
+				<div>
+					<h2>Learner dashboard</h2>
+					<p>Sorted by learners needing attention first.</p>
+				</div>
+				<div class="filter-tabs" role="group" aria-label="Learner filter">
+					<button type="button" [class.active]="filter === 'all'" (click)="setFilter('all')">All</button>
+					<button type="button" [class.active]="filter === 'atRisk'" (click)="setFilter('atRisk')">At risk</button>
+					<button type="button" [class.active]="filter === 'complete'" (click)="setFilter('complete')">Complete</button>
+				</div>
+			</div>
+
+			<div class="table-scroll">
+				<table>
+					<thead>
+						<tr>
+							<th>Learner</th>
+							<th>Lessons</th>
+							<th>Assignments</th>
+							<th>Grade</th>
+							<th>Last activity</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						@for (learner of filteredLearners; track learner.studentId) {
+							<tr [class.needs-attention]="learner.isAtRisk">
+								<td class="learner-cell">
+									<strong>{{ learner.studentName || learner.studentId }}</strong>
+									<small>{{ learner.studentEmail }}</small>
+								</td>
+								<td>
+									<div class="progress-cell">
+										<span>{{ learner.completedLectures }} / {{ learner.totalLectures }}</span>
+										<div class="mini-bar"><i [style.width]="progressStyle(learner.lessonProgressPercent)"></i></div>
+										<b>{{ learner.lessonProgressPercent | number:'1.0-0' }}%</b>
+									</div>
+								</td>
+								<td>
+									<span class="compact-stat">{{ learner.submittedAssignments }} / {{ learner.totalAssignments }}</span>
+									<small>{{ learner.missingAssignments }} missing</small>
+								</td>
+								<td>
+									<span class="grade-pill" [ngClass]="gradeClass(learner.finalGradePercent)">
+										{{ learner.finalGradePercent | number:'1.0-1' }}% {{ learner.letterGrade }}
+									</span>
+									<small>Current {{ (learner.currentGradePercent ?? 0) | number:'1.0-1' }}%</small>
+								</td>
+								<td>
+									@if (learner.lastActivityAt) {
+										<span>{{ learner.lastActivityAt | date:'mediumDate' }}</span>
+									} @else {
+										<span class="muted-text">No activity</span>
+									}
+								</td>
+								<td>
+									@if (learner.isAtRisk) {
+										<div class="risk-list">
+											@for (reason of learner.atRiskReasons; track reason) {
+												<span>{{ reason }}</span>
+											}
+										</div>
+									} @else if (learner.isCompleted) {
+										<span class="status-good">Complete</span>
+									} @else {
+										<span class="status-steady">On track</span>
+									}
+								</td>
+							</tr>
+						}
+						@if (filteredLearners.length === 0) {
+							<tr>
+								<td colspan="6" class="empty-note">No learners match this filter.</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</section>
+	} @else {
+		<div class="empty-note">{{ isLoading ? 'Loading course analytics...' : 'Course analytics are not available.' }}</div>
+	}
+</div>

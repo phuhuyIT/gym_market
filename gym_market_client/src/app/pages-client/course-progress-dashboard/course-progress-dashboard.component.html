@@ -1,0 +1,78 @@
+<div class="progress-shell">
+	<header class="progress-header">
+		<div>
+			<a [routerLink]="['/client/course-learn', courseId]" class="back-link">Learning path</a>
+			<h1>{{ analytics?.courseTitle || 'My course progress' }}</h1>
+			<p>Your lessons, assignments, and grade status in one place.</p>
+		</div>
+		<button type="button" (click)="load()" [disabled]="isLoading">{{ isLoading ? 'Refreshing...' : 'Refresh' }}</button>
+	</header>
+
+	@if (analytics) {
+		@let progress = analytics.progress;
+		<section class="hero-progress" [class.needs-attention]="progress.isAtRisk">
+			<div>
+				<span>Course progress</span>
+				<strong>{{ progress.lessonProgressPercent | number:'1.0-0' }}%</strong>
+				<p>{{ progress.completedLectures }} of {{ progress.totalLectures }} lessons completed</p>
+			</div>
+			<div class="ring" [style.--value]="progress.lessonProgressPercent">
+				<b>{{ progress.finalGradePercent | number:'1.0-0' }}%</b>
+				<small>{{ progress.letterGrade || 'Grade' }}</small>
+			</div>
+		</section>
+
+		<section class="summary-grid">
+			<a [routerLink]="['/client/course-learn', courseId]" class="summary-card">
+				<span>Lessons</span>
+				<strong>{{ progress.completedLectures }} / {{ progress.totalLectures }}</strong>
+				<div class="bar"><i [style.width]="progressWidth(progress.lessonProgressPercent)"></i></div>
+			</a>
+			<a [routerLink]="['/client/course-assignments', courseId]" class="summary-card">
+				<span>Assignments</span>
+				<strong>{{ progress.submittedAssignments }} / {{ progress.totalAssignments }}</strong>
+				<small>{{ progress.missingAssignments }} missing</small>
+			</a>
+			<a [routerLink]="['/client/course-grades', courseId]" class="summary-card">
+				<span>Grades</span>
+				<strong [ngClass]="gradeClass(progress.finalGradePercent)">{{ progress.finalGradePercent | number:'1.0-1' }}%</strong>
+				<small>Current {{ (progress.currentGradePercent ?? 0) | number:'1.0-1' }}%</small>
+			</a>
+			<div class="summary-card">
+				<span>Last activity</span>
+				@if (progress.lastActivityAt) {
+					<strong>{{ progress.lastActivityAt | date:'mediumDate' }}</strong>
+				} @else {
+					<strong>No activity</strong>
+				}
+				<small>{{ progress.completedGradeItems }} / {{ progress.totalGradeItems }} grade items complete</small>
+			</div>
+		</section>
+
+		<section class="next-panel">
+			<div>
+				<h2>Status</h2>
+				@if (progress.isAtRisk) {
+					<p>Focus on the items below to get back on track.</p>
+				} @else if (progress.isCompleted) {
+					<p>All tracked course requirements are complete.</p>
+				} @else {
+					<p>You are making progress. Keep working through lessons and open assignments.</p>
+				}
+			</div>
+			<div class="status-tags">
+				@if (progress.isAtRisk) {
+					@for (reason of progress.atRiskReasons; track reason) {
+						<span class="risk">{{ reason }}</span>
+					}
+				} @else if (progress.isCompleted) {
+					<span class="complete">Complete</span>
+				} @else {
+					<span class="steady">On track</span>
+				}
+			</div>
+		</section>
+	} @else {
+		<div class="empty-note">{{ isLoading ? 'Loading course progress...' : 'Course progress is not available.' }}</div>
+	}
+</div>

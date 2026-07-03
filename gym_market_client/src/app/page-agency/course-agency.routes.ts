@@ -4,6 +4,7 @@ import { UpdateCourseComponent } from './update-course/update-course.component';
 import { CourseMaterialComponent } from './course-material/course-material.component';
 import { AssignmentsComponent } from './assignments/assignments.component';
 import { GradebookComponent } from './gradebook/gradebook.component';
+import { CourseAnalyticsComponent } from './course-analytics/course-analytics.component';
 import { CourseDiscussionsComponent } from './course-discussions/course-discussions.component';
 import { CourseAnnouncementsComponent } from './course-announcements/course-announcements.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -43,6 +44,7 @@ export const routes: Routes = [
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Cập nhật course' },
 			{ path: 'course-materials/:courseId', component: CourseMaterialComponent, title: 'Tài liệu khóa học' },
 			{ path: 'assignments/:courseId', component: AssignmentsComponent, title: 'Assignments' },
+			{ path: 'analytics/:courseId', component: CourseAnalyticsComponent, title: 'Course analytics' },
 			{ path: 'announcements/:courseId', component: CourseAnnouncementsComponent, title: 'Course announcements' },
 			{ path: 'discussions/:courseId', component: CourseDiscussionsComponent, title: 'Course Q&A' },
 			{ path: 'gradebook/:courseId', component: GradebookComponent, title: 'Gradebook' },
