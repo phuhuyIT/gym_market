@@ -1052,8 +1052,32 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Course_ID");
+            entity.Property(e => e.ModuleId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Module_ID");
+            entity.Property(e => e.LectureId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Lecture_ID");
             entity.Property(e => e.Title).HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.ScopeType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(AssessmentScopeType.Course)
+                .HasColumnName("Scope_Type");
             entity.Property(e => e.PassingScorePercent).HasColumnName("Passing_Score_Percent");
+            entity.Property(e => e.TimeLimitMinutes).HasColumnName("Time_Limit_Minutes");
+            entity.Property(e => e.MaxAttempts).HasColumnName("Max_Attempts");
+            entity.Property(e => e.ShuffleQuestions).HasColumnName("Shuffle_Questions");
+            entity.Property(e => e.ShowCorrectAnswers).HasColumnName("Show_Correct_Answers");
+            entity.Property(e => e.AvailableFrom)
+                .HasColumnType("datetime")
+                .HasColumnName("Available_From");
+            entity.Property(e => e.AvailableUntil)
+                .HasColumnType("datetime")
+                .HasColumnName("Available_Until");
             entity.Property(e => e.IsPublished).HasColumnName("Is_Published");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
@@ -1064,12 +1088,25 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_At");
 
-            entity.HasIndex(e => e.CourseId).IsUnique();
+            entity.HasIndex(e => e.CourseId);
+            entity.HasIndex(e => e.ModuleId);
+            entity.HasIndex(e => e.LectureId);
+            entity.HasIndex(e => new { e.CourseId, e.ScopeType });
 
             entity.HasOne(d => d.Course).WithMany(p => p.CourseQuizzes)
                 .HasForeignKey(d => d.CourseId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Course_Quizzes_Course");
+
+            entity.HasOne(d => d.Module).WithMany()
+                .HasForeignKey(d => d.ModuleId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_Course_Quizzes_Course_Module");
+
+            entity.HasOne(d => d.Lecture).WithMany()
+                .HasForeignKey(d => d.LectureId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_Course_Quizzes_Lecture");
         });
 
         modelBuilder.Entity<QuizQuestion>(entity =>
@@ -1087,6 +1124,13 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .IsUnicode(false)
                 .HasColumnName("Quiz_ID");
             entity.Property(e => e.Prompt).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.QuestionType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(QuizQuestionType.SingleChoice)
+                .HasColumnName("Question_Type");
+            entity.Property(e => e.Explanation).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.RequiresManualGrading).HasColumnName("Requires_Manual_Grading");
 
             entity.HasIndex(e => e.QuizId);
             entity.HasIndex(e => new { e.QuizId, e.Order }).IsUnique();
@@ -1140,6 +1184,7 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Student_ID");
+            entity.Property(e => e.AttemptNumber).HasColumnName("Attempt_Number");
             entity.Property(e => e.ScorePercent)
                 .HasColumnType("decimal(5, 2)")
                 .HasColumnName("Score_Percent");
@@ -1147,6 +1192,18 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.SubmittedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Submitted_At");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(QuizAttemptStatus.Submitted);
+            entity.Property(e => e.RequiresManualGrading).HasColumnName("Requires_Manual_Grading");
+            entity.Property(e => e.StartedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Started_At");
+            entity.Property(e => e.GradedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Graded_At");
+            entity.Property(e => e.Feedback).HasMaxLength(2000);
 
             entity.HasIndex(e => e.QuizId);
             entity.HasIndex(e => e.StudentId);
@@ -1185,8 +1242,15 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Selected_Option_ID");
+            entity.Property(e => e.SelectedOptionIds)
+                .HasColumnType("nvarchar(max)")
+                .HasColumnName("Selected_Option_IDs");
+            entity.Property(e => e.TextAnswer)
+                .HasColumnType("nvarchar(max)")
+                .HasColumnName("Text_Answer");
             entity.Property(e => e.IsCorrect).HasColumnName("Is_Correct");
             entity.Property(e => e.PointsAwarded).HasColumnName("Points_Awarded");
+            entity.Property(e => e.Feedback).HasMaxLength(2000);
 
             entity.HasIndex(e => e.AttemptId);
             entity.HasIndex(e => e.QuestionId);

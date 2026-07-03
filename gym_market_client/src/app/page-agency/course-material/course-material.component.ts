@@ -43,7 +43,11 @@ export class CourseMaterialComponent implements OnInit {
 
 	quizDraft: UpsertCourseQuiz = this.createEmptyQuizDraft();
 	quizGradebook: QuizAttemptSummary[] = [];
+	gradeScores: Record<string, number> = {};
+	gradeFeedbacks: Record<string, string> = {};
 	isQuizLoading = false;
+	readonly assessmentScopes = ['Course', 'Module', 'Lesson'] as const;
+	readonly questionTypes = ['SingleChoice', 'MultipleChoice', 'OpenText'] as const;
 
 	// lecture modals
 	isShowLectureModal: boolean = false;
@@ -524,22 +528,7 @@ export class CourseMaterialComponent implements OnInit {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: quiz => {
-					this.quizDraft = {
-						title: quiz.title,
-						passingScorePercent: quiz.passingScorePercent,
-						isPublished: quiz.isPublished,
-						questions: quiz.questions.map(question => ({
-							questionId: question.questionId,
-							prompt: question.prompt,
-							order: question.order,
-							points: question.points,
-							options: question.options.map(option => ({
-								optionId: option.optionId,
-								text: option.text,
-								isCorrect: option.isCorrect,
-							})),
-						})),
-					};
+					this.quizDraft = this.toQuizDraft(quiz);
 					this.isQuizLoading = false;
 					this.cdr.markForCheck();
 				},
@@ -561,6 +550,12 @@ export class CourseMaterialComponent implements OnInit {
 			.subscribe({
 				next: attempts => {
 					this.quizGradebook = attempts;
+					this.gradeScores = {};
+					this.gradeFeedbacks = {};
+					for (const attempt of attempts) {
+						this.gradeScores[attempt.attemptId] = attempt.score;
+						this.gradeFeedbacks[attempt.attemptId] = attempt.feedback ?? '';
+					}
 					this.cdr.markForCheck();
 				},
 				error: err => {
@@ -574,8 +569,10 @@ export class CourseMaterialComponent implements OnInit {
 	addQuizQuestion() {
 		this.quizDraft.questions.push({
 			prompt: '',
+			questionType: 'SingleChoice',
 			order: this.quizDraft.questions.length + 1,
 			points: 1,
+			explanation: null,
 			options: [
 				{ text: '', isCorrect: true },
 				{ text: '', isCorrect: false },
@@ -591,11 +588,16 @@ export class CourseMaterialComponent implements OnInit {
 	}
 
 	addQuizOption(question: TrainerQuizQuestion) {
+		if (question.questionType === 'OpenText') {
+			this.toastService.show('Open text questions do not use answer options', 'error');
+			return;
+		}
 		question.options.push({ text: '', isCorrect: false });
 		this.cdr.markForCheck();
 	}
 
 	removeQuizOption(question: TrainerQuizQuestion, index: number) {
+		if (question.questionType === 'OpenText') return;
 		if (question.options.length <= 2) {
 			this.toastService.show('Each question needs at least two options', 'error');
 			return;
@@ -609,7 +611,30 @@ export class CourseMaterialComponent implements OnInit {
 	}
 
 	markCorrect(question: TrainerQuizQuestion, optionIndex: number) {
+		if (question.questionType === 'MultipleChoice') {
+			question.options[optionIndex].isCorrect = !question.options[optionIndex].isCorrect;
+			return;
+		}
 		question.options.forEach((option, index) => (option.isCorrect = index === optionIndex));
+	}
+
+	onQuestionTypeChange(question: TrainerQuizQuestion) {
+		if (question.questionType === 'OpenText') {
+			question.options = [];
+			question.requiresManualGrading = true;
+			return;
+		}
+
+		question.requiresManualGrading = false;
+		if (question.options.length < 2) {
+			question.options = [
+				{ text: '', isCorrect: true },
+				{ text: '', isCorrect: false },
+			];
+		}
+		if (question.questionType === 'SingleChoice' && question.options.filter(option => option.isCorrect).length !== 1) {
+			question.options.forEach((option, index) => (option.isCorrect = index === 0));
+		}
 	}
 
 	saveQuiz() {
@@ -620,27 +645,12 @@ export class CourseMaterialComponent implements OnInit {
 
 		patchState(this.loaderStore, { isShow: true });
 		this.courseMaterialService
-			.saveQuiz(this.courseId, this.quizDraft)
+			.saveQuiz(this.courseId, this.normalizedQuizDraft())
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: quiz => {
 					patchState(this.loaderStore, { isShow: false });
-					this.quizDraft = {
-						title: quiz.title,
-						passingScorePercent: quiz.passingScorePercent,
-						isPublished: quiz.isPublished,
-						questions: quiz.questions.map(question => ({
-							questionId: question.questionId,
-							prompt: question.prompt,
-							order: question.order,
-							points: question.points,
-							options: question.options.map(option => ({
-								optionId: option.optionId,
-								text: option.text,
-								isCorrect: option.isCorrect,
-							})),
-						})),
-					};
+					this.quizDraft = this.toQuizDraft(quiz);
 					this.toastService.show('Quiz saved');
 					this.cdr.markForCheck();
 				},
@@ -654,22 +664,110 @@ export class CourseMaterialComponent implements OnInit {
 			});
 	}
 
+	gradeAttempt(attempt: QuizAttemptSummary) {
+		const score = Number(this.gradeScores[attempt.attemptId] ?? attempt.score);
+		if (Number.isNaN(score) || score < 0 || score > attempt.totalPoints) {
+			this.toastService.show(`Score must be between 0 and ${attempt.totalPoints}`, 'error');
+			return;
+		}
+
+		patchState(this.loaderStore, { isShow: true });
+		this.courseMaterialService
+			.gradeQuizAttempt(attempt.attemptId, score, this.gradeFeedbacks[attempt.attemptId])
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: updated => {
+					patchState(this.loaderStore, { isShow: false });
+					const idx = this.quizGradebook.findIndex(item => item.attemptId === updated.attemptId);
+					if (idx !== -1) this.quizGradebook[idx] = updated;
+					this.gradeScores[updated.attemptId] = updated.score;
+					this.gradeFeedbacks[updated.attemptId] = updated.feedback ?? '';
+					this.toastService.show('Attempt graded');
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					patchState(this.loaderStore, { isShow: false });
+					this.toastService.show('Failed to grade attempt', 'error');
+				},
+			});
+	}
+
 	private createEmptyQuizDraft(): UpsertCourseQuiz {
 		return {
-			title: 'Course checkpoint',
+			title: 'Course assessment',
+			description: null,
+			scopeType: 'Course',
+			moduleId: null,
+			lectureId: null,
 			passingScorePercent: 70,
+			timeLimitMinutes: null,
+			maxAttempts: null,
+			shuffleQuestions: false,
+			showCorrectAnswers: false,
+			availableFrom: null,
+			availableUntil: null,
 			isPublished: false,
 			questions: [
 				{
 					prompt: '',
+					questionType: 'SingleChoice',
 					order: 1,
 					points: 1,
+					explanation: null,
 					options: [
 						{ text: '', isCorrect: true },
 						{ text: '', isCorrect: false },
 					],
 				},
 			],
+		};
+	}
+
+	private toQuizDraft(quiz: UpsertCourseQuiz): UpsertCourseQuiz {
+		return {
+			title: quiz.title,
+			description: quiz.description ?? null,
+			scopeType: quiz.scopeType ?? 'Course',
+			moduleId: quiz.moduleId ?? null,
+			lectureId: quiz.lectureId ?? null,
+			passingScorePercent: quiz.passingScorePercent,
+			timeLimitMinutes: quiz.timeLimitMinutes ?? null,
+			maxAttempts: quiz.maxAttempts ?? null,
+			shuffleQuestions: !!quiz.shuffleQuestions,
+			showCorrectAnswers: !!quiz.showCorrectAnswers,
+			availableFrom: this.toDateTimeLocal(quiz.availableFrom),
+			availableUntil: this.toDateTimeLocal(quiz.availableUntil),
+			isPublished: quiz.isPublished,
+			questions: quiz.questions.map(question => ({
+				questionId: question.questionId,
+				prompt: question.prompt,
+				questionType: question.questionType ?? 'SingleChoice',
+				order: question.order,
+				points: question.points,
+				explanation: question.explanation ?? null,
+				requiresManualGrading: question.requiresManualGrading,
+				options: question.options.map(option => ({
+					optionId: option.optionId,
+					text: option.text,
+					isCorrect: option.isCorrect,
+				})),
+			})),
+		};
+	}
+
+	private normalizedQuizDraft(): UpsertCourseQuiz {
+		return {
+			...this.quizDraft,
+			moduleId: this.quizDraft.scopeType === 'Module' ? this.quizDraft.moduleId || null : null,
+			lectureId: this.quizDraft.scopeType === 'Lesson' ? this.quizDraft.lectureId || null : null,
+			timeLimitMinutes: this.quizDraft.timeLimitMinutes || null,
+			maxAttempts: this.quizDraft.maxAttempts || null,
+			availableFrom: this.quizDraft.availableFrom || null,
+			availableUntil: this.quizDraft.availableUntil || null,
+			questions: this.quizDraft.questions.map(question => ({
+				...question,
+				options: question.questionType === 'OpenText' ? [] : question.options,
+			})),
 		};
 	}
 

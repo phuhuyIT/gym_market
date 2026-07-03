@@ -101,20 +101,47 @@ export class CourseMaterialService {
 		return this.http.get<TrainerCourseQuiz>(`${environment.baseApi}/quiz/course/${courseId}/manage`);
 	}
 
+	getManageQuizzes(courseId: string): Observable<TrainerCourseQuiz[]> {
+		return this.http.get<TrainerCourseQuiz[]>(`${environment.baseApi}/quiz/course/${courseId}/manage/all`);
+	}
+
+	createQuiz(courseId: string, model: UpsertCourseQuiz): Observable<TrainerCourseQuiz> {
+		return this.http.post<TrainerCourseQuiz>(`${environment.baseApi}/quiz/course/${courseId}`, model);
+	}
+
 	saveQuiz(courseId: string, model: UpsertCourseQuiz): Observable<TrainerCourseQuiz> {
 		return this.http.put<TrainerCourseQuiz>(`${environment.baseApi}/quiz/course/${courseId}`, model);
+	}
+
+	updateQuiz(quizId: string, model: UpsertCourseQuiz): Observable<TrainerCourseQuiz> {
+		return this.http.put<TrainerCourseQuiz>(`${environment.baseApi}/quiz/${quizId}`, model);
 	}
 
 	getQuiz(courseId: string): Observable<CourseQuiz> {
 		return this.http.get<CourseQuiz>(`${environment.baseApi}/quiz/course/${courseId}`);
 	}
 
+	getQuizzes(courseId: string): Observable<CourseQuiz[]> {
+		return this.http.get<CourseQuiz[]>(`${environment.baseApi}/quiz/course/${courseId}/all`);
+	}
+
 	submitQuiz(courseId: string, model: SubmitQuizAttempt): Observable<QuizAttemptSummary> {
 		return this.http.post<QuizAttemptSummary>(`${environment.baseApi}/quiz/course/${courseId}/submit`, model);
 	}
 
+	submitAssessment(quizId: string, model: SubmitQuizAttempt): Observable<QuizAttemptSummary> {
+		return this.http.post<QuizAttemptSummary>(`${environment.baseApi}/quiz/${quizId}/submit`, model);
+	}
+
 	getQuizGradebook(courseId: string): Observable<QuizAttemptSummary[]> {
 		return this.http.get<QuizAttemptSummary[]>(`${environment.baseApi}/quiz/course/${courseId}/gradebook`);
+	}
+
+	gradeQuizAttempt(attemptId: string, score: number, feedback?: string | null): Observable<QuizAttemptSummary> {
+		return this.http.put<QuizAttemptSummary>(`${environment.baseApi}/quiz/attempts/${attemptId}/grade`, {
+			score,
+			feedback: feedback || null,
+		});
 	}
 
 	getCompletionStatus(courseId: string): Observable<CourseCompletionStatus> {

@@ -89,6 +89,51 @@ namespace GymMarket.API
         }
     }
 
+    public static class AssessmentScopeType
+    {
+        public const string Course = "Course";
+        public const string Module = "Module";
+        public const string Lesson = "Lesson";
+
+        public static readonly string[] All = [Course, Module, Lesson];
+
+        public static string Normalize(string? scope)
+        {
+            if (string.IsNullOrWhiteSpace(scope))
+                return Course;
+
+            return All.FirstOrDefault(
+                supported => string.Equals(supported, scope.Trim(), StringComparison.OrdinalIgnoreCase)) ?? Course;
+        }
+    }
+
+    public static class QuizQuestionType
+    {
+        public const string SingleChoice = "SingleChoice";
+        public const string MultipleChoice = "MultipleChoice";
+        public const string OpenText = "OpenText";
+
+        public static readonly string[] All = [SingleChoice, MultipleChoice, OpenText];
+
+        public static string Normalize(string? type)
+        {
+            if (string.IsNullOrWhiteSpace(type))
+                return SingleChoice;
+
+            return All.FirstOrDefault(
+                supported => string.Equals(supported, type.Trim(), StringComparison.OrdinalIgnoreCase)) ?? SingleChoice;
+        }
+    }
+
+    public static class QuizAttemptStatus
+    {
+        public const string Submitted = "Submitted";
+        public const string PendingReview = "PendingReview";
+        public const string Graded = "Graded";
+
+        public static readonly string[] All = [Submitted, PendingReview, Graded];
+    }
+
     public static class TrainerApprovalStatus
     {
         public const string PendingReview = "PendingReview";

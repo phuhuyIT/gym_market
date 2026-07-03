@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { patchState } from '@ngrx/signals';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoaderModalStore } from '../../stores/loader.store';
@@ -24,7 +25,7 @@ import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
 @Component({
 	selector: 'app-course-learn',
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [CommonModule, GmButtonComponent, GmCardComponent],
+	imports: [CommonModule, FormsModule, GmButtonComponent, GmCardComponent],
 	templateUrl: './course-learn.component.html',
 	styleUrl: './course-learn.component.scss',
 })
@@ -37,6 +38,8 @@ export class CourseLearnComponent implements OnInit {
 	materials: LectureMaterial[] = [];
 	quiz: CourseQuiz | null = null;
 	quizAnswers: Record<string, string> = {};
+	quizMultiAnswers: Record<string, string[]> = {};
+	quizTextAnswers: Record<string, string> = {};
 	latestQuizAttempt: QuizAttemptSummary | null = null;
 	isQuizSubmitting = false;
 	completionStatus: CourseCompletionStatus | null = null;
@@ -133,6 +136,8 @@ export class CourseLearnComponent implements OnInit {
 		this.quiz = null;
 		this.latestQuizAttempt = null;
 		this.quizAnswers = {};
+		this.quizMultiAnswers = {};
+		this.quizTextAnswers = {};
 		this.courseMaterialService
 			.getQuiz(this.courseId)
 			.pipe(takeUntilDestroyed(this.destroyRef))
@@ -289,9 +294,28 @@ export class CourseLearnComponent implements OnInit {
 		this.quizAnswers[questionId] = optionId;
 	}
 
+	toggleQuizOption(questionId: string, optionId: string) {
+		const selected = this.quizMultiAnswers[questionId] ?? [];
+		this.quizMultiAnswers[questionId] = selected.includes(optionId)
+			? selected.filter(id => id !== optionId)
+			: [...selected, optionId];
+	}
+
+	isQuizOptionSelected(questionId: string, optionId: string): boolean {
+		return (this.quizMultiAnswers[questionId] ?? []).includes(optionId);
+	}
+
 	submitQuiz() {
 		if (!this.quiz || this.isQuizSubmitting) return;
-		const unanswered = this.quiz.questions.some(question => !this.quizAnswers[question.questionId]);
+		const unanswered = this.quiz.questions.some(question => {
+			if (question.questionType === 'OpenText') {
+				return !this.quizTextAnswers[question.questionId]?.trim();
+			}
+			if (question.questionType === 'MultipleChoice') {
+				return (this.quizMultiAnswers[question.questionId] ?? []).length === 0;
+			}
+			return !this.quizAnswers[question.questionId];
+		});
 		if (unanswered) {
 			this.toastService.show('Answer every question before submitting', 'error');
 			return;
@@ -302,7 +326,13 @@ export class CourseLearnComponent implements OnInit {
 			.submitQuiz(this.courseId, {
 				answers: this.quiz.questions.map(question => ({
 					questionId: question.questionId,
-					selectedOptionId: this.quizAnswers[question.questionId],
+					selectedOptionId: question.questionType === 'SingleChoice' ? this.quizAnswers[question.questionId] : null,
+					selectedOptionIds: question.questionType === 'MultipleChoice'
+						? this.quizMultiAnswers[question.questionId] ?? []
+						: [],
+					textAnswer: question.questionType === 'OpenText'
+						? this.quizTextAnswers[question.questionId]
+						: null,
 				})),
 			})
 			.pipe(takeUntilDestroyed(this.destroyRef))
@@ -316,8 +346,10 @@ export class CourseLearnComponent implements OnInit {
 						}
 					}
 					this.quizAnswers = {};
+					this.quizMultiAnswers = {};
+					this.quizTextAnswers = {};
 					this.isQuizSubmitting = false;
-					this.toastService.show(attempt.passed ? 'Quiz passed' : 'Quiz submitted');
+					this.toastService.show(attempt.requiresManualGrading ? 'Submitted for review' : attempt.passed ? 'Quiz passed' : 'Quiz submitted');
 					this.loadCompletionStatus();
 					this.cdr.markForCheck();
 				},

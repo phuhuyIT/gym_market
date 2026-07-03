@@ -13,4 +13,8 @@ public class SubmitQuizAnswerDto
     public string QuestionId { get; set; } = string.Empty;
 
     public string? SelectedOptionId { get; set; }
+
+    public List<string> SelectedOptionIds { get; set; } = [];
+
+    public string? TextAnswer { get; set; }
 }

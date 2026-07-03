@@ -423,6 +423,18 @@
     line-height: 1.5;
     font-weight: 600;
   }
+
+  &__text {
+    width: 100%;
+    min-height: 7rem;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm, 10px);
+    padding: 0.8rem;
+    resize: vertical;
+    font: inherit;
+    color: var(--text, #111827);
+    background: rgba(255, 255, 255, 0.88);
+  }
 }
 
 .quiz-options {

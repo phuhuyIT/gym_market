@@ -105,18 +105,25 @@ namespace GymMarket.API.Controllers
                     && p.IsCompleted
                     && lectureIds.Contains(p.LectureId));
 
-            var quiz = await _context.CourseQuizzes
+            var quizzes = await _context.CourseQuizzes
                 .AsNoTracking()
-                .FirstOrDefaultAsync(q => q.CourseId == courseId && q.IsPublished);
+                .Where(q => q.CourseId == courseId && q.IsPublished)
+                .ToListAsync();
 
-            var bestQuizAttempt = quiz == null
-                ? null
+            var quizIds = quizzes.Select(q => q.QuizId).ToList();
+            var attempts = quizIds.Count == 0
+                ? new List<QuizAttempt>()
                 : await _context.QuizAttempts
                     .AsNoTracking()
-                    .Where(a => a.QuizId == quiz.QuizId && a.StudentId == studentId)
+                    .Where(a => quizIds.Contains(a.QuizId) && a.StudentId == studentId)
                     .OrderByDescending(a => a.ScorePercent)
                     .ThenByDescending(a => a.SubmittedAt)
-                    .FirstOrDefaultAsync();
+                    .ToListAsync();
+
+            var bestQuizAttempt = attempts
+                .OrderByDescending(a => a.ScorePercent)
+                .ThenByDescending(a => a.SubmittedAt)
+                .FirstOrDefault();
 
             var certificate = await _context.CourseCertificates
                 .AsNoTracking()
@@ -125,8 +132,11 @@ namespace GymMarket.API.Controllers
                 .FirstOrDefaultAsync(c => c.CourseId == courseId && c.StudentId == studentId);
 
             var lecturesCompleted = lectureIds.Count > 0 && completedLectureCount == lectureIds.Count;
-            var quizRequired = quiz != null;
-            var quizPassed = !quizRequired || bestQuizAttempt?.Passed == true;
+            var quizRequired = quizzes.Count > 0;
+            var quizPassed = !quizRequired || quizzes.All(quiz =>
+                attempts.Any(attempt => attempt.QuizId == quiz.QuizId
+                    && attempt.Passed
+                    && attempt.Status != QuizAttemptStatus.PendingReview));
 
             return new CourseCompletionStatusDto
             {

@@ -12,6 +12,8 @@ public class QuizAttemptSummaryDto
 
     public string? StudentEmail { get; set; }
 
+    public int AttemptNumber { get; set; }
+
     public int Score { get; set; }
 
     public int TotalPoints { get; set; }
@@ -19,6 +21,12 @@ public class QuizAttemptSummaryDto
     public decimal ScorePercent { get; set; }
 
     public bool Passed { get; set; }
+
+    public string Status { get; set; } = string.Empty;
+
+    public bool RequiresManualGrading { get; set; }
+
+    public string? Feedback { get; set; }
 
     public DateTime SubmittedAt { get; set; }
 }

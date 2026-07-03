@@ -176,7 +176,7 @@
             <div class="quiz-panel__attempt" [class.quiz-panel__attempt--pass]="latestQuizAttempt.passed">
               Latest attempt: {{ latestQuizAttempt.score }} / {{ latestQuizAttempt.totalPoints }} points,
               {{ latestQuizAttempt.scorePercent }}%.
-              {{ latestQuizAttempt.passed ? 'Passed' : 'Try again when you are ready' }}
+              {{ latestQuizAttempt.requiresManualGrading ? 'Pending trainer review' : latestQuizAttempt.passed ? 'Passed' : 'Try again when you are ready' }}
             </div>
           }
 
@@ -188,19 +188,31 @@
                   <span>{{ question.points }} point{{ question.points === 1 ? '' : 's' }}</span>
                 </div>
                 <p class="quiz-question__prompt">{{ question.prompt }}</p>
-                <div class="quiz-options">
-                  @for (option of question.options; track option.optionId) {
-                    <label class="quiz-option" [class.quiz-option--selected]="quizAnswers[question.questionId] === option.optionId">
-                      <input
-                        type="radio"
-                        [name]="'quiz-' + question.questionId"
-                        [checked]="quizAnswers[question.questionId] === option.optionId"
-                        (change)="selectQuizAnswer(question.questionId, option.optionId)"
-                      />
-                      <span>{{ option.text }}</span>
-                    </label>
-                  }
-                </div>
+                @if (question.questionType === 'OpenText') {
+                  <textarea
+                    class="quiz-question__text"
+                    [(ngModel)]="quizTextAnswers[question.questionId]"
+                    rows="4"
+                    placeholder="Write your answer"
+                  ></textarea>
+                } @else {
+                  <div class="quiz-options">
+                    @for (option of question.options; track option.optionId) {
+                      <label
+                        class="quiz-option"
+                        [class.quiz-option--selected]="question.questionType === 'MultipleChoice' ? isQuizOptionSelected(question.questionId, option.optionId) : quizAnswers[question.questionId] === option.optionId"
+                      >
+                        <input
+                          [type]="question.questionType === 'MultipleChoice' ? 'checkbox' : 'radio'"
+                          [name]="'quiz-' + question.questionId"
+                          [checked]="question.questionType === 'MultipleChoice' ? isQuizOptionSelected(question.questionId, option.optionId) : quizAnswers[question.questionId] === option.optionId"
+                          (change)="question.questionType === 'MultipleChoice' ? toggleQuizOption(question.questionId, option.optionId) : selectQuizAnswer(question.questionId, option.optionId)"
+                        />
+                        <span>{{ option.text }}</span>
+                      </label>
+                    }
+                  </div>
+                }
               </div>
             }
           </div>

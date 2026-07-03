@@ -30,9 +30,70 @@ namespace GymMarket.API.Controllers
             if (!await _courseAccessService.CanManageCourseAsync(User, courseId))
                 return Forbid();
 
-            var quiz = await LoadQuiz(courseId);
+            var quiz = await LoadPrimaryQuiz(courseId);
             if (quiz == null)
                 return NotFound(new { Message = "QUIZ_NOT_FOUND" });
+
+            return Ok(ToTrainerDto(quiz));
+        }
+
+        [HttpGet("course/{courseId}/manage/all")]
+        [Authorize(Roles = "Trainer,Admin")]
+        public async Task<IActionResult> GetAllForManagement(string courseId)
+        {
+            if (!await _courseAccessService.CanManageCourseAsync(User, courseId))
+                return Forbid();
+
+            var quizzes = await _context.CourseQuizzes
+                .AsNoTracking()
+                .Include(q => q.Module)
+                .Include(q => q.Lecture)
+                .Include(q => q.Questions.OrderBy(question => question.Order))
+                    .ThenInclude(q => q.Options)
+                .Where(q => q.CourseId == courseId)
+                .OrderBy(q => q.ScopeType)
+                .ThenBy(q => q.CreatedAt)
+                .ToListAsync();
+
+            return Ok(quizzes.Select(ToTrainerDto));
+        }
+
+        [HttpGet("{quizId}/manage")]
+        [Authorize(Roles = "Trainer,Admin")]
+        public async Task<IActionResult> GetAssessmentForManagement(string quizId)
+        {
+            var quiz = await LoadQuizById(quizId);
+            if (quiz == null)
+                return NotFound(new { Message = "QUIZ_NOT_FOUND" });
+
+            if (!await _courseAccessService.CanManageCourseAsync(User, quiz.CourseId))
+                return Forbid();
+
+            return Ok(ToTrainerDto(quiz));
+        }
+
+        [HttpPost("course/{courseId}")]
+        [Authorize(Roles = "Trainer,Admin")]
+        public async Task<IActionResult> Create(string courseId, UpsertCourseQuizDto dto)
+        {
+            if (!await _courseAccessService.CanManageCourseAsync(User, courseId))
+                return Forbid();
+
+            var validationError = await ValidateQuiz(courseId, null, dto);
+            if (validationError != null)
+                return BadRequest(new { Message = validationError });
+
+            var now = DateTime.UtcNow;
+            var quiz = new CourseQuiz
+            {
+                QuizId = Guid.NewGuid().ToString(),
+                CourseId = courseId,
+                CreatedAt = now
+            };
+
+            ApplyQuiz(quiz, dto, now);
+            _context.CourseQuizzes.Add(quiz);
+            await _context.SaveChangesAsync();
 
             return Ok(ToTrainerDto(quiz));
         }
@@ -44,14 +105,173 @@ namespace GymMarket.API.Controllers
             if (!await _courseAccessService.CanManageCourseAsync(User, courseId))
                 return Forbid();
 
-            var validationError = ValidateQuiz(dto);
-            if (validationError != null)
-                return BadRequest(new { Message = validationError });
-
             var quiz = await _context.CourseQuizzes
                 .Include(q => q.Questions).ThenInclude(q => q.Options)
                 .Include(q => q.Attempts)
-                .FirstOrDefaultAsync(q => q.CourseId == courseId);
+                .OrderBy(q => q.CreatedAt)
+                .FirstOrDefaultAsync(q => q.CourseId == courseId && q.ScopeType == AssessmentScopeType.Course);
+
+            return await SaveQuiz(courseId, quiz, dto);
+        }
+
+        [HttpPut("{quizId}")]
+        [Authorize(Roles = "Trainer,Admin")]
+        public async Task<IActionResult> Update(string quizId, UpsertCourseQuizDto dto)
+        {
+            var quiz = await _context.CourseQuizzes
+                .Include(q => q.Questions).ThenInclude(q => q.Options)
+                .Include(q => q.Attempts)
+                .FirstOrDefaultAsync(q => q.QuizId == quizId);
+
+            if (quiz == null)
+                return NotFound(new { Message = "QUIZ_NOT_FOUND" });
+
+            if (!await _courseAccessService.CanManageCourseAsync(User, quiz.CourseId))
+                return Forbid();
+
+            return await SaveQuiz(quiz.CourseId, quiz, dto);
+        }
+
+        [HttpGet("course/{courseId}")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GetForStudent(string courseId)
+        {
+            var studentId = CurrentStudentId();
+            if (string.IsNullOrEmpty(studentId))
+                return StatusCode(StatusCodes.Status403Forbidden, new { Message = "NOT_A_STUDENT" });
+
+            if (!await _courseAccessService.CanAccessCourseAsync(User, courseId))
+                return Forbid();
+
+            var quiz = await LoadPrimaryQuiz(courseId);
+            if (quiz == null || !quiz.IsPublished)
+                return NotFound(new { Message = "QUIZ_NOT_FOUND" });
+
+            var accessError = await ValidateStudentAssessmentAccess(quiz, studentId);
+            if (accessError != null)
+                return Conflict(new { Message = accessError });
+
+            return Ok(await ToStudentDto(quiz, studentId));
+        }
+
+        [HttpGet("course/{courseId}/all")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GetAllForStudent(string courseId)
+        {
+            var studentId = CurrentStudentId();
+            if (string.IsNullOrEmpty(studentId))
+                return StatusCode(StatusCodes.Status403Forbidden, new { Message = "NOT_A_STUDENT" });
+
+            if (!await _courseAccessService.CanAccessCourseAsync(User, courseId))
+                return Forbid();
+
+            var quizzes = await _context.CourseQuizzes
+                .AsNoTracking()
+                .Include(q => q.Module)
+                .Include(q => q.Lecture)
+                .Include(q => q.Questions.OrderBy(question => question.Order))
+                    .ThenInclude(q => q.Options)
+                .Where(q => q.CourseId == courseId && q.IsPublished)
+                .OrderBy(q => q.ScopeType)
+                .ThenBy(q => q.CreatedAt)
+                .ToListAsync();
+
+            var available = new List<CourseQuizDto>();
+            foreach (var quiz in quizzes)
+            {
+                if (await ValidateStudentAssessmentAccess(quiz, studentId) == null)
+                    available.Add(await ToStudentDto(quiz, studentId));
+            }
+
+            return Ok(available);
+        }
+
+        [HttpPost("course/{courseId}/submit")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> SubmitForCourse(string courseId, SubmitQuizAttemptDto dto)
+        {
+            var quiz = await LoadPrimaryQuiz(courseId);
+            if (quiz == null)
+                return NotFound(new { Message = "QUIZ_NOT_FOUND" });
+
+            return await SubmitAssessment(quiz, dto);
+        }
+
+        [HttpPost("{quizId}/submit")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> Submit(string quizId, SubmitQuizAttemptDto dto)
+        {
+            var quiz = await LoadQuizById(quizId);
+            if (quiz == null)
+                return NotFound(new { Message = "QUIZ_NOT_FOUND" });
+
+            return await SubmitAssessment(quiz, dto);
+        }
+
+        [HttpGet("course/{courseId}/gradebook")]
+        [Authorize(Roles = "Trainer,Admin")]
+        public async Task<IActionResult> GetGradebook(string courseId)
+        {
+            if (!await _courseAccessService.CanManageCourseAsync(User, courseId))
+                return Forbid();
+
+            var quiz = await _context.CourseQuizzes
+                .AsNoTracking()
+                .OrderBy(q => q.CreatedAt)
+                .FirstOrDefaultAsync(q => q.CourseId == courseId && q.ScopeType == AssessmentScopeType.Course);
+            if (quiz == null)
+                return NotFound(new { Message = "QUIZ_NOT_FOUND" });
+
+            return Ok(await LoadGradebook(quiz.QuizId));
+        }
+
+        [HttpGet("{quizId}/gradebook")]
+        [Authorize(Roles = "Trainer,Admin")]
+        public async Task<IActionResult> GetAssessmentGradebook(string quizId)
+        {
+            var quiz = await _context.CourseQuizzes.AsNoTracking().FirstOrDefaultAsync(q => q.QuizId == quizId);
+            if (quiz == null)
+                return NotFound(new { Message = "QUIZ_NOT_FOUND" });
+
+            if (!await _courseAccessService.CanManageCourseAsync(User, quiz.CourseId))
+                return Forbid();
+
+            return Ok(await LoadGradebook(quizId));
+        }
+
+        [HttpPut("attempts/{attemptId}/grade")]
+        [Authorize(Roles = "Trainer,Admin")]
+        public async Task<IActionResult> GradeAttempt(string attemptId, GradeQuizAttemptDto dto)
+        {
+            var attempt = await _context.QuizAttempts
+                .Include(a => a.Quiz)
+                .Include(a => a.Student)
+                .FirstOrDefaultAsync(a => a.AttemptId == attemptId);
+            if (attempt?.Quiz == null)
+                return NotFound(new { Message = "QUIZ_ATTEMPT_NOT_FOUND" });
+
+            if (!await _courseAccessService.CanManageCourseAsync(User, attempt.Quiz.CourseId))
+                return Forbid();
+
+            attempt.Score = Math.Clamp(dto.Score, 0, attempt.TotalPoints);
+            attempt.ScorePercent = attempt.TotalPoints == 0
+                ? 0
+                : Math.Round((decimal)attempt.Score / attempt.TotalPoints * 100, 2);
+            attempt.Passed = attempt.ScorePercent >= attempt.Quiz.PassingScorePercent;
+            attempt.Status = QuizAttemptStatus.Graded;
+            attempt.RequiresManualGrading = false;
+            attempt.GradedAt = DateTime.UtcNow;
+            attempt.Feedback = string.IsNullOrWhiteSpace(dto.Feedback) ? null : dto.Feedback.Trim();
+
+            await _context.SaveChangesAsync();
+            return Ok(ToAttemptDto(attempt));
+        }
+
+        private async Task<IActionResult> SaveQuiz(string courseId, CourseQuiz? quiz, UpsertCourseQuizDto dto)
+        {
+            var validationError = await ValidateQuiz(courseId, quiz?.QuizId, dto);
+            if (validationError != null)
+                return BadRequest(new { Message = validationError });
 
             var now = DateTime.UtcNow;
             if (quiz == null)
@@ -74,100 +294,234 @@ namespace GymMarket.API.Controllers
                 _context.QuizQuestions.RemoveRange(quiz.Questions);
             }
 
+            ApplyQuiz(quiz, dto, now);
+            await _context.SaveChangesAsync();
+
+            return Ok(ToTrainerDto(quiz));
+        }
+
+        private void ApplyQuiz(CourseQuiz quiz, UpsertCourseQuizDto dto, DateTime now)
+        {
+            var scopeType = AssessmentScopeType.Normalize(dto.ScopeType);
+
             quiz.Title = dto.Title.Trim();
+            quiz.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
+            quiz.ScopeType = scopeType;
+            quiz.ModuleId = scopeType == AssessmentScopeType.Module ? dto.ModuleId : null;
+            quiz.LectureId = scopeType == AssessmentScopeType.Lesson ? dto.LectureId : null;
             quiz.PassingScorePercent = dto.PassingScorePercent;
+            quiz.TimeLimitMinutes = dto.TimeLimitMinutes;
+            quiz.MaxAttempts = dto.MaxAttempts;
+            quiz.ShuffleQuestions = dto.ShuffleQuestions;
+            quiz.ShowCorrectAnswers = dto.ShowCorrectAnswers;
+            quiz.AvailableFrom = dto.AvailableFrom;
+            quiz.AvailableUntil = dto.AvailableUntil;
             quiz.IsPublished = dto.IsPublished;
             quiz.UpdatedAt = now;
             quiz.Questions = dto.Questions
                 .OrderBy(q => q.Order)
-                .Select(question => new QuizQuestion
+                .Select(question =>
                 {
-                    QuestionId = Guid.NewGuid().ToString(),
-                    QuizId = quiz.QuizId,
-                    Prompt = question.Prompt.Trim(),
-                    Order = question.Order,
-                    Points = question.Points,
-                    Options = question.Options.Select(option => new QuizOption
+                    var questionType = QuizQuestionType.Normalize(question.QuestionType);
+                    return new QuizQuestion
                     {
-                        OptionId = Guid.NewGuid().ToString(),
-                        Text = option.Text.Trim(),
-                        IsCorrect = option.IsCorrect
-                    }).ToList()
+                        QuestionId = Guid.NewGuid().ToString(),
+                        QuizId = quiz.QuizId,
+                        Prompt = question.Prompt.Trim(),
+                        QuestionType = questionType,
+                        Order = question.Order,
+                        Points = question.Points,
+                        Explanation = string.IsNullOrWhiteSpace(question.Explanation) ? null : question.Explanation.Trim(),
+                        RequiresManualGrading = questionType == QuizQuestionType.OpenText,
+                        Options = questionType == QuizQuestionType.OpenText
+                            ? []
+                            : question.Options.Select(option => new QuizOption
+                            {
+                                OptionId = Guid.NewGuid().ToString(),
+                                Text = option.Text.Trim(),
+                                IsCorrect = option.IsCorrect
+                            }).ToList()
+                    };
                 })
                 .ToList();
-
-            await _context.SaveChangesAsync();
-            return Ok(ToTrainerDto(quiz));
         }
 
-        [HttpGet("course/{courseId}")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetForStudent(string courseId)
+        private async Task<CourseQuiz?> LoadPrimaryQuiz(string courseId)
         {
-            var studentId = CurrentStudentId();
-            if (string.IsNullOrEmpty(studentId))
-                return StatusCode(StatusCodes.Status403Forbidden, new { Message = "NOT_A_STUDENT" });
+            return await _context.CourseQuizzes
+                .Include(q => q.Module)
+                .Include(q => q.Lecture)
+                .Include(q => q.Questions.OrderBy(question => question.Order))
+                    .ThenInclude(q => q.Options)
+                .OrderBy(q => q.CreatedAt)
+                .FirstOrDefaultAsync(q => q.CourseId == courseId && q.ScopeType == AssessmentScopeType.Course);
+        }
 
-            if (!await _courseAccessService.CanAccessCourseAsync(User, courseId))
-                return Forbid();
+        private async Task<CourseQuiz?> LoadQuizById(string quizId)
+        {
+            return await _context.CourseQuizzes
+                .Include(q => q.Module)
+                .Include(q => q.Lecture)
+                .Include(q => q.Questions.OrderBy(question => question.Order))
+                    .ThenInclude(q => q.Options)
+                .FirstOrDefaultAsync(q => q.QuizId == quizId);
+        }
 
-            var quiz = await LoadQuiz(courseId);
-            if (quiz == null || !quiz.IsPublished)
-                return NotFound(new { Message = "QUIZ_NOT_FOUND" });
-
+        private async Task<List<QuizAttemptSummaryDto>> LoadGradebook(string quizId)
+        {
             var attempts = await _context.QuizAttempts
                 .AsNoTracking()
-                .Where(a => a.QuizId == quiz.QuizId && a.StudentId == studentId)
+                .Include(a => a.Student)
+                .Where(a => a.QuizId == quizId)
                 .OrderByDescending(a => a.SubmittedAt)
                 .ToListAsync();
 
-            return Ok(ToStudentDto(quiz, attempts.FirstOrDefault(), attempts.OrderByDescending(a => a.ScorePercent).FirstOrDefault()));
+            return attempts.Select(ToAttemptDto).ToList();
         }
 
-        [HttpPost("course/{courseId}/submit")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> Submit(string courseId, SubmitQuizAttemptDto dto)
+        private async Task<string?> ValidateQuiz(string courseId, string? quizId, UpsertCourseQuizDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Title))
+                return "QUIZ_TITLE_REQUIRED";
+
+            var scopeType = AssessmentScopeType.Normalize(dto.ScopeType);
+            if (scopeType == AssessmentScopeType.Module)
+            {
+                if (string.IsNullOrWhiteSpace(dto.ModuleId))
+                    return "MODULE_ASSESSMENT_REQUIRES_MODULE";
+
+                var moduleExists = await _context.CourseModules.AnyAsync(m => m.ModuleId == dto.ModuleId && m.CourseId == courseId);
+                if (!moduleExists)
+                    return "MODULE_NOT_IN_COURSE";
+            }
+
+            if (scopeType == AssessmentScopeType.Lesson)
+            {
+                if (string.IsNullOrWhiteSpace(dto.LectureId))
+                    return "LESSON_ASSESSMENT_REQUIRES_LESSON";
+
+                var lectureExists = await _context.Lectures.AnyAsync(l => l.LectureId == dto.LectureId && l.CourseId == courseId);
+                if (!lectureExists)
+                    return "LESSON_NOT_IN_COURSE";
+            }
+
+            if (dto.AvailableFrom.HasValue && dto.AvailableUntil.HasValue && dto.AvailableUntil <= dto.AvailableFrom)
+                return "ASSESSMENT_AVAILABLE_UNTIL_MUST_BE_AFTER_FROM";
+
+            if (dto.IsPublished && dto.Questions.Count == 0)
+                return "PUBLISHED_ASSESSMENT_REQUIRES_QUESTIONS";
+
+            foreach (var question in dto.Questions)
+            {
+                var questionType = QuizQuestionType.Normalize(question.QuestionType);
+                if (string.IsNullOrWhiteSpace(question.Prompt))
+                    return "QUESTION_PROMPT_REQUIRED";
+
+                if (questionType == QuizQuestionType.OpenText)
+                    continue;
+
+                if (question.Options.Count < 2)
+                    return "QUESTION_REQUIRES_TWO_OPTIONS";
+                if (questionType == QuizQuestionType.SingleChoice && question.Options.Count(o => o.IsCorrect) != 1)
+                    return "QUESTION_REQUIRES_ONE_CORRECT_OPTION";
+                if (questionType == QuizQuestionType.MultipleChoice && question.Options.Count(o => o.IsCorrect) == 0)
+                    return "QUESTION_REQUIRES_CORRECT_OPTION";
+                if (question.Options.Any(o => string.IsNullOrWhiteSpace(o.Text)))
+                    return "OPTION_TEXT_REQUIRED";
+            }
+
+            return null;
+        }
+
+        private async Task<string?> ValidateStudentAssessmentAccess(CourseQuiz quiz, string studentId)
+        {
+            var now = DateTime.UtcNow;
+            if (!quiz.IsPublished)
+                return "QUIZ_NOT_PUBLISHED";
+            if (quiz.AvailableFrom.HasValue && quiz.AvailableFrom.Value > now)
+                return "ASSESSMENT_NOT_AVAILABLE_YET";
+            if (quiz.AvailableUntil.HasValue && quiz.AvailableUntil.Value < now)
+                return "ASSESSMENT_CLOSED";
+
+            if (quiz.ScopeType == AssessmentScopeType.Lesson && !string.IsNullOrEmpty(quiz.LectureId))
+            {
+                var unlockState = await _courseAccessService.GetLectureUnlockStateAsync(User, quiz.LectureId);
+                if (unlockState.IsLocked)
+                    return unlockState.Reason ?? "LESSON_LOCKED";
+            }
+
+            var attemptCount = await _context.QuizAttempts.CountAsync(a => a.QuizId == quiz.QuizId && a.StudentId == studentId);
+            if (quiz.MaxAttempts.HasValue && attemptCount >= quiz.MaxAttempts.Value)
+                return "MAX_ATTEMPTS_REACHED";
+
+            return null;
+        }
+
+        private async Task<IActionResult> SubmitAssessment(CourseQuiz quiz, SubmitQuizAttemptDto dto)
         {
             var studentId = CurrentStudentId();
             if (string.IsNullOrEmpty(studentId))
                 return StatusCode(StatusCodes.Status403Forbidden, new { Message = "NOT_A_STUDENT" });
 
-            if (!await _courseAccessService.CanAccessCourseAsync(User, courseId))
+            if (!await _courseAccessService.CanAccessCourseAsync(User, quiz.CourseId))
                 return Forbid();
 
-            var quiz = await LoadQuiz(courseId);
-            if (quiz == null || !quiz.IsPublished)
-                return NotFound(new { Message = "QUIZ_NOT_FOUND" });
+            var accessError = await ValidateStudentAssessmentAccess(quiz, studentId);
+            if (accessError != null)
+                return Conflict(new { Message = accessError });
 
             var answersByQuestion = dto.Answers
                 .GroupBy(a => a.QuestionId)
-                .ToDictionary(g => g.Key, g => g.Last().SelectedOptionId);
+                .ToDictionary(g => g.Key, g => g.Last());
 
+            var attemptCount = await _context.QuizAttempts.CountAsync(a => a.QuizId == quiz.QuizId && a.StudentId == studentId);
             var totalPoints = quiz.Questions.Sum(q => q.Points);
             var score = 0;
+            var requiresManualGrading = quiz.Questions.Any(q => q.RequiresManualGrading);
             var attempt = new QuizAttempt
             {
                 AttemptId = Guid.NewGuid().ToString(),
                 QuizId = quiz.QuizId,
                 StudentId = studentId,
+                AttemptNumber = attemptCount + 1,
                 TotalPoints = totalPoints,
-                SubmittedAt = DateTime.UtcNow
+                SubmittedAt = DateTime.UtcNow,
+                Status = requiresManualGrading ? QuizAttemptStatus.PendingReview : QuizAttemptStatus.Graded,
+                RequiresManualGrading = requiresManualGrading
             };
 
             foreach (var question in quiz.Questions)
             {
-                answersByQuestion.TryGetValue(question.QuestionId, out var selectedOptionId);
-                var selected = question.Options.FirstOrDefault(o => o.OptionId == selectedOptionId);
-                var isCorrect = selected?.IsCorrect == true;
-                var points = isCorrect ? question.Points : 0;
-                score += points;
+                answersByQuestion.TryGetValue(question.QuestionId, out var answer);
+                var questionType = QuizQuestionType.Normalize(question.QuestionType);
+                var selectedOptionIds = NormalizeSelectedOptionIds(answer);
+                var selectedOptionId = selectedOptionIds.FirstOrDefault();
+                var isCorrect = false;
+                var points = 0;
 
+                if (questionType == QuizQuestionType.SingleChoice)
+                {
+                    var selected = question.Options.FirstOrDefault(o => o.OptionId == selectedOptionId);
+                    isCorrect = selected?.IsCorrect == true;
+                    points = isCorrect ? question.Points : 0;
+                }
+                else if (questionType == QuizQuestionType.MultipleChoice)
+                {
+                    var correctIds = question.Options.Where(o => o.IsCorrect).Select(o => o.OptionId).Order().ToList();
+                    var submittedIds = selectedOptionIds.Order().ToList();
+                    isCorrect = correctIds.SequenceEqual(submittedIds);
+                    points = isCorrect ? question.Points : 0;
+                }
+
+                score += points;
                 attempt.Answers.Add(new QuizAttemptAnswer
                 {
                     AttemptAnswerId = Guid.NewGuid().ToString(),
                     AttemptId = attempt.AttemptId,
                     QuestionId = question.QuestionId,
-                    SelectedOptionId = selected?.OptionId,
+                    SelectedOptionId = questionType == QuizQuestionType.SingleChoice ? selectedOptionId : null,
+                    SelectedOptionIds = selectedOptionIds.Count == 0 ? null : string.Join(",", selectedOptionIds),
+                    TextAnswer = string.IsNullOrWhiteSpace(answer?.TextAnswer) ? null : answer.TextAnswer.Trim(),
                     IsCorrect = isCorrect,
                     PointsAwarded = points
                 });
@@ -175,7 +529,7 @@ namespace GymMarket.API.Controllers
 
             attempt.Score = score;
             attempt.ScorePercent = totalPoints == 0 ? 0 : Math.Round((decimal)score / totalPoints * 100, 2);
-            attempt.Passed = attempt.ScorePercent >= quiz.PassingScorePercent;
+            attempt.Passed = !requiresManualGrading && attempt.ScorePercent >= quiz.PassingScorePercent;
 
             _context.QuizAttempts.Add(attempt);
             await _context.SaveChangesAsync();
@@ -183,58 +537,16 @@ namespace GymMarket.API.Controllers
             return Ok(ToAttemptDto(attempt));
         }
 
-        [HttpGet("course/{courseId}/gradebook")]
-        [Authorize(Roles = "Trainer,Admin")]
-        public async Task<IActionResult> GetGradebook(string courseId)
+        private static List<string> NormalizeSelectedOptionIds(SubmitQuizAnswerDto? answer)
         {
-            if (!await _courseAccessService.CanManageCourseAsync(User, courseId))
-                return Forbid();
+            var ids = new List<string>();
+            if (!string.IsNullOrWhiteSpace(answer?.SelectedOptionId))
+                ids.Add(answer.SelectedOptionId);
 
-            var quiz = await _context.CourseQuizzes
-                .AsNoTracking()
-                .FirstOrDefaultAsync(q => q.CourseId == courseId);
-            if (quiz == null)
-                return NotFound(new { Message = "QUIZ_NOT_FOUND" });
+            if (answer?.SelectedOptionIds != null)
+                ids.AddRange(answer.SelectedOptionIds.Where(id => !string.IsNullOrWhiteSpace(id)));
 
-            var attempts = await _context.QuizAttempts
-                .AsNoTracking()
-                .Include(a => a.Student)
-                .Where(a => a.QuizId == quiz.QuizId)
-                .OrderByDescending(a => a.SubmittedAt)
-                .ToListAsync();
-
-            return Ok(attempts.Select(ToAttemptDto));
-        }
-
-        private async Task<CourseQuiz?> LoadQuiz(string courseId)
-        {
-            return await _context.CourseQuizzes
-                .Include(q => q.Questions.OrderBy(question => question.Order))
-                    .ThenInclude(q => q.Options)
-                .FirstOrDefaultAsync(q => q.CourseId == courseId);
-        }
-
-        private static string? ValidateQuiz(UpsertCourseQuizDto dto)
-        {
-            if (string.IsNullOrWhiteSpace(dto.Title))
-                return "QUIZ_TITLE_REQUIRED";
-
-            if (dto.IsPublished && dto.Questions.Count == 0)
-                return "PUBLISHED_QUIZ_REQUIRES_QUESTIONS";
-
-            foreach (var question in dto.Questions)
-            {
-                if (string.IsNullOrWhiteSpace(question.Prompt))
-                    return "QUESTION_PROMPT_REQUIRED";
-                if (question.Options.Count < 2)
-                    return "QUESTION_REQUIRES_TWO_OPTIONS";
-                if (question.Options.Count(o => o.IsCorrect) != 1)
-                    return "QUESTION_REQUIRES_ONE_CORRECT_OPTION";
-                if (question.Options.Any(o => string.IsNullOrWhiteSpace(o.Text)))
-                    return "OPTION_TEXT_REQUIRED";
-            }
-
-            return null;
+            return ids.Distinct().ToList();
         }
 
         private static TrainerCourseQuizDto ToTrainerDto(CourseQuiz quiz)
@@ -244,7 +556,19 @@ namespace GymMarket.API.Controllers
                 QuizId = quiz.QuizId,
                 CourseId = quiz.CourseId,
                 Title = quiz.Title,
+                Description = quiz.Description,
+                ScopeType = quiz.ScopeType,
+                ModuleId = quiz.ModuleId,
+                ModuleTitle = quiz.Module?.Title,
+                LectureId = quiz.LectureId,
+                LectureTitle = quiz.Lecture?.Title,
                 PassingScorePercent = quiz.PassingScorePercent,
+                TimeLimitMinutes = quiz.TimeLimitMinutes,
+                MaxAttempts = quiz.MaxAttempts,
+                ShuffleQuestions = quiz.ShuffleQuestions,
+                ShowCorrectAnswers = quiz.ShowCorrectAnswers,
+                AvailableFrom = quiz.AvailableFrom,
+                AvailableUntil = quiz.AvailableUntil,
                 IsPublished = quiz.IsPublished,
                 Questions = quiz.Questions
                     .OrderBy(q => q.Order)
@@ -252,8 +576,11 @@ namespace GymMarket.API.Controllers
                     {
                         QuestionId = q.QuestionId,
                         Prompt = q.Prompt,
+                        QuestionType = q.QuestionType,
                         Order = q.Order,
                         Points = q.Points,
+                        Explanation = q.Explanation,
+                        RequiresManualGrading = q.RequiresManualGrading,
                         Options = q.Options.Select(o => new TrainerQuizOptionDto
                         {
                             OptionId = o.OptionId,
@@ -264,25 +591,52 @@ namespace GymMarket.API.Controllers
             };
         }
 
-        private static CourseQuizDto ToStudentDto(CourseQuiz quiz, QuizAttempt? latestAttempt, QuizAttempt? bestAttempt)
+        private async Task<CourseQuizDto> ToStudentDto(CourseQuiz quiz, string studentId)
         {
+            var attempts = await _context.QuizAttempts
+                .AsNoTracking()
+                .Where(a => a.QuizId == quiz.QuizId && a.StudentId == studentId)
+                .OrderByDescending(a => a.SubmittedAt)
+                .ToListAsync();
+
+            var questions = quiz.ShuffleQuestions
+                ? quiz.Questions.OrderBy(_ => Guid.NewGuid()).ToList()
+                : quiz.Questions.OrderBy(q => q.Order).ToList();
+
             return new CourseQuizDto
             {
                 QuizId = quiz.QuizId,
                 CourseId = quiz.CourseId,
                 Title = quiz.Title,
+                Description = quiz.Description,
+                ScopeType = quiz.ScopeType,
+                ModuleId = quiz.ModuleId,
+                ModuleTitle = quiz.Module?.Title,
+                LectureId = quiz.LectureId,
+                LectureTitle = quiz.Lecture?.Title,
                 PassingScorePercent = quiz.PassingScorePercent,
+                TimeLimitMinutes = quiz.TimeLimitMinutes,
+                MaxAttempts = quiz.MaxAttempts,
+                AttemptsUsed = attempts.Count,
+                AttemptsRemaining = quiz.MaxAttempts.HasValue ? Math.Max(quiz.MaxAttempts.Value - attempts.Count, 0) : null,
+                ShuffleQuestions = quiz.ShuffleQuestions,
+                ShowCorrectAnswers = quiz.ShowCorrectAnswers,
+                AvailableFrom = quiz.AvailableFrom,
+                AvailableUntil = quiz.AvailableUntil,
                 IsPublished = quiz.IsPublished,
-                LatestAttempt = latestAttempt == null ? null : ToAttemptDto(latestAttempt),
-                BestAttempt = bestAttempt == null ? null : ToAttemptDto(bestAttempt),
-                Questions = quiz.Questions
-                    .OrderBy(q => q.Order)
+                LatestAttempt = attempts.FirstOrDefault() == null ? null : ToAttemptDto(attempts.First()),
+                BestAttempt = attempts.OrderByDescending(a => a.ScorePercent).FirstOrDefault() == null
+                    ? null
+                    : ToAttemptDto(attempts.OrderByDescending(a => a.ScorePercent).First()),
+                Questions = questions
                     .Select(q => new QuizQuestionDto
                     {
                         QuestionId = q.QuestionId,
                         Prompt = q.Prompt,
+                        QuestionType = q.QuestionType,
                         Order = q.Order,
                         Points = q.Points,
+                        Explanation = quiz.ShowCorrectAnswers ? q.Explanation : null,
                         Options = q.Options.Select(o => new QuizOptionDto
                         {
                             OptionId = o.OptionId,
@@ -301,10 +655,14 @@ namespace GymMarket.API.Controllers
                 StudentId = attempt.StudentId,
                 StudentName = attempt.Student?.Name,
                 StudentEmail = attempt.Student?.Email,
+                AttemptNumber = attempt.AttemptNumber,
                 Score = attempt.Score,
                 TotalPoints = attempt.TotalPoints,
                 ScorePercent = attempt.ScorePercent,
                 Passed = attempt.Passed,
+                Status = attempt.Status,
+                RequiresManualGrading = attempt.RequiresManualGrading,
+                Feedback = attempt.Feedback,
                 SubmittedAt = attempt.SubmittedAt
             };
         }

@@ -1,3 +1,5 @@
+using GymMarket.API;
+
 namespace GymMarket.API.Models;
 
 public partial class QuizQuestion
@@ -8,9 +10,15 @@ public partial class QuizQuestion
 
     public string Prompt { get; set; } = string.Empty;
 
+    public string QuestionType { get; set; } = QuizQuestionType.SingleChoice;
+
     public int Order { get; set; }
 
     public int Points { get; set; } = 1;
+
+    public string? Explanation { get; set; }
+
+    public bool RequiresManualGrading { get; set; }
 
     public virtual CourseQuiz? Quiz { get; set; }
 

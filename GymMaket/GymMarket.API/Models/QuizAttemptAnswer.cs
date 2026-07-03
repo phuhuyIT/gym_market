@@ -10,9 +10,15 @@ public partial class QuizAttemptAnswer
 
     public string? SelectedOptionId { get; set; }
 
+    public string? SelectedOptionIds { get; set; }
+
+    public string? TextAnswer { get; set; }
+
     public bool IsCorrect { get; set; }
 
     public int PointsAwarded { get; set; }
+
+    public string? Feedback { get; set; }
 
     public virtual QuizAttempt? Attempt { get; set; }
 
