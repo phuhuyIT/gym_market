@@ -1,0 +1,135 @@
+<div class="assignments-shell">
+	<header class="assignments-header">
+		<div>
+			<a routerLink="../courses" class="back-link">Course list</a>
+			<h1>Assignments</h1>
+			<p>Create scored work, review submissions, and send grades to the course gradebook.</p>
+		</div>
+		<div class="header-actions">
+			<a [routerLink]="['../gradebook', courseId]">Gradebook</a>
+			<button type="button" (click)="newAssignment()">New assignment</button>
+		</div>
+	</header>
+
+	<section class="assignment-grid">
+		<aside class="assignment-list">
+			<div class="panel-title">
+				<h2>Course work</h2>
+				<span>{{ assignments.length }}</span>
+			</div>
+			@for (assignment of assignments; track assignment.assignmentId) {
+				<button type="button" class="assignment-row" [class.active]="selectedAssignment?.assignmentId === assignment.assignmentId" (click)="editAssignment(assignment)">
+					<span>
+						<strong>{{ assignment.title }}</strong>
+						<small>{{ assignment.pointsPossible }} pts · {{ assignment.submissionCount }} submitted</small>
+					</span>
+					<i [ngClass]="statusClass(assignment.status)">{{ assignment.status }}</i>
+				</button>
+			}
+			@if (assignments.length === 0) {
+				<p class="empty-note">{{ isLoading ? 'Loading assignments...' : 'No assignments yet.' }}</p>
+			}
+		</aside>
+
+		<section class="editor-panel">
+			<div class="panel-title">
+				<h2>{{ selectedAssignment ? 'Edit assignment' : 'Create assignment' }}</h2>
+				@if (selectedAssignment) {
+					<button type="button" class="danger" (click)="deleteAssignment(selectedAssignment)">Delete</button>
+				}
+			</div>
+
+			<div class="form-grid">
+				<label>
+					<span>Title</span>
+					<input [(ngModel)]="draft.title" />
+				</label>
+				<label>
+					<span>Points</span>
+					<input [(ngModel)]="draft.pointsPossible" type="number" min="1" />
+				</label>
+				<label>
+					<span>Grade category</span>
+					<select [(ngModel)]="draft.gradeCategoryId">
+						<option [ngValue]="null">Default category</option>
+						@for (category of categories; track category.categoryId) {
+							<option [ngValue]="category.categoryId">{{ category.name }} · {{ category.weightPercent }}%</option>
+						}
+					</select>
+				</label>
+				<label>
+					<span>Due date</span>
+					<input [(ngModel)]="draft.dueAt" type="datetime-local" />
+				</label>
+				<label>
+					<span>Submission type</span>
+					<select [(ngModel)]="draft.submissionType">
+						<option value="Text">Text</option>
+						<option value="Url">URL</option>
+						<option value="File">File link</option>
+					</select>
+				</label>
+				<label>
+					<span>Status</span>
+					<select [(ngModel)]="draft.status">
+						<option value="Draft">Draft</option>
+						<option value="Published">Published</option>
+						<option value="Closed">Closed</option>
+					</select>
+				</label>
+				<label class="full">
+					<span>Instructions</span>
+					<textarea [(ngModel)]="draft.instructions" rows="5"></textarea>
+				</label>
+			</div>
+
+			<div class="editor-actions">
+				<button type="button" class="primary" (click)="saveAssignment()" [disabled]="isSaving">
+					{{ isSaving ? 'Saving...' : 'Save assignment' }}
+				</button>
+			</div>
+		</section>
+	</section>
+
+	@if (selectedAssignment) {
+		<section class="submission-panel">
+			<div class="panel-title">
+				<div>
+					<h2>Submission queue</h2>
+					<p>{{ selectedAssignment.title }} · {{ selectedAssignment.gradedCount }} / {{ selectedAssignment.submissionCount }} graded</p>
+				</div>
+				<button type="button" (click)="loadSubmissions(selectedAssignment)">Refresh</button>
+			</div>
+
+			<div class="submission-table">
+				<div class="submission-row submission-head">
+					<span>Learner</span>
+					<span>Submitted work</span>
+					<span>Score</span>
+					<span>Feedback</span>
+					<span></span>
+				</div>
+				@for (submission of submissions; track submission.submissionId) {
+					<div class="submission-row">
+						<span>
+							<strong>{{ submission.studentName || submission.studentId }}</strong>
+							<small>{{ submission.studentEmail }}</small>
+						</span>
+						<span>
+							@if (submission.attachmentUrl) {
+								<a [href]="submission.attachmentUrl" target="_blank" rel="noopener noreferrer">Open attachment</a>
+							}
+							<small>{{ submission.textResponse || 'No text response' }}</small>
+						</span>
+						<input [(ngModel)]="gradeScores[submission.submissionId]" type="number" min="0" [max]="selectedAssignment.pointsPossible" />
+						<textarea [(ngModel)]="gradeFeedbacks[submission.submissionId]" rows="2"></textarea>
+						<button type="button" class="primary" (click)="gradeSubmission(submission)">Grade</button>
+					</div>
+				}
+				@if (submissions.length === 0) {
+					<p class="empty-note">{{ isSubmissionsLoading ? 'Loading submissions...' : 'No submissions yet.' }}</p>
+				}
+			</div>
+		</section>
+	}
+</div>

@@ -7,6 +7,8 @@ import { ManageNutritionComponent } from '../page-agency/manage-nutrition/manage
 import { AddCourseComponent } from '../page-agency/add-course/add-course.component';
 import { UpdateCourseComponent } from '../page-agency/update-course/update-course.component';
 import { CourseMaterialComponent } from '../page-agency/course-material/course-material.component';
+import { AssignmentsComponent } from '../page-agency/assignments/assignments.component';
+import { GradebookComponent } from '../page-agency/gradebook/gradebook.component';
 import { CourseOptionListComponent } from '../page-agency/course-option-list/course-option-list.component';
 import { AccountSettingsComponent } from '../account-settings/account-settings.component';
 import { AdminUsersComponent } from './admin-users/admin-users.component';
@@ -39,6 +41,8 @@ export const routes: Routes = [
 			{ path: 'add-course', component: AddCourseComponent, title: 'Add Course' },
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Edit Course' },
 			{ path: 'course-materials/:courseId', component: CourseMaterialComponent, title: 'Course Materials' },
+				{ path: 'assignments/:courseId', component: AssignmentsComponent, title: 'Assignments' },
+				{ path: 'gradebook/:courseId', component: GradebookComponent, title: 'Gradebook' },
 			{ path: 'course-option-list', component: CourseOptionListComponent, title: 'Course Options' },
 			{ path: 'account-settings', component: AccountSettingsComponent, title: 'Account Settings' },
 		],

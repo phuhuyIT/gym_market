@@ -6,7 +6,7 @@ import {
 	inject,
 	OnInit,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { patchState } from '@ngrx/signals';
@@ -25,7 +25,7 @@ import { STORAGE_KEYS } from '../../utilities/storage-keys.const';
 @Component({
 	selector: 'app-course-learn',
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [CommonModule, FormsModule, GmButtonComponent, GmCardComponent],
+	imports: [CommonModule, FormsModule, RouterLink, GmButtonComponent, GmCardComponent],
 	templateUrl: './course-learn.component.html',
 	styleUrl: './course-learn.component.scss',
 })

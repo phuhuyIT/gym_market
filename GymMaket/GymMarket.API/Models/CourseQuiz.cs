@@ -18,6 +18,8 @@ public partial class CourseQuiz
 
     public string? LectureId { get; set; }
 
+    public string? GradeCategoryId { get; set; }
+
     public int PassingScorePercent { get; set; } = 70;
 
     public int? TimeLimitMinutes { get; set; }
@@ -43,6 +45,8 @@ public partial class CourseQuiz
     public virtual CourseModule? Module { get; set; }
 
     public virtual Lecture? Lecture { get; set; }
+
+    public virtual GradeCategory? GradeCategory { get; set; }
 
     public virtual ICollection<QuizQuestion> Questions { get; set; } = new List<QuizQuestion>();
 

@@ -1,0 +1,77 @@
+<div class="student-assignments">
+	<header class="assignments-header">
+		<div>
+			<a [routerLink]="['/client/course-learn', courseId]" class="back-link">Learning path</a>
+			<h1>Assignments</h1>
+			<p>Submit course work and review scored feedback from your trainer.</p>
+		</div>
+		<a [routerLink]="['/client/course-grades', courseId]" class="grade-link">View grades</a>
+	</header>
+
+	@if (assignments.length > 0) {
+		<div class="assignments-layout">
+			<aside class="assignment-list">
+				@for (assignment of assignments; track assignment.assignmentId) {
+					<button type="button" [class.active]="selectedAssignment?.assignmentId === assignment.assignmentId" (click)="selectAssignment(assignment)">
+						<span>
+							<strong>{{ assignment.title }}</strong>
+							<small>{{ assignment.pointsPossible }} pts · due {{ assignment.dueAt ? (assignment.dueAt | date:'mediumDate') : 'anytime' }}</small>
+						</span>
+						<i [ngClass]="statusClass(assignment)">{{ statusLabel(assignment) }}</i>
+					</button>
+				}
+			</aside>
+
+			@if (selectedAssignment) {
+				<section class="submission-workbench">
+					<div class="workbench-head">
+						<div>
+							<h2>{{ selectedAssignment.title }}</h2>
+							<p>{{ selectedAssignment.pointsPossible }} points · {{ selectedAssignment.submissionType }} submission</p>
+						</div>
+						<span [ngClass]="statusClass(selectedAssignment)">{{ statusLabel(selectedAssignment) }}</span>
+					</div>
+
+					@if (selectedAssignment.instructions) {
+						<div class="instructions">{{ selectedAssignment.instructions }}</div>
+					}
+
+					<div class="submission-form">
+						<label>
+							<span>Response</span>
+							<textarea [(ngModel)]="textResponses[selectedAssignment.assignmentId]" rows="8"></textarea>
+						</label>
+						<label>
+							<span>Attachment URL</span>
+							<input [(ngModel)]="attachmentUrls[selectedAssignment.assignmentId]" placeholder="https://..." />
+						</label>
+						<button type="button" class="primary" (click)="submitAssignment(selectedAssignment)" [disabled]="isSubmitting || selectedAssignment.status === 'Closed'">
+							{{ selectedAssignment.mySubmission ? 'Resubmit assignment' : 'Submit assignment' }}
+						</button>
+					</div>
+
+					@if (selectedAssignment.mySubmission) {
+						<div class="feedback-panel">
+							<div>
+								<span>Score</span>
+								<strong>
+									@if (selectedAssignment.mySubmission.scorePercent !== null && selectedAssignment.mySubmission.scorePercent !== undefined) {
+										{{ selectedAssignment.mySubmission.scorePercent | number:'1.0-1' }}%
+									} @else {
+										Pending
+									}
+								</strong>
+							</div>
+							<div>
+								<span>Feedback</span>
+								<p>{{ selectedAssignment.mySubmission.feedback || 'No feedback yet.' }}</p>
+							</div>
+						</div>
+					}
+				</section>
+			}
+		</div>
+	} @else {
+		<div class="empty-note">{{ isLoading ? 'Loading assignments...' : 'No assignments have been published for this course yet.' }}</div>
+	}
+</div>

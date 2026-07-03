@@ -53,5 +53,7 @@ public partial class Student
 
     public virtual ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
 
+    public virtual ICollection<AssignmentSubmission> AssignmentSubmissions { get; set; } = new List<AssignmentSubmission>();
+
     public virtual AppUser? AppUser { get; set; }
 }

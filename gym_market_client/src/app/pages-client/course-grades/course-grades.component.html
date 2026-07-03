@@ -1,0 +1,87 @@
+<div class="grades-shell">
+	<header class="grades-header">
+		<div>
+			<a [routerLink]="['/client/course-learn', courseId]" class="back-link">Learning path</a>
+			<h1>{{ grades?.courseTitle || 'My grades' }}</h1>
+			<p>Current grade shows completed work. Final grade includes missing work as zero.</p>
+		</div>
+		@if (grades) {
+			<div class="final-mark" [ngClass]="gradeClass(grades.grade.finalPercent)">
+				<span>Final</span>
+				<strong>{{ grades.grade.finalPercent | number:'1.0-1' }}%</strong>
+				<small>{{ grades.grade.letterGrade }}</small>
+			</div>
+		}
+	</header>
+
+	@if (grades) {
+		<section class="summary-grid">
+			<div>
+				<span>Current grade</span>
+				<strong>{{ grades.grade.currentPercent ?? 0 | number:'1.0-1' }}%</strong>
+			</div>
+			<div>
+				<span>Final grade</span>
+				<strong>{{ grades.grade.finalPercent | number:'1.0-1' }}%</strong>
+			</div>
+			<div>
+				<span>Letter</span>
+				<strong>{{ grades.grade.letterGrade }}</strong>
+			</div>
+			<div>
+				<span>Items graded</span>
+				<strong>{{ gradedItemCount }} / {{ grades.grade.items.length }}</strong>
+			</div>
+		</section>
+
+		<section class="category-panel">
+			<div class="panel-heading">
+				<h2>Category breakdown</h2>
+				<p>Each category contributes according to the trainer's grading policy.</p>
+			</div>
+			<div class="category-list">
+				@for (category of grades.grade.categories; track category.categoryId) {
+					<div class="category-card">
+						<div class="category-top">
+							<div>
+								<strong>{{ category.name }}</strong>
+								<span>{{ category.weightPercent }}% weight · {{ category.gradedItems }} / {{ category.totalItems }} graded</span>
+							</div>
+							<b>{{ category.finalPercent | number:'1.0-1' }}%</b>
+						</div>
+						<div class="bar"><i [style.width.%]="categoryProgress(category)"></i></div>
+					</div>
+				}
+			</div>
+		</section>
+
+		<section class="items-panel">
+			<div class="panel-heading">
+				<h2>Grade items</h2>
+				<p>Scores are based on your best eligible attempt for each published quiz.</p>
+			</div>
+			<div class="items-table">
+				<div class="items-row items-head">
+					<span>Item</span>
+					<span>Status</span>
+					<span>Score</span>
+				</div>
+				@for (item of grades.grade.items; track item.itemId) {
+					<div class="items-row">
+						<span>
+							<strong>{{ item.title }}</strong>
+							<small>{{ item.itemType }} · {{ item.pointsPossible }} pts</small>
+						</span>
+						<span>{{ item.status }}</span>
+						<span class="score-badge" [ngClass]="gradeClass(item.scorePercent)">{{ scoreText(item) }}</span>
+					</div>
+				}
+				@if (grades.grade.items.length === 0) {
+					<p class="empty-note">No published grade items are available yet.</p>
+				}
+			</div>
+		</section>
+	} @else {
+		<div class="empty-note">{{ isLoading ? 'Loading grades...' : 'Grades are not available.' }}</div>
+	}
+</div>

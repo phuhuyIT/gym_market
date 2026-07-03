@@ -4,6 +4,7 @@ using GymMarket.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymMarket.API.Migrations
 {
     [DbContext(typeof(GymMarketContext))]
-    partial class GymMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20260703023919_AddGradebookPolicy")]
+    partial class AddGradebookPolicy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,82 +109,6 @@ namespace GymMarket.API.Migrations
                     b.HasIndex("Status");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.AssignmentSubmission", b =>
-                {
-                    b.Property<string>("SubmissionId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Submission_ID");
-
-                    b.Property<string>("AssignmentId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Assignment_ID");
-
-                    b.Property<string>("AttachmentUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)")
-                        .HasColumnName("Attachment_Url");
-
-                    b.Property<string>("Feedback")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateTime?>("GradedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Graded_At");
-
-                    b.Property<decimal?>("Score")
-                        .HasColumnType("decimal(8, 2)");
-
-                    b.Property<decimal?>("ScorePercent")
-                        .HasColumnType("decimal(5, 2)")
-                        .HasColumnName("Score_Percent");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasDefaultValue("Submitted");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Student_ID");
-
-                    b.Property<DateTime>("SubmittedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Submitted_At");
-
-                    b.Property<string>("TextResponse")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Text_Response");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Updated_At");
-
-                    b.HasKey("SubmissionId");
-
-                    b.HasIndex("AssignmentId");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("AssignmentId", "StudentId")
-                        .IsUnique();
-
-                    b.ToTable("Assignment_Submissions", (string)null);
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.ClassBooking", b =>
@@ -408,88 +335,6 @@ namespace GymMarket.API.Migrations
                     b.HasIndex("Type");
 
                     b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.CourseAssignment", b =>
-                {
-                    b.Property<string>("AssignmentId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Assignment_ID");
-
-                    b.Property<string>("CourseId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Course_ID");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("Created_At")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<DateTime?>("DueAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("Due_At");
-
-                    b.Property<string>("GradeCategoryId")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Grade_Category_ID");
-
-                    b.Property<string>("Instructions")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
-
-                    b.Property<decimal>("PointsPossible")
-                        .HasColumnType("decimal(8, 2)")
-                        .HasColumnName("Points_Possible");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasDefaultValue("Draft");
-
-                    b.Property<string>("SubmissionType")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasDefaultValue("Text")
-                        .HasColumnName("Submission_Type");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("Updated_At")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.HasKey("AssignmentId");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("DueAt");
-
-                    b.HasIndex("GradeCategoryId");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("CourseId", "Status", "DueAt");
-
-                    b.ToTable("Course_Assignments", (string)null);
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.CourseCertificate", b =>
@@ -3278,27 +3123,6 @@ namespace GymMarket.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("GymMarket.API.Models.AssignmentSubmission", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.CourseAssignment", "Assignment")
-                        .WithMany("Submissions")
-                        .HasForeignKey("AssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Assignment_Submissions_Assignment");
-
-                    b.HasOne("GymMarket.API.Models.Student", "Student")
-                        .WithMany("AssignmentSubmissions")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Assignment_Submissions_Student");
-
-                    b.Navigation("Assignment");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("GymMarket.API.Models.ClassBooking", b =>
                 {
                     b.HasOne("GymMarket.API.Models.GymClassSession", "ClassSession")
@@ -3339,26 +3163,6 @@ namespace GymMarket.API.Migrations
                         .HasConstraintName("FK_Courses_Trainer");
 
                     b.Navigation("Trainer");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.CourseAssignment", b =>
-                {
-                    b.HasOne("GymMarket.API.Models.Course", "Course")
-                        .WithMany("CourseAssignments")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Course_Assignments_Course");
-
-                    b.HasOne("GymMarket.API.Models.GradeCategory", "GradeCategory")
-                        .WithMany("CourseAssignments")
-                        .HasForeignKey("GradeCategoryId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_Course_Assignments_Grade_Category");
-
-                    b.Navigation("Course");
-
-                    b.Navigation("GradeCategory");
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.CourseCertificate", b =>
@@ -4027,8 +3831,6 @@ namespace GymMarket.API.Migrations
 
             modelBuilder.Entity("GymMarket.API.Models.Course", b =>
                 {
-                    b.Navigation("CourseAssignments");
-
                     b.Navigation("CourseCertificates");
 
                     b.Navigation("CourseModules");
@@ -4052,11 +3854,6 @@ namespace GymMarket.API.Migrations
                     b.Navigation("Messages");
 
                     b.Navigation("Payments");
-                });
-
-            modelBuilder.Entity("GymMarket.API.Models.CourseAssignment", b =>
-                {
-                    b.Navigation("Submissions");
                 });
 
             modelBuilder.Entity("GymMarket.API.Models.CourseModule", b =>
@@ -4087,8 +3884,6 @@ namespace GymMarket.API.Migrations
 
             modelBuilder.Entity("GymMarket.API.Models.GradeCategory", b =>
                 {
-                    b.Navigation("CourseAssignments");
-
                     b.Navigation("CourseQuizzes");
                 });
 
@@ -4140,8 +3935,6 @@ namespace GymMarket.API.Migrations
 
             modelBuilder.Entity("GymMarket.API.Models.Student", b =>
                 {
-                    b.Navigation("AssignmentSubmissions");
-
                     b.Navigation("ClassBookings");
 
                     b.Navigation("CourseCertificates");

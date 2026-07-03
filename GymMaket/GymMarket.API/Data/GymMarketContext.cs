@@ -11,6 +11,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 {
     public virtual DbSet<Course> Courses { get; set; }
 
+    public virtual DbSet<CourseAssignment> CourseAssignments { get; set; }
+
     public virtual DbSet<CourseOption> CourseOptions { get; set; }
 
     public virtual DbSet<CourseCertificate> CourseCertificates { get; set; }
@@ -28,6 +30,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
     public virtual DbSet<CourseQuiz> CourseQuizzes { get; set; }
 
     public virtual DbSet<CourseModule> CourseModules { get; set; }
+
+    public virtual DbSet<GradeCategory> GradeCategories { get; set; }
 
     public virtual DbSet<HealthDatum> HealthData { get; set; }
 
@@ -58,6 +62,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
     public virtual DbSet<QuizAttempt> QuizAttempts { get; set; }
 
     public virtual DbSet<QuizAttemptAnswer> QuizAttemptAnswers { get; set; }
+
+    public virtual DbSet<AssignmentSubmission> AssignmentSubmissions { get; set; }
 
     public virtual DbSet<QuizOption> QuizOptions { get; set; }
 
@@ -160,6 +166,111 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasOne(d => d.Trainer).WithMany(p => p.Courses)
                 .HasForeignKey(d => d.TrainerId)
                 .HasConstraintName("FK_Courses_Trainer");
+        });
+
+        modelBuilder.Entity<GradeCategory>(entity =>
+        {
+            entity.HasKey(e => e.CategoryId);
+
+            entity.ToTable("Grade_Categories");
+
+            entity.Property(e => e.CategoryId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Category_ID");
+            entity.Property(e => e.CourseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Course_ID");
+            entity.Property(e => e.Name)
+                .HasMaxLength(120);
+            entity.Property(e => e.WeightPercent)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("Weight_Percent");
+            entity.Property(e => e.Order)
+                .HasColumnName("Category_Order");
+            entity.Property(e => e.IsDefault)
+                .HasColumnName("Is_Default");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.CourseId);
+            entity.HasIndex(e => new { e.CourseId, e.Name }).IsUnique();
+            entity.HasIndex(e => new { e.CourseId, e.Order });
+
+            entity.HasOne(d => d.Course).WithMany(p => p.GradeCategories)
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Grade_Categories_Course");
+        });
+
+        modelBuilder.Entity<CourseAssignment>(entity =>
+        {
+            entity.HasKey(e => e.AssignmentId);
+
+            entity.ToTable("Course_Assignments");
+
+            entity.Property(e => e.AssignmentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Assignment_ID");
+            entity.Property(e => e.CourseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Course_ID");
+            entity.Property(e => e.GradeCategoryId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Grade_Category_ID");
+            entity.Property(e => e.Title)
+                .HasMaxLength(200);
+            entity.Property(e => e.Instructions)
+                .HasMaxLength(4000);
+            entity.Property(e => e.PointsPossible)
+                .HasColumnType("decimal(8, 2)")
+                .HasColumnName("Points_Possible");
+            entity.Property(e => e.DueAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Due_At");
+            entity.Property(e => e.SubmissionType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(AssignmentSubmissionType.Text)
+                .HasColumnName("Submission_Type");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(AssignmentStatus.Draft);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.CourseId);
+            entity.HasIndex(e => e.GradeCategoryId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.DueAt);
+            entity.HasIndex(e => new { e.CourseId, e.Status, e.DueAt });
+
+            entity.HasOne(d => d.Course).WithMany(p => p.CourseAssignments)
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Course_Assignments_Course");
+
+            entity.HasOne(d => d.GradeCategory).WithMany(p => p.CourseAssignments)
+                .HasForeignKey(d => d.GradeCategoryId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Course_Assignments_Grade_Category");
         });
 
         modelBuilder.Entity<CourseCertificate>(entity =>
@@ -1060,6 +1171,10 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("Lecture_ID");
+            entity.Property(e => e.GradeCategoryId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Grade_Category_ID");
             entity.Property(e => e.Title).HasMaxLength(200);
             entity.Property(e => e.Description).HasMaxLength(1000);
             entity.Property(e => e.ScopeType)
@@ -1091,6 +1206,7 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.HasIndex(e => e.CourseId);
             entity.HasIndex(e => e.ModuleId);
             entity.HasIndex(e => e.LectureId);
+            entity.HasIndex(e => e.GradeCategoryId);
             entity.HasIndex(e => new { e.CourseId, e.ScopeType });
 
             entity.HasOne(d => d.Course).WithMany(p => p.CourseQuizzes)
@@ -1107,6 +1223,11 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.LectureId)
                 .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK_Course_Quizzes_Lecture");
+
+            entity.HasOne(d => d.GradeCategory).WithMany(p => p.CourseQuizzes)
+                .HasForeignKey(d => d.GradeCategoryId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Course_Quizzes_Grade_Category");
         });
 
         modelBuilder.Entity<QuizQuestion>(entity =>
@@ -1270,6 +1391,67 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.SelectedOptionId)
                 .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK_Quiz_Attempt_Answers_Quiz_Option");
+        });
+
+        modelBuilder.Entity<AssignmentSubmission>(entity =>
+        {
+            entity.HasKey(e => e.SubmissionId);
+
+            entity.ToTable("Assignment_Submissions");
+
+            entity.Property(e => e.SubmissionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Submission_ID");
+            entity.Property(e => e.AssignmentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Assignment_ID");
+            entity.Property(e => e.StudentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Student_ID");
+            entity.Property(e => e.TextResponse)
+                .HasColumnType("nvarchar(max)")
+                .HasColumnName("Text_Response");
+            entity.Property(e => e.AttachmentUrl)
+                .HasMaxLength(1000)
+                .HasColumnName("Attachment_Url");
+            entity.Property(e => e.Score)
+                .HasColumnType("decimal(8, 2)");
+            entity.Property(e => e.ScorePercent)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("Score_Percent");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(AssignmentSubmissionStatus.Submitted);
+            entity.Property(e => e.Feedback)
+                .HasMaxLength(2000);
+            entity.Property(e => e.SubmittedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Submitted_At");
+            entity.Property(e => e.GradedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Graded_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.AssignmentId);
+            entity.HasIndex(e => e.StudentId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => new { e.AssignmentId, e.StudentId }).IsUnique();
+
+            entity.HasOne(d => d.Assignment).WithMany(p => p.Submissions)
+                .HasForeignKey(d => d.AssignmentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Assignment_Submissions_Assignment");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.AssignmentSubmissions)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Assignment_Submissions_Student");
         });
 
         modelBuilder.Entity<Message>(entity =>

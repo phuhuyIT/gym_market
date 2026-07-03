@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { AddCourseComponent } from './add-course/add-course.component';
 import { UpdateCourseComponent } from './update-course/update-course.component';
 import { CourseMaterialComponent } from './course-material/course-material.component';
+import { AssignmentsComponent } from './assignments/assignments.component';
+import { GradebookComponent } from './gradebook/gradebook.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CourseAgencyComponent } from './course-agency.component';
 import { CourseOptionListComponent } from './course-option-list/course-option-list.component';
@@ -38,6 +40,8 @@ export const routes: Routes = [
 				{ path: 'add-course', component: AddCourseComponent, title: 'Thêm course' },
 			{ path: 'update-course/:id', component: UpdateCourseComponent, title: 'Cập nhật course' },
 			{ path: 'course-materials/:courseId', component: CourseMaterialComponent, title: 'Tài liệu khóa học' },
+			{ path: 'assignments/:courseId', component: AssignmentsComponent, title: 'Assignments' },
+			{ path: 'gradebook/:courseId', component: GradebookComponent, title: 'Gradebook' },
 			{ path: 'course-option-list', component: CourseOptionListComponent, title: 'Danh sách option của course' },
 			{ path: 'your-profile', component: YourProfileComponent, title: 'Thông tin cá nhân' },
 			{ path: 'edit-profile', component: UpdateProfileComponent, title: 'Chỉnh sửa hồ sơ' },

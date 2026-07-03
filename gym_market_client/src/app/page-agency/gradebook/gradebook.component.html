@@ -1,0 +1,149 @@
+<div class="gradebook-shell">
+	<header class="gradebook-header">
+		<div>
+			<a routerLink="../courses" class="gradebook-back">Course list</a>
+			<h1>{{ gradebook?.courseTitle || 'Course gradebook' }}</h1>
+			<p>Weighted policy, learner scores, and export-ready records.</p>
+		</div>
+		<div class="gradebook-actions">
+			<button type="button" (click)="load()" [disabled]="isLoading">Refresh</button>
+			<button type="button" class="primary" (click)="exportCsv()" [disabled]="isExporting || !gradebook">
+				{{ isExporting ? 'Exporting...' : 'Export CSV' }}
+			</button>
+		</div>
+	</header>
+
+	@if (gradebook) {
+		<section class="gradebook-metrics">
+			<div>
+				<span>Current average</span>
+				<strong>{{ gradebook.currentAveragePercent ?? 0 | number:'1.0-1' }}%</strong>
+			</div>
+			<div>
+				<span>Final average</span>
+				<strong>{{ gradebook.finalAveragePercent | number:'1.0-1' }}%</strong>
+			</div>
+			<div>
+				<span>Learners</span>
+				<strong>{{ gradebook.students.length }}</strong>
+			</div>
+			<div>
+				<span>Missing scores</span>
+				<strong>{{ missingCount }}</strong>
+			</div>
+		</section>
+
+		<section class="gradebook-policy">
+			<div class="policy-panel">
+				<div class="panel-title">
+					<div>
+						<h2>Grading policy</h2>
+						<p>Weights must total exactly 100%.</p>
+					</div>
+					<span [class.weight-ok]="totalWeight === 100">{{ totalWeight | number:'1.0-2' }}%</span>
+				</div>
+
+				<div class="category-list">
+					@for (category of categoryDrafts; track category.categoryId; let i = $index) {
+						<div class="category-row">
+							<input [(ngModel)]="category.name" aria-label="Category name" />
+							<input [(ngModel)]="category.weightPercent" type="number" min="0" max="100" aria-label="Category weight" />
+							<button type="button" title="Remove category" (click)="removeCategory(category.categoryId)" [disabled]="categoryDrafts.length <= 1">×</button>
+						</div>
+					}
+				</div>
+
+				<div class="policy-actions">
+					<button type="button" (click)="addCategory()">Add category</button>
+					<button type="button" class="primary" (click)="savePolicy()" [disabled]="isSaving">
+						{{ isSaving ? 'Saving...' : 'Save policy' }}
+					</button>
+				</div>
+			</div>
+
+			<div class="policy-panel">
+				<div class="panel-title">
+					<div>
+						<h2>Grade items</h2>
+						<p>Published quizzes are included automatically.</p>
+					</div>
+					<span>{{ gradebook.items.length }}</span>
+				</div>
+
+				<div class="item-list">
+					@for (item of gradebook.items; track item.itemId) {
+						<label class="item-row">
+							<span>
+								<strong>{{ item.title }}</strong>
+								<small>{{ item.itemType }} · {{ item.pointsPossible }} pts</small>
+							</span>
+							<select [(ngModel)]="itemCategory[item.itemId]">
+								@for (category of categoryDrafts; track category.categoryId) {
+									<option [ngValue]="category.categoryId">{{ category.name }}</option>
+								}
+							</select>
+						</label>
+					}
+					@if (gradebook.items.length === 0) {
+						<p class="empty-note">No published quizzes are available for grading yet.</p>
+					}
+				</div>
+			</div>
+		</section>
+
+		<section class="ledger">
+			<div class="ledger-title">
+				<h2>Grade ledger</h2>
+				<p>Current grade excludes missing work; final grade counts missing work as zero.</p>
+			</div>
+			<div class="ledger-scroll">
+				<table>
+					<thead>
+						<tr>
+							<th class="student-col">Learner</th>
+							<th>Current</th>
+							<th>Final</th>
+							<th>Letter</th>
+							@for (item of sortedItems; track item.itemId) {
+								<th>
+									<span>{{ item.title }}</span>
+									<small>{{ categoryName(item.categoryId) }}</small>
+								</th>
+							}
+						</tr>
+					</thead>
+					<tbody>
+						@for (student of gradebook.students; track student.studentId) {
+							<tr>
+								<td class="student-col">
+									<strong>{{ student.studentName || student.studentId }}</strong>
+									<small>{{ student.studentEmail }}</small>
+								</td>
+								<td><span class="score-pill" [ngClass]="gradeClass(student.currentPercent)">{{ student.currentPercent ?? 0 | number:'1.0-1' }}%</span></td>
+								<td><span class="score-pill" [ngClass]="gradeClass(student.finalPercent)">{{ student.finalPercent | number:'1.0-1' }}%</span></td>
+								<td><span class="letter">{{ student.letterGrade }}</span></td>
+								@for (item of sortedItems; track item.itemId) {
+									<td>
+										@let score = scoreFor(student, item);
+										<span class="score-pill" [ngClass]="gradeClass(score)">
+											{{ score === null ? 'Missing' : (score | number:'1.0-1') + '%' }}
+										</span>
+									</td>
+								}
+							</tr>
+						}
+						@if (gradebook.students.length === 0) {
+							<tr>
+								<td [attr.colspan]="4 + sortedItems.length" class="empty-note">No paid learners are enrolled in this course yet.</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</section>
+	} @else {
+		<div class="gradebook-empty">
+			{{ isLoading ? 'Loading gradebook...' : 'Gradebook is not available.' }}
+		</div>
+	}
+</div>

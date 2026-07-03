@@ -134,6 +134,51 @@ namespace GymMarket.API
         public static readonly string[] All = [Submitted, PendingReview, Graded];
     }
 
+    public static class AssignmentStatus
+    {
+        public const string Draft = "Draft";
+        public const string Published = "Published";
+        public const string Closed = "Closed";
+
+        public static readonly string[] All = [Draft, Published, Closed];
+
+        public static string Normalize(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return Draft;
+
+            return All.FirstOrDefault(
+                supported => string.Equals(supported, status.Trim(), StringComparison.OrdinalIgnoreCase)) ?? Draft;
+        }
+    }
+
+    public static class AssignmentSubmissionType
+    {
+        public const string Text = "Text";
+        public const string Url = "Url";
+        public const string File = "File";
+
+        public static readonly string[] All = [Text, Url, File];
+
+        public static string Normalize(string? type)
+        {
+            if (string.IsNullOrWhiteSpace(type))
+                return Text;
+
+            return All.FirstOrDefault(
+                supported => string.Equals(supported, type.Trim(), StringComparison.OrdinalIgnoreCase)) ?? Text;
+        }
+    }
+
+    public static class AssignmentSubmissionStatus
+    {
+        public const string Submitted = "Submitted";
+        public const string Graded = "Graded";
+        public const string Returned = "Returned";
+
+        public static readonly string[] All = [Submitted, Graded, Returned];
+    }
+
     public static class TrainerApprovalStatus
     {
         public const string PendingReview = "PendingReview";
