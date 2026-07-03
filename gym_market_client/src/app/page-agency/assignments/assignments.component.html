@@ -46,7 +46,7 @@
 				</label>
 				<label>
 					<span>Points</span>
-					<input [(ngModel)]="draft.pointsPossible" type="number" min="1" />
+					<input [(ngModel)]="draft.pointsPossible" type="number" min="1" [disabled]="draft.rubricCriteria.length > 0" />
 				</label>
 				<label>
 					<span>Grade category</span>
@@ -83,6 +83,43 @@
 				</label>
 			</div>
 
+			<section class="rubric-builder">
+				<div class="rubric-builder__head">
+					<div>
+						<h3>Rubric</h3>
+						<p>Criteria points become the assignment total when a rubric is used.</p>
+					</div>
+					<div class="rubric-builder__actions">
+						<strong>{{ rubricTotal() }} pts</strong>
+						<button type="button" (click)="addRubricCriterion()">Add criterion</button>
+					</div>
+				</div>
+
+				@if (draft.rubricCriteria.length > 0) {
+					<div class="rubric-criteria">
+						@for (criterion of draft.rubricCriteria; track criterion.criterionId || $index; let i = $index) {
+							<div class="rubric-criterion">
+								<label>
+									<span>Criterion</span>
+									<input [(ngModel)]="criterion.title" />
+								</label>
+								<label>
+									<span>Points</span>
+									<input [(ngModel)]="criterion.pointsPossible" (ngModelChange)="syncPointsWithRubric()" type="number" min="0.01" step="0.01" />
+								</label>
+								<label class="rubric-criterion__description">
+									<span>Description</span>
+									<textarea [(ngModel)]="criterion.description" rows="2"></textarea>
+								</label>
+								<button type="button" class="danger" title="Remove criterion" (click)="removeRubricCriterion(i)">Remove</button>
+							</div>
+						}
+					</div>
+				} @else {
+					<p class="rubric-empty">No rubric criteria yet. Use a rubric when the work needs structured feedback.</p>
+				}
+			</section>
+
 			<div class="editor-actions">
 				<button type="button" class="primary" (click)="saveAssignment()" [disabled]="isSaving">
 					{{ isSaving ? 'Saving...' : 'Save assignment' }}
@@ -105,7 +142,7 @@
 				<div class="submission-row submission-head">
 					<span>Learner</span>
 					<span>Submitted work</span>
-					<span>Score</span>
+					<span>{{ selectedAssignment.rubricCriteria.length > 0 ? 'Rubric' : 'Score' }}</span>
 					<span>Feedback</span>
 					<span></span>
 				</div>
@@ -121,7 +158,20 @@
 							}
 							<small>{{ submission.textResponse || 'No text response' }}</small>
 						</span>
-						<input [(ngModel)]="gradeScores[submission.submissionId]" type="number" min="0" [max]="selectedAssignment.pointsPossible" />
+						@if (selectedAssignment.rubricCriteria.length > 0) {
+							<div class="rubric-grade">
+								@for (criterion of selectedAssignment.rubricCriteria; track criterion.criterionId) {
+									<label>
+										<span>{{ criterion.title }}</span>
+										<input [(ngModel)]="rubricScoreValues[rubricKey(submission.submissionId, criterion.criterionId)]" type="number" min="0" [max]="criterion.pointsPossible" />
+										<small>/ {{ criterion.pointsPossible }}</small>
+										<textarea [(ngModel)]="rubricFeedbackValues[rubricKey(submission.submissionId, criterion.criterionId)]" rows="2" placeholder="Criterion feedback"></textarea>
+									</label>
+								}
+							</div>
+						} @else {
+							<input [(ngModel)]="gradeScores[submission.submissionId]" type="number" min="0" [max]="selectedAssignment.pointsPossible" />
+						}
 						<textarea [(ngModel)]="gradeFeedbacks[submission.submissionId]" rows="2"></textarea>
 						<button type="button" class="primary" (click)="gradeSubmission(submission)">Grade</button>
 					</div>

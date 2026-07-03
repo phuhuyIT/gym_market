@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment.development';
 import {
 	AssignmentSubmission,
 	CourseAssignment,
+	GradeAssignmentRubricScore,
 	SubmitAssignment,
 	UpsertCourseAssignment,
 } from '../models/assignment.model';
@@ -43,10 +44,16 @@ export class AssignmentService {
 		return this.http.post<AssignmentSubmission>(`${environment.baseApi}/assignments/${assignmentId}/submit`, model);
 	}
 
-	grade(submissionId: string, score: number, feedback?: string | null): Observable<AssignmentSubmission> {
+	grade(
+		submissionId: string,
+		score: number | null,
+		feedback?: string | null,
+		rubricScores: GradeAssignmentRubricScore[] = []
+	): Observable<AssignmentSubmission> {
 		return this.http.put<AssignmentSubmission>(`${environment.baseApi}/assignments/submissions/${submissionId}/grade`, {
 			score,
 			feedback: feedback || null,
+			rubricScores,
 		});
 	}
 }

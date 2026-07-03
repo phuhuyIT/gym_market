@@ -13,6 +13,10 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<CourseAssignment> CourseAssignments { get; set; }
 
+    public virtual DbSet<AssignmentRubricCriterion> AssignmentRubricCriteria { get; set; }
+
+    public virtual DbSet<AssignmentRubricScore> AssignmentRubricScores { get; set; }
+
     public virtual DbSet<CourseAnnouncement> CourseAnnouncements { get; set; }
 
     public virtual DbSet<CourseDiscussionQuestion> CourseDiscussionQuestions { get; set; }
@@ -277,6 +281,93 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.GradeCategoryId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_Course_Assignments_Grade_Category");
+        });
+
+        modelBuilder.Entity<AssignmentRubricCriterion>(entity =>
+        {
+            entity.HasKey(e => e.CriterionId);
+
+            entity.ToTable("Assignment_Rubric_Criteria");
+
+            entity.Property(e => e.CriterionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Criterion_ID");
+            entity.Property(e => e.AssignmentId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Assignment_ID");
+            entity.Property(e => e.Title)
+                .HasMaxLength(160);
+            entity.Property(e => e.Description)
+                .HasMaxLength(1000);
+            entity.Property(e => e.PointsPossible)
+                .HasColumnType("decimal(8, 2)")
+                .HasColumnName("Points_Possible");
+            entity.Property(e => e.Order)
+                .HasColumnName("Criterion_Order");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.AssignmentId);
+            entity.HasIndex(e => new { e.AssignmentId, e.Order });
+
+            entity.HasOne(d => d.Assignment).WithMany(p => p.RubricCriteria)
+                .HasForeignKey(d => d.AssignmentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Assignment_Rubric_Criteria_Assignment");
+        });
+
+        modelBuilder.Entity<AssignmentRubricScore>(entity =>
+        {
+            entity.HasKey(e => e.RubricScoreId);
+
+            entity.ToTable("Assignment_Rubric_Scores");
+
+            entity.Property(e => e.RubricScoreId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Rubric_Score_ID");
+            entity.Property(e => e.SubmissionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Submission_ID");
+            entity.Property(e => e.CriterionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Criterion_ID");
+            entity.Property(e => e.Score)
+                .HasColumnType("decimal(8, 2)");
+            entity.Property(e => e.Feedback)
+                .HasMaxLength(1000);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.SubmissionId);
+            entity.HasIndex(e => e.CriterionId);
+            entity.HasIndex(e => new { e.SubmissionId, e.CriterionId }).IsUnique();
+
+            entity.HasOne(d => d.Submission).WithMany(p => p.RubricScores)
+                .HasForeignKey(d => d.SubmissionId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Assignment_Rubric_Scores_Submission");
+
+            entity.HasOne(d => d.Criterion).WithMany(p => p.Scores)
+                .HasForeignKey(d => d.CriterionId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_Assignment_Rubric_Scores_Criterion");
         });
 
         modelBuilder.Entity<CourseAnnouncement>(entity =>

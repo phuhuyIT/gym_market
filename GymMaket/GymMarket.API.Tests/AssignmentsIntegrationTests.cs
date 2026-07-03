@@ -98,6 +98,91 @@ public class AssignmentsIntegrationTests : BaseIntegrationTests
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
+    [Fact]
+    public async Task RubricAssignment_GradesByCriteriaAndFeedsGradebook()
+    {
+        var courseId = await CreateCourseAsync("rubric_assignment_trainer@example.com");
+        var created = await Client.PostAsJsonAsync($"/api/Assignments/course/{courseId}", new UpsertCourseAssignmentDto
+        {
+            Title = "Coaching case study",
+            Instructions = "Analyze the client and propose a plan.",
+            PointsPossible = 20,
+            SubmissionType = AssignmentSubmissionType.Text,
+            Status = AssignmentStatus.Published,
+            RubricCriteria =
+            [
+                new UpsertAssignmentRubricCriterionDto
+                {
+                    Title = "Analysis",
+                    Description = "Identifies constraints and risk factors.",
+                    PointsPossible = 10,
+                    Order = 1
+                },
+                new UpsertAssignmentRubricCriterionDto
+                {
+                    Title = "Plan quality",
+                    Description = "Creates an actionable training plan.",
+                    PointsPossible = 10,
+                    Order = 2
+                }
+            ]
+        });
+        Assert.Equal(HttpStatusCode.OK, created.StatusCode);
+        var assignment = await created.Content.ReadFromJsonAsync<CourseAssignmentDto>();
+        Assert.NotNull(assignment);
+        Assert.Equal(20, assignment!.PointsPossible);
+        Assert.Equal(2, assignment.RubricCriteria.Count);
+
+        await AuthenticateAsync(email: "rubric_assignment_student@example.com", role: "Student");
+        var studentId = GetTokenClaim("studentId")!;
+        await SeedPaidPaymentAsync(studentId, courseId);
+
+        var submit = await Client.PostAsJsonAsync($"/api/Assignments/{assignment.AssignmentId}/submit", new SubmitAssignmentDto
+        {
+            TextResponse = "The plan includes a lower-volume first week and progressive overload."
+        });
+        Assert.Equal(HttpStatusCode.OK, submit.StatusCode);
+        var submission = await submit.Content.ReadFromJsonAsync<AssignmentSubmissionDto>();
+        Assert.NotNull(submission);
+
+        await AuthenticateAsync(email: "rubric_assignment_trainer@example.com", role: "Trainer");
+        var grade = await Client.PutAsJsonAsync($"/api/Assignments/submissions/{submission!.SubmissionId}/grade", new GradeAssignmentSubmissionDto
+        {
+            Feedback = "Strong plan with a clear progression.",
+            RubricScores =
+            [
+                new GradeAssignmentRubricScoreDto
+                {
+                    CriterionId = assignment.RubricCriteria[0].CriterionId,
+                    Score = 8,
+                    Feedback = "Good client analysis."
+                },
+                new GradeAssignmentRubricScoreDto
+                {
+                    CriterionId = assignment.RubricCriteria[1].CriterionId,
+                    Score = 9,
+                    Feedback = "Plan is specific and practical."
+                }
+            ]
+        });
+        Assert.Equal(HttpStatusCode.OK, grade.StatusCode);
+        var graded = await grade.Content.ReadFromJsonAsync<AssignmentSubmissionDto>();
+        Assert.NotNull(graded);
+        Assert.Equal(17, graded!.Score);
+        Assert.Equal(85, graded.ScorePercent);
+        Assert.Equal(2, graded.RubricScores.Count);
+
+        var gradebook = await Client.GetFromJsonAsync<CourseGradebookDto>($"/api/Gradebook/course/{courseId}");
+        var gradebookStudent = Assert.Single(gradebook!.Students);
+        Assert.Equal(85, gradebookStudent.FinalPercent);
+
+        await AuthenticateAsync(email: "rubric_assignment_student@example.com", role: "Student");
+        var studentAssignments = await Client.GetFromJsonAsync<List<CourseAssignmentDto>>($"/api/Assignments/course/{courseId}");
+        var studentAssignment = Assert.Single(studentAssignments!);
+        Assert.Equal(2, studentAssignment.RubricCriteria.Count);
+        Assert.Equal(2, studentAssignment.MySubmission!.RubricScores.Count);
+    }
+
     private async Task<string> CreateCourseAsync(string trainerEmail)
     {
         await AuthenticateAsync(email: trainerEmail, role: "Trainer");

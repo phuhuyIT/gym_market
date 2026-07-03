@@ -36,6 +36,26 @@
 						<div class="instructions">{{ selectedAssignment.instructions }}</div>
 					}
 
+					@if (selectedAssignment.rubricCriteria.length > 0) {
+						<section class="rubric-preview">
+							<div class="rubric-preview__head">
+								<h3>Rubric</h3>
+								<span>{{ selectedAssignment.pointsPossible }} pts</span>
+							</div>
+							@for (criterion of selectedAssignment.rubricCriteria; track criterion.criterionId) {
+								<div class="rubric-preview__row">
+									<div>
+										<strong>{{ criterion.title }}</strong>
+										@if (criterion.description) {
+											<p>{{ criterion.description }}</p>
+										}
+									</div>
+									<span>{{ criterion.pointsPossible }} pts</span>
+								</div>
+							}
+						</section>
+					}
+
 					<div class="submission-form">
 						<label>
 							<span>Response</span>
@@ -67,6 +87,21 @@
 								<p>{{ selectedAssignment.mySubmission.feedback || 'No feedback yet.' }}</p>
 							</div>
 						</div>
+
+						@if (selectedAssignment.mySubmission.rubricScores.length > 0) {
+							<section class="rubric-feedback">
+								<h3>Rubric feedback</h3>
+								@for (score of selectedAssignment.mySubmission.rubricScores; track score.rubricScoreId) {
+									<div class="rubric-feedback__row">
+										<div>
+											<strong>{{ score.criterionTitle || 'Criterion' }}</strong>
+											<p>{{ score.feedback || 'No criterion feedback.' }}</p>
+										</div>
+										<span>{{ score.score }} / {{ score.pointsPossible }}</span>
+									</div>
+								}
+							</section>
+						}
 					}
 				</section>
 			}

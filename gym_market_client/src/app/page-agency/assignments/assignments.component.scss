@@ -188,13 +188,85 @@ textarea {
 	margin-top: 14px;
 }
 
+.rubric-builder {
+	margin-top: 16px;
+	border: 1px solid #d9e2df;
+	border-radius: 8px;
+	background: #f8fbf9;
+	padding: 14px;
+}
+
+.rubric-builder__head {
+	display: flex;
+	align-items: start;
+	justify-content: space-between;
+	gap: 12px;
+
+	h3 {
+		margin: 0 0 4px;
+		font-size: 1rem;
+		font-weight: 900;
+	}
+
+	p {
+		margin: 0;
+		color: #71807b;
+	}
+}
+
+.rubric-builder__actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+
+	strong {
+		border-radius: 8px;
+		background: #e4f2ed;
+		color: #225f52;
+		padding: 8px 10px;
+		white-space: nowrap;
+	}
+}
+
+.rubric-criteria {
+	display: grid;
+	gap: 10px;
+	margin-top: 14px;
+}
+
+.rubric-criterion {
+	display: grid;
+	grid-template-columns: minmax(150px, 1fr) 100px minmax(180px, 1.25fr) auto;
+	gap: 10px;
+	align-items: end;
+	border-top: 1px solid #e1e9e6;
+	padding-top: 10px;
+
+	label {
+		display: grid;
+		gap: 6px;
+	}
+
+	span {
+		color: #64736e;
+		font-size: 0.72rem;
+		font-weight: 900;
+		text-transform: uppercase;
+	}
+}
+
+.rubric-empty {
+	margin: 14px 0 0;
+	color: #71807b;
+}
+
 .submission-table {
 	overflow-x: auto;
 }
 
 .submission-row {
 	display: grid;
-	grid-template-columns: 210px minmax(220px, 1fr) 100px minmax(180px, 0.7fr) 90px;
+	grid-template-columns: 190px minmax(180px, 0.8fr) minmax(220px, 1.1fr) minmax(180px, 0.6fr) 90px;
 	gap: 10px;
 	align-items: start;
 	border-top: 1px solid #e4ebe8;
@@ -207,6 +279,41 @@ textarea {
 
 	small {
 		color: #71807b;
+	}
+}
+
+.rubric-grade {
+	display: grid;
+	gap: 8px;
+
+	label {
+		display: grid;
+		grid-template-columns: minmax(110px, 1fr) 78px auto;
+		gap: 7px;
+		align-items: center;
+		border: 1px solid #e1e8e5;
+		border-radius: 8px;
+		background: #fbfcfb;
+		padding: 8px;
+	}
+
+	span {
+		color: #263d37;
+		font-size: 0.78rem;
+		font-weight: 900;
+	}
+
+	input {
+		padding: 8px;
+	}
+
+	small {
+		color: #71807b;
+	}
+
+	textarea {
+		grid-column: 1 / -1;
+		padding: 8px;
 	}
 }
 
@@ -227,6 +334,7 @@ textarea {
 @media (max-width: 920px) {
 	.assignments-header,
 	.assignment-grid,
+	.rubric-criterion,
 	.form-grid,
 	.submission-row {
 		grid-template-columns: 1fr;

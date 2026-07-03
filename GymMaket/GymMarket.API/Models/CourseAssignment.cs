@@ -28,5 +28,7 @@ public partial class CourseAssignment
 
     public virtual GradeCategory? GradeCategory { get; set; }
 
+    public virtual ICollection<AssignmentRubricCriterion> RubricCriteria { get; set; } = new List<AssignmentRubricCriterion>();
+
     public virtual ICollection<AssignmentSubmission> Submissions { get; set; } = new List<AssignmentSubmission>();
 }

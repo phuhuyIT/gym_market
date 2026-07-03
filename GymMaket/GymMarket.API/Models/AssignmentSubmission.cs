@@ -29,4 +29,6 @@ public partial class AssignmentSubmission
     public virtual CourseAssignment? Assignment { get; set; }
 
     public virtual Student? Student { get; set; }
+
+    public virtual ICollection<AssignmentRubricScore> RubricScores { get; set; } = new List<AssignmentRubricScore>();
 }

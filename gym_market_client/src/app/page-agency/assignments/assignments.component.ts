@@ -5,7 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AssignmentService } from '../../core/services/assignment.service';
 import { GradebookService } from '../../core/services/gradebook.service';
-import { AssignmentSubmission, CourseAssignment, UpsertCourseAssignment } from '../../core/models/assignment.model';
+import {
+	AssignmentSubmission,
+	CourseAssignment,
+	GradeAssignmentRubricScore,
+	UpsertAssignmentRubricCriterion,
+	UpsertCourseAssignment,
+} from '../../core/models/assignment.model';
 import { GradeCategory } from '../../core/models/gradebook.model';
 import { ToastService } from '../../shared/services/toast.service';
 
@@ -25,6 +31,8 @@ export class AssignmentsComponent implements OnInit {
 	submissions: AssignmentSubmission[] = [];
 	gradeScores: Record<string, number> = {};
 	gradeFeedbacks: Record<string, string> = {};
+	rubricScoreValues: Record<string, number> = {};
+	rubricFeedbackValues: Record<string, string> = {};
 	isLoading = false;
 	isSaving = false;
 	isSubmissionsLoading = false;
@@ -91,6 +99,13 @@ export class AssignmentsComponent implements OnInit {
 			dueAt: this.toDateTimeLocal(assignment.dueAt),
 			submissionType: assignment.submissionType,
 			status: assignment.status,
+			rubricCriteria: (assignment.rubricCriteria ?? []).map(criterion => ({
+				criterionId: criterion.criterionId,
+				title: criterion.title,
+				description: criterion.description ?? '',
+				pointsPossible: criterion.pointsPossible,
+				order: criterion.order,
+			})),
 		};
 		this.loadSubmissions(assignment);
 	}
@@ -108,10 +123,16 @@ export class AssignmentsComponent implements OnInit {
 			return;
 		}
 		this.isSaving = true;
+		const rubricCriteria = this.draft.rubricCriteria.map((criterion, index) => ({
+			...criterion,
+			pointsPossible: Number(criterion.pointsPossible) || 0,
+			order: index + 1,
+		}));
 		const payload = {
 			...this.draft,
 			dueAt: this.draft.dueAt || null,
-			pointsPossible: Number(this.draft.pointsPossible) || 100,
+			pointsPossible: rubricCriteria.length > 0 ? this.rubricTotal(rubricCriteria) : Number(this.draft.pointsPossible) || 100,
+			rubricCriteria,
 		};
 		const request = this.selectedAssignment
 			? this.assignmentService.update(this.selectedAssignment.assignmentId, payload)
@@ -160,6 +181,16 @@ export class AssignmentsComponent implements OnInit {
 					this.submissions = submissions;
 					this.gradeScores = Object.fromEntries(submissions.map(s => [s.submissionId, s.score ?? 0]));
 					this.gradeFeedbacks = Object.fromEntries(submissions.map(s => [s.submissionId, s.feedback ?? '']));
+					this.rubricScoreValues = {};
+					this.rubricFeedbackValues = {};
+					for (const submission of submissions) {
+						for (const criterion of assignment.rubricCriteria ?? []) {
+							const existing = submission.rubricScores?.find(score => score.criterionId === criterion.criterionId);
+							const key = this.rubricKey(submission.submissionId, criterion.criterionId);
+							this.rubricScoreValues[key] = existing?.score ?? 0;
+							this.rubricFeedbackValues[key] = existing?.feedback ?? '';
+						}
+					}
 					this.isSubmissionsLoading = false;
 					this.cdr.markForCheck();
 				},
@@ -173,13 +204,17 @@ export class AssignmentsComponent implements OnInit {
 
 	gradeSubmission(submission: AssignmentSubmission) {
 		if (!this.selectedAssignment) return;
-		const score = Number(this.gradeScores[submission.submissionId]);
+		const rubricScores = this.buildRubricScores(submission);
+		if (rubricScores === null) return;
+		const score = rubricScores.length > 0
+			? rubricScores.reduce((sum, item) => sum + item.score, 0)
+			: Number(this.gradeScores[submission.submissionId]);
 		if (Number.isNaN(score) || score < 0 || score > this.selectedAssignment.pointsPossible) {
 			this.toastService.show(`Score must be between 0 and ${this.selectedAssignment.pointsPossible}`, 'error');
 			return;
 		}
 		this.assignmentService
-			.grade(submission.submissionId, score, this.gradeFeedbacks[submission.submissionId])
+			.grade(submission.submissionId, rubricScores.length > 0 ? null : score, this.gradeFeedbacks[submission.submissionId], rubricScores)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: updated => {
@@ -196,6 +231,63 @@ export class AssignmentsComponent implements OnInit {
 		return status === 'Published' ? 'published' : status === 'Closed' ? 'closed' : 'draft';
 	}
 
+	addRubricCriterion() {
+		const nextOrder = this.draft.rubricCriteria.length + 1;
+		this.draft.rubricCriteria = [
+			...this.draft.rubricCriteria,
+			{
+				title: `Criterion ${nextOrder}`,
+				description: '',
+				pointsPossible: 10,
+				order: nextOrder,
+			},
+		];
+		this.syncPointsWithRubric();
+	}
+
+	removeRubricCriterion(index: number) {
+		this.draft.rubricCriteria = this.draft.rubricCriteria
+			.filter((_, i) => i !== index)
+			.map((criterion, order) => ({ ...criterion, order: order + 1 }));
+		this.syncPointsWithRubric();
+	}
+
+	syncPointsWithRubric() {
+		if (this.draft.rubricCriteria.length === 0) return;
+		this.draft.pointsPossible = this.rubricTotal(this.draft.rubricCriteria);
+	}
+
+	rubricTotal(criteria: UpsertAssignmentRubricCriterion[] = this.draft.rubricCriteria): number {
+		return criteria.reduce((sum, criterion) => sum + (Number(criterion.pointsPossible) || 0), 0);
+	}
+
+	rubricKey(submissionId: string, criterionId: string): string {
+		return `${submissionId}:${criterionId}`;
+	}
+
+	private buildRubricScores(submission: AssignmentSubmission): GradeAssignmentRubricScore[] | null {
+		const criteria = this.selectedAssignment?.rubricCriteria ?? [];
+		if (criteria.length === 0) return [];
+
+		const scores: GradeAssignmentRubricScore[] = [];
+		for (const criterion of criteria) {
+			const key = this.rubricKey(submission.submissionId, criterion.criterionId);
+			const score = Number(this.rubricScoreValues[key]);
+			if (Number.isNaN(score) || score < 0 || score > criterion.pointsPossible) {
+				this.toastService.show(`"${criterion.title}" must be between 0 and ${criterion.pointsPossible}`, 'error');
+				return null;
+			}
+
+			scores.push({
+				criterionId: criterion.criterionId,
+				score,
+				feedback: this.rubricFeedbackValues[key] || null,
+			});
+		}
+
+		return scores;
+	}
+
 	private emptyDraft(): UpsertCourseAssignment {
 		return {
 			title: '',
@@ -205,6 +297,7 @@ export class AssignmentsComponent implements OnInit {
 			dueAt: null,
 			submissionType: 'Text',
 			status: 'Draft',
+			rubricCriteria: [],
 		};
 	}
 
