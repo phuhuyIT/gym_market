@@ -36,12 +36,26 @@ public class CourseAnalyticsIntegrationTests : BaseIntegrationTests
         Assert.Equal(2, dashboard.TotalGradeItems);
         Assert.Equal(50, dashboard.AverageLessonProgressPercent);
         Assert.Equal(75, dashboard.AverageFinalGradePercent);
+        Assert.Equal(100, dashboard.SubmissionRatePercent);
+        Assert.Equal(0, dashboard.AtRiskRatePercent);
+        Assert.NotEmpty(dashboard.PerformanceItems);
+        Assert.Contains(dashboard.PerformanceItems, item => item.ItemType == "Assignment" && item.AveragePercent == 80);
+        Assert.Contains(dashboard.PerformanceItems, item => item.ItemType == "Quiz" && item.AveragePercent == 70);
+        Assert.Equal(1, dashboard.Engagement.DiscussionQuestions);
+        Assert.Equal(1, dashboard.Engagement.CertificatesIssued);
+        Assert.NotEmpty(dashboard.Trends);
 
         var learner = Assert.Single(dashboard.Learners);
         Assert.Equal(studentId, learner.StudentId);
         Assert.Equal(1, learner.CompletedLectures);
         Assert.Equal(1, learner.SubmittedAssignments);
         Assert.Equal(2, learner.CompletedGradeItems);
+        Assert.Equal(1, learner.QuizAttempts);
+        Assert.Equal(1, learner.DiscussionPosts);
+        Assert.True(learner.CertificateIssued);
+        Assert.True(learner.EngagementScore > 0);
+        Assert.Equal(0, learner.RiskScore);
+        Assert.Equal("Monitor progress", learner.RecommendedAction);
         Assert.False(learner.IsAtRisk);
     }
 
@@ -175,6 +189,28 @@ public class CourseAnalyticsIntegrationTests : BaseIntegrationTests
             ScorePercent = 70,
             Status = QuizAttemptStatus.Graded,
             SubmittedAt = now
+        });
+
+        db.CourseDiscussionQuestions.Add(new CourseDiscussionQuestion
+        {
+            QuestionId = Guid.NewGuid().ToString(),
+            CourseId = courseId,
+            StudentId = studentId,
+            Title = "How should I pace this course?",
+            Body = "Looking for pacing advice.",
+            Status = DiscussionQuestionStatus.Open,
+            CreatedAt = now,
+            UpdatedAt = now,
+            LastActivityAt = now
+        });
+
+        db.CourseCertificates.Add(new CourseCertificate
+        {
+            CertificateId = Guid.NewGuid().ToString(),
+            CourseId = courseId,
+            StudentId = studentId,
+            VerificationCode = Guid.NewGuid().ToString("N")[..12].ToUpperInvariant(),
+            IssuedAt = now
         });
 
         await db.SaveChangesAsync();

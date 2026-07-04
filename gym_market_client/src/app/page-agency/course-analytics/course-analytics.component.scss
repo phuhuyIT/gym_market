@@ -66,14 +66,15 @@ td small {
 
 .metric-grid {
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-template-columns: repeat(5, minmax(0, 1fr));
 	gap: 1rem;
 }
 
 .metric-card,
-.learner-panel {
+.learner-panel,
+.insight-panel {
 	border: 1px solid rgba(24, 32, 51, 0.08);
-	border-radius: 1rem;
+	border-radius: 8px;
 	background: #fff;
 	box-shadow: 0 14px 35px rgba(15, 23, 42, 0.06);
 }
@@ -96,6 +97,7 @@ td small {
 .accent-grade { --accent: #2563eb; }
 .accent-risk { --accent: #dc2626; }
 .accent-complete { --accent: #7c3aed; }
+.accent-engagement { --accent: #f59e0b; }
 
 .metric-card span {
 	display: block;
@@ -117,6 +119,16 @@ td small {
 	overflow: hidden;
 }
 
+.insight-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+	gap: 1rem;
+}
+
+.insight-panel {
+	overflow: hidden;
+}
+
 .panel-title {
 	display: flex;
 	align-items: center;
@@ -124,6 +136,10 @@ td small {
 	gap: 1rem;
 	padding: 1.1rem 1.25rem;
 	border-bottom: 1px solid rgba(24, 32, 51, 0.08);
+}
+
+.panel-title.compact {
+	padding: 1rem;
 }
 
 .panel-title h2 {
@@ -150,6 +166,192 @@ td small {
 	background: #ffffff;
 	color: #0f766e;
 	box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+.trend-chart {
+	display: grid;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	gap: 0.75rem;
+	align-items: end;
+	padding: 1rem 1rem 0.75rem;
+	min-height: 14rem;
+}
+
+.trend-week {
+	display: grid;
+	gap: 0.5rem;
+	align-items: end;
+
+	span {
+		color: #667085;
+		font-size: 0.72rem;
+		font-weight: 800;
+		text-align: center;
+	}
+}
+
+.trend-bars {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 0.2rem;
+	align-items: end;
+	height: 10rem;
+	padding: 0.4rem;
+	border-radius: 8px;
+	background: #f8fafc;
+
+	i {
+		display: block;
+		min-height: 0.4rem;
+		border-radius: 999px 999px 0 0;
+	}
+}
+
+.trend-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	padding: 0 1rem 1rem;
+
+	span {
+		font-size: 0.75rem;
+		font-weight: 800;
+	}
+}
+
+.trend-lessons { color: #0f766e; background: #0f766e; }
+.trend-assignments { color: #dc2626; background: #dc2626; }
+.trend-quizzes { color: #7c3aed; background: #7c3aed; }
+.trend-discussions { color: #f59e0b; background: #f59e0b; }
+
+.trend-legend .trend-lessons,
+.trend-legend .trend-assignments,
+.trend-legend .trend-quizzes,
+.trend-legend .trend-discussions {
+	background: transparent;
+}
+
+.engagement-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem;
+	padding: 1rem;
+
+	div {
+		border: 1px solid rgba(24, 32, 51, 0.08);
+		border-radius: 8px;
+		padding: 0.85rem;
+		background: #f8fafc;
+	}
+
+	strong,
+	span {
+		display: block;
+	}
+
+	strong {
+		font-size: 1.45rem;
+		color: #111827;
+	}
+
+	span {
+		color: #667085;
+		font-size: 0.72rem;
+		font-weight: 900;
+		text-transform: uppercase;
+	}
+}
+
+.performance-list,
+.risk-queue {
+	display: grid;
+	gap: 0.7rem;
+	padding: 1rem;
+}
+
+.performance-item,
+.risk-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	border: 1px solid rgba(24, 32, 51, 0.08);
+	border-radius: 8px;
+	padding: 0.85rem;
+	background: #fff;
+}
+
+.performance-item span {
+	color: #0f766e;
+	font-size: 0.7rem;
+	font-weight: 900;
+	text-transform: uppercase;
+}
+
+.performance-item strong,
+.performance-item small,
+.risk-card strong,
+.risk-card small {
+	display: block;
+}
+
+.performance-score {
+	min-width: 6rem;
+	border-radius: 8px;
+	padding: 0.55rem;
+	text-align: right;
+
+	&.strong {
+		background: #dcfce7;
+		color: #166534;
+	}
+
+	&.steady {
+		background: #e0f2fe;
+		color: #075985;
+	}
+
+	&.risk {
+		background: #fee2e2;
+		color: #991b1b;
+	}
+
+	&.muted {
+		background: #f2f4f7;
+		color: #667085;
+	}
+}
+
+.risk-card span,
+.engagement-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 2.5rem;
+	border-radius: 999px;
+	padding: 0.35rem 0.6rem;
+	font-weight: 900;
+}
+
+.risk-low,
+.engagement-pill {
+	background: #dcfce7;
+	color: #166534;
+}
+
+.risk-medium {
+	background: #fef3c7;
+	color: #92400e;
+}
+
+.risk-high {
+	background: #fee2e2;
+	color: #991b1b;
+}
+
+.empty-inline {
+	margin: 0;
+	color: #667085;
 }
 
 .table-scroll {
@@ -280,6 +482,10 @@ td small {
 
 	.metric-grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.insight-grid {
+		grid-template-columns: 1fr;
 	}
 }
 

@@ -68,6 +68,40 @@ export class CourseAnalyticsComponent implements OnInit {
 		return `${Math.max(0, Math.min(100, percent))}%`;
 	}
 
+	trendHeight(value: number): string {
+		const max = this.maxTrendValue;
+		if (max <= 0) return '0%';
+		return `${Math.max(8, Math.round((value / max) * 100))}%`;
+	}
+
+	riskClass(score: number): string {
+		if (score >= 70) return 'risk-high';
+		if (score >= 40) return 'risk-medium';
+		return 'risk-low';
+	}
+
+	get maxTrendValue(): number {
+		const values = this.dashboard?.trends.flatMap(trend => [
+			trend.completedLessons,
+			trend.assignmentSubmissions,
+			trend.quizAttempts,
+			trend.discussionPosts,
+		]) ?? [];
+		return Math.max(0, ...values);
+	}
+
+	get topRiskLearners(): CourseLearnerAnalytics[] {
+		return [...(this.dashboard?.learners ?? [])]
+			.filter(learner => learner.isAtRisk)
+			.sort((a, b) => b.riskScore - a.riskScore)
+			.slice(0, 4);
+	}
+
+	get performanceItems() {
+		return [...(this.dashboard?.performanceItems ?? [])]
+			.sort((a, b) => (a.averagePercent ?? -1) - (b.averagePercent ?? -1));
+	}
+
 	get filteredLearners(): CourseLearnerAnalytics[] {
 		const learners = this.dashboard?.learners ?? [];
 		if (this.filter === 'atRisk') return learners.filter(learner => learner.isAtRisk);

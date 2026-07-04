@@ -31,7 +31,111 @@
 			<div class="metric-card accent-complete">
 				<span>Completed</span>
 				<strong>{{ dashboard.completedLearners }}</strong>
-				<small>{{ dashboard.totalAssignments }} assignments</small>
+				<small>{{ dashboard.completionRatePercent | number:'1.0-1' }}% completion rate</small>
+			</div>
+			<div class="metric-card accent-engagement">
+				<span>Engagement</span>
+				<strong>{{ dashboard.averageEngagementScore | number:'1.0-0' }}</strong>
+				<small>{{ dashboard.submissionRatePercent | number:'1.0-1' }}% assignment submission rate</small>
+			</div>
+		</section>
+
+		<section class="insight-grid">
+			<div class="insight-panel">
+				<div class="panel-title compact">
+					<div>
+						<h2>Weekly momentum</h2>
+						<p>Activity across the last six weeks.</p>
+					</div>
+				</div>
+				<div class="trend-chart">
+					@for (trend of dashboard.trends; track trend.weekStart) {
+						<div class="trend-week">
+							<div class="trend-bars">
+								<i class="trend-lessons" [style.height]="trendHeight(trend.completedLessons)" title="Completed lessons"></i>
+								<i class="trend-assignments" [style.height]="trendHeight(trend.assignmentSubmissions)" title="Assignment submissions"></i>
+								<i class="trend-quizzes" [style.height]="trendHeight(trend.quizAttempts)" title="Quiz attempts"></i>
+								<i class="trend-discussions" [style.height]="trendHeight(trend.discussionPosts)" title="Discussion posts"></i>
+							</div>
+							<span>{{ trend.weekStart | date:'MMM d' }}</span>
+						</div>
+					}
+				</div>
+				<div class="trend-legend">
+					<span class="trend-lessons">Lessons</span>
+					<span class="trend-assignments">Assignments</span>
+					<span class="trend-quizzes">Quizzes</span>
+					<span class="trend-discussions">Discussions</span>
+				</div>
+			</div>
+
+			<div class="insight-panel">
+				<div class="panel-title compact">
+					<div>
+						<h2>Engagement signals</h2>
+						<p>Course activity beyond grades.</p>
+					</div>
+				</div>
+				<div class="engagement-grid">
+					<div><strong>{{ dashboard.engagement.discussionQuestions }}</strong><span>Questions</span></div>
+					<div><strong>{{ dashboard.engagement.discussionAnswers }}</strong><span>Answers</span></div>
+					<div><strong>{{ dashboard.engagement.activeStudyGroups }}</strong><span>Groups</span></div>
+					<div><strong>{{ dashboard.engagement.certificatesIssued }}</strong><span>Certificates</span></div>
+					<div><strong>{{ dashboard.engagement.upcomingCalendarItems }}</strong><span>Upcoming</span></div>
+					<div><strong>{{ dashboard.engagement.scheduledLiveSessions }}</strong><span>Live sessions</span></div>
+				</div>
+			</div>
+		</section>
+
+		<section class="insight-grid">
+			<div class="insight-panel">
+				<div class="panel-title compact">
+					<div>
+						<h2>Assessment performance</h2>
+						<p>Lowest averages appear first.</p>
+					</div>
+				</div>
+				<div class="performance-list">
+					@for (item of performanceItems; track item.itemId) {
+						<div class="performance-item">
+							<div>
+								<span>{{ item.itemType }}</span>
+								<strong>{{ item.title }}</strong>
+								<small>{{ item.completedCount }} complete · {{ item.missingCount }} missing</small>
+							</div>
+							<div class="performance-score" [ngClass]="gradeClass(item.averagePercent)">
+								<strong>{{ (item.averagePercent ?? 0) | number:'1.0-1' }}%</strong>
+								<small>{{ item.passRatePercent | number:'1.0-0' }}% pass</small>
+							</div>
+						</div>
+					}
+					@if (performanceItems.length === 0) {
+						<p class="empty-inline">No graded assessments yet.</p>
+					}
+				</div>
+			</div>
+
+			<div class="insight-panel">
+				<div class="panel-title compact">
+					<div>
+						<h2>Attention queue</h2>
+						<p>Learners with the highest risk score.</p>
+					</div>
+				</div>
+				<div class="risk-queue">
+					@for (learner of topRiskLearners; track learner.studentId) {
+						<div class="risk-card">
+							<div>
+								<strong>{{ learner.studentName || learner.studentId }}</strong>
+								<small>{{ learner.recommendedAction }}</small>
+							</div>
+							<span [ngClass]="riskClass(learner.riskScore)">{{ learner.riskScore }}</span>
+						</div>
+					}
+					@if (topRiskLearners.length === 0) {
+						<p class="empty-inline">No learners are currently flagged.</p>
+					}
+				</div>
 			</div>
 		</section>
 
@@ -55,10 +159,11 @@
 							<th>Learner</th>
 							<th>Lessons</th>
 							<th>Assignments</th>
-							<th>Grade</th>
-							<th>Last activity</th>
-							<th>Status</th>
-						</tr>
+								<th>Grade</th>
+								<th>Engagement</th>
+								<th>Last activity</th>
+								<th>Status</th>
+							</tr>
 					</thead>
 					<tbody>
 						@for (learner of filteredLearners; track learner.studentId) {
@@ -85,6 +190,10 @@
 									<small>Current {{ (learner.currentGradePercent ?? 0) | number:'1.0-1' }}%</small>
 								</td>
 								<td>
+									<span class="engagement-pill">{{ learner.engagementScore | number:'1.0-0' }}</span>
+									<small>{{ learner.quizAttempts }} quiz attempts · {{ learner.discussionPosts }} posts</small>
+								</td>
+								<td>
 									@if (learner.lastActivityAt) {
 										<span>{{ learner.lastActivityAt | date:'mediumDate' }}</span>
 									} @else {
@@ -94,6 +203,7 @@
 								<td>
 									@if (learner.isAtRisk) {
 										<div class="risk-list">
+											<span [ngClass]="riskClass(learner.riskScore)">Risk {{ learner.riskScore }}</span>
 											@for (reason of learner.atRiskReasons; track reason) {
 												<span>{{ reason }}</span>
 											}
@@ -108,7 +218,7 @@
 						}
 						@if (filteredLearners.length === 0) {
 							<tr>
-								<td colspan="6" class="empty-note">No learners match this filter.</td>
+								<td colspan="7" class="empty-note">No learners match this filter.</td>
 							</tr>
 						}
 					</tbody>
