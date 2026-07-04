@@ -15,6 +15,7 @@ import { CourseAnnouncementsComponent } from './course-announcements/course-anno
 import { CourseLiveSessionsComponent } from './course-live-sessions/course-live-sessions.component';
 import { CourseCohortsComponent } from './course-cohorts/course-cohorts.component';
 import { CourseCertificatesComponent } from './course-certificates/course-certificates.component';
+import { CourseCalendarComponent } from './course-calendar/course-calendar.component';
 import { CoursePaymentComponent } from './course-payment/course-payment.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { CourseRegistrationComponent } from './course-registration/course-registration.component';
@@ -48,6 +49,7 @@ export const routes: Routes = [
 						{ path: 'course-cohorts/:courseId', component: CourseCohortsComponent, title: 'Course groups' },
 						{ path: 'course-discussions/:courseId', component: CourseDiscussionsComponent, title: 'Course Q&A' },
 						{ path: 'certificates', component: CourseCertificatesComponent, title: 'My certificates' },
+						{ path: 'calendar', component: CourseCalendarComponent, title: 'Learning calendar' },
 				{ path: 'course-grades/:courseId', component: CourseGradesComponent, title: 'Course grades' },
 			{ path: 'course-payment/:courseId', component: CoursePaymentComponent, title: 'Course payment' },
 				{ path: 'course-registration', component: CourseRegistrationComponent, title: 'Course Registration' },

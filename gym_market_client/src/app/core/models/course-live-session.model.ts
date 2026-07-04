@@ -30,6 +30,7 @@ export interface UpsertCourseLiveSession {
 export interface CourseCalendarItem {
 	itemId: string;
 	courseId: string;
+	courseTitle?: string | null;
 	type: 'assignment' | 'quiz' | 'announcement' | 'live_session' | string;
 	title: string;
 	description?: string | null;

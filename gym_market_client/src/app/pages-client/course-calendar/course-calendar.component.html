@@ -1,0 +1,82 @@
+<main class="calendar-page">
+	<header class="calendar-hero">
+		<div>
+			<p class="calendar-hero__eyebrow">Learning calendar</p>
+			<h1>What is coming up</h1>
+			<p class="calendar-hero__copy">Assignments, quizzes, live sessions, and announcements across your enrolled courses.</p>
+		</div>
+		<div class="calendar-pulse">
+			<span>Next 48 hours</span>
+			<strong>{{ dueSoonCount }}</strong>
+			<small>priority items</small>
+		</div>
+	</header>
+
+	<section class="calendar-toolbar">
+		<div class="date-fields">
+			<label>
+				<span>From</span>
+				<input type="date" [(ngModel)]="from" (change)="load()" />
+			</label>
+			<label>
+				<span>To</span>
+				<input type="date" [(ngModel)]="to" (change)="load()" />
+			</label>
+		</div>
+		<div class="filter-row">
+			@for (item of filters; track item.value) {
+				<button type="button" [class.active]="filter === item.value" (click)="setFilter(item.value)">
+					{{ item.label }}
+				</button>
+			}
+		</div>
+	</section>
+
+	@if (nextItem) {
+		<section class="next-strip">
+			<span>Next</span>
+			<strong>{{ nextItem.title }}</strong>
+			<small>{{ nextItem.courseTitle || 'Course' }} · {{ nextItem.startsAt | date:'medium' }}</small>
+		</section>
+	}
+
+	@if (isLoading) {
+		<section class="calendar-empty">Loading calendar...</section>
+	} @else if (groupedItems.length === 0) {
+		<section class="calendar-empty">
+			<h2>No scheduled course items</h2>
+			<p>Try widening the date range or checking another filter.</p>
+		</section>
+	} @else {
+		<section class="agenda">
+			@for (group of groupedItems; track group.day) {
+				<div class="agenda-day">
+					<div class="agenda-day__date">
+						<strong>{{ group.day | date:'EEE, MMM d' }}</strong>
+						<span>{{ group.items.length }} item{{ group.items.length === 1 ? '' : 's' }}</span>
+					</div>
+					<div class="agenda-day__items">
+						@for (item of group.items; track item.type + item.itemId) {
+							<a class="calendar-item" [class]="itemClass(item.type)" [routerLink]="item.link">
+								<div class="calendar-item__time">
+									<strong>{{ item.startsAt | date:'shortTime' }}</strong>
+									@if (item.endsAt) {
+										<span>{{ item.endsAt | date:'shortTime' }}</span>
+									}
+								</div>
+								<div class="calendar-item__body">
+									<span>{{ typeLabel(item.type) }}</span>
+									<h2>{{ item.title }}</h2>
+									<p>{{ item.courseTitle || 'Course' }}</p>
+								</div>
+								@if (item.status) {
+									<small>{{ item.status }}</small>
+								}
+							</a>
+						}
+					</div>
+				</div>
+			}
+		</section>
+	}
+</main>

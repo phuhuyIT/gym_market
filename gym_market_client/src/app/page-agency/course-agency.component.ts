@@ -55,8 +55,9 @@ export class CourseAgencyComponent {
 		if (url.includes('/students')) return 'Manage Students';
 		if (url.includes('/payments')) return 'Payments';
 		if (url.includes('/memberships')) return 'Memberships';
-		if (url.includes('/classes')) return 'Class Schedule';
-		if (url.includes('/live-sessions')) return 'Course live sessions';
+			if (url.includes('/classes')) return 'Class Schedule';
+			if (url.includes('/calendar')) return 'Course Calendar';
+			if (url.includes('/live-sessions')) return 'Course live sessions';
 			if (url.includes('/workouts')) return 'Workout Plans';
 			if (url.includes('/progress')) return 'Progress Review';
 			if (url.includes('/notifications')) return 'Notifications';

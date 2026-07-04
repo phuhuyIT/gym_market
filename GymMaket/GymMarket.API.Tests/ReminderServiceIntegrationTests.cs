@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.ClassSchedule;
+using GymMarket.API.DTOs.Course;
 using GymMarket.API.DTOs.Membership;
 using GymMarket.API.DTOs.Notifications;
 using GymMarket.API.DTOs.Workout;
@@ -91,6 +92,35 @@ public class ReminderServiceIntegrationTests : BaseIntegrationTests
             && n.Title == "Workout waiting"
             && n.Link == "/client/workouts"
             && n.Content!.Contains(plan.Name));
+    }
+
+    [Fact]
+    public async Task SendDueRemindersAsync_ForCourseScheduleItems_NotifiesPaidStudent()
+    {
+        var trainerEmail = "reminder-course-trainer@example.com";
+        var studentEmail = "reminder-course-student@example.com";
+        var courseId = await CreateCourseAsync(trainerEmail);
+        await AuthenticateAsync(email: studentEmail, role: "Student");
+        var studentId = GetTokenClaim("studentId")!;
+        await SeedPaidPaymentAsync(studentId, courseId);
+        await SeedCourseScheduleItemsAsync(courseId, DateTime.UtcNow.AddHours(12));
+
+        var sent = await RunReminders();
+
+        Assert.True(sent >= 3);
+        var notifications = await Client.GetFromJsonAsync<List<NotificationDto>>("/api/Notifications/get-notifications");
+        Assert.Contains(notifications!, n =>
+            n.Type == NotificationTypes.Assignment
+            && n.Title == "Assignment due soon"
+            && n.Link == $"/client/course-assignments/{courseId}");
+        Assert.Contains(notifications!, n =>
+            n.Type == NotificationTypes.Quiz
+            && n.Title == "Quiz closes soon"
+            && n.Link == $"/client/course-learn/{courseId}");
+        Assert.Contains(notifications!, n =>
+            n.Type == NotificationTypes.LiveSession
+            && n.Title == "Live session starts soon"
+            && n.Link == $"/client/course-live-sessions/{courseId}");
     }
 
     private async Task<int> RunReminders()
@@ -186,5 +216,83 @@ public class ReminderServiceIntegrationTests : BaseIntegrationTests
 
         response.EnsureSuccessStatusCode();
         return (await response.Content.ReadFromJsonAsync<WorkoutPlanDto>())!;
+    }
+
+    private async Task<string> CreateCourseAsync(string trainerEmail)
+    {
+        await AuthenticateAsync(email: trainerEmail, role: "Trainer");
+        var courseId = "REM_COURSE_" + Guid.NewGuid().ToString("N")[..8];
+        var response = await Client.PostAsJsonAsync("/api/Course", new CourseCreateDTO
+        {
+            CourseId = courseId,
+            Title = "Reminder course " + courseId,
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(30),
+            Price = 100,
+            MaxParticipants = 10,
+            Duration = 10,
+            Status = CourseStatus.PendingReview
+        });
+        response.EnsureSuccessStatusCode();
+        return courseId;
+    }
+
+    private async Task SeedPaidPaymentAsync(string studentId, string courseId)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+        db.Payments.Add(new Payment
+        {
+            PaymentId = Guid.NewGuid().ToString(),
+            StudentId = studentId,
+            CourseId = courseId,
+            PaymentAmount = 100,
+            PaymentStatus = PaymentStatus.Paid,
+            CreatedAt = DateTime.UtcNow
+        });
+        await db.SaveChangesAsync();
+    }
+
+    private async Task SeedCourseScheduleItemsAsync(string courseId, DateTime startsAt)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+        db.CourseAssignments.Add(new CourseAssignment
+        {
+            AssignmentId = Guid.NewGuid().ToString(),
+            CourseId = courseId,
+            Title = "Reminder assignment",
+            Instructions = "Submit before the deadline.",
+            DueAt = startsAt,
+            Status = AssignmentStatus.Published,
+            PointsPossible = 100,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        db.CourseQuizzes.Add(new CourseQuiz
+        {
+            QuizId = Guid.NewGuid().ToString(),
+            CourseId = courseId,
+            Title = "Reminder quiz",
+            Description = "Closing soon.",
+            AvailableUntil = startsAt,
+            IsPublished = true,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        });
+        db.CourseLiveSessions.Add(new CourseLiveSession
+        {
+            LiveSessionId = Guid.NewGuid().ToString(),
+            CourseId = courseId,
+            Title = "Reminder live session",
+            StartsAt = startsAt,
+            EndsAt = startsAt.AddHours(1),
+            Status = CourseLiveSessionStatus.Scheduled,
+            AttendanceRequired = true,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            PublishedAt = DateTime.UtcNow
+        });
+        await db.SaveChangesAsync();
     }
 }

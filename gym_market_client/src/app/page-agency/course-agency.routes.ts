@@ -10,6 +10,7 @@ import { CourseAnnouncementsComponent } from './course-announcements/course-anno
 import { CourseLiveSessionsComponent } from './course-live-sessions/course-live-sessions.component';
 import { CourseCohortsComponent } from './course-cohorts/course-cohorts.component';
 import { CourseCertificatesComponent } from './course-certificates/course-certificates.component';
+import { CourseCalendarComponent } from './course-calendar/course-calendar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CourseAgencyComponent } from './course-agency.component';
 import { CourseOptionListComponent } from './course-option-list/course-option-list.component';
@@ -38,8 +39,9 @@ export const routes: Routes = [
 				{ path: 'students', component: ManageStudentsComponent, title: 'Quản lý học viên' },
 				{ path: 'payments', component: PaymentsComponent, title: 'Payments' },
 				{ path: 'memberships', component: MembershipsComponent, title: 'Memberships' },
-				{ path: 'classes', component: ClassScheduleComponent, title: 'Class Schedule' },
-					{ path: 'workouts', component: WorkoutPlansComponent, title: 'Workout Plans' },
+					{ path: 'classes', component: ClassScheduleComponent, title: 'Class Schedule' },
+					{ path: 'calendar', component: CourseCalendarComponent, title: 'Course calendar' },
+						{ path: 'workouts', component: WorkoutPlansComponent, title: 'Workout Plans' },
 					{ path: 'progress', component: ProgressReviewComponent, title: 'Progress Review' },
 					{ path: 'notifications', component: NotificationCenterComponent, title: 'Notifications' },
 					{ path: 'nutrition', component: ManageNutritionComponent, title: 'Food Database' },

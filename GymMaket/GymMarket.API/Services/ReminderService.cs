@@ -24,9 +24,107 @@ public class ReminderService : IReminderService
         var sent = 0;
 
         sent += await SendUpcomingClassReminders(now, cancellationToken);
+        sent += await SendUpcomingCourseLiveSessionReminders(now, cancellationToken);
+        sent += await SendCourseAssignmentDueReminders(now, cancellationToken);
+        sent += await SendCourseQuizClosingReminders(now, cancellationToken);
         sent += await SendMembershipExpiryReminders(now, cancellationToken);
         sent += await SendProgressCheckInReminders(now, cancellationToken);
         sent += await SendWorkoutInactivityReminders(now, cancellationToken);
+
+        return sent;
+    }
+
+    private async Task<int> SendUpcomingCourseLiveSessionReminders(DateTime now, CancellationToken cancellationToken)
+    {
+        var cutoff = now.AddHours(24);
+        var sessions = await _context.CourseLiveSessions
+            .AsNoTracking()
+            .Include(s => s.Course)
+            .Where(s => s.Status == CourseLiveSessionStatus.Scheduled
+                && s.StartsAt > now
+                && s.StartsAt <= cutoff)
+            .ToListAsync(cancellationToken);
+
+        var sent = 0;
+        foreach (var session in sessions)
+        {
+            var userIds = await GetCourseLearnerUserIdsAsync(session.CourseId, cancellationToken);
+            foreach (var userId in userIds)
+            {
+                sent += await NotifyOnce(
+                    userId,
+                    NotificationTypes.LiveSession,
+                    "Live session starts soon",
+                    $"{session.Title} in {session.Course?.Title ?? "your course"} starts on {FormatDateTime(session.StartsAt)}.",
+                    $"/client/course-live-sessions/{session.CourseId}",
+                    now,
+                    cancellationToken);
+            }
+        }
+
+        return sent;
+    }
+
+    private async Task<int> SendCourseAssignmentDueReminders(DateTime now, CancellationToken cancellationToken)
+    {
+        var cutoff = now.AddHours(48);
+        var assignments = await _context.CourseAssignments
+            .AsNoTracking()
+            .Include(a => a.Course)
+            .Where(a => a.Status == AssignmentStatus.Published
+                && a.DueAt != null
+                && a.DueAt > now
+                && a.DueAt <= cutoff)
+            .ToListAsync(cancellationToken);
+
+        var sent = 0;
+        foreach (var assignment in assignments)
+        {
+            var userIds = await GetCourseLearnerUserIdsAsync(assignment.CourseId, cancellationToken);
+            foreach (var userId in userIds)
+            {
+                sent += await NotifyOnce(
+                    userId,
+                    NotificationTypes.Assignment,
+                    "Assignment due soon",
+                    $"{assignment.Title} in {assignment.Course?.Title ?? "your course"} is due on {FormatDateTime(assignment.DueAt!.Value)}.",
+                    $"/client/course-assignments/{assignment.CourseId}",
+                    now,
+                    cancellationToken);
+            }
+        }
+
+        return sent;
+    }
+
+    private async Task<int> SendCourseQuizClosingReminders(DateTime now, CancellationToken cancellationToken)
+    {
+        var cutoff = now.AddHours(24);
+        var quizzes = await _context.CourseQuizzes
+            .AsNoTracking()
+            .Include(q => q.Course)
+            .Where(q => q.IsPublished
+                && q.AvailableUntil != null
+                && q.AvailableUntil > now
+                && q.AvailableUntil <= cutoff)
+            .ToListAsync(cancellationToken);
+
+        var sent = 0;
+        foreach (var quiz in quizzes)
+        {
+            var userIds = await GetCourseLearnerUserIdsAsync(quiz.CourseId, cancellationToken);
+            foreach (var userId in userIds)
+            {
+                sent += await NotifyOnce(
+                    userId,
+                    NotificationTypes.Quiz,
+                    "Quiz closes soon",
+                    $"{quiz.Title} in {quiz.Course?.Title ?? "your course"} closes on {FormatDateTime(quiz.AvailableUntil!.Value)}.",
+                    $"/client/course-learn/{quiz.CourseId}",
+                    now,
+                    cancellationToken);
+            }
+        }
 
         return sent;
     }
@@ -240,6 +338,33 @@ public class ReminderService : IReminderService
 
         await _notificationRepository.NotifyUser(userId, type, title, content, link);
         return 1;
+    }
+
+    private async Task<List<string>> GetCourseLearnerUserIdsAsync(string courseId, CancellationToken cancellationToken)
+    {
+        var paidStatuses = new[] { PaymentStatus.Paid, PaymentStatus.Completed };
+        var paymentUserIds = await _context.Payments
+            .AsNoTracking()
+            .Where(p => p.CourseId == courseId
+                && paidStatuses.Contains(p.PaymentStatus!)
+                && p.Student != null
+                && p.Student.UserId != null)
+            .Select(p => p.Student!.UserId!)
+            .ToListAsync(cancellationToken);
+
+        var registrationUserIds = await _context.CourseRegistrations
+            .AsNoTracking()
+            .Where(r => r.CourseId == courseId
+                && paidStatuses.Contains(r.PaymentStatus!)
+                && r.Student != null
+                && r.Student.UserId != null)
+            .Select(r => r.Student!.UserId!)
+            .ToListAsync(cancellationToken);
+
+        return paymentUserIds
+            .Concat(registrationUserIds)
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
     }
 
     private static string FormatDateTime(DateTime dateTime)

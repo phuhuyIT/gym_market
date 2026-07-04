@@ -36,4 +36,18 @@ export class CourseLiveSessionService {
 		if (to) params = params.set('to', to.toISOString());
 		return this.http.get<CourseCalendarItem[]>(`${environment.baseApi}/CourseCalendar/course/${courseId}`, { params });
 	}
+
+	getMyCalendar(from?: Date, to?: Date): Observable<CourseCalendarItem[]> {
+		let params = new HttpParams();
+		if (from) params = params.set('from', from.toISOString());
+		if (to) params = params.set('to', to.toISOString());
+		return this.http.get<CourseCalendarItem[]>(`${environment.baseApi}/CourseCalendar/me`, { params });
+	}
+
+	getTrainerCalendar(from?: Date, to?: Date): Observable<CourseCalendarItem[]> {
+		let params = new HttpParams();
+		if (from) params = params.set('from', from.toISOString());
+		if (to) params = params.set('to', to.toISOString());
+		return this.http.get<CourseCalendarItem[]>(`${environment.baseApi}/CourseCalendar/trainer`, { params });
+	}
 }
