@@ -1,0 +1,86 @@
+<main class="learner-live">
+	<header class="learner-header">
+		<nav>
+			<a [routerLink]="['/client/course-learn', courseId]">Content</a>
+			<a [routerLink]="['/client/course-assignments', courseId]">Assignments</a>
+			<a [routerLink]="['/client/course-grades', courseId]">Grades</a>
+		</nav>
+		<h1>Live sessions</h1>
+	</header>
+
+	<section class="live-grid">
+		<div class="sessions-panel">
+			<div class="panel-head">
+				<h2>Upcoming</h2>
+				<span>{{ upcomingSessions().length }}</span>
+			</div>
+
+			@if (isLoading) {
+				<p class="empty">Loading sessions...</p>
+			} @else if (upcomingSessions().length === 0) {
+				<p class="empty">No upcoming live sessions.</p>
+			} @else {
+				@for (session of upcomingSessions(); track session.liveSessionId) {
+					<article class="session-card">
+						<div>
+							<span class="status-pill" [ngClass]="statusClass(session.status)">{{ session.status }}</span>
+							<h3>{{ session.title }}</h3>
+							<p>{{ formatDate(session.startsAt) }} - {{ formatDate(session.endsAt) }}</p>
+							@if (session.description) {
+								<p class="description">{{ session.description }}</p>
+							}
+						</div>
+						<div class="actions">
+							@if (session.meetingUrl && session.status !== 'Cancelled') {
+								<a class="primary-link" [href]="session.meetingUrl" target="_blank" rel="noopener noreferrer">Join</a>
+							}
+							@if (session.recordingUrl) {
+								<a class="secondary-link" [href]="session.recordingUrl" target="_blank" rel="noopener noreferrer">Recording</a>
+							}
+						</div>
+					</article>
+				}
+			}
+
+			@if (pastSessions().length > 0) {
+				<div class="panel-head panel-head--past">
+					<h2>Previous</h2>
+					<span>{{ pastSessions().length }}</span>
+				</div>
+				@for (session of pastSessions(); track session.liveSessionId) {
+					<article class="session-card session-card--quiet">
+						<div>
+							<span class="status-pill" [ngClass]="statusClass(session.status)">{{ session.status }}</span>
+							<h3>{{ session.title }}</h3>
+							<p>{{ formatDate(session.startsAt) }}</p>
+						</div>
+						@if (session.recordingUrl) {
+							<a class="secondary-link" [href]="session.recordingUrl" target="_blank" rel="noopener noreferrer">Recording</a>
+						}
+					</article>
+				}
+			}
+		</div>
+
+		<aside class="calendar-panel">
+			<div class="panel-head">
+				<h2>Calendar</h2>
+				<span>{{ calendarItems.length }}</span>
+			</div>
+
+			@if (calendarItems.length === 0) {
+				<p class="empty">No dated course activity yet.</p>
+			} @else {
+				<div class="timeline">
+					@for (item of calendarItems; track item.type + item.itemId) {
+						<a class="calendar-item" [ngClass]="itemClass(item.type)" [routerLink]="item.link || null">
+							<span class="calendar-date">{{ formatDate(item.startsAt) }}</span>
+							<strong>{{ item.title }}</strong>
+							<small>{{ item.type.replace('_', ' ') }}</small>
+						</a>
+					}
+				</div>
+			}
+		</aside>
+	</section>
+</main>

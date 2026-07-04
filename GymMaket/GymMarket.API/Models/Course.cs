@@ -47,6 +47,8 @@ public partial class Course
 
     public virtual ICollection<CourseAnnouncement> CourseAnnouncements { get; set; } = new List<CourseAnnouncement>();
 
+    public virtual ICollection<CourseLiveSession> CourseLiveSessions { get; set; } = new List<CourseLiveSession>();
+
     public virtual ICollection<CourseDiscussionQuestion> DiscussionQuestions { get; set; } = new List<CourseDiscussionQuestion>();
 
     public virtual ICollection<CourseModule> CourseModules { get; set; } = new List<CourseModule>();

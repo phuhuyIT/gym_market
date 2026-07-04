@@ -19,6 +19,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<CourseAnnouncement> CourseAnnouncements { get; set; }
 
+    public virtual DbSet<CourseLiveSession> CourseLiveSessions { get; set; }
+
     public virtual DbSet<CourseDiscussionQuestion> CourseDiscussionQuestions { get; set; }
 
     public virtual DbSet<CourseDiscussionAnswer> CourseDiscussionAnswers { get; set; }
@@ -432,6 +434,66 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_Course_Announcements_AppUser");
+        });
+
+        modelBuilder.Entity<CourseLiveSession>(entity =>
+        {
+            entity.HasKey(e => e.LiveSessionId);
+
+            entity.ToTable("Course_Live_Sessions");
+
+            entity.Property(e => e.LiveSessionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Live_Session_ID");
+            entity.Property(e => e.CourseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Course_ID");
+            entity.Property(e => e.Title)
+                .HasMaxLength(200);
+            entity.Property(e => e.Description)
+                .HasMaxLength(2000);
+            entity.Property(e => e.StartsAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Starts_At");
+            entity.Property(e => e.EndsAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Ends_At");
+            entity.Property(e => e.MeetingUrl)
+                .HasMaxLength(1000)
+                .HasColumnName("Meeting_Url");
+            entity.Property(e => e.RecordingUrl)
+                .HasMaxLength(1000)
+                .HasColumnName("Recording_Url");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(CourseLiveSessionStatus.Draft);
+            entity.Property(e => e.AttendanceRequired)
+                .HasDefaultValue(false)
+                .HasColumnName("Attendance_Required");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+            entity.Property(e => e.PublishedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Published_At");
+
+            entity.HasIndex(e => e.CourseId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.StartsAt);
+            entity.HasIndex(e => new { e.CourseId, e.Status, e.StartsAt });
+
+            entity.HasOne(d => d.Course).WithMany(p => p.CourseLiveSessions)
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Course_Live_Sessions_Course");
         });
 
         modelBuilder.Entity<CourseDiscussionQuestion>(entity =>

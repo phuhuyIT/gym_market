@@ -7,6 +7,7 @@ namespace GymMarket.API.Models
         public const string Chat = "chat";
         public const string Course = "course";
         public const string Announcement = "announcement";
+        public const string LiveSession = "live_session";
         public const string Class = "class";
         public const string Workout = "workout";
         public const string Progress = "progress";
@@ -19,6 +20,7 @@ namespace GymMarket.API.Models
             Chat,
             Course,
             Announcement,
+            LiveSession,
             Class,
             Workout,
             Progress,
@@ -32,6 +34,7 @@ namespace GymMarket.API.Models
             [Chat] = "Chat",
             [Course] = "Course",
             [Announcement] = "Course announcement",
+            [LiveSession] = "Live session",
             [Class] = "Class",
             [Workout] = "Workout",
             [Progress] = "Progress",

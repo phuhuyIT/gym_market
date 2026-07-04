@@ -1,0 +1,277 @@
+.live-shell {
+	padding: 1.5rem;
+	color: #17201b;
+}
+
+.live-header,
+.workspace,
+.form-top,
+.panel-head,
+.two-col,
+.session-card,
+.calendar-item {
+	display: flex;
+}
+
+.live-header {
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 1.25rem;
+}
+
+.live-header h1,
+.session-form h2,
+.panel-head h2 {
+	margin: 0;
+}
+
+.live-header h1 {
+	font-size: clamp(2rem, 4vw, 3.4rem);
+	font-weight: 900;
+	letter-spacing: 0;
+}
+
+.back-link {
+	color: #2f7c68;
+	font-size: 0.85rem;
+	font-weight: 800;
+	text-decoration: none;
+}
+
+.workspace {
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.session-form,
+.session-list,
+.calendar-rail {
+	background: #fff;
+	border: 1px solid #dde5df;
+	border-radius: 8px;
+	box-shadow: 0 12px 30px rgb(15 23 42 / 0.06);
+}
+
+.session-form {
+	flex: 1 1 360px;
+	display: grid;
+	gap: 1rem;
+	padding: 1rem;
+}
+
+.session-list {
+	flex: 1 1 340px;
+	padding: 1rem;
+}
+
+.calendar-rail {
+	flex: 0 0 320px;
+	padding: 1rem;
+}
+
+.form-top,
+.panel-head {
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+label {
+	display: grid;
+	gap: 0.4rem;
+	font-size: 0.82rem;
+	font-weight: 800;
+	color: #506059;
+}
+
+input,
+textarea,
+select {
+	width: 100%;
+	border: 1px solid #ccd8d1;
+	border-radius: 7px;
+	background: #f8faf7;
+	color: #17201b;
+	font: inherit;
+	font-weight: 600;
+	padding: 0.75rem 0.85rem;
+	outline: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+	border-color: #2f7c68;
+	box-shadow: 0 0 0 3px rgb(47 124 104 / 0.12);
+}
+
+.two-col {
+	gap: 0.8rem;
+}
+
+.two-col > * {
+	flex: 1 1 0;
+}
+
+.check-row {
+	align-content: end;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	background: #f8faf7;
+	border: 1px solid #ccd8d1;
+	border-radius: 7px;
+	padding: 0.75rem;
+}
+
+.check-row input {
+	width: auto;
+}
+
+.primary-btn,
+.ghost-btn,
+.delete-btn {
+	border: 0;
+	border-radius: 7px;
+	cursor: pointer;
+	font-weight: 900;
+	padding: 0.8rem 1rem;
+}
+
+.primary-btn {
+	background: #1c5f51;
+	color: #fff;
+}
+
+.ghost-btn {
+	background: #e7efe9;
+	color: #1c5f51;
+}
+
+.delete-btn {
+	background: #fff0ed;
+	color: #b13d25;
+}
+
+.session-list {
+	display: grid;
+	gap: 0.75rem;
+}
+
+.session-card {
+	align-items: stretch;
+	gap: 0.5rem;
+	border: 1px solid #e4ebe6;
+	border-radius: 8px;
+	padding: 0.5rem;
+}
+
+.session-card--active {
+	border-color: #2f7c68;
+}
+
+.session-main {
+	flex: 1;
+	display: grid;
+	gap: 0.35rem;
+	text-align: left;
+	background: transparent;
+	border: 0;
+	cursor: pointer;
+	color: inherit;
+}
+
+.session-main strong,
+.calendar-body strong {
+	font-size: 0.95rem;
+}
+
+.session-main small,
+.calendar-body small {
+	color: #6a766f;
+	font-weight: 700;
+	text-transform: capitalize;
+}
+
+.status-pill {
+	width: fit-content;
+	border-radius: 999px;
+	font-size: 0.68rem;
+	font-weight: 900;
+	padding: 0.25rem 0.55rem;
+}
+
+.status-draft {
+	background: #eceff3;
+	color: #53606e;
+}
+
+.status-scheduled {
+	background: #dff3ed;
+	color: #1c5f51;
+}
+
+.status-completed {
+	background: #e9eefb;
+	color: #3754a5;
+}
+
+.status-cancelled {
+	background: #ffe5df;
+	color: #a33923;
+}
+
+.timeline {
+	display: grid;
+	gap: 0.5rem;
+}
+
+.calendar-item {
+	align-items: flex-start;
+	gap: 0.65rem;
+	color: inherit;
+	text-decoration: none;
+	border-radius: 7px;
+	padding: 0.65rem;
+}
+
+.calendar-item:hover {
+	background: #f5f8f6;
+}
+
+.calendar-dot {
+	width: 0.7rem;
+	height: 0.7rem;
+	border-radius: 50%;
+	margin-top: 0.25rem;
+	background: #2f7c68;
+}
+
+.item-assignment .calendar-dot {
+	background: #4f46e5;
+}
+
+.item-quiz .calendar-dot {
+	background: #c26a1b;
+}
+
+.item-announcement .calendar-dot {
+	background: #76992f;
+}
+
+.empty {
+	color: #6a766f;
+	font-weight: 700;
+}
+
+@media (max-width: 1100px) {
+	.workspace,
+	.two-col {
+		flex-direction: column;
+	}
+
+	.calendar-rail {
+		flex-basis: auto;
+		width: 100%;
+	}
+}

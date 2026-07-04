@@ -12,6 +12,7 @@ import { CourseGradesComponent } from './course-grades/course-grades.component';
 import { CourseProgressDashboardComponent } from './course-progress-dashboard/course-progress-dashboard.component';
 import { CourseDiscussionsComponent } from './course-discussions/course-discussions.component';
 import { CourseAnnouncementsComponent } from './course-announcements/course-announcements.component';
+import { CourseLiveSessionsComponent } from './course-live-sessions/course-live-sessions.component';
 import { CoursePaymentComponent } from './course-payment/course-payment.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { CourseRegistrationComponent } from './course-registration/course-registration.component';
@@ -41,6 +42,7 @@ export const routes: Routes = [
 				{ path: 'course-progress/:courseId', component: CourseProgressDashboardComponent, title: 'Course progress' },
 				{ path: 'course-assignments/:courseId', component: CourseAssignmentsComponent, title: 'Course assignments' },
 				{ path: 'course-announcements/:courseId', component: CourseAnnouncementsComponent, title: 'Course announcements' },
+				{ path: 'course-live-sessions/:courseId', component: CourseLiveSessionsComponent, title: 'Course live sessions' },
 				{ path: 'course-discussions/:courseId', component: CourseDiscussionsComponent, title: 'Course Q&A' },
 			{ path: 'course-grades/:courseId', component: CourseGradesComponent, title: 'Course grades' },
 			{ path: 'course-payment/:courseId', component: CoursePaymentComponent, title: 'Course payment' },
