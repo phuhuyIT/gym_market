@@ -11,6 +11,7 @@
       <a class="back-link" [routerLink]="['/client/course-discussions', courseId]">Q&amp;A</a>
       <a class="back-link" [routerLink]="['/client/course-assignments', courseId]">Assignments</a>
       <a class="back-link" [routerLink]="['/client/course-grades', courseId]">Grades</a>
+      <a class="back-link" routerLink="/client/certificates">Certificates</a>
       <h1 class="learn-header__title section-title">
         {{ course?.title || 'Course content' }}
       </h1>
@@ -260,11 +261,14 @@
           <div class="certificate-panel__body">
             <p class="certificate-panel__eyebrow">Certificate</p>
             <h2 class="certificate-panel__title">
-              {{ issuedCertificate ? 'Certificate issued' : completionStatus.isCompleted ? 'Ready to issue' : 'Requirements remaining' }}
+              {{ !completionStatus.certificatesEnabled ? 'Certificates paused' : issuedCertificate ? 'Certificate issued' : completionStatus.isCompleted ? 'Ready to issue' : 'Requirements remaining' }}
             </h2>
+            @if (completionStatus.setting?.bodyText) {
+              <p class="certificate-panel__text">{{ completionStatus.setting?.bodyText }}</p>
+            }
             <div class="certificate-checks">
               <span [class.certificate-checks__item--done]="completionStatus.lecturesCompleted">
-                {{ completionStatus.completedLectures }} / {{ completionStatus.totalLectures }} lectures completed
+                {{ completionStatus.lectureCompletionPercent }}% / {{ completionStatus.requiredLecturePercent }}% lectures
               </span>
               <span [class.certificate-checks__item--done]="completionStatus.quizPassed">
                 @if (completionStatus.quizRequired) {
@@ -276,16 +280,34 @@
                   No quiz required
                 }
               </span>
+              <span [class.certificate-checks__item--done]="completionStatus.assignmentPassed">
+                @if (completionStatus.assignmentRequired) {
+                  {{ completionStatus.gradedAssignments }} / {{ completionStatus.totalAssignments }} assignments graded
+                  @if (completionStatus.assignmentAveragePercent !== null && completionStatus.assignmentAveragePercent !== undefined) {
+                    (avg {{ completionStatus.assignmentAveragePercent }}%)
+                  }
+                } @else {
+                  No assignment requirement
+                }
+              </span>
+              <span [class.certificate-checks__item--done]="completionStatus.finalGradePassed">
+                @if (completionStatus.minimumFinalGradePercent !== null && completionStatus.minimumFinalGradePercent !== undefined) {
+                  Final grade {{ completionStatus.finalGradePercent ?? 0 }}% / {{ completionStatus.minimumFinalGradePercent }}%
+                } @else {
+                  No final grade minimum
+                }
+              </span>
             </div>
             @if (issuedCertificate) {
               <div class="certificate-code">
                 <span>Verification code</span>
                 <strong>{{ issuedCertificate.verificationCode }}</strong>
+                <a [routerLink]="['/certificate/verify', issuedCertificate.verificationCode]">Verify</a>
               </div>
             }
           </div>
 
-          @if (!issuedCertificate) {
+          @if (!issuedCertificate && completionStatus.certificatesEnabled) {
             <gm-button
               [variant]="completionStatus.isCompleted ? 'primary' : 'secondary'"
               (clicked)="issueCertificate()"

@@ -190,6 +190,13 @@
                   </svg>
                 </a>
 
+                <!-- Credentials -->
+                <a [routerLink]="['../certificates', course.courseId]" class="inline-flex items-center justify-center p-2 rounded-xl bg-violet-500/10 hover:bg-violet-600 text-violet-600 dark:text-violet-400 hover:text-white transition-colors shadow-sm" title="Credentials">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75 12 16.5l-4.5 2.25V5.25A2.25 2.25 0 0 1 9.75 3h4.5a2.25 2.25 0 0 1 2.25 2.25v13.5ZM7.5 7.5h9" />
+                  </svg>
+                </a>
+
                 <!-- Edit Course -->
                 <a [routerLink]="['../update-course', course.courseId]" class="inline-flex items-center justify-center p-2 rounded-xl bg-blue-500/10 hover:bg-blue-600 text-[#007AFF] dark:text-blue-400 hover:text-white transition-colors shadow-sm" title="Edit Course">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-4 h-4">

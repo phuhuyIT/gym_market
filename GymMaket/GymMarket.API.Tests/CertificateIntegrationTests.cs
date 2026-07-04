@@ -72,6 +72,65 @@ public class CertificateIntegrationTests : BaseIntegrationTests
         Assert.Equal(certificate.CertificateId, verified!.CertificateId);
     }
 
+    [Fact]
+    public async Task UpdateCertificateSettings_AsTrainer_ReturnsSavedSettings()
+    {
+        var (courseId, _) = await CreateCourseWithLectureAndQuizAsync("cert_settings_trainer@example.com");
+
+        var response = await Client.PutAsJsonAsync($"/api/Certificates/course/{courseId}/settings", new UpdateCourseCertificateSettingDto
+        {
+            IsEnabled = true,
+            TemplateName = "Performance",
+            CertificateTitle = "Strength Credential",
+            BodyText = "Awarded for meeting the course credential policy.",
+            AccentColor = "#16A34A",
+            RequiredLecturePercent = 80,
+            RequirePublishedQuizzes = false,
+            RequirePublishedAssignments = true,
+            RequiredAssignmentPercent = 70,
+            MinimumFinalGradePercent = 75
+        });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var setting = await response.Content.ReadFromJsonAsync<CourseCertificateSettingDto>();
+        Assert.NotNull(setting);
+        Assert.Equal("Performance", setting!.TemplateName);
+        Assert.Equal(80, setting.RequiredLecturePercent);
+        Assert.False(setting.RequirePublishedQuizzes);
+        Assert.True(setting.RequirePublishedAssignments);
+        Assert.Equal(75, setting.MinimumFinalGradePercent);
+    }
+
+    [Fact]
+    public async Task IssueCertificate_WithRelaxedCourseRules_ReturnsCertificate()
+    {
+        var (courseId, _) = await CreateCourseWithLectureAndQuizAsync("cert_relaxed_trainer@example.com");
+        var settingsResponse = await Client.PutAsJsonAsync($"/api/Certificates/course/{courseId}/settings", new UpdateCourseCertificateSettingDto
+        {
+            IsEnabled = true,
+            TemplateName = "Fast Track",
+            CertificateTitle = "Course Participation",
+            BodyText = "Awarded when participation requirements are met.",
+            AccentColor = "#7C3AED",
+            RequiredLecturePercent = 0,
+            RequirePublishedQuizzes = false,
+            RequirePublishedAssignments = false,
+            RequiredAssignmentPercent = 0,
+            MinimumFinalGradePercent = null
+        });
+        settingsResponse.EnsureSuccessStatusCode();
+
+        await AuthenticateAsync(email: "cert_relaxed_student@example.com", role: "Student");
+        await SeedPaidPaymentAsync(GetTokenClaim("studentId")!, courseId);
+
+        var response = await Client.PostAsync($"/api/Certificates/course/{courseId}/issue", null);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var certificate = await response.Content.ReadFromJsonAsync<CourseCertificateDto>();
+        Assert.NotNull(certificate);
+        Assert.Equal("Fast Track", certificate!.Setting?.TemplateName);
+    }
+
     private async Task<(string courseId, string lectureId)> CreateCourseWithLectureAndQuizAsync(string trainerEmail)
     {
         await AuthenticateAsync(email: trainerEmail, role: "Trainer");

@@ -499,6 +499,12 @@
     margin: 0;
     font-size: 1.2rem;
   }
+
+  &__text {
+    margin: 0.4rem 0 0;
+    color: var(--text-muted, #888);
+    line-height: 1.5;
+  }
 }
 
 .certificate-checks {
@@ -542,5 +548,11 @@
   strong {
     font-family: var(--font-display);
     letter-spacing: 0.08em;
+  }
+
+  a {
+    color: var(--blue);
+    font-weight: 700;
+    text-decoration: none;
   }
 }

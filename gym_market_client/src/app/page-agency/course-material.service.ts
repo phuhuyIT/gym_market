@@ -10,7 +10,12 @@ import {
 	TrainerCourseQuiz,
 	UpsertCourseQuiz,
 } from '../core/models/quiz.model';
-import { CourseCertificate, CourseCompletionStatus } from '../core/models/certificate.model';
+import {
+	CourseCertificate,
+	CourseCertificateSetting,
+	CourseCompletionStatus,
+	UpdateCourseCertificateSetting,
+} from '../core/models/certificate.model';
 
 export interface CourseProgress {
 	courseId: string;
@@ -154,6 +159,32 @@ export class CourseMaterialService {
 		return this.http.post<CourseCertificate>(
 			`${environment.baseApi}/certificates/course/${courseId}/issue`,
 			{}
+		);
+	}
+
+	getMyCertificates(): Observable<CourseCertificate[]> {
+		return this.http.get<CourseCertificate[]>(`${environment.baseApi}/certificates/me`);
+	}
+
+	verifyCertificate(verificationCode: string): Observable<CourseCertificate> {
+		return this.http.get<CourseCertificate>(
+			`${environment.baseApi}/certificates/verify/${verificationCode}`
+		);
+	}
+
+	getCertificateSettings(courseId: string): Observable<CourseCertificateSetting> {
+		return this.http.get<CourseCertificateSetting>(
+			`${environment.baseApi}/certificates/course/${courseId}/settings`
+		);
+	}
+
+	updateCertificateSettings(
+		courseId: string,
+		model: UpdateCourseCertificateSetting
+	): Observable<CourseCertificateSetting> {
+		return this.http.put<CourseCertificateSetting>(
+			`${environment.baseApi}/certificates/course/${courseId}/settings`,
+			model
 		);
 	}
 }

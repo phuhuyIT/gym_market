@@ -1,0 +1,38 @@
+<div class="cert-wallet">
+	<header class="cert-wallet__header">
+		<div>
+			<p>My credentials</p>
+			<h1>Certificates</h1>
+		</div>
+		<a routerLink="../course-search">Find courses</a>
+	</header>
+
+	@if (isLoading) {
+		<div class="cert-wallet__empty">Loading certificates...</div>
+	} @else if (certificates.length === 0) {
+		<div class="cert-wallet__empty">
+			<h2>No certificates yet</h2>
+			<p>Complete an eligible course and issue your first verified certificate from the course player.</p>
+			<a routerLink="../course-search">Browse courses</a>
+		</div>
+	} @else {
+		<div class="cert-grid">
+			@for (certificate of certificates; track certificate.certificateId) {
+				<article class="cert-card" [style.--accent]="certificate.setting?.accentColor || '#007AFF'">
+					<div class="cert-card__mark">{{ certificate.setting?.templateName || 'Certificate' }}</div>
+					<h2>{{ certificate.setting?.certificateTitle || 'Certificate of Completion' }}</h2>
+					<p class="cert-card__course">{{ certificate.courseTitle || 'Course' }}</p>
+					<p class="cert-card__body">{{ certificate.setting?.bodyText || 'Awarded for successfully completing this course.' }}</p>
+					<div class="cert-card__meta">
+						<span>Issued {{ certificate.issuedAt | date:'mediumDate' }}</span>
+						<strong>{{ certificate.verificationCode }}</strong>
+					</div>
+					<div class="cert-card__actions">
+						<a [routerLink]="['/certificate/verify', certificate.verificationCode]">Verify</a>
+						<a [routerLink]="['/client/course-learn', certificate.courseId]">Course</a>
+					</div>
+				</article>
+			}
+		</div>
+	}
+</div>

@@ -9,6 +9,7 @@ import { CourseDiscussionsComponent } from './course-discussions/course-discussi
 import { CourseAnnouncementsComponent } from './course-announcements/course-announcements.component';
 import { CourseLiveSessionsComponent } from './course-live-sessions/course-live-sessions.component';
 import { CourseCohortsComponent } from './course-cohorts/course-cohorts.component';
+import { CourseCertificatesComponent } from './course-certificates/course-certificates.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CourseAgencyComponent } from './course-agency.component';
 import { CourseOptionListComponent } from './course-option-list/course-option-list.component';
@@ -48,9 +49,10 @@ export const routes: Routes = [
 			{ path: 'assignments/:courseId', component: AssignmentsComponent, title: 'Assignments' },
 			{ path: 'analytics/:courseId', component: CourseAnalyticsComponent, title: 'Course analytics' },
 				{ path: 'announcements/:courseId', component: CourseAnnouncementsComponent, title: 'Course announcements' },
-				{ path: 'live-sessions/:courseId', component: CourseLiveSessionsComponent, title: 'Course live sessions' },
-				{ path: 'cohorts/:courseId', component: CourseCohortsComponent, title: 'Course groups' },
-				{ path: 'discussions/:courseId', component: CourseDiscussionsComponent, title: 'Course Q&A' },
+					{ path: 'live-sessions/:courseId', component: CourseLiveSessionsComponent, title: 'Course live sessions' },
+					{ path: 'cohorts/:courseId', component: CourseCohortsComponent, title: 'Course groups' },
+					{ path: 'certificates/:courseId', component: CourseCertificatesComponent, title: 'Course credentials' },
+					{ path: 'discussions/:courseId', component: CourseDiscussionsComponent, title: 'Course Q&A' },
 			{ path: 'gradebook/:courseId', component: GradebookComponent, title: 'Gradebook' },
 			{ path: 'course-option-list', component: CourseOptionListComponent, title: 'Danh sách option của course' },
 			{ path: 'your-profile', component: YourProfileComponent, title: 'Thông tin cá nhân' },

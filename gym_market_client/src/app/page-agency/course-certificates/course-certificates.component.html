@@ -1,0 +1,105 @@
+<div class="credential-page">
+	<header class="credential-hero">
+		<a class="credential-hero__back" routerLink="../../courses">Back to courses</a>
+		<div>
+			<p class="credential-hero__eyebrow">Course credentials</p>
+			<h1>{{ setting?.courseTitle || 'Certificate settings' }}</h1>
+			<p>Define the rules learners must meet before they can issue a verified certificate.</p>
+		</div>
+		<div class="credential-status" [class.credential-status--off]="!draft.isEnabled">
+			<span>{{ draft.isEnabled ? 'Enabled' : 'Paused' }}</span>
+			<strong>{{ draft.requiredLecturePercent | number:'1.0-0' }}%</strong>
+			<small>lecture requirement</small>
+		</div>
+	</header>
+
+	@if (isLoading) {
+		<div class="credential-empty">Loading certificate settings...</div>
+	} @else {
+		<div class="credential-grid">
+			<section class="credential-panel">
+				<div class="credential-panel__head">
+					<div>
+						<p>Template</p>
+						<h2>Certificate copy</h2>
+					</div>
+					<label class="credential-toggle">
+						<input type="checkbox" [(ngModel)]="draft.isEnabled" />
+						<span>Certificates enabled</span>
+					</label>
+				</div>
+
+				<label class="field">
+					<span>Template name</span>
+					<input [(ngModel)]="draft.templateName" maxlength="80" />
+				</label>
+
+				<label class="field">
+					<span>Certificate title</span>
+					<input [(ngModel)]="draft.certificateTitle" maxlength="160" />
+				</label>
+
+				<label class="field">
+					<span>Body text</span>
+					<textarea [(ngModel)]="draft.bodyText" rows="4" maxlength="1000"></textarea>
+				</label>
+
+				<label class="field field--color">
+					<span>Accent color</span>
+					<input type="color" [(ngModel)]="draft.accentColor" />
+					<input [(ngModel)]="draft.accentColor" maxlength="16" />
+				</label>
+			</section>
+
+			<section class="credential-panel">
+				<div class="credential-panel__head">
+					<div>
+						<p>Completion rules</p>
+						<h2>Issue policy</h2>
+					</div>
+				</div>
+
+				<label class="field">
+					<span>Required lecture completion</span>
+					<input type="number" min="0" max="100" [(ngModel)]="draft.requiredLecturePercent" />
+				</label>
+
+				<label class="check-row">
+					<input type="checkbox" [(ngModel)]="draft.requirePublishedQuizzes" />
+					<span>Require every published quiz to be passed</span>
+				</label>
+
+				<label class="check-row">
+					<input type="checkbox" [(ngModel)]="draft.requirePublishedAssignments" />
+					<span>Require published assignments to be graded</span>
+				</label>
+
+				<label class="field">
+					<span>Minimum assignment average</span>
+					<input type="number" min="0" max="100" [(ngModel)]="draft.requiredAssignmentPercent" />
+				</label>
+
+				<label class="field">
+					<span>Minimum final grade</span>
+					<input type="number" min="0" max="100" [(ngModel)]="draft.minimumFinalGradePercent" placeholder="Optional" />
+				</label>
+
+				<div class="credential-actions">
+					<button type="button" class="ghost-button" (click)="resetDefaults()">Reset defaults</button>
+					<button type="button" class="primary-button" (click)="save()">
+						{{ isSaving ? 'Saving...' : 'Save settings' }}
+					</button>
+				</div>
+			</section>
+
+			<section class="certificate-preview" [style.--accent]="draft.accentColor">
+				<p>{{ draft.templateName || 'Classic' }}</p>
+				<h2>{{ draft.certificateTitle || 'Certificate of Completion' }}</h2>
+				<div class="certificate-preview__line"></div>
+				<strong>Learner name</strong>
+				<span>{{ draft.bodyText || 'Awarded for successfully completing this course.' }}</span>
+				<small>Verification code appears after issue</small>
+			</section>
+		</div>
+	}
+</div>

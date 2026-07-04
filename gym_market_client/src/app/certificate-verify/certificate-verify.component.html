@@ -1,0 +1,31 @@
+<main class="verify-page">
+	<a class="verify-page__home" routerLink="/">Gym Market</a>
+
+	@if (isLoading) {
+		<section class="verify-shell">
+			<p class="verify-shell__eyebrow">Certificate verification</p>
+			<h1>Checking credential...</h1>
+		</section>
+	} @else if (certificate) {
+		<section class="verify-shell verify-shell--valid" [style.--accent]="certificate.setting?.accentColor || '#007AFF'">
+			<div class="verify-badge">Verified</div>
+			<p class="verify-shell__eyebrow">{{ certificate.setting?.templateName || 'Certificate' }}</p>
+			<h1>{{ certificate.setting?.certificateTitle || 'Certificate of Completion' }}</h1>
+			<div class="verify-line"></div>
+			<h2>{{ certificate.studentName || 'Learner' }}</h2>
+			<p class="verify-course">{{ certificate.courseTitle || 'Course' }}</p>
+			<p class="verify-body">{{ certificate.setting?.bodyText || 'Awarded for successfully completing this course.' }}</p>
+			<div class="verify-meta">
+				<span>Issued {{ certificate.issuedAt | date:'mediumDate' }}</span>
+				<strong>{{ certificate.verificationCode }}</strong>
+			</div>
+		</section>
+	} @else {
+		<section class="verify-shell">
+			<div class="verify-badge verify-badge--invalid">Not found</div>
+			<p class="verify-shell__eyebrow">Certificate verification</p>
+			<h1>Credential not found</h1>
+			<p class="verify-body">Check the verification code and try the link again.</p>
+		</section>
+	}
+</main>

@@ -5,6 +5,7 @@ import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { CertificateVerifyComponent } from './certificate-verify/certificate-verify.component';
 
 export const routes: Routes = [
 	{
@@ -27,12 +28,13 @@ export const routes: Routes = [
 		loadChildren: () => import('./admin/admin.routes').then(r => r.routes),
 		canActivate: [adminGuard],
 	},
-	{
-		path: 'chat',
-		loadChildren: () => import('./chat/chat.routes').then(r => r.routes),
-		canActivate: [authGuard],
-	},
-    { path: 'access-denied', component: AccessDeniedComponent, title: 'Access denied' },
+		{
+			path: 'chat',
+			loadChildren: () => import('./chat/chat.routes').then(r => r.routes),
+			canActivate: [authGuard],
+		},
+	    { path: 'certificate/verify/:verificationCode', component: CertificateVerifyComponent, title: 'Verify certificate' },
+	    { path: 'access-denied', component: AccessDeniedComponent, title: 'Access denied' },
     { path: 'not-found', component: NotFoundComponent, title: 'Page not found' },
 	{ path: '**', redirectTo: '/not-found' },
 ];

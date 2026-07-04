@@ -15,4 +15,6 @@ public class CourseCertificateDto
     public string VerificationCode { get; set; } = string.Empty;
 
     public DateTime IssuedAt { get; set; }
+
+    public CourseCertificateSettingDto? Setting { get; set; }
 }

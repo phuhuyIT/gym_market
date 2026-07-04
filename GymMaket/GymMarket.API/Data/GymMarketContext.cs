@@ -31,6 +31,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<CourseCertificate> CourseCertificates { get; set; }
 
+    public virtual DbSet<CourseCertificateSetting> CourseCertificateSettings { get; set; }
+
     public virtual DbSet<CourseRating> CourseRatings { get; set; }
 
     public virtual DbSet<CourseRegistration> CourseRegistrations { get; set; }
@@ -658,6 +660,62 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.StudentId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Course_Certificates_Student");
+        });
+
+        modelBuilder.Entity<CourseCertificateSetting>(entity =>
+        {
+            entity.HasKey(e => e.CourseId);
+
+            entity.ToTable("Course_Certificate_Settings");
+
+            entity.Property(e => e.CourseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Course_ID");
+            entity.Property(e => e.IsEnabled)
+                .HasDefaultValue(true)
+                .HasColumnName("Is_Enabled");
+            entity.Property(e => e.TemplateName)
+                .HasMaxLength(80)
+                .HasColumnName("Template_Name");
+            entity.Property(e => e.CertificateTitle)
+                .HasMaxLength(160)
+                .HasColumnName("Certificate_Title");
+            entity.Property(e => e.BodyText)
+                .HasMaxLength(1000)
+                .HasColumnName("Body_Text");
+            entity.Property(e => e.AccentColor)
+                .HasMaxLength(16)
+                .IsUnicode(false)
+                .HasColumnName("Accent_Color");
+            entity.Property(e => e.RequiredLecturePercent)
+                .HasColumnType("decimal(5, 2)")
+                .HasDefaultValue(100m)
+                .HasColumnName("Required_Lecture_Percent");
+            entity.Property(e => e.RequirePublishedQuizzes)
+                .HasDefaultValue(true)
+                .HasColumnName("Require_Published_Quizzes");
+            entity.Property(e => e.RequirePublishedAssignments)
+                .HasColumnName("Require_Published_Assignments");
+            entity.Property(e => e.RequiredAssignmentPercent)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("Required_Assignment_Percent");
+            entity.Property(e => e.MinimumFinalGradePercent)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("Minimum_Final_Grade_Percent");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasOne(d => d.Course).WithOne(p => p.CertificateSetting)
+                .HasForeignKey<CourseCertificateSetting>(d => d.CourseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Course_Certificate_Settings_Course");
         });
 
         modelBuilder.Entity<CourseModule>(entity =>
