@@ -9,4 +9,6 @@ public class NotificationPreferenceDto
     public bool InAppEnabled { get; set; }
 
     public bool EmailEnabled { get; set; }
+
+    public string EmailFrequency { get; set; } = string.Empty;
 }

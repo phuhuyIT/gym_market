@@ -60,13 +60,26 @@ namespace GymMarket.API.Repositories
                     && !p.InAppEnabled)
                 .Select(p => p.UserId)
                 .ToListAsync();
-            var disabledEmailUserIds = await _context.NotificationPreferences
+            var emailPreferences = await _context.NotificationPreferences
                 .AsNoTracking()
                 .Where(p => targetUserIds.Contains(p.UserId)
-                    && p.Type == normalizedType
-                    && !p.EmailEnabled)
-                .Select(p => p.UserId)
+                    && p.Type == normalizedType)
+                .Select(p => new
+                {
+                    p.UserId,
+                    p.EmailEnabled,
+                    p.EmailFrequency,
+                })
                 .ToListAsync();
+            var disabledEmailUserIds = emailPreferences
+                .Where(p => !p.EmailEnabled || p.EmailFrequency == NotificationEmailFrequencies.Off)
+                .Select(p => p.UserId)
+                .ToList();
+            var digestEmailPreferences = emailPreferences
+                .Where(p => p.EmailEnabled
+                    && (p.EmailFrequency == NotificationEmailFrequencies.Daily
+                        || p.EmailFrequency == NotificationEmailFrequencies.Weekly))
+                .ToList();
             var deliveryLogs = new List<NotificationDeliveryLog>();
 
             var notifications = targetUserIds
@@ -130,7 +143,24 @@ namespace GymMarket.API.Repositories
                     errorMessage: "Skipped by email notification preference."));
             }
 
-            var emailUserIds = targetUserIds.Except(disabledEmailUserIds).ToList();
+            foreach (var preference in digestEmailPreferences)
+            {
+                deliveryLogs.Add(CreateDeliveryLog(
+                    preference.UserId,
+                    normalizedType,
+                    NotificationDeliveryChannels.Email,
+                    NotificationDeliveryStatuses.Deferred,
+                    title,
+                    content,
+                    link,
+                    errorMessage: $"Deferred for {preference.EmailFrequency} email digest."));
+            }
+
+            var digestEmailUserIds = digestEmailPreferences.Select(p => p.UserId).ToList();
+            var emailUserIds = targetUserIds
+                .Except(disabledEmailUserIds)
+                .Except(digestEmailUserIds)
+                .ToList();
             await SendNotificationEmails(emailUserIds, normalizedType, title, content, link, deliveryLogs);
 
             if (deliveryLogs.Count > 0)
@@ -302,7 +332,8 @@ namespace GymMarket.API.Repositories
                         Type = type,
                         Label = NotificationTypes.LabelFor(type),
                         InAppEnabled = preference?.InAppEnabled ?? true,
-                        EmailEnabled = preference?.EmailEnabled ?? true,
+                        EmailEnabled = ResolveEmailEnabled(preference),
+                        EmailFrequency = ResolveEmailFrequency(preference),
                     };
                 })
                 .ToList();
@@ -319,6 +350,7 @@ namespace GymMarket.API.Repositories
                     Type = NotificationTypes.Normalize(p.Type),
                     p.InAppEnabled,
                     p.EmailEnabled,
+                    p.EmailFrequency,
                 })
                 .GroupBy(p => p.Type)
                 .Select(g => g.Last())
@@ -338,6 +370,9 @@ namespace GymMarket.API.Repositories
             foreach (var item in requested)
             {
                 var preference = existing.FirstOrDefault(p => p.Type == item.Type);
+                var emailFrequency = ResolveRequestedEmailFrequency(item.EmailEnabled, item.EmailFrequency, preference);
+                var emailEnabled = ResolveRequestedEmailEnabled(item.EmailEnabled, emailFrequency, preference);
+
                 if (preference == null)
                 {
                     _context.NotificationPreferences.Add(new NotificationPreference
@@ -345,7 +380,8 @@ namespace GymMarket.API.Repositories
                         UserId = userId,
                         Type = item.Type,
                         InAppEnabled = item.InAppEnabled,
-                        EmailEnabled = item.EmailEnabled ?? true,
+                        EmailEnabled = emailEnabled,
+                        EmailFrequency = emailFrequency,
                         CreatedAt = now,
                         UpdatedAt = now,
                     });
@@ -353,7 +389,8 @@ namespace GymMarket.API.Repositories
                 else
                 {
                     preference.InAppEnabled = item.InAppEnabled;
-                    preference.EmailEnabled = item.EmailEnabled ?? preference.EmailEnabled;
+                    preference.EmailEnabled = emailEnabled;
+                    preference.EmailFrequency = emailFrequency;
                     preference.UpdatedAt = now;
                 }
             }
@@ -383,6 +420,66 @@ namespace GymMarket.API.Repositories
                 .FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
 
             return preference?.InAppEnabled ?? true;
+        }
+
+        private static bool ResolveEmailEnabled(NotificationPreference? preference)
+        {
+            return preference == null
+                || (preference.EmailEnabled && ResolveEmailFrequency(preference) != NotificationEmailFrequencies.Off);
+        }
+
+        private static string ResolveEmailFrequency(NotificationPreference? preference)
+        {
+            if (preference == null)
+            {
+                return NotificationEmailFrequencies.Immediate;
+            }
+
+            if (!preference.EmailEnabled)
+            {
+                return NotificationEmailFrequencies.Off;
+            }
+
+            return NotificationEmailFrequencies.IsSupported(preference.EmailFrequency)
+                ? NotificationEmailFrequencies.Normalize(preference.EmailFrequency)
+                : NotificationEmailFrequencies.Immediate;
+        }
+
+        private static string ResolveRequestedEmailFrequency(
+            bool? requestedEmailEnabled,
+            string? requestedFrequency,
+            NotificationPreference? existing)
+        {
+            if (requestedEmailEnabled == false)
+            {
+                return NotificationEmailFrequencies.Off;
+            }
+
+            if (!string.IsNullOrWhiteSpace(requestedFrequency)
+                && NotificationEmailFrequencies.IsSupported(requestedFrequency))
+            {
+                return NotificationEmailFrequencies.Normalize(requestedFrequency);
+            }
+
+            if (requestedEmailEnabled == true && ResolveEmailFrequency(existing) == NotificationEmailFrequencies.Off)
+            {
+                return NotificationEmailFrequencies.Immediate;
+            }
+
+            return ResolveEmailFrequency(existing);
+        }
+
+        private static bool ResolveRequestedEmailEnabled(
+            bool? requestedEmailEnabled,
+            string emailFrequency,
+            NotificationPreference? existing)
+        {
+            if (emailFrequency == NotificationEmailFrequencies.Off)
+            {
+                return false;
+            }
+
+            return requestedEmailEnabled ?? existing?.EmailEnabled ?? true;
         }
 
         private async Task SendNotificationEmails(

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
-import { NotificationPreference } from '../../../core/models/notification.model';
+import { type NotificationEmailFrequency, type NotificationPreference } from '../../../core/models/notification.model';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ToastService } from '../../services/toast.service';
 
@@ -19,15 +19,22 @@ export class NotificationPreferencesComponent implements OnInit {
 	readonly loading = signal(false);
 	readonly saving = signal(false);
 
-		readonly inAppEnabledCount = computed(() => this.preferences().filter(preference => preference.inAppEnabled).length);
-		readonly emailEnabledCount = computed(() => this.preferences().filter(preference => preference.emailEnabled).length);
-		readonly hasChanges = computed(() => {
-			const original = this.originalPreferences();
-			return this.preferences().some(preference => {
-				const baseline = original.find(item => item.type === preference.type);
-				return baseline?.inAppEnabled !== preference.inAppEnabled || baseline?.emailEnabled !== preference.emailEnabled;
-			});
+	readonly inAppEnabledCount = computed(() => this.preferences().filter(preference => preference.inAppEnabled).length);
+	readonly emailEnabledCount = computed(() => this.preferences().filter(preference => preference.emailFrequency === 'immediate').length);
+	readonly digestEnabledCount = computed(() =>
+		this.preferences().filter(preference => preference.emailFrequency === 'daily' || preference.emailFrequency === 'weekly').length
+	);
+	readonly hasChanges = computed(() => {
+		const original = this.originalPreferences();
+		return this.preferences().some(preference => {
+			const baseline = original.find(item => item.type === preference.type);
+			return (
+				baseline?.inAppEnabled !== preference.inAppEnabled ||
+				baseline?.emailEnabled !== preference.emailEnabled ||
+				baseline?.emailFrequency !== preference.emailFrequency
+			);
 		});
+	});
 
 	ngOnInit() {
 		this.load();
@@ -47,19 +54,34 @@ export class NotificationPreferencesComponent implements OnInit {
 			});
 	}
 
-		toggle(type: string, channel: 'inAppEnabled' | 'emailEnabled', enabled: boolean) {
-			this.preferences.update(preferences =>
-				preferences.map(preference =>
-					preference.type === type ? { ...preference, [channel]: enabled } : preference
-				)
-			);
-		}
+	toggle(type: string, channel: 'inAppEnabled' | 'emailEnabled', enabled: boolean) {
+		this.preferences.update(preferences =>
+			preferences.map(preference =>
+				preference.type === type ? this.applyChannelToggle(preference, channel, enabled) : preference
+			)
+		);
+	}
 
-		setAll(enabled: boolean) {
-			this.preferences.update(preferences =>
-				preferences.map(preference => ({ ...preference, inAppEnabled: enabled, emailEnabled: enabled }))
-			);
-		}
+	setEmailFrequency(type: string, frequency: NotificationEmailFrequency) {
+		this.preferences.update(preferences =>
+			preferences.map(preference =>
+				preference.type === type
+					? { ...preference, emailEnabled: frequency !== 'off', emailFrequency: frequency }
+					: preference
+			)
+		);
+	}
+
+	setAll(enabled: boolean) {
+		this.preferences.update(preferences =>
+			preferences.map(preference => ({
+				...preference,
+				inAppEnabled: enabled,
+				emailEnabled: enabled,
+				emailFrequency: enabled ? 'immediate' : 'off',
+			}))
+		);
+	}
 
 	reset() {
 		this.preferences.set(this.originalPreferences());
@@ -86,5 +108,34 @@ export class NotificationPreferencesComponent implements OnInit {
 
 	trackByType(_: number, preference: NotificationPreference) {
 		return preference.type;
+	}
+
+	emailSummary(preference: NotificationPreference) {
+		if (!preference.emailEnabled || preference.emailFrequency === 'off') {
+			return 'email off';
+		}
+
+		if (preference.emailFrequency === 'daily') {
+			return 'daily digest';
+		}
+
+		if (preference.emailFrequency === 'weekly') {
+			return 'weekly digest';
+		}
+
+		return 'instant email';
+	}
+
+	private applyChannelToggle(
+		preference: NotificationPreference,
+		channel: 'inAppEnabled' | 'emailEnabled',
+		enabled: boolean
+	): NotificationPreference {
+		if (channel === 'emailEnabled') {
+			const emailFrequency = enabled && preference.emailFrequency === 'off' ? 'immediate' : enabled ? preference.emailFrequency : 'off';
+			return { ...preference, emailEnabled: enabled, emailFrequency };
+		}
+
+		return { ...preference, inAppEnabled: enabled };
 	}
 }

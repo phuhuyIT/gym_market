@@ -1,12 +1,15 @@
 using System.Net;
 using System.Net.Http.Json;
+using GymMarket.API.Data;
 using GymMarket.API.DTOs.Admin;
 using GymMarket.API.DTOs.Notifications;
 using GymMarket.API.DTOs.Response;
 using GymMarket.API.Models;
 using GymMarket.API.Repositories.IRepositories;
+using GymMarket.API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GymMarket.API.Tests;
@@ -75,7 +78,11 @@ public class NotificationsIntegrationTests : BaseIntegrationTests
         Assert.Equal(NotificationTypes.All.Count, preferences!.Count);
         Assert.All(preferences, preference => Assert.True(preference.InAppEnabled));
         Assert.All(preferences, preference => Assert.True(preference.EmailEnabled));
+        Assert.All(preferences, preference => Assert.Equal(NotificationEmailFrequencies.Immediate, preference.EmailFrequency));
         Assert.Contains(preferences, preference => preference.Type == NotificationTypes.Class && preference.Label == "Class");
+        Assert.Contains(preferences, preference => preference.Type == NotificationTypes.Discussion && preference.Label == "Course discussion");
+        Assert.Contains(preferences, preference => preference.Type == NotificationTypes.StudyGroup && preference.Label == "Study group");
+        Assert.Contains(preferences, preference => preference.Type == NotificationTypes.Grading && preference.Label == "Grading");
     }
 
     [Fact]
@@ -151,6 +158,65 @@ public class NotificationsIntegrationTests : BaseIntegrationTests
         var notifications = await Client.GetFromJsonAsync<List<NotificationDto>>("/api/Notifications/get-notifications");
         Assert.NotNull(notifications);
         Assert.Contains(notifications!, n => n.Type == NotificationTypes.Membership && n.Title == "Membership expiring");
+    }
+
+    [Fact]
+    public async Task DailyDigestPreferenceDefersImmediateEmailAndSendsDigest()
+    {
+        const string email = "notification-digest-daily@example.com";
+        await AuthenticateAsync(email: email, role: "Student");
+
+        var updateResponse = await Client.PutAsJsonAsync("/api/Notifications/preferences", new UpdateNotificationPreferencesDto
+        {
+            Preferences =
+            [
+                new NotificationPreferenceUpdateDto
+                {
+                    Type = NotificationTypes.Workout,
+                    InAppEnabled = true,
+                    EmailEnabled = true,
+                    EmailFrequency = NotificationEmailFrequencies.Daily,
+                },
+            ],
+        });
+        Assert.Equal(HttpStatusCode.OK, updateResponse.StatusCode);
+        EmailSender.Clear();
+
+        await SeedNotification(email, NotificationTypes.Workout, "Workout waiting", "/client/workouts");
+
+        Assert.Empty(EmailSender.SentEmails);
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            var deferredLog = await db.NotificationDeliveryLogs
+                .FirstAsync(log => log.Type == NotificationTypes.Workout
+                    && log.Channel == NotificationDeliveryChannels.Email
+                    && log.Status == NotificationDeliveryStatuses.Deferred);
+            deferredLog.CreatedAt = DateTime.UtcNow.AddDays(-2);
+            await db.SaveChangesAsync();
+        }
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var digestService = scope.ServiceProvider.GetRequiredService<INotificationDigestService>();
+            var sentCount = await digestService.SendDueDigestsAsync(DateTime.UtcNow);
+            Assert.Equal(1, sentCount);
+        }
+
+        var digestEmail = Assert.Single(EmailSender.SentEmails);
+        Assert.Equal(email, digestEmail.ToEmail);
+        Assert.Equal("Your GymMarket daily digest", digestEmail.Subject);
+        Assert.Contains("Workout waiting", digestEmail.HtmlBody);
+        Assert.Contains("http://localhost:4200/client/workouts", digestEmail.HtmlBody);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<GymMarketContext>();
+            Assert.Contains(await db.NotificationDeliveryLogs.ToListAsync(), log =>
+                log.Type == NotificationTypes.Workout
+                && log.Channel == NotificationDeliveryChannels.Email
+                && log.Status == NotificationDeliveryStatuses.Digested);
+        }
     }
 
     [Fact]

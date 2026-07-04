@@ -170,10 +170,12 @@ builder.Services.AddScoped<ICourseStudyGroupService, CourseStudyGroupService>();
 builder.Services.AddScoped<IFoodNutritionService, FoodNutritionService>();
 builder.Services.AddScoped<IRegistrationExpiryService, RegistrationExpiryService>();
 builder.Services.AddScoped<IReminderService, ReminderService>();
+builder.Services.AddScoped<INotificationDigestService, NotificationDigestService>();
 builder.Services.AddScoped<IPaymentEventService, PaymentEventService>();
 builder.Services.AddSingleton<IPresenceTracker, PresenceTracker>();
 builder.Services.AddHostedService<RegistrationExpiryHostedService>();
 builder.Services.AddHostedService<ReminderHostedService>();
+builder.Services.AddHostedService<NotificationDigestHostedService>();
 
 
 

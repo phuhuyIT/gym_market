@@ -13,4 +13,7 @@ export interface NotificationPreference {
 	label: string;
 	inAppEnabled: boolean;
 	emailEnabled: boolean;
+	emailFrequency: NotificationEmailFrequency;
 }
+
+export type NotificationEmailFrequency = 'immediate' | 'daily' | 'weekly' | 'off';

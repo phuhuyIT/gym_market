@@ -16,7 +16,11 @@
 		</span>
 		<span>
 			<strong>{{ emailEnabledCount() }}</strong>
-			Email
+			Instant
+		</span>
+		<span>
+			<strong>{{ digestEnabledCount() }}</strong>
+			Digest
 		</span>
 	</div>
 
@@ -34,11 +38,11 @@
 						<strong>{{ preference.label }}</strong>
 						<small>
 							@if (preference.inAppEnabled && preference.emailEnabled) {
-								Feed and email
+								Feed and {{ emailSummary(preference) }}
 							} @else if (preference.inAppEnabled) {
 								Feed only
 							} @else if (preference.emailEnabled) {
-								Email only
+								{{ emailSummary(preference) }} only
 							} @else {
 								Muted
 							}
@@ -54,7 +58,7 @@
 							/>
 							<i aria-hidden="true"></i>
 						</label>
-						<label class="channel-toggle">
+						<label class="channel-toggle email-toggle">
 							<span>Email</span>
 							<input
 								type="checkbox"
@@ -62,6 +66,19 @@
 								(change)="toggle(preference.type, 'emailEnabled', $any($event.target).checked)"
 							/>
 							<i aria-hidden="true"></i>
+						</label>
+						<label class="digest-select">
+							<span>Email cadence</span>
+							<select
+								[value]="preference.emailFrequency"
+								(change)="setEmailFrequency(preference.type, $any($event.target).value)"
+								[attr.aria-label]="'Email cadence for ' + preference.label"
+							>
+								<option value="immediate">Now</option>
+								<option value="daily">Daily</option>
+								<option value="weekly">Weekly</option>
+								<option value="off">Off</option>
+							</select>
 						</label>
 					</div>
 				</article>

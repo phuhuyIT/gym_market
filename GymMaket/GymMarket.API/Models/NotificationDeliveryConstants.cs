@@ -24,8 +24,10 @@ public static class NotificationDeliveryStatuses
     public const string Sent = "sent";
     public const string Skipped = "skipped";
     public const string Failed = "failed";
+    public const string Deferred = "deferred";
+    public const string Digested = "digested";
 
-    public static readonly IReadOnlyList<string> All = [Sent, Skipped, Failed];
+    public static readonly IReadOnlyList<string> All = [Sent, Skipped, Failed, Deferred, Digested];
 
     public static bool IsSupported(string? status)
     {

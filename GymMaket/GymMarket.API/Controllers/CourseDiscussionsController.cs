@@ -2,6 +2,7 @@ using System.Security.Claims;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Discussions;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,15 +19,18 @@ public class CourseDiscussionsController : ControllerBase
     private readonly GymMarketContext _context;
     private readonly ICourseAccessService _courseAccessService;
     private readonly UserManager<AppUser> _userManager;
+    private readonly INotificationRepository _notificationRepository;
 
     public CourseDiscussionsController(
         GymMarketContext context,
         ICourseAccessService courseAccessService,
-        UserManager<AppUser> userManager)
+        UserManager<AppUser> userManager,
+        INotificationRepository notificationRepository)
     {
         _context = context;
         _courseAccessService = courseAccessService;
         _userManager = userManager;
+        _notificationRepository = notificationRepository;
     }
 
     [HttpGet("course/{courseId}")]
@@ -149,6 +153,7 @@ public class CourseDiscussionsController : ControllerBase
 
         _context.CourseDiscussionAnswers.Add(answer);
         await _context.SaveChangesAsync();
+        await NotifyQuestionOwnerAsync(question, answer);
 
         answer = await _context.CourseDiscussionAnswers
             .AsNoTracking()
@@ -188,6 +193,7 @@ public class CourseDiscussionsController : ControllerBase
         question.LastActivityAt = now;
 
         await _context.SaveChangesAsync();
+        await NotifyAcceptedAnswerAuthorAsync(question, answer);
         question = await QuestionQuery().FirstAsync(q => q.QuestionId == questionId);
         return Ok(ToQuestionDto(question, includeAnswers: true));
     }
@@ -401,6 +407,41 @@ public class CourseDiscussionsController : ControllerBase
         return User.IsInRole(DiscussionAuthorRole.Admin)
             || User.IsInRole(DiscussionAuthorRole.Trainer)
             || (!string.IsNullOrWhiteSpace(answer.AuthorEntityId) && answer.AuthorEntityId == CurrentStudentId());
+    }
+
+    private async Task NotifyQuestionOwnerAsync(CourseDiscussionQuestion question, CourseDiscussionAnswer answer)
+    {
+        if (string.IsNullOrWhiteSpace(question.StudentId))
+            return;
+
+        var ownerUserId = await _context.Students
+            .AsNoTracking()
+            .Where(student => student.StudentId == question.StudentId)
+            .Select(student => student.UserId)
+            .FirstOrDefaultAsync();
+
+        if (string.IsNullOrWhiteSpace(ownerUserId) || ownerUserId == answer.AuthorUserId)
+            return;
+
+        await _notificationRepository.NotifyUserUpsert(
+            ownerUserId,
+            NotificationTypes.Discussion,
+            $"New answer: {question.Title}",
+            $"{answer.AuthorName} answered your course question.",
+            $"/client/course-discussions/{question.CourseId}");
+    }
+
+    private async Task NotifyAcceptedAnswerAuthorAsync(CourseDiscussionQuestion question, CourseDiscussionAnswer answer)
+    {
+        if (string.IsNullOrWhiteSpace(answer.AuthorUserId) || answer.AuthorUserId == CurrentUserId())
+            return;
+
+        await _notificationRepository.NotifyUser(
+            answer.AuthorUserId,
+            NotificationTypes.Discussion,
+            "Your answer was accepted",
+            $"Your answer to \"{question.Title}\" was accepted.",
+            $"/client/course-discussions/{question.CourseId}");
     }
 
     private string CurrentStudentId()

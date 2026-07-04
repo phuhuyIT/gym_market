@@ -7,4 +7,6 @@ public class NotificationPreferenceUpdateDto
     public bool InAppEnabled { get; set; }
 
     public bool? EmailEnabled { get; set; }
+
+    public string? EmailFrequency { get; set; }
 }

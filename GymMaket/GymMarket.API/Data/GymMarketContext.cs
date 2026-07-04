@@ -2119,6 +2119,9 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.Type).HasMaxLength(50);
             entity.Property(e => e.InAppEnabled).HasDefaultValue(true);
             entity.Property(e => e.EmailEnabled).HasDefaultValue(true);
+            entity.Property(e => e.EmailFrequency)
+                .HasMaxLength(20)
+                .HasDefaultValue(NotificationEmailFrequencies.Immediate);
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");

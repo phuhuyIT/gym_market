@@ -566,7 +566,7 @@ public class CourseStudyGroupService : ICourseStudyGroupService
 
         await _notificationRepository.NotifyUsers(
             targetIds,
-            NotificationTypes.Chat,
+            NotificationTypes.StudyGroup,
             "Added to a course group",
             $"You were added to \"{groupName}\".",
             "/chat/chat-list");

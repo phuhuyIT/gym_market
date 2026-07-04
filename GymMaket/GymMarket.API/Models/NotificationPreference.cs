@@ -14,6 +14,8 @@ public partial class NotificationPreference
 
     public bool EmailEnabled { get; set; } = true;
 
+    public string EmailFrequency { get; set; } = NotificationEmailFrequencies.Immediate;
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

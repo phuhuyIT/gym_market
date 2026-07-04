@@ -84,6 +84,18 @@ namespace GymMarket.API.Controllers
                 return BadRequest(new { message = "Unsupported notification type.", types = invalidTypes });
             }
 
+            var invalidFrequencies = model.Preferences
+                .Where(p => !string.IsNullOrWhiteSpace(p.EmailFrequency)
+                    && !NotificationEmailFrequencies.IsSupported(p.EmailFrequency))
+                .Select(p => p.EmailFrequency)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (invalidFrequencies.Count > 0)
+            {
+                return BadRequest(new { message = "Unsupported email notification frequency.", frequencies = invalidFrequencies });
+            }
+
             var preferences = await _notificationRepository.UpdatePreferences(GetUserId(), model.Preferences);
             return Ok(preferences);
         }

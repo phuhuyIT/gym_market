@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Assignments;
 using GymMarket.API.Models;
+using GymMarket.API.Repositories.IRepositories;
 using GymMarket.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,16 @@ public class AssignmentsController : ControllerBase
 {
     private readonly GymMarketContext _context;
     private readonly ICourseAccessService _courseAccessService;
+    private readonly INotificationRepository _notificationRepository;
 
-    public AssignmentsController(GymMarketContext context, ICourseAccessService courseAccessService)
+    public AssignmentsController(
+        GymMarketContext context,
+        ICourseAccessService courseAccessService,
+        INotificationRepository notificationRepository)
     {
         _context = context;
         _courseAccessService = courseAccessService;
+        _notificationRepository = notificationRepository;
     }
 
     [HttpGet("course/{courseId}/manage")]
@@ -277,6 +283,7 @@ public class AssignmentsController : ControllerBase
         submission.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+        await NotifyGradedAsync(submission);
         return Ok(ToSubmissionDto(submission));
     }
 
@@ -334,6 +341,19 @@ public class AssignmentsController : ControllerBase
         assignment.Status = AssignmentStatus.Normalize(dto.Status);
         assignment.UpdatedAt = now;
         ApplyRubricCriteria(assignment, dto.RubricCriteria, now);
+    }
+
+    private async Task NotifyGradedAsync(AssignmentSubmission submission)
+    {
+        if (string.IsNullOrWhiteSpace(submission.Student?.UserId) || submission.Assignment == null)
+            return;
+
+        await _notificationRepository.NotifyUser(
+            submission.Student.UserId,
+            NotificationTypes.Grading,
+            $"Grade posted: {submission.Assignment.Title}",
+            $"Your score is {submission.ScorePercent:0.##}% for {submission.Assignment.Title}.",
+            $"/client/course-grades/{submission.Assignment.CourseId}");
     }
 
     private static void ApplyRubricCriteria(CourseAssignment assignment, List<UpsertAssignmentRubricCriterionDto> criteria, DateTime now)

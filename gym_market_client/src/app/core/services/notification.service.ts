@@ -115,12 +115,13 @@ export class NotificationService {
 
 	updatePreferences(preferences: NotificationPreference[]) {
 		return this.http.put<NotificationPreference[]>(`${this.base}/preferences`, {
-				preferences: preferences.map(preference => ({
-					type: preference.type,
-					inAppEnabled: preference.inAppEnabled,
-					emailEnabled: preference.emailEnabled,
-				})),
-			});
+			preferences: preferences.map(preference => ({
+				type: preference.type,
+				inAppEnabled: preference.inAppEnabled,
+				emailEnabled: preference.emailEnabled,
+				emailFrequency: preference.emailFrequency,
+			})),
+		});
 	}
 
 	markRead(id: number) {
