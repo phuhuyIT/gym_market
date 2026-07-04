@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using GymMarket.API.Data;
 using GymMarket.API.DTOs.Assignments;
 using GymMarket.API.Models;
@@ -171,6 +172,7 @@ public class AssignmentsController : ControllerBase
             return BadRequest(new { Message = "SUBMISSION_CONTENT_REQUIRED" });
 
         var now = DateTime.UtcNow;
+        var similarity = await CalculateSimilarityAsync(assignmentId, studentId, dto.TextResponse);
         var submission = await _context.AssignmentSubmissions
             .Include(s => s.RubricScores)
             .FirstOrDefaultAsync(s => s.AssignmentId == assignmentId && s.StudentId == studentId);
@@ -193,6 +195,11 @@ public class AssignmentsController : ControllerBase
         submission.Score = null;
         submission.ScorePercent = null;
         submission.Feedback = null;
+        submission.SimilarityScorePercent = similarity.ScorePercent;
+        submission.SimilarityMatchedSubmissionId = similarity.MatchedSubmissionId;
+        submission.SimilarityMatchedStudentName = similarity.MatchedStudentName;
+        submission.SimilarityFlags = similarity.Flags;
+        submission.SimilarityCheckedAt = now;
         submission.GradedAt = null;
         submission.UpdatedAt = now;
         submission.SubmittedAt = now;
@@ -409,6 +416,11 @@ public class AssignmentsController : ControllerBase
         ScorePercent = submission.ScorePercent,
         Status = submission.Status,
         Feedback = submission.Feedback,
+        SimilarityScorePercent = submission.SimilarityScorePercent,
+        SimilarityMatchedSubmissionId = submission.SimilarityMatchedSubmissionId,
+        SimilarityMatchedStudentName = submission.SimilarityMatchedStudentName,
+        SimilarityFlags = submission.SimilarityFlags,
+        SimilarityCheckedAt = submission.SimilarityCheckedAt,
         SubmittedAt = submission.SubmittedAt,
         GradedAt = submission.GradedAt,
         UpdatedAt = submission.UpdatedAt,
@@ -438,6 +450,92 @@ public class AssignmentsController : ControllerBase
         Score = score.Score,
         Feedback = score.Feedback
     };
+
+    private async Task<SimilarityResult> CalculateSimilarityAsync(string assignmentId, string studentId, string? textResponse)
+    {
+        var normalizedCurrent = NormalizeSimilarityText(textResponse);
+        if (normalizedCurrent.Count < 12)
+            return new SimilarityResult(0, null, null, null);
+
+        var previousSubmissions = await _context.AssignmentSubmissions
+            .AsNoTracking()
+            .Include(s => s.Student)
+            .Where(s => s.AssignmentId == assignmentId
+                && s.StudentId != studentId
+                && s.TextResponse != null)
+            .ToListAsync();
+
+        decimal bestScore = 0;
+        AssignmentSubmission? bestMatch = null;
+        foreach (var previous in previousSubmissions)
+        {
+            var previousTokens = NormalizeSimilarityText(previous.TextResponse);
+            if (previousTokens.Count < 12)
+                continue;
+
+            var score = CalculateJaccardPercent(normalizedCurrent, previousTokens);
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestMatch = previous;
+            }
+        }
+
+        var flags = bestScore switch
+        {
+            >= 85 => "High similarity to another submission",
+            >= 65 => "Elevated similarity to another submission",
+            >= 45 => "Moderate similarity to another submission",
+            _ => null
+        };
+
+        return new SimilarityResult(
+            bestScore,
+            bestMatch?.SubmissionId,
+            bestMatch?.Student?.Name,
+            flags);
+    }
+
+    private static HashSet<string> NormalizeSimilarityText(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return [];
+
+        var words = Regex.Matches(value.ToLowerInvariant(), @"[a-z0-9]{3,}")
+            .Select(match => match.Value)
+            .Where(word => !SimilarityStopWords.Contains(word))
+            .ToList();
+
+        if (words.Count < 3)
+            return words.ToHashSet(StringComparer.Ordinal);
+
+        var shingles = new HashSet<string>(StringComparer.Ordinal);
+        for (var i = 0; i <= words.Count - 3; i++)
+            shingles.Add($"{words[i]} {words[i + 1]} {words[i + 2]}");
+
+        return shingles;
+    }
+
+    private static decimal CalculateJaccardPercent(HashSet<string> current, HashSet<string> previous)
+    {
+        var intersection = current.Intersect(previous).Count();
+        var union = current.Union(previous).Count();
+        return union == 0
+            ? 0
+            : Math.Round((decimal)intersection / union * 100m, 2, MidpointRounding.AwayFromZero);
+    }
+
+    private static readonly HashSet<string> SimilarityStopWords = new(StringComparer.Ordinal)
+    {
+        "the", "and", "for", "with", "that", "this", "from", "are", "was", "were", "you", "your", "have", "has",
+        "but", "not", "all", "can", "will", "about", "into", "than", "then", "they", "their", "our", "out"
+    };
+
+    private sealed record SimilarityResult(
+        decimal ScorePercent,
+        string? MatchedSubmissionId,
+        string? MatchedStudentName,
+        string? Flags);
 
     private static string? ValidateRubricScores(List<AssignmentRubricCriterion> criteria, List<GradeAssignmentRubricScoreDto> scores)
     {

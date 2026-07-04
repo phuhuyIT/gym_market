@@ -157,6 +157,17 @@
 								<a [href]="submission.attachmentUrl" target="_blank" rel="noopener noreferrer">Open attachment</a>
 							}
 							<small>{{ submission.textResponse || 'No text response' }}</small>
+							@if (submission.similarityScorePercent !== null && submission.similarityScorePercent !== undefined) {
+								<small class="integrity-note" [class.integrity-note--flagged]="submission.similarityScorePercent >= 45">
+									Similarity {{ submission.similarityScorePercent }}%
+									@if (submission.similarityMatchedStudentName) {
+										· closest to {{ submission.similarityMatchedStudentName }}
+									}
+									@if (submission.similarityFlags) {
+										· {{ submission.similarityFlags }}
+									}
+								</small>
+							}
 						</span>
 						@if (selectedAssignment.rubricCriteria.length > 0) {
 							<div class="rubric-grade">

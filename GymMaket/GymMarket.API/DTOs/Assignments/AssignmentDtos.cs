@@ -56,6 +56,11 @@ public class AssignmentSubmissionDto
     public decimal? ScorePercent { get; set; }
     public string Status { get; set; } = string.Empty;
     public string? Feedback { get; set; }
+    public decimal? SimilarityScorePercent { get; set; }
+    public string? SimilarityMatchedSubmissionId { get; set; }
+    public string? SimilarityMatchedStudentName { get; set; }
+    public string? SimilarityFlags { get; set; }
+    public DateTime? SimilarityCheckedAt { get; set; }
     public DateTime SubmittedAt { get; set; }
     public DateTime? GradedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

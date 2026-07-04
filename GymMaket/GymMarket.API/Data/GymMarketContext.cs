@@ -1530,7 +1530,10 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.TimeLimitMinutes).HasColumnName("Time_Limit_Minutes");
             entity.Property(e => e.MaxAttempts).HasColumnName("Max_Attempts");
             entity.Property(e => e.ShuffleQuestions).HasColumnName("Shuffle_Questions");
+            entity.Property(e => e.ShuffleOptions).HasColumnName("Shuffle_Options");
             entity.Property(e => e.ShowCorrectAnswers).HasColumnName("Show_Correct_Answers");
+            entity.Property(e => e.RequireHonorCode).HasColumnName("Require_Honor_Code");
+            entity.Property(e => e.TrackProctoringSignals).HasColumnName("Track_Proctoring_Signals");
             entity.Property(e => e.AvailableFrom)
                 .HasColumnType("datetime")
                 .HasColumnName("Available_From");
@@ -1595,6 +1598,9 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasDefaultValue(QuizQuestionType.SingleChoice)
                 .HasColumnName("Question_Type");
             entity.Property(e => e.Explanation).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.QuestionBank)
+                .HasMaxLength(120)
+                .HasColumnName("Question_Bank");
             entity.Property(e => e.RequiresManualGrading).HasColumnName("Requires_Manual_Grading");
 
             entity.HasIndex(e => e.QuizId);
@@ -1665,6 +1671,25 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
             entity.Property(e => e.StartedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Started_At");
+            entity.Property(e => e.QuestionOrderSnapshot)
+                .HasColumnType("nvarchar(max)")
+                .HasColumnName("Question_Order_Snapshot");
+            entity.Property(e => e.BrowserFingerprint)
+                .HasMaxLength(256)
+                .HasColumnName("Browser_Fingerprint");
+            entity.Property(e => e.IpAddress)
+                .HasMaxLength(64)
+                .HasColumnName("Ip_Address");
+            entity.Property(e => e.HonorCodeAccepted).HasColumnName("Honor_Code_Accepted");
+            entity.Property(e => e.ProctoringReviewRequired).HasColumnName("Proctoring_Review_Required");
+            entity.Property(e => e.FocusLostCount).HasColumnName("Focus_Lost_Count");
+            entity.Property(e => e.PasteEventCount).HasColumnName("Paste_Event_Count");
+            entity.Property(e => e.FullscreenExitCount).HasColumnName("Fullscreen_Exit_Count");
+            entity.Property(e => e.ProctoringEventCount).HasColumnName("Proctoring_Event_Count");
+            entity.Property(e => e.SuspiciousActivityScore).HasColumnName("Suspicious_Activity_Score");
+            entity.Property(e => e.ProctoringFlags)
+                .HasMaxLength(1000)
+                .HasColumnName("Proctoring_Flags");
             entity.Property(e => e.GradedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Graded_At");
@@ -1772,6 +1797,22 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasDefaultValue(AssignmentSubmissionStatus.Submitted);
             entity.Property(e => e.Feedback)
                 .HasMaxLength(2000);
+            entity.Property(e => e.SimilarityScorePercent)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("Similarity_Score_Percent");
+            entity.Property(e => e.SimilarityMatchedSubmissionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Similarity_Matched_Submission_ID");
+            entity.Property(e => e.SimilarityMatchedStudentName)
+                .HasMaxLength(200)
+                .HasColumnName("Similarity_Matched_Student_Name");
+            entity.Property(e => e.SimilarityFlags)
+                .HasMaxLength(1000)
+                .HasColumnName("Similarity_Flags");
+            entity.Property(e => e.SimilarityCheckedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Similarity_Checked_At");
             entity.Property(e => e.SubmittedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Submitted_At");

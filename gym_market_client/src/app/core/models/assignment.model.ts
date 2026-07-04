@@ -14,6 +14,11 @@ export interface AssignmentSubmission {
 	scorePercent?: number | null;
 	status: AssignmentSubmissionStatus | string;
 	feedback?: string | null;
+	similarityScorePercent?: number | null;
+	similarityMatchedSubmissionId?: string | null;
+	similarityMatchedStudentName?: string | null;
+	similarityFlags?: string | null;
+	similarityCheckedAt?: string | null;
 	submittedAt: string;
 	gradedAt?: string | null;
 	updatedAt: string;

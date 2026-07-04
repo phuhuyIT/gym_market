@@ -313,7 +313,10 @@ namespace GymMarket.API.Controllers
             quiz.TimeLimitMinutes = dto.TimeLimitMinutes;
             quiz.MaxAttempts = dto.MaxAttempts;
             quiz.ShuffleQuestions = dto.ShuffleQuestions;
+            quiz.ShuffleOptions = dto.ShuffleOptions;
             quiz.ShowCorrectAnswers = dto.ShowCorrectAnswers;
+            quiz.RequireHonorCode = dto.RequireHonorCode;
+            quiz.TrackProctoringSignals = dto.TrackProctoringSignals;
             quiz.AvailableFrom = dto.AvailableFrom;
             quiz.AvailableUntil = dto.AvailableUntil;
             quiz.IsPublished = dto.IsPublished;
@@ -332,6 +335,7 @@ namespace GymMarket.API.Controllers
                         Order = question.Order,
                         Points = question.Points,
                         Explanation = string.IsNullOrWhiteSpace(question.Explanation) ? null : question.Explanation.Trim(),
+                        QuestionBank = string.IsNullOrWhiteSpace(question.QuestionBank) ? null : question.QuestionBank.Trim(),
                         RequiresManualGrading = questionType == QuizQuestionType.OpenText,
                         Options = questionType == QuizQuestionType.OpenText
                             ? []
@@ -408,6 +412,9 @@ namespace GymMarket.API.Controllers
             if (dto.AvailableFrom.HasValue && dto.AvailableUntil.HasValue && dto.AvailableUntil <= dto.AvailableFrom)
                 return "ASSESSMENT_AVAILABLE_UNTIL_MUST_BE_AFTER_FROM";
 
+            if (dto.MaxAttempts.HasValue && dto.MaxAttempts.Value <= 0)
+                return "MAX_ATTEMPTS_INVALID";
+
             if (dto.IsPublished && dto.Questions.Count == 0)
                 return "PUBLISHED_ASSESSMENT_REQUIRES_QUESTIONS";
 
@@ -470,6 +477,17 @@ namespace GymMarket.API.Controllers
             if (accessError != null)
                 return Conflict(new { Message = accessError });
 
+            if (quiz.RequireHonorCode && !dto.HonorCodeAccepted)
+                return BadRequest(new { Message = "HONOR_CODE_REQUIRED" });
+
+            var timingError = ValidateAttemptTiming(quiz, dto);
+            if (timingError != null)
+                return Conflict(new { Message = timingError });
+
+            var answerValidationError = ValidateSubmittedAnswers(quiz, dto);
+            if (answerValidationError != null)
+                return BadRequest(new { Message = answerValidationError });
+
             var answersByQuestion = dto.Answers
                 .GroupBy(a => a.QuestionId)
                 .ToDictionary(g => g.Key, g => g.Last());
@@ -478,6 +496,7 @@ namespace GymMarket.API.Controllers
             var totalPoints = quiz.Questions.Sum(q => q.Points);
             var score = 0;
             var requiresManualGrading = quiz.Questions.Any(q => q.RequiresManualGrading);
+            var proctoring = AnalyzeProctoring(dto.ProctoringSignals);
             var attempt = new QuizAttempt
             {
                 AttemptId = Guid.NewGuid().ToString(),
@@ -485,9 +504,21 @@ namespace GymMarket.API.Controllers
                 StudentId = studentId,
                 AttemptNumber = attemptCount + 1,
                 TotalPoints = totalPoints,
+                StartedAt = dto.StartedAt?.ToUniversalTime(),
                 SubmittedAt = DateTime.UtcNow,
                 Status = requiresManualGrading ? QuizAttemptStatus.PendingReview : QuizAttemptStatus.Graded,
-                RequiresManualGrading = requiresManualGrading
+                RequiresManualGrading = requiresManualGrading,
+                QuestionOrderSnapshot = dto.Answers.Count == 0 ? null : string.Join(",", dto.Answers.Select(a => a.QuestionId)),
+                BrowserFingerprint = string.IsNullOrWhiteSpace(dto.BrowserFingerprint) ? null : dto.BrowserFingerprint.Trim(),
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                HonorCodeAccepted = dto.HonorCodeAccepted,
+                FocusLostCount = proctoring.FocusLostCount,
+                PasteEventCount = proctoring.PasteEventCount,
+                FullscreenExitCount = proctoring.FullscreenExitCount,
+                ProctoringEventCount = proctoring.EventCount,
+                SuspiciousActivityScore = proctoring.Score,
+                ProctoringReviewRequired = quiz.TrackProctoringSignals && proctoring.Score >= 5,
+                ProctoringFlags = quiz.TrackProctoringSignals ? proctoring.Flags : null
             };
 
             foreach (var question in quiz.Questions)
@@ -537,6 +568,55 @@ namespace GymMarket.API.Controllers
             return Ok(ToAttemptDto(attempt));
         }
 
+        private static string? ValidateAttemptTiming(CourseQuiz quiz, SubmitQuizAttemptDto dto)
+        {
+            if (!quiz.TimeLimitMinutes.HasValue || !dto.StartedAt.HasValue)
+                return null;
+
+            var startedAt = dto.StartedAt.Value.ToUniversalTime();
+            var latestSubmitAt = startedAt.AddMinutes(quiz.TimeLimitMinutes.Value + 2);
+            return DateTime.UtcNow > latestSubmitAt ? "ASSESSMENT_TIME_LIMIT_EXCEEDED" : null;
+        }
+
+        private static string? ValidateSubmittedAnswers(CourseQuiz quiz, SubmitQuizAttemptDto dto)
+        {
+            var questionIds = quiz.Questions.Select(q => q.QuestionId).ToHashSet(StringComparer.Ordinal);
+            var submittedIds = dto.Answers.Select(a => a.QuestionId).ToList();
+            if (submittedIds.Any(id => !questionIds.Contains(id)))
+                return "QUESTION_NOT_IN_QUIZ";
+
+            if (submittedIds.Distinct(StringComparer.Ordinal).Count() != submittedIds.Count)
+                return "DUPLICATE_QUESTION_ANSWER";
+
+            foreach (var question in quiz.Questions)
+            {
+                var answer = dto.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                if (answer == null)
+                    return "ANSWER_REQUIRED";
+
+                var questionType = QuizQuestionType.Normalize(question.QuestionType);
+                if (questionType == QuizQuestionType.OpenText)
+                {
+                    if (string.IsNullOrWhiteSpace(answer.TextAnswer))
+                        return "TEXT_ANSWER_REQUIRED";
+                    continue;
+                }
+
+                var optionIds = NormalizeSelectedOptionIds(answer);
+                if (optionIds.Count == 0)
+                    return "OPTION_ANSWER_REQUIRED";
+
+                var validOptionIds = question.Options.Select(o => o.OptionId).ToHashSet(StringComparer.Ordinal);
+                if (optionIds.Any(optionId => !validOptionIds.Contains(optionId)))
+                    return "OPTION_NOT_IN_QUESTION";
+
+                if (questionType == QuizQuestionType.SingleChoice && optionIds.Count != 1)
+                    return "SINGLE_CHOICE_REQUIRES_ONE_OPTION";
+            }
+
+            return null;
+        }
+
         private static List<string> NormalizeSelectedOptionIds(SubmitQuizAnswerDto? answer)
         {
             var ids = new List<string>();
@@ -566,7 +646,10 @@ namespace GymMarket.API.Controllers
                 TimeLimitMinutes = quiz.TimeLimitMinutes,
                 MaxAttempts = quiz.MaxAttempts,
                 ShuffleQuestions = quiz.ShuffleQuestions,
+                ShuffleOptions = quiz.ShuffleOptions,
                 ShowCorrectAnswers = quiz.ShowCorrectAnswers,
+                RequireHonorCode = quiz.RequireHonorCode,
+                TrackProctoringSignals = quiz.TrackProctoringSignals,
                 AvailableFrom = quiz.AvailableFrom,
                 AvailableUntil = quiz.AvailableUntil,
                 IsPublished = quiz.IsPublished,
@@ -580,6 +663,7 @@ namespace GymMarket.API.Controllers
                         Order = q.Order,
                         Points = q.Points,
                         Explanation = q.Explanation,
+                        QuestionBank = q.QuestionBank,
                         RequiresManualGrading = q.RequiresManualGrading,
                         Options = q.Options.Select(o => new TrainerQuizOptionDto
                         {
@@ -620,7 +704,10 @@ namespace GymMarket.API.Controllers
                 AttemptsUsed = attempts.Count,
                 AttemptsRemaining = quiz.MaxAttempts.HasValue ? Math.Max(quiz.MaxAttempts.Value - attempts.Count, 0) : null,
                 ShuffleQuestions = quiz.ShuffleQuestions,
+                ShuffleOptions = quiz.ShuffleOptions,
                 ShowCorrectAnswers = quiz.ShowCorrectAnswers,
+                RequireHonorCode = quiz.RequireHonorCode,
+                TrackProctoringSignals = quiz.TrackProctoringSignals,
                 AvailableFrom = quiz.AvailableFrom,
                 AvailableUntil = quiz.AvailableUntil,
                 IsPublished = quiz.IsPublished,
@@ -637,13 +724,23 @@ namespace GymMarket.API.Controllers
                         Order = q.Order,
                         Points = q.Points,
                         Explanation = quiz.ShowCorrectAnswers ? q.Explanation : null,
-                        Options = q.Options.Select(o => new QuizOptionDto
-                        {
-                            OptionId = o.OptionId,
-                            Text = o.Text
-                        }).ToList()
+                        QuestionBank = q.QuestionBank,
+                        Options = ToStudentOptions(q, quiz.ShuffleOptions)
                     }).ToList()
             };
+        }
+
+        private static List<QuizOptionDto> ToStudentOptions(QuizQuestion question, bool shuffleOptions)
+        {
+            var options = shuffleOptions
+                ? question.Options.OrderBy(_ => Guid.NewGuid()).ToList()
+                : question.Options.ToList();
+
+            return options.Select(o => new QuizOptionDto
+            {
+                OptionId = o.OptionId,
+                Text = o.Text
+            }).ToList();
         }
 
         private static QuizAttemptSummaryDto ToAttemptDto(QuizAttempt attempt)
@@ -662,10 +759,56 @@ namespace GymMarket.API.Controllers
                 Passed = attempt.Passed,
                 Status = attempt.Status,
                 RequiresManualGrading = attempt.RequiresManualGrading,
+                StartedAt = attempt.StartedAt,
+                HonorCodeAccepted = attempt.HonorCodeAccepted,
+                ProctoringReviewRequired = attempt.ProctoringReviewRequired,
+                FocusLostCount = attempt.FocusLostCount,
+                PasteEventCount = attempt.PasteEventCount,
+                FullscreenExitCount = attempt.FullscreenExitCount,
+                ProctoringEventCount = attempt.ProctoringEventCount,
+                SuspiciousActivityScore = attempt.SuspiciousActivityScore,
+                ProctoringFlags = attempt.ProctoringFlags,
                 Feedback = attempt.Feedback,
                 SubmittedAt = attempt.SubmittedAt
             };
         }
+
+        private static ProctoringStats AnalyzeProctoring(List<QuizProctoringSignalDto> signals)
+        {
+            var focusLost = SignalCount(signals, "focus_lost", "blur", "tab_hidden");
+            var paste = SignalCount(signals, "paste");
+            var fullscreenExit = SignalCount(signals, "fullscreen_exit");
+            var eventCount = signals.Sum(signal => Math.Max(signal.Count, 1));
+            var score = focusLost + (paste * 2) + fullscreenExit;
+            var flags = new List<string>();
+            if (focusLost > 0) flags.Add($"{focusLost} focus changes");
+            if (paste > 0) flags.Add($"{paste} paste events");
+            if (fullscreenExit > 0) flags.Add($"{fullscreenExit} fullscreen exits");
+
+            return new ProctoringStats(
+                focusLost,
+                paste,
+                fullscreenExit,
+                eventCount,
+                score,
+                flags.Count == 0 ? null : string.Join("; ", flags));
+        }
+
+        private static int SignalCount(List<QuizProctoringSignalDto> signals, params string[] types)
+        {
+            var allowed = types.ToHashSet(StringComparer.OrdinalIgnoreCase);
+            return signals
+                .Where(signal => allowed.Contains(signal.Type.Trim()))
+                .Sum(signal => Math.Max(signal.Count, 1));
+        }
+
+        private sealed record ProctoringStats(
+            int FocusLostCount,
+            int PasteEventCount,
+            int FullscreenExitCount,
+            int EventCount,
+            int Score,
+            string? Flags);
 
         private string CurrentStudentId()
         {

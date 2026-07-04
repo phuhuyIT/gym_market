@@ -354,8 +354,20 @@
 						Shuffle questions
 					</label>
 					<label class="col-span-3 flex items-center gap-2 text-sm text-gray-700">
+						<input type="checkbox" [(ngModel)]="quizDraft.shuffleOptions" [disabled]="quizGradebook.length > 0" />
+						Shuffle options
+					</label>
+					<label class="col-span-3 flex items-center gap-2 text-sm text-gray-700">
 						<input type="checkbox" [(ngModel)]="quizDraft.showCorrectAnswers" [disabled]="quizGradebook.length > 0" />
 						Show explanations
+					</label>
+					<label class="col-span-3 flex items-center gap-2 text-sm text-gray-700">
+						<input type="checkbox" [(ngModel)]="quizDraft.requireHonorCode" [disabled]="quizGradebook.length > 0" />
+						Honor code
+					</label>
+					<label class="col-span-4 flex items-center gap-2 text-sm text-gray-700">
+						<input type="checkbox" [(ngModel)]="quizDraft.trackProctoringSignals" [disabled]="quizGradebook.length > 0" />
+						Track proctoring signals
 					</label>
 				</div>
 
@@ -410,6 +422,15 @@
 									[disabled]="quizGradebook.length > 0"
 									class="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2"
 									placeholder="Optional feedback after grading"
+								/>
+							</label>
+							<label class="col-span-4 text-xs font-medium text-gray-600">
+								Question bank
+								<input
+									[(ngModel)]="question.questionBank"
+									[disabled]="quizGradebook.length > 0"
+									class="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2"
+									placeholder="Default bank"
 								/>
 							</label>
 						</div>
@@ -484,6 +505,11 @@
 								<p class="text-xs text-gray-500 mt-1">
 									Attempt {{ attempt.attemptNumber || 1 }} · {{ attempt.score }} / {{ attempt.totalPoints }} points · {{ attempt.status || 'Submitted' }}
 								</p>
+								@if (attempt.proctoringReviewRequired || attempt.proctoringFlags) {
+									<p class="mt-1 rounded bg-red-50 px-2 py-1 text-xs font-medium text-red-700">
+										Integrity review: {{ attempt.proctoringFlags || 'Suspicious activity detected' }}
+									</p>
+								}
 								@if (attempt.requiresManualGrading || attempt.status === 'PendingReview') {
 									<div class="mt-2 space-y-2 rounded border border-amber-200 bg-amber-50 p-2">
 										<label class="block text-xs font-medium text-amber-900">

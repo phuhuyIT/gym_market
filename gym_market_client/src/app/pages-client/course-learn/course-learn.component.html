@@ -168,7 +168,15 @@
             <div>
               <p class="quiz-panel__eyebrow">Course checkpoint</p>
               <h2 class="quiz-panel__title">{{ quiz.title }}</h2>
-              <p class="quiz-panel__meta">Pass score: {{ quiz.passingScorePercent }}%</p>
+              <p class="quiz-panel__meta">
+                Pass score: {{ quiz.passingScorePercent }}%
+                @if (quiz.maxAttempts) {
+                  · Attempts: {{ quiz.attemptsUsed }} / {{ quiz.maxAttempts }}
+                }
+                @if (quiz.timeLimitMinutes) {
+                  · {{ quiz.timeLimitMinutes }} min
+                }
+              </p>
             </div>
             @if (quiz.bestAttempt) {
               <div class="quiz-panel__score" [class.quiz-panel__score--pass]="quiz.bestAttempt.passed">
@@ -183,6 +191,23 @@
               Latest attempt: {{ latestQuizAttempt.score }} / {{ latestQuizAttempt.totalPoints }} points,
               {{ latestQuizAttempt.scorePercent }}%.
               {{ latestQuizAttempt.requiresManualGrading ? 'Pending trainer review' : latestQuizAttempt.passed ? 'Passed' : 'Try again when you are ready' }}
+              @if (latestQuizAttempt.proctoringReviewRequired) {
+                Integrity review flagged.
+              }
+            </div>
+          }
+
+          @if (quiz.requireHonorCode || quiz.trackProctoringSignals) {
+            <div class="quiz-panel__attempt">
+              @if (quiz.requireHonorCode) {
+                <label>
+                  <input type="checkbox" [(ngModel)]="honorCodeAccepted" />
+                  I confirm this submission is my own work.
+                </label>
+              }
+              @if (quiz.trackProctoringSignals) {
+                <span>Focus changes and paste activity may be recorded for review.</span>
+              }
             </div>
           }
 

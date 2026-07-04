@@ -28,7 +28,13 @@ public class TrainerCourseQuizDto
 
     public bool ShuffleQuestions { get; set; }
 
+    public bool ShuffleOptions { get; set; }
+
     public bool ShowCorrectAnswers { get; set; }
+
+    public bool RequireHonorCode { get; set; }
+
+    public bool TrackProctoringSignals { get; set; }
 
     public DateTime? AvailableFrom { get; set; }
 
@@ -52,6 +58,8 @@ public class TrainerQuizQuestionDto
     public int Points { get; set; }
 
     public string? Explanation { get; set; }
+
+    public string? QuestionBank { get; set; }
 
     public bool RequiresManualGrading { get; set; }
 

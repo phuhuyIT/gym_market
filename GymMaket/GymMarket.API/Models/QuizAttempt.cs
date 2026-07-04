@@ -28,6 +28,28 @@ public partial class QuizAttempt
 
     public DateTime? StartedAt { get; set; }
 
+    public string? QuestionOrderSnapshot { get; set; }
+
+    public string? BrowserFingerprint { get; set; }
+
+    public string? IpAddress { get; set; }
+
+    public bool HonorCodeAccepted { get; set; }
+
+    public bool ProctoringReviewRequired { get; set; }
+
+    public int FocusLostCount { get; set; }
+
+    public int PasteEventCount { get; set; }
+
+    public int FullscreenExitCount { get; set; }
+
+    public int ProctoringEventCount { get; set; }
+
+    public int SuspiciousActivityScore { get; set; }
+
+    public string? ProctoringFlags { get; set; }
+
     public DateTime? GradedAt { get; set; }
 
     public string? Feedback { get; set; }

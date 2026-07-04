@@ -28,7 +28,13 @@ public partial class CourseQuiz
 
     public bool ShuffleQuestions { get; set; }
 
+    public bool ShuffleOptions { get; set; }
+
     public bool ShowCorrectAnswers { get; set; }
+
+    public bool RequireHonorCode { get; set; }
+
+    public bool TrackProctoringSignals { get; set; }
 
     public DateTime? AvailableFrom { get; set; }
 

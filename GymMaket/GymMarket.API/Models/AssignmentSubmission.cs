@@ -20,6 +20,16 @@ public partial class AssignmentSubmission
 
     public string? Feedback { get; set; }
 
+    public decimal? SimilarityScorePercent { get; set; }
+
+    public string? SimilarityMatchedSubmissionId { get; set; }
+
+    public string? SimilarityMatchedStudentName { get; set; }
+
+    public string? SimilarityFlags { get; set; }
+
+    public DateTime? SimilarityCheckedAt { get; set; }
+
     public DateTime SubmittedAt { get; set; }
 
     public DateTime? GradedAt { get; set; }

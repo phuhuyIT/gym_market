@@ -32,7 +32,13 @@ public class CourseQuizDto
 
     public bool ShuffleQuestions { get; set; }
 
+    public bool ShuffleOptions { get; set; }
+
     public bool ShowCorrectAnswers { get; set; }
+
+    public bool RequireHonorCode { get; set; }
+
+    public bool TrackProctoringSignals { get; set; }
 
     public DateTime? AvailableFrom { get; set; }
 
@@ -60,6 +66,8 @@ public class QuizQuestionDto
     public int Points { get; set; }
 
     public string? Explanation { get; set; }
+
+    public string? QuestionBank { get; set; }
 
     public List<QuizOptionDto> Options { get; set; } = [];
 }

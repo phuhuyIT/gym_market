@@ -26,6 +26,24 @@ public class QuizAttemptSummaryDto
 
     public bool RequiresManualGrading { get; set; }
 
+    public DateTime? StartedAt { get; set; }
+
+    public bool HonorCodeAccepted { get; set; }
+
+    public bool ProctoringReviewRequired { get; set; }
+
+    public int FocusLostCount { get; set; }
+
+    public int PasteEventCount { get; set; }
+
+    public int FullscreenExitCount { get; set; }
+
+    public int ProctoringEventCount { get; set; }
+
+    public int SuspiciousActivityScore { get; set; }
+
+    public string? ProctoringFlags { get; set; }
+
     public string? Feedback { get; set; }
 
     public DateTime SubmittedAt { get; set; }

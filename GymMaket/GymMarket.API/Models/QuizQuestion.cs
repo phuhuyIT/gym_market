@@ -18,6 +18,8 @@ public partial class QuizQuestion
 
     public string? Explanation { get; set; }
 
+    public string? QuestionBank { get; set; }
+
     public bool RequiresManualGrading { get; set; }
 
     public virtual CourseQuiz? Quiz { get; set; }

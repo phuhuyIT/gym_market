@@ -14,6 +14,15 @@ export interface QuizAttemptSummary {
 	passed: boolean;
 	status: string;
 	requiresManualGrading: boolean;
+	startedAt?: string | null;
+	honorCodeAccepted: boolean;
+	proctoringReviewRequired: boolean;
+	focusLostCount: number;
+	pasteEventCount: number;
+	fullscreenExitCount: number;
+	proctoringEventCount: number;
+	suspiciousActivityScore: number;
+	proctoringFlags?: string | null;
 	feedback?: string | null;
 	submittedAt: string;
 }
@@ -34,7 +43,10 @@ export interface CourseQuiz {
 	attemptsUsed: number;
 	attemptsRemaining?: number | null;
 	shuffleQuestions: boolean;
+	shuffleOptions: boolean;
 	showCorrectAnswers: boolean;
+	requireHonorCode: boolean;
+	trackProctoringSignals: boolean;
 	availableFrom?: string | null;
 	availableUntil?: string | null;
 	isPublished: boolean;
@@ -50,6 +62,7 @@ export interface QuizQuestion {
 	order: number;
 	points: number;
 	explanation?: string | null;
+	questionBank?: string | null;
 	options: QuizOption[];
 }
 
@@ -72,7 +85,10 @@ export interface TrainerCourseQuiz {
 	timeLimitMinutes?: number | null;
 	maxAttempts?: number | null;
 	shuffleQuestions: boolean;
+	shuffleOptions: boolean;
 	showCorrectAnswers: boolean;
+	requireHonorCode: boolean;
+	trackProctoringSignals: boolean;
 	availableFrom?: string | null;
 	availableUntil?: string | null;
 	isPublished: boolean;
@@ -86,6 +102,7 @@ export interface TrainerQuizQuestion {
 	order: number;
 	points: number;
 	explanation?: string | null;
+	questionBank?: string | null;
 	requiresManualGrading?: boolean;
 	options: TrainerQuizOption[];
 }
@@ -106,7 +123,10 @@ export interface UpsertCourseQuiz {
 	timeLimitMinutes?: number | null;
 	maxAttempts?: number | null;
 	shuffleQuestions: boolean;
+	shuffleOptions: boolean;
 	showCorrectAnswers: boolean;
+	requireHonorCode: boolean;
+	trackProctoringSignals: boolean;
 	availableFrom?: string | null;
 	availableUntil?: string | null;
 	isPublished: boolean;
@@ -114,10 +134,20 @@ export interface UpsertCourseQuiz {
 }
 
 export interface SubmitQuizAttempt {
+	startedAt?: string | null;
+	honorCodeAccepted: boolean;
+	browserFingerprint?: string | null;
+	proctoringSignals: QuizProctoringSignal[];
 	answers: {
 		questionId: string;
 		selectedOptionId?: string | null;
 		selectedOptionIds?: string[];
 		textAnswer?: string | null;
 	}[];
+}
+
+export interface QuizProctoringSignal {
+	type: string;
+	occurredAt?: string | null;
+	count: number;
 }

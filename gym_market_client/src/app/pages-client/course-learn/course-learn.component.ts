@@ -3,6 +3,7 @@ import {
 	ChangeDetectorRef,
 	Component,
 	DestroyRef,
+	HostListener,
 	inject,
 	OnInit,
 } from '@angular/core';
@@ -40,6 +41,9 @@ export class CourseLearnComponent implements OnInit {
 	quizAnswers: Record<string, string> = {};
 	quizMultiAnswers: Record<string, string[]> = {};
 	quizTextAnswers: Record<string, string> = {};
+	quizStartedAt: string | null = null;
+	honorCodeAccepted = false;
+	private proctoringSignalCounts: Record<string, number> = {};
 	latestQuizAttempt: QuizAttemptSummary | null = null;
 	isQuizSubmitting = false;
 	completionStatus: CourseCompletionStatus | null = null;
@@ -145,6 +149,9 @@ export class CourseLearnComponent implements OnInit {
 				next: quiz => {
 					this.quiz = quiz;
 					this.latestQuizAttempt = quiz.latestAttempt ?? null;
+					this.quizStartedAt = new Date().toISOString();
+					this.honorCodeAccepted = false;
+					this.proctoringSignalCounts = {};
 					this.cdr.markForCheck();
 				},
 				error: err => {
@@ -305,8 +312,36 @@ export class CourseLearnComponent implements OnInit {
 		return (this.quizMultiAnswers[questionId] ?? []).includes(optionId);
 	}
 
+	@HostListener('window:blur')
+	onQuizWindowBlur() {
+		this.recordProctoringSignal('focus_lost');
+	}
+
+	@HostListener('document:visibilitychange')
+	onQuizVisibilityChange() {
+		if (document.hidden) {
+			this.recordProctoringSignal('tab_hidden');
+		}
+	}
+
+	@HostListener('document:paste')
+	onQuizPaste() {
+		this.recordProctoringSignal('paste');
+	}
+
+	@HostListener('document:fullscreenchange')
+	onQuizFullscreenChange() {
+		if (!document.fullscreenElement) {
+			this.recordProctoringSignal('fullscreen_exit');
+		}
+	}
+
 	submitQuiz() {
 		if (!this.quiz || this.isQuizSubmitting) return;
+		if (this.quiz.requireHonorCode && !this.honorCodeAccepted) {
+			this.toastService.show('Accept the honor code before submitting', 'error');
+			return;
+		}
 		const unanswered = this.quiz.questions.some(question => {
 			if (question.questionType === 'OpenText') {
 				return !this.quizTextAnswers[question.questionId]?.trim();
@@ -324,6 +359,10 @@ export class CourseLearnComponent implements OnInit {
 		this.isQuizSubmitting = true;
 		this.courseMaterialService
 			.submitQuiz(this.courseId, {
+				startedAt: this.quizStartedAt,
+				honorCodeAccepted: this.honorCodeAccepted,
+				browserFingerprint: this.browserFingerprint(),
+				proctoringSignals: this.proctoringSignals(),
 				answers: this.quiz.questions.map(question => ({
 					questionId: question.questionId,
 					selectedOptionId: question.questionType === 'SingleChoice' ? this.quizAnswers[question.questionId] : null,
@@ -348,6 +387,9 @@ export class CourseLearnComponent implements OnInit {
 					this.quizAnswers = {};
 					this.quizMultiAnswers = {};
 					this.quizTextAnswers = {};
+					this.quizStartedAt = new Date().toISOString();
+					this.honorCodeAccepted = false;
+					this.proctoringSignalCounts = {};
 					this.isQuizSubmitting = false;
 					this.toastService.show(attempt.requiresManualGrading ? 'Submitted for review' : attempt.passed ? 'Quiz passed' : 'Quiz submitted');
 					this.loadCompletionStatus();
@@ -359,6 +401,29 @@ export class CourseLearnComponent implements OnInit {
 					this.cdr.markForCheck();
 				},
 			});
+	}
+
+	private recordProctoringSignal(type: string) {
+		if (!this.quiz?.trackProctoringSignals || this.isQuizSubmitting) return;
+		this.proctoringSignalCounts[type] = (this.proctoringSignalCounts[type] ?? 0) + 1;
+	}
+
+	private proctoringSignals() {
+		if (!this.quiz?.trackProctoringSignals) return [];
+		return Object.entries(this.proctoringSignalCounts).map(([type, count]) => ({
+			type,
+			count,
+			occurredAt: new Date().toISOString(),
+		}));
+	}
+
+	private browserFingerprint(): string {
+		return [
+			navigator.userAgent,
+			navigator.language,
+			`${screen.width}x${screen.height}`,
+			Intl.DateTimeFormat().resolvedOptions().timeZone,
+		].join('|').slice(0, 256);
 	}
 
 	issueCertificate() {
