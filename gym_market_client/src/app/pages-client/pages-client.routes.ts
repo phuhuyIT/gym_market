@@ -13,6 +13,7 @@ import { CourseProgressDashboardComponent } from './course-progress-dashboard/co
 import { CourseDiscussionsComponent } from './course-discussions/course-discussions.component';
 import { CourseAnnouncementsComponent } from './course-announcements/course-announcements.component';
 import { CourseLiveSessionsComponent } from './course-live-sessions/course-live-sessions.component';
+import { CourseCohortsComponent } from './course-cohorts/course-cohorts.component';
 import { CoursePaymentComponent } from './course-payment/course-payment.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { CourseRegistrationComponent } from './course-registration/course-registration.component';
@@ -41,9 +42,10 @@ export const routes: Routes = [
 			{ path: 'course-learn/:courseId', component: CourseLearnComponent, title: 'Course content' },
 				{ path: 'course-progress/:courseId', component: CourseProgressDashboardComponent, title: 'Course progress' },
 				{ path: 'course-assignments/:courseId', component: CourseAssignmentsComponent, title: 'Course assignments' },
-				{ path: 'course-announcements/:courseId', component: CourseAnnouncementsComponent, title: 'Course announcements' },
-				{ path: 'course-live-sessions/:courseId', component: CourseLiveSessionsComponent, title: 'Course live sessions' },
-				{ path: 'course-discussions/:courseId', component: CourseDiscussionsComponent, title: 'Course Q&A' },
+					{ path: 'course-announcements/:courseId', component: CourseAnnouncementsComponent, title: 'Course announcements' },
+					{ path: 'course-live-sessions/:courseId', component: CourseLiveSessionsComponent, title: 'Course live sessions' },
+					{ path: 'course-cohorts/:courseId', component: CourseCohortsComponent, title: 'Course groups' },
+					{ path: 'course-discussions/:courseId', component: CourseDiscussionsComponent, title: 'Course Q&A' },
 			{ path: 'course-grades/:courseId', component: CourseGradesComponent, title: 'Course grades' },
 			{ path: 'course-payment/:courseId', component: CoursePaymentComponent, title: 'Course payment' },
 				{ path: 'course-registration', component: CourseRegistrationComponent, title: 'Course Registration' },

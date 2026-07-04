@@ -25,6 +25,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<CourseDiscussionAnswer> CourseDiscussionAnswers { get; set; }
 
+    public virtual DbSet<CourseStudyGroup> CourseStudyGroups { get; set; }
+
     public virtual DbSet<CourseOption> CourseOptions { get; set; }
 
     public virtual DbSet<CourseCertificate> CourseCertificates { get; set; }
@@ -724,6 +726,65 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .WithMany(p => p.FileCourses)
                 .HasForeignKey(d => d.CourseId)
                 .HasConstraintName("FK_FileCourses_Course");
+        });
+
+        modelBuilder.Entity<CourseStudyGroup>(entity =>
+        {
+            entity.HasKey(e => e.StudyGroupId);
+
+            entity.ToTable("Course_Study_Groups");
+
+            entity.Property(e => e.StudyGroupId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Study_Group_ID");
+            entity.Property(e => e.CourseId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Course_ID");
+            entity.Property(e => e.ConversationId)
+                .HasColumnName("Conversation_ID");
+            entity.Property(e => e.Name)
+                .HasMaxLength(120);
+            entity.Property(e => e.Description)
+                .HasMaxLength(1000);
+            entity.Property(e => e.Kind)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue(CourseStudyGroupKind.StudyGroup);
+            entity.Property(e => e.IsDefaultCohort)
+                .HasColumnName("Is_Default_Cohort");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("Is_Active");
+            entity.Property(e => e.CreatedByUserId)
+                .HasMaxLength(450)
+                .HasColumnName("Created_By_User_ID");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_At");
+
+            entity.HasIndex(e => e.CourseId);
+            entity.HasIndex(e => e.ConversationId).IsUnique();
+            entity.HasIndex(e => new { e.CourseId, e.IsDefaultCohort })
+                .IsUnique()
+                .HasFilter("[Is_Default_Cohort] = 1");
+            entity.HasIndex(e => new { e.CourseId, e.IsActive });
+
+            entity.HasOne(d => d.Course).WithMany(p => p.StudyGroups)
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Course_Study_Groups_Course");
+
+            entity.HasOne(d => d.Conversation).WithOne()
+                .HasForeignKey<CourseStudyGroup>(d => d.ConversationId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Course_Study_Groups_Conversation");
         });
 
         modelBuilder.Entity<CourseOption>(entity =>

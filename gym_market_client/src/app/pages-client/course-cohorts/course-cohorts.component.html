@@ -1,0 +1,51 @@
+<main class="learner-groups">
+	<header class="learner-header">
+		<nav>
+			<a [routerLink]="['/client/course-learn', courseId]">Content</a>
+			<a [routerLink]="['/client/course-assignments', courseId]">Assignments</a>
+			<a [routerLink]="['/client/course-grades', courseId]">Grades</a>
+			<a [routerLink]="['/client/course-discussions', courseId]">Q&amp;A</a>
+		</nav>
+		<h1>Course groups</h1>
+	</header>
+
+	@if (isLoading) {
+		<p class="empty">Loading course groups...</p>
+	} @else if (groups.length === 0) {
+		<section class="empty-panel">
+			<h2>No groups available</h2>
+			<p>Your course cohort appears after your paid enrollment is synced.</p>
+		</section>
+	} @else {
+		<section class="group-grid">
+			@for (group of groups; track group.studyGroupId) {
+				<article class="group-card" [class.group-card--cohort]="group.isDefaultCohort">
+					<div class="group-top">
+						<span>{{ group.isDefaultCohort ? 'Course cohort' : 'Study group' }}</span>
+						<small>{{ group.memberCount }} member{{ group.memberCount === 1 ? '' : 's' }}</small>
+					</div>
+					<h2>{{ group.name }}</h2>
+					@if (group.description) {
+						<p>{{ group.description }}</p>
+					}
+
+					<div class="moderators">
+						<strong>Moderators</strong>
+						@if (moderators(group).length === 0) {
+							<small>No moderators assigned.</small>
+						} @else {
+							@for (member of moderators(group); track member.userId) {
+								<span>{{ member.fullName || member.email }}</span>
+							}
+						}
+					</div>
+
+					<div class="group-foot">
+						<small>Updated {{ formatDate(group.updatedAt) }}</small>
+						<a [routerLink]="['/chat/chat-list']" [queryParams]="{ conversationId: group.conversationId }">Open chat</a>
+					</div>
+				</article>
+			}
+		</section>
+	}
+</main>

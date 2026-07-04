@@ -1,0 +1,145 @@
+<main class="cohort-shell">
+	<header class="cohort-header">
+		<div>
+			<a class="back-link" [routerLink]="['/agency/courses']">Courses</a>
+			<h1>Course groups</h1>
+		</div>
+		<div class="header-actions">
+			<button type="button" class="ghost-btn" (click)="syncDefaultCohort()" [disabled]="isSaving">Sync cohort</button>
+			<button type="button" class="primary-btn" (click)="newGroup()">New study group</button>
+		</div>
+	</header>
+
+	<section class="workspace">
+		<aside class="group-list">
+			<div class="panel-head">
+				<h2>Groups</h2>
+				<span>{{ groups.length }}</span>
+			</div>
+
+			@if (isLoading) {
+				<p class="empty">Loading groups...</p>
+			} @else if (groups.length === 0) {
+				<p class="empty">No groups yet. Sync the course cohort to begin.</p>
+			} @else {
+				@for (group of groups; track group.studyGroupId) {
+					<button type="button" class="group-card" [class.group-card--active]="selected?.studyGroupId === group.studyGroupId" (click)="selectGroup(group)">
+						<span class="kind-pill" [class.kind-pill--cohort]="group.isDefaultCohort">{{ group.isDefaultCohort ? 'Cohort' : 'Study group' }}</span>
+						<strong>{{ group.name }}</strong>
+						<small>{{ group.memberCount }} member{{ group.memberCount === 1 ? '' : 's' }}</small>
+					</button>
+				}
+			}
+		</aside>
+
+		<section class="editor-panel">
+			<div class="panel-head">
+				<h2>{{ selected ? 'Group settings' : 'Create study group' }}</h2>
+				@if (selected) {
+					<a class="chat-link" [routerLink]="['/chat/chat-list']" [queryParams]="{ conversationId: selected.conversationId }">Open chat</a>
+				}
+			</div>
+
+			<form class="group-form" (ngSubmit)="save()">
+				<label>
+					<span>Name</span>
+					<input name="name" [(ngModel)]="form.name" [disabled]="!!selected?.isDefaultCohort" placeholder="Accountability group" />
+				</label>
+
+				<label>
+					<span>Description</span>
+					<textarea name="description" [(ngModel)]="form.description" rows="4" placeholder="Purpose, expectations, or moderation notes"></textarea>
+				</label>
+
+				<div class="two-col">
+					<label>
+						<span>Type</span>
+						<select name="kind" [(ngModel)]="form.kind" [disabled]="!!selected?.isDefaultCohort">
+							<option value="StudyGroup">Study group</option>
+							<option value="Cohort">Cohort</option>
+						</select>
+					</label>
+
+					<label class="check-row">
+						<input type="checkbox" name="isActive" [(ngModel)]="form.isActive" [disabled]="!!selected?.isDefaultCohort" />
+						<span>Active</span>
+					</label>
+				</div>
+
+				<div class="form-actions">
+					<button class="primary-btn" type="submit" [disabled]="isSaving">
+						{{ isSaving ? 'Saving...' : selected ? 'Save changes' : 'Create group' }}
+					</button>
+					@if (selected && !selected.isDefaultCohort) {
+						<button type="button" class="danger-btn" (click)="archiveSelected()">Archive</button>
+					}
+				</div>
+			</form>
+
+			@if (selected?.isDefaultCohort) {
+				<p class="hint">Default cohort membership is controlled by paid enrollments. Use sync after payment reconciliation.</p>
+			}
+		</section>
+
+		<section class="members-panel">
+			<div class="panel-head">
+				<h2>Members</h2>
+				<span>{{ selected?.members?.length || 0 }}</span>
+			</div>
+
+			@if (!selected) {
+				<p class="empty">Select a group to manage members.</p>
+			} @else {
+				<div class="member-list">
+					@for (member of selected.members; track member.userId) {
+						<article class="member-row">
+							<img [src]="member.avatar" alt="" />
+							<div>
+								<strong>{{ member.fullName || member.email }}</strong>
+								<small>{{ member.email }} · {{ member.role }}</small>
+							</div>
+							<div class="member-actions">
+								@if (member.role !== 'Owner') {
+									<button type="button" class="tiny-btn" (click)="setRole(member.userId, member.role === 'Admin' ? 'Member' : 'Admin')">
+										{{ member.role === 'Admin' ? 'Member' : 'Moderator' }}
+									</button>
+								}
+								@if (!selected.isDefaultCohort && member.role !== 'Owner') {
+									<button type="button" class="tiny-btn tiny-btn--danger" (click)="removeMember(member.userId)">Remove</button>
+								}
+							</div>
+						</article>
+					}
+				</div>
+			}
+		</section>
+
+		<aside class="learner-panel">
+			<div class="panel-head">
+				<h2>Eligible learners</h2>
+				<span>{{ availableLearners().length }}</span>
+			</div>
+
+			@if (selected?.isDefaultCohort) {
+				<p class="empty">Learners are added automatically after payment.</p>
+			} @else if (availableLearners().length === 0) {
+				<p class="empty">No paid learners available to add.</p>
+			} @else {
+				<div class="learner-list">
+					@for (learner of availableLearners(); track learner.userId) {
+						<label class="learner-row">
+							<input type="checkbox" [checked]="selectedLearnerIds.has(learner.userId)" (change)="toggleLearner(learner.userId, $any($event.target).checked)" />
+							<span>
+								<strong>{{ learner.fullName || learner.email }}</strong>
+								<small>{{ learner.email }}</small>
+							</span>
+						</label>
+					}
+				</div>
+				<button type="button" class="primary-btn learner-add" [disabled]="selected ? selectedLearnerIds.size === 0 : false" (click)="selected ? addSelectedLearners() : save()">
+					{{ selected ? 'Add selected' : 'Create with selected' }}
+				</button>
+			}
+		</aside>
+	</section>
+</main>

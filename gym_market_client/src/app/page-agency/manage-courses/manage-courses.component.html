@@ -183,6 +183,13 @@
                   </svg>
                 </a>
 
+                <!-- Course Groups -->
+                <a [routerLink]="['../cohorts', course.courseId]" class="inline-flex items-center justify-center p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-600 text-emerald-700 dark:text-emerald-400 hover:text-white transition-colors shadow-sm" title="Course groups">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a8.96 8.96 0 0 0 3-.72 3.75 3.75 0 0 0-6.75-2.25M18 18.72v-.47a3.75 3.75 0 0 0-7.5 0v.47M18 18.72a11.91 11.91 0 0 1-7.5 0M12 11.25a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm6-1.5a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Zm-12 0a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" />
+                  </svg>
+                </a>
+
                 <!-- Edit Course -->
                 <a [routerLink]="['../update-course', course.courseId]" class="inline-flex items-center justify-center p-2 rounded-xl bg-blue-500/10 hover:bg-blue-600 text-[#007AFF] dark:text-blue-400 hover:text-white transition-colors shadow-sm" title="Edit Course">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-4 h-4">
