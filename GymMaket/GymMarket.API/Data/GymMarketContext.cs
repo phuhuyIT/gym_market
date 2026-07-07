@@ -17,6 +17,8 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<AssignmentRubricScore> AssignmentRubricScores { get; set; }
 
+    public virtual DbSet<AssignmentFeedbackEntry> AssignmentFeedbackEntries { get; set; }
+
     public virtual DbSet<CourseAnnouncement> CourseAnnouncements { get; set; }
 
     public virtual DbSet<CourseLiveSession> CourseLiveSessions { get; set; }
@@ -374,6 +376,57 @@ public partial class GymMarketContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.CriterionId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_Assignment_Rubric_Scores_Criterion");
+        });
+
+        modelBuilder.Entity<AssignmentFeedbackEntry>(entity =>
+        {
+            entity.HasKey(e => e.FeedbackEntryId);
+
+            entity.ToTable("Assignment_Feedback_Entries");
+
+            entity.Property(e => e.FeedbackEntryId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Feedback_Entry_ID");
+            entity.Property(e => e.SubmissionId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Submission_ID");
+            entity.Property(e => e.AuthorUserId)
+                .HasMaxLength(450)
+                .HasColumnName("Author_User_ID");
+            entity.Property(e => e.AuthorName)
+                .HasMaxLength(200)
+                .HasColumnName("Author_Name");
+            entity.Property(e => e.AuthorRole)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Author_Role");
+            entity.Property(e => e.Action)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Score)
+                .HasColumnType("decimal(8, 2)");
+            entity.Property(e => e.ScorePercent)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("Score_Percent");
+            entity.Property(e => e.Feedback)
+                .HasMaxLength(2000);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("Created_At");
+
+            entity.HasIndex(e => e.SubmissionId);
+            entity.HasIndex(e => new { e.SubmissionId, e.CreatedAt });
+
+            entity.HasOne(d => d.Submission).WithMany(p => p.FeedbackEntries)
+                .HasForeignKey(d => d.SubmissionId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Assignment_Feedback_Entries_Submission");
         });
 
         modelBuilder.Entity<CourseAnnouncement>(entity =>

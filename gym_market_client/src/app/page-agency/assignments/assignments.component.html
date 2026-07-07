@@ -151,6 +151,7 @@
 						<span>
 							<strong>{{ submission.studentName || submission.studentId }}</strong>
 							<small>{{ submission.studentEmail }}</small>
+							<i [ngClass]="submissionStatusClass(submission.status)">{{ submission.status }}</i>
 						</span>
 						<span>
 							@if (submission.attachmentUrl) {
@@ -183,8 +184,28 @@
 						} @else {
 							<input [(ngModel)]="gradeScores[submission.submissionId]" type="number" min="0" [max]="selectedAssignment.pointsPossible" />
 						}
-						<textarea [(ngModel)]="gradeFeedbacks[submission.submissionId]" rows="2"></textarea>
-						<button type="button" class="primary" (click)="gradeSubmission(submission)">Grade</button>
+						<div class="feedback-editor">
+							<textarea [(ngModel)]="gradeFeedbacks[submission.submissionId]" rows="2" placeholder="Overall feedback or return note"></textarea>
+							@if (submission.feedbackEntries.length > 0) {
+								<div class="feedback-history">
+									@for (entry of submission.feedbackEntries; track entry.feedbackEntryId) {
+										<div class="feedback-history__item">
+											<span>{{ entry.action }} · {{ entry.authorName }} · {{ entry.createdAt | date:'short' }}</span>
+											@if (entry.scorePercent !== null && entry.scorePercent !== undefined) {
+												<strong>{{ entry.scorePercent }}%</strong>
+											}
+											@if (entry.feedback) {
+												<p>{{ entry.feedback }}</p>
+											}
+										</div>
+									}
+								</div>
+							}
+						</div>
+						<div class="submission-actions">
+							<button type="button" class="primary" (click)="gradeSubmission(submission)">Grade</button>
+							<button type="button" (click)="returnSubmission(submission)">Return</button>
+						</div>
 					</div>
 				}
 				@if (submissions.length === 0) {

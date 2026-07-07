@@ -183,6 +183,77 @@ public class AssignmentsIntegrationTests : BaseIntegrationTests
         Assert.Equal(2, studentAssignment.MySubmission!.RubricScores.Count);
     }
 
+    [Fact]
+    public async Task Assignment_CanBeReturnedForResubmissionWithFeedbackHistory()
+    {
+        var courseId = await CreateCourseAsync("return_assignment_trainer@example.com");
+        var created = await Client.PostAsJsonAsync($"/api/Assignments/course/{courseId}", new UpsertCourseAssignmentDto
+        {
+            Title = "Technique review",
+            PointsPossible = 10,
+            SubmissionType = AssignmentSubmissionType.Text,
+            Status = AssignmentStatus.Published
+        });
+        Assert.Equal(HttpStatusCode.OK, created.StatusCode);
+        var assignment = await created.Content.ReadFromJsonAsync<CourseAssignmentDto>();
+        Assert.NotNull(assignment);
+
+        await AuthenticateAsync(email: "return_assignment_student@example.com", role: "Student");
+        var studentId = GetTokenClaim("studentId")!;
+        await SeedPaidPaymentAsync(studentId, courseId);
+
+        var submit = await Client.PostAsJsonAsync($"/api/Assignments/{assignment!.AssignmentId}/submit", new SubmitAssignmentDto
+        {
+            TextResponse = "My first review is too short."
+        });
+        Assert.Equal(HttpStatusCode.OK, submit.StatusCode);
+        var submission = await submit.Content.ReadFromJsonAsync<AssignmentSubmissionDto>();
+        Assert.NotNull(submission);
+
+        await AuthenticateAsync(email: "return_assignment_trainer@example.com", role: "Trainer");
+        var returnedResponse = await Client.PutAsJsonAsync($"/api/Assignments/submissions/{submission!.SubmissionId}/return", new ReturnAssignmentSubmissionDto
+        {
+            Feedback = "Add a movement analysis and coaching cue."
+        });
+        Assert.Equal(HttpStatusCode.OK, returnedResponse.StatusCode);
+        var returned = await returnedResponse.Content.ReadFromJsonAsync<AssignmentSubmissionDto>();
+        Assert.NotNull(returned);
+        Assert.Equal(AssignmentSubmissionStatus.Returned, returned!.Status);
+        Assert.Null(returned.ScorePercent);
+        Assert.Contains(returned.FeedbackEntries, entry =>
+            entry.Action == "Returned" &&
+            entry.Feedback == "Add a movement analysis and coaching cue.");
+
+        await AuthenticateAsync(email: "return_assignment_student@example.com", role: "Student");
+        var studentAssignments = await Client.GetFromJsonAsync<List<CourseAssignmentDto>>($"/api/Assignments/course/{courseId}");
+        var studentAssignment = Assert.Single(studentAssignments!);
+        Assert.Equal(AssignmentSubmissionStatus.Returned, studentAssignment.MySubmission!.Status);
+        Assert.Contains(studentAssignment.MySubmission.FeedbackEntries, entry => entry.Action == "Returned");
+
+        var resubmit = await Client.PostAsJsonAsync($"/api/Assignments/{assignment.AssignmentId}/submit", new SubmitAssignmentDto
+        {
+            TextResponse = "My revised review explains the movement fault and gives a coaching cue."
+        });
+        Assert.Equal(HttpStatusCode.OK, resubmit.StatusCode);
+        var resubmitted = await resubmit.Content.ReadFromJsonAsync<AssignmentSubmissionDto>();
+        Assert.NotNull(resubmitted);
+        Assert.Equal(AssignmentSubmissionStatus.Submitted, resubmitted!.Status);
+        Assert.Null(resubmitted.Feedback);
+        Assert.Contains(resubmitted.FeedbackEntries, entry => entry.Action == "Resubmitted");
+
+        await AuthenticateAsync(email: "return_assignment_trainer@example.com", role: "Trainer");
+        var grade = await Client.PutAsJsonAsync($"/api/Assignments/submissions/{resubmitted.SubmissionId}/grade", new GradeAssignmentSubmissionDto
+        {
+            Score = 9,
+            Feedback = "Much clearer coaching rationale."
+        });
+        Assert.Equal(HttpStatusCode.OK, grade.StatusCode);
+        var graded = await grade.Content.ReadFromJsonAsync<AssignmentSubmissionDto>();
+        Assert.NotNull(graded);
+        Assert.Equal(AssignmentSubmissionStatus.Graded, graded!.Status);
+        Assert.Contains(graded.FeedbackEntries, entry => entry.Action == "Graded" && entry.ScorePercent == 90);
+    }
+
     private async Task<string> CreateCourseAsync(string trainerEmail)
     {
         await AuthenticateAsync(email: trainerEmail, role: "Trainer");

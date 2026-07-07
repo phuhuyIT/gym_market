@@ -65,8 +65,8 @@
 							<span>Attachment URL</span>
 							<input [(ngModel)]="attachmentUrls[selectedAssignment.assignmentId]" placeholder="https://..." />
 						</label>
-						<button type="button" class="primary" (click)="submitAssignment(selectedAssignment)" [disabled]="isSubmitting || selectedAssignment.status === 'Closed'">
-							{{ selectedAssignment.mySubmission ? 'Resubmit assignment' : 'Submit assignment' }}
+						<button type="button" class="primary" (click)="submitAssignment(selectedAssignment)" [disabled]="isSubmitting || !canSubmit(selectedAssignment)">
+							{{ submitButtonLabel(selectedAssignment) }}
 						</button>
 					</div>
 
@@ -98,6 +98,26 @@
 											<p>{{ score.feedback || 'No criterion feedback.' }}</p>
 										</div>
 										<span>{{ score.score }} / {{ score.pointsPossible }}</span>
+									</div>
+								}
+							</section>
+						}
+
+						@if (selectedAssignment.mySubmission.feedbackEntries.length > 0) {
+							<section class="feedback-history">
+								<h3>Feedback history</h3>
+								@for (entry of selectedAssignment.mySubmission.feedbackEntries; track entry.feedbackEntryId) {
+									<div class="feedback-history__row">
+										<div>
+											<strong>{{ entry.action }}</strong>
+											<small>{{ entry.authorName }} · {{ entry.createdAt | date:'short' }}</small>
+											@if (entry.feedback) {
+												<p>{{ entry.feedback }}</p>
+											}
+										</div>
+										@if (entry.scorePercent !== null && entry.scorePercent !== undefined) {
+											<span>{{ entry.scorePercent | number:'1.0-1' }}%</span>
+										}
 									</div>
 								}
 							</section>

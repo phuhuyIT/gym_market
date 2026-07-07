@@ -40,5 +40,7 @@ public partial class AssignmentSubmission
 
     public virtual Student? Student { get; set; }
 
+    public virtual ICollection<AssignmentFeedbackEntry> FeedbackEntries { get; set; } = new List<AssignmentFeedbackEntry>();
+
     public virtual ICollection<AssignmentRubricScore> RubricScores { get; set; } = new List<AssignmentRubricScore>();
 }

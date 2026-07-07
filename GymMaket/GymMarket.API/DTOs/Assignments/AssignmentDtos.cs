@@ -36,6 +36,11 @@ public class SubmitAssignmentDto
     public string? AttachmentUrl { get; set; }
 }
 
+public class ReturnAssignmentSubmissionDto
+{
+    public string? Feedback { get; set; }
+}
+
 public class GradeAssignmentSubmissionDto
 {
     public decimal? Score { get; set; }
@@ -65,6 +70,7 @@ public class AssignmentSubmissionDto
     public DateTime? GradedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public List<AssignmentRubricScoreDto> RubricScores { get; set; } = [];
+    public List<AssignmentFeedbackEntryDto> FeedbackEntries { get; set; } = [];
 }
 
 public class AssignmentRubricCriterionDto
@@ -102,4 +108,19 @@ public class AssignmentRubricScoreDto
     public decimal PointsPossible { get; set; }
     public decimal Score { get; set; }
     public string? Feedback { get; set; }
+}
+
+public class AssignmentFeedbackEntryDto
+{
+    public string FeedbackEntryId { get; set; } = string.Empty;
+    public string SubmissionId { get; set; } = string.Empty;
+    public string? AuthorUserId { get; set; }
+    public string AuthorName { get; set; } = string.Empty;
+    public string AuthorRole { get; set; } = string.Empty;
+    public string Action { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public decimal? Score { get; set; }
+    public decimal? ScorePercent { get; set; }
+    public string? Feedback { get; set; }
+    public DateTime CreatedAt { get; set; }
 }

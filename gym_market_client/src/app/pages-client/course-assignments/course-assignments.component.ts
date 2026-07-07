@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AssignmentService } from '../../core/services/assignment.service';
-import { CourseAssignment } from '../../core/models/assignment.model';
+import { AssignmentSubmissionStatus, CourseAssignment } from '../../core/models/assignment.model';
 import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
@@ -67,6 +67,8 @@ export class CourseAssignmentsComponent implements OnInit {
 
 	submitAssignment(assignment: CourseAssignment) {
 		if (this.isSubmitting) return;
+		if (!this.canSubmit(assignment)) return;
+
 		const textResponse = this.textResponses[assignment.assignmentId]?.trim() || null;
 		const attachmentUrl = this.attachmentUrls[assignment.assignmentId]?.trim() || null;
 		if (!textResponse && !attachmentUrl) {
@@ -96,11 +98,27 @@ export class CourseAssignmentsComponent implements OnInit {
 	statusClass(assignment: CourseAssignment): string {
 		const status = assignment.mySubmission?.status;
 		if (status === 'Graded') return 'graded';
+		if (status === 'Returned') return 'returned';
 		if (status === 'Submitted') return 'submitted';
 		return 'missing';
 	}
 
 	statusLabel(assignment: CourseAssignment): string {
 		return assignment.mySubmission?.status || 'Missing';
+	}
+
+	canSubmit(assignment: CourseAssignment): boolean {
+		if (assignment.status === 'Closed') return false;
+
+		const status = assignment.mySubmission?.status as AssignmentSubmissionStatus | undefined;
+		return !status || status === 'Submitted' || status === 'Returned';
+	}
+
+	submitButtonLabel(assignment: CourseAssignment): string {
+		const status = assignment.mySubmission?.status;
+		if (status === 'Returned') return 'Resubmit assignment';
+		if (status === 'Submitted') return 'Update submission';
+		if (status === 'Graded') return 'Graded';
+		return 'Submit assignment';
 	}
 }

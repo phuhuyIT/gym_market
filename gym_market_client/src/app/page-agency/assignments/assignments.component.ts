@@ -6,9 +6,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AssignmentService } from '../../core/services/assignment.service';
 import { GradebookService } from '../../core/services/gradebook.service';
 import {
-	AssignmentSubmission,
-	CourseAssignment,
-	GradeAssignmentRubricScore,
+		AssignmentSubmission,
+		AssignmentSubmissionStatus,
+		CourseAssignment,
+		GradeAssignmentRubricScore,
 	UpsertAssignmentRubricCriterion,
 	UpsertCourseAssignment,
 } from '../../core/models/assignment.model';
@@ -179,8 +180,8 @@ export class AssignmentsComponent implements OnInit {
 			.subscribe({
 				next: submissions => {
 					this.submissions = submissions;
-					this.gradeScores = Object.fromEntries(submissions.map(s => [s.submissionId, s.score ?? 0]));
-					this.gradeFeedbacks = Object.fromEntries(submissions.map(s => [s.submissionId, s.feedback ?? '']));
+							this.gradeScores = Object.fromEntries(submissions.map(s => [s.submissionId, s.score ?? 0]));
+							this.gradeFeedbacks = Object.fromEntries(submissions.map(s => [s.submissionId, s.feedback ?? '']));
 					this.rubricScoreValues = {};
 					this.rubricFeedbackValues = {};
 					for (const submission of submissions) {
@@ -202,7 +203,7 @@ export class AssignmentsComponent implements OnInit {
 			});
 	}
 
-	gradeSubmission(submission: AssignmentSubmission) {
+		gradeSubmission(submission: AssignmentSubmission) {
 		if (!this.selectedAssignment) return;
 		const rubricScores = this.buildRubricScores(submission);
 		if (rubricScores === null) return;
@@ -224,12 +225,44 @@ export class AssignmentsComponent implements OnInit {
 					this.cdr.markForCheck();
 				},
 				error: () => this.toastService.show('Failed to grade submission', 'error'),
-			});
-	}
+				});
+		}
 
-	statusClass(status: string): string {
-		return status === 'Published' ? 'published' : status === 'Closed' ? 'closed' : 'draft';
-	}
+		returnSubmission(submission: AssignmentSubmission) {
+			const feedback = this.gradeFeedbacks[submission.submissionId]?.trim();
+			if (!feedback) {
+				this.toastService.show('Add feedback before returning the submission', 'error');
+				return;
+			}
+
+			this.assignmentService
+				.returnForResubmission(submission.submissionId, { feedback })
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: updated => {
+						this.submissions = this.submissions.map(item => item.submissionId === updated.submissionId ? updated : item);
+						this.gradeScores[updated.submissionId] = updated.score ?? 0;
+						this.gradeFeedbacks[updated.submissionId] = updated.feedback ?? '';
+						this.toastService.show('Submission returned for resubmission');
+						this.loadAssignments();
+						this.cdr.markForCheck();
+					},
+					error: err => {
+						const message = err?.error?.message || err?.error?.Message || 'Failed to return submission';
+						this.toastService.show(message, 'error');
+					},
+				});
+		}
+
+		statusClass(status: string): string {
+			return status === 'Published' ? 'published' : status === 'Closed' ? 'closed' : 'draft';
+		}
+
+		submissionStatusClass(status: AssignmentSubmissionStatus | string): string {
+			if (status === 'Graded') return 'graded';
+			if (status === 'Returned') return 'returned';
+			return 'submitted';
+		}
 
 	addRubricCriterion() {
 		const nextOrder = this.draft.rubricCriteria.length + 1;

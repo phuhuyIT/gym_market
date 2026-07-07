@@ -6,6 +6,7 @@ import {
 	AssignmentSubmission,
 	CourseAssignment,
 	GradeAssignmentRubricScore,
+	ReturnAssignmentSubmission,
 	SubmitAssignment,
 	UpsertCourseAssignment,
 } from '../models/assignment.model';
@@ -55,5 +56,9 @@ export class AssignmentService {
 			feedback: feedback || null,
 			rubricScores,
 		});
+	}
+
+	returnForResubmission(submissionId: string, model: ReturnAssignmentSubmission): Observable<AssignmentSubmission> {
+		return this.http.put<AssignmentSubmission>(`${environment.baseApi}/assignments/submissions/${submissionId}/return`, model);
 	}
 }

@@ -23,6 +23,7 @@ export interface AssignmentSubmission {
 	gradedAt?: string | null;
 	updatedAt: string;
 	rubricScores: AssignmentRubricScore[];
+	feedbackEntries: AssignmentFeedbackEntry[];
 }
 
 export interface CourseAssignment {
@@ -58,6 +59,10 @@ export interface SubmitAssignment {
 	attachmentUrl?: string | null;
 }
 
+export interface ReturnAssignmentSubmission {
+	feedback?: string | null;
+}
+
 export interface AssignmentRubricCriterion {
 	criterionId: string;
 	assignmentId: string;
@@ -89,4 +94,18 @@ export interface AssignmentRubricScore {
 	pointsPossible: number;
 	score: number;
 	feedback?: string | null;
+}
+
+export interface AssignmentFeedbackEntry {
+	feedbackEntryId: string;
+	submissionId: string;
+	authorUserId?: string | null;
+	authorName: string;
+	authorRole: string;
+	action: string;
+	status: string;
+	score?: number | null;
+	scorePercent?: number | null;
+	feedback?: string | null;
+	createdAt: string;
 }

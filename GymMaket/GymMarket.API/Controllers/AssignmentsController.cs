@@ -149,6 +149,7 @@ public class AssignmentsController : ControllerBase
             .AsNoTracking()
             .Include(s => s.Student)
             .Include(s => s.RubricScores).ThenInclude(r => r.Criterion)
+            .Include(s => s.FeedbackEntries)
             .Where(s => s.AssignmentId == assignmentId)
             .OrderByDescending(s => s.SubmittedAt)
             .ToListAsync();
@@ -181,7 +182,9 @@ public class AssignmentsController : ControllerBase
         var similarity = await CalculateSimilarityAsync(assignmentId, studentId, dto.TextResponse);
         var submission = await _context.AssignmentSubmissions
             .Include(s => s.RubricScores)
+            .Include(s => s.FeedbackEntries)
             .FirstOrDefaultAsync(s => s.AssignmentId == assignmentId && s.StudentId == studentId);
+        var feedbackAction = "Submitted";
 
         if (submission == null)
         {
@@ -193,6 +196,13 @@ public class AssignmentsController : ControllerBase
                 SubmittedAt = now
             };
             _context.AssignmentSubmissions.Add(submission);
+        }
+        else
+        {
+            if (submission.Status == AssignmentSubmissionStatus.Graded)
+                return Conflict(new { Message = "SUBMISSION_ALREADY_GRADED" });
+
+            feedbackAction = submission.Status == AssignmentSubmissionStatus.Returned ? "Resubmitted" : "Updated";
         }
 
         submission.TextResponse = dto.TextResponse?.Trim();
@@ -211,6 +221,7 @@ public class AssignmentsController : ControllerBase
         submission.SubmittedAt = now;
         if (submission.RubricScores.Count > 0)
             _context.AssignmentRubricScores.RemoveRange(submission.RubricScores);
+        await AddFeedbackEntryAsync(submission, feedbackAction, null, now);
 
         await _context.SaveChangesAsync();
 
@@ -218,6 +229,7 @@ public class AssignmentsController : ControllerBase
             .AsNoTracking()
             .Include(s => s.Student)
             .Include(s => s.RubricScores).ThenInclude(r => r.Criterion)
+            .Include(s => s.FeedbackEntries)
             .FirstAsync(s => s.SubmissionId == submission.SubmissionId);
         return Ok(ToSubmissionDto(submission));
     }
@@ -230,6 +242,7 @@ public class AssignmentsController : ControllerBase
             .Include(s => s.Assignment).ThenInclude(a => a!.RubricCriteria)
             .Include(s => s.Student)
             .Include(s => s.RubricScores).ThenInclude(r => r.Criterion)
+            .Include(s => s.FeedbackEntries)
             .FirstOrDefaultAsync(s => s.SubmissionId == submissionId);
         if (submission?.Assignment == null)
             return NotFound(new { Message = "SUBMISSION_NOT_FOUND" });
@@ -274,16 +287,51 @@ public class AssignmentsController : ControllerBase
             submission.Score = dto.Score.Value;
         }
 
+        var gradedAt = DateTime.UtcNow;
         submission.ScorePercent = submission.Assignment.PointsPossible <= 0
             ? 0
             : Math.Round(submission.Score.Value / submission.Assignment.PointsPossible * 100m, 2, MidpointRounding.AwayFromZero);
         submission.Feedback = dto.Feedback?.Trim();
         submission.Status = AssignmentSubmissionStatus.Graded;
-        submission.GradedAt = DateTime.UtcNow;
-        submission.UpdatedAt = DateTime.UtcNow;
+        submission.GradedAt = gradedAt;
+        submission.UpdatedAt = gradedAt;
+        await AddFeedbackEntryAsync(submission, "Graded", submission.Feedback, gradedAt);
 
         await _context.SaveChangesAsync();
         await NotifyGradedAsync(submission);
+        return Ok(ToSubmissionDto(submission));
+    }
+
+    [HttpPut("submissions/{submissionId}/return")]
+    [Authorize(Roles = "Trainer,Admin")]
+    public async Task<IActionResult> ReturnForResubmission(string submissionId, ReturnAssignmentSubmissionDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Feedback))
+            return BadRequest(new { Message = "ASSIGNMENT_RETURN_FEEDBACK_REQUIRED" });
+
+        var submission = await _context.AssignmentSubmissions
+            .Include(s => s.Assignment)
+            .Include(s => s.Student)
+            .Include(s => s.RubricScores).ThenInclude(r => r.Criterion)
+            .Include(s => s.FeedbackEntries)
+            .FirstOrDefaultAsync(s => s.SubmissionId == submissionId);
+        if (submission?.Assignment == null)
+            return NotFound(new { Message = "SUBMISSION_NOT_FOUND" });
+
+        if (!await _courseAccessService.CanManageCourseAsync(User, submission.Assignment.CourseId))
+            return Forbid();
+
+        var now = DateTime.UtcNow;
+        submission.Status = AssignmentSubmissionStatus.Returned;
+        submission.Score = null;
+        submission.ScorePercent = null;
+        submission.Feedback = dto.Feedback.Trim();
+        submission.GradedAt = null;
+        submission.UpdatedAt = now;
+        await AddFeedbackEntryAsync(submission, "Returned", submission.Feedback, now);
+
+        await _context.SaveChangesAsync();
+        await NotifyReturnedAsync(submission);
         return Ok(ToSubmissionDto(submission));
     }
 
@@ -292,7 +340,8 @@ public class AssignmentsController : ControllerBase
         .Include(a => a.GradeCategory)
         .Include(a => a.RubricCriteria)
         .Include(a => a.Submissions).ThenInclude(s => s.Student)
-        .Include(a => a.Submissions).ThenInclude(s => s.RubricScores).ThenInclude(r => r.Criterion);
+        .Include(a => a.Submissions).ThenInclude(s => s.RubricScores).ThenInclude(r => r.Criterion)
+        .Include(a => a.Submissions).ThenInclude(s => s.FeedbackEntries);
 
     private async Task<string?> ValidateAssignment(string courseId, UpsertCourseAssignmentDto dto)
     {
@@ -354,6 +403,19 @@ public class AssignmentsController : ControllerBase
             $"Grade posted: {submission.Assignment.Title}",
             $"Your score is {submission.ScorePercent:0.##}% for {submission.Assignment.Title}.",
             $"/client/course-grades/{submission.Assignment.CourseId}");
+    }
+
+    private async Task NotifyReturnedAsync(AssignmentSubmission submission)
+    {
+        if (string.IsNullOrWhiteSpace(submission.Student?.UserId) || submission.Assignment == null)
+            return;
+
+        await _notificationRepository.NotifyUser(
+            submission.Student.UserId,
+            NotificationTypes.Grading,
+            $"Submission returned: {submission.Assignment.Title}",
+            $"Your trainer returned {submission.Assignment.Title} for resubmission.",
+            $"/client/course-assignments/{submission.Assignment.CourseId}");
     }
 
     private static void ApplyRubricCriteria(CourseAssignment assignment, List<UpsertAssignmentRubricCriterionDto> criteria, DateTime now)
@@ -447,6 +509,10 @@ public class AssignmentsController : ControllerBase
         RubricScores = submission.RubricScores
             .OrderBy(s => s.Criterion?.Order ?? int.MaxValue)
             .Select(ToRubricScoreDto)
+            .ToList(),
+        FeedbackEntries = submission.FeedbackEntries
+            .OrderByDescending(e => e.CreatedAt)
+            .Select(ToFeedbackEntryDto)
             .ToList()
     };
 
@@ -469,6 +535,21 @@ public class AssignmentsController : ControllerBase
         PointsPossible = score.Criterion?.PointsPossible ?? 0,
         Score = score.Score,
         Feedback = score.Feedback
+    };
+
+    private static AssignmentFeedbackEntryDto ToFeedbackEntryDto(AssignmentFeedbackEntry entry) => new()
+    {
+        FeedbackEntryId = entry.FeedbackEntryId,
+        SubmissionId = entry.SubmissionId,
+        AuthorUserId = entry.AuthorUserId,
+        AuthorName = entry.AuthorName,
+        AuthorRole = entry.AuthorRole,
+        Action = entry.Action,
+        Status = entry.Status,
+        Score = entry.Score,
+        ScorePercent = entry.ScorePercent,
+        Feedback = entry.Feedback,
+        CreatedAt = entry.CreatedAt
     };
 
     private async Task<SimilarityResult> CalculateSimilarityAsync(string assignmentId, string studentId, string? textResponse)
@@ -557,6 +638,49 @@ public class AssignmentsController : ControllerBase
         string? MatchedStudentName,
         string? Flags);
 
+    private async Task AddFeedbackEntryAsync(AssignmentSubmission submission, string action, string? feedback, DateTime createdAt)
+    {
+        var author = await GetFeedbackAuthorAsync();
+        var entry = new AssignmentFeedbackEntry
+        {
+            FeedbackEntryId = Guid.NewGuid().ToString(),
+            SubmissionId = submission.SubmissionId,
+            AuthorUserId = author.UserId,
+            AuthorName = author.Name,
+            AuthorRole = author.Role,
+            Action = action,
+            Status = submission.Status,
+            Score = submission.Score,
+            ScorePercent = submission.ScorePercent,
+            Feedback = string.IsNullOrWhiteSpace(feedback) ? null : feedback.Trim(),
+            CreatedAt = createdAt
+        };
+        submission.FeedbackEntries.Add(entry);
+    }
+
+    private async Task<FeedbackAuthor> GetFeedbackAuthorAsync()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (User.IsInRole("Trainer"))
+        {
+            var trainerId = User.FindFirstValue("trainerId");
+            var trainer = string.IsNullOrWhiteSpace(trainerId)
+                ? null
+                : await _context.Trainers.AsNoTracking().FirstOrDefaultAsync(t => t.TrainerId == trainerId);
+            return new FeedbackAuthor(userId, "Trainer", trainer?.Name ?? trainer?.Email ?? "Trainer");
+        }
+
+        if (User.IsInRole("Admin"))
+            return new FeedbackAuthor(userId, "Admin", User.Identity?.Name ?? "Admin");
+
+        var studentId = CurrentStudentId();
+        var student = string.IsNullOrWhiteSpace(studentId)
+            ? null
+            : await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.StudentId == studentId);
+        return new FeedbackAuthor(userId, "Student", student?.Name ?? student?.Email ?? "Student");
+    }
+
     private static string? ValidateRubricScores(List<AssignmentRubricCriterion> criteria, List<GradeAssignmentRubricScoreDto> scores)
     {
         if (scores.Count != criteria.Count)
@@ -583,4 +707,6 @@ public class AssignmentsController : ControllerBase
     {
         return User.FindFirstValue("studentId") ?? string.Empty;
     }
+
+    private sealed record FeedbackAuthor(string? UserId, string Role, string Name);
 }
