@@ -12,7 +12,13 @@
 		<div class="assignments-layout">
 			<aside class="assignment-list">
 				@for (assignment of assignments; track assignment.assignmentId) {
-					<button type="button" [class.active]="selectedAssignment?.assignmentId === assignment.assignmentId" (click)="selectAssignment(assignment)">
+					<button
+						type="button"
+						[class.active]="selectedAssignment?.assignmentId === assignment.assignmentId"
+						[attr.aria-current]="selectedAssignment?.assignmentId === assignment.assignmentId ? 'true' : null"
+						[attr.aria-label]="assignment.title + ', ' + statusLabel(assignment)"
+						(click)="selectAssignment(assignment)"
+					>
 						<span>
 							<strong>{{ assignment.title }}</strong>
 							<small>{{ assignment.pointsPossible }} pts · due {{ assignment.dueAt ? (assignment.dueAt | date:'mediumDate') : 'anytime' }}</small>
@@ -65,7 +71,13 @@
 							<span>Attachment URL</span>
 							<input [(ngModel)]="attachmentUrls[selectedAssignment.assignmentId]" placeholder="https://..." />
 						</label>
-						<button type="button" class="primary" (click)="submitAssignment(selectedAssignment)" [disabled]="isSubmitting || !canSubmit(selectedAssignment)">
+					<button
+						type="button"
+						class="primary"
+						[attr.aria-label]="submitButtonLabel(selectedAssignment) + ' for ' + selectedAssignment.title"
+						(click)="submitAssignment(selectedAssignment)"
+						[disabled]="isSubmitting || !canSubmit(selectedAssignment)"
+					>
 							{{ submitButtonLabel(selectedAssignment) }}
 						</button>
 					</div>

@@ -18,7 +18,14 @@
 				<span>{{ assignments.length }}</span>
 			</div>
 			@for (assignment of assignments; track assignment.assignmentId) {
-				<button type="button" class="assignment-row" [class.active]="selectedAssignment?.assignmentId === assignment.assignmentId" (click)="editAssignment(assignment)">
+				<button
+					type="button"
+					class="assignment-row"
+					[class.active]="selectedAssignment?.assignmentId === assignment.assignmentId"
+					[attr.aria-current]="selectedAssignment?.assignmentId === assignment.assignmentId ? 'true' : null"
+					[attr.aria-label]="'Edit ' + assignment.title + ', ' + assignment.submissionCount + ' submitted'"
+					(click)="editAssignment(assignment)"
+				>
 					<span>
 						<strong>{{ assignment.title }}</strong>
 						<small>{{ assignment.pointsPossible }} pts · {{ assignment.submissionCount }} submitted</small>
@@ -151,7 +158,7 @@
 						<span>
 							<strong>{{ submission.studentName || submission.studentId }}</strong>
 							<small>{{ submission.studentEmail }}</small>
-							<i [ngClass]="submissionStatusClass(submission.status)">{{ submission.status }}</i>
+							<i [ngClass]="submissionStatusClass(submission.status)" role="status">{{ submission.status }}</i>
 						</span>
 						<span>
 							@if (submission.attachmentUrl) {
@@ -203,8 +210,8 @@
 							}
 						</div>
 						<div class="submission-actions">
-							<button type="button" class="primary" (click)="gradeSubmission(submission)">Grade</button>
-							<button type="button" (click)="returnSubmission(submission)">Return</button>
+							<button type="button" class="primary" [attr.aria-label]="'Grade submission from ' + (submission.studentName || submission.studentId)" (click)="gradeSubmission(submission)">Grade</button>
+							<button type="button" [attr.aria-label]="'Return submission from ' + (submission.studentName || submission.studentId) + ' for resubmission'" (click)="returnSubmission(submission)">Return</button>
 						</div>
 					</div>
 				}

@@ -5,6 +5,37 @@
   padding: 120px 0 60px;
 }
 
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 0.75rem;
+  z-index: 30;
+  transform: translateY(-140%);
+  border-radius: 8px;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 800;
+  padding: 0.65rem 0.85rem;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+
+  &:focus-visible {
+    transform: translateY(0);
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 // Header
 .learn-header {
   margin-bottom: 2rem;
@@ -16,6 +47,13 @@
   }
 }
 
+.learn-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.9rem;
+  align-items: center;
+}
+
 .back-link {
   background: none;
   border: none;
@@ -24,7 +62,14 @@
   font-weight: 600;
   font-size: 0.85rem;
   cursor: pointer;
-  padding: 0;
+  padding: 0.18rem 0;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 3px solid rgba(0, 122, 255, 0.35);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
 }
 
 .learn-progress {
@@ -140,15 +185,15 @@
 
 .lecture-item {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
+  align-items: stretch;
+  gap: 0.65rem;
+  padding: 0.35rem;
   border-radius: var(--radius-sm, 10px);
-  cursor: pointer;
   transition: background 0.2s ease;
   border: 1px solid transparent;
 
-  &:hover {
+  &:hover,
+  &:focus-within {
     background: var(--glass-fill, rgba(127, 127, 127, 0.08));
   }
 
@@ -165,8 +210,11 @@
     flex: 0 0 22px;
     width: 22px;
     height: 22px;
+    min-width: 36px;
+    min-height: 36px;
     border-radius: 50%;
     border: 1.5px solid var(--glass-border);
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -174,6 +222,12 @@
     font-weight: 700;
     color: #fff;
     transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 3px solid rgba(0, 122, 255, 0.35);
+      outline-offset: 2px;
+    }
 
     &--done {
       background: var(--blue);
@@ -183,6 +237,26 @@
     &--locked {
       color: var(--text-muted, #888);
       background: var(--glass-fill, rgba(127, 127, 127, 0.08));
+    }
+  }
+
+  &__select {
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    padding: 0.4rem 0.35rem;
+    text-align: left;
+
+    &:focus-visible {
+      outline: 3px solid rgba(0, 122, 255, 0.35);
+      outline-offset: 2px;
+      border-radius: 8px;
     }
   }
 
@@ -223,6 +297,7 @@
 // Content panel
 .learn-content {
   min-width: 0;
+  scroll-margin-top: 96px;
 
   &__head {
     display: flex;
@@ -259,6 +334,32 @@
   }
 }
 
+.lesson-pager {
+  display: none;
+  gap: 0.75rem;
+  margin: -0.25rem 0 1.25rem;
+
+  button {
+    min-height: 42px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm, 10px);
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--text);
+    font-weight: 800;
+    padding: 0.65rem 0.9rem;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    &:focus-visible {
+      outline: 3px solid rgba(0, 122, 255, 0.35);
+      outline-offset: 2px;
+    }
+  }
+}
+
 .material-list {
   display: flex;
   flex-direction: column;
@@ -290,6 +391,8 @@
 
   &__video {
     width: 100%;
+    max-height: min(64vh, 620px);
+    aspect-ratio: 16 / 9;
     border-radius: var(--radius-sm, 10px);
     background: #000;
     display: block;
@@ -297,6 +400,8 @@
 
   &__image {
     width: 100%;
+    max-height: min(64vh, 620px);
+    object-fit: contain;
     border-radius: var(--radius-sm, 10px);
     display: block;
   }
@@ -306,9 +411,18 @@
     color: var(--blue);
     font-weight: 600;
     text-decoration: none;
+    min-height: 40px;
+    padding: 0.45rem 0;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 3px solid rgba(0, 122, 255, 0.35);
+      outline-offset: 3px;
+      border-radius: 6px;
     }
   }
 
@@ -460,6 +574,24 @@
 
   input {
     flex: 0 0 auto;
+    min-width: 18px;
+    min-height: 18px;
+  }
+
+  &:focus-within {
+    outline: 3px solid rgba(0, 122, 255, 0.35);
+    outline-offset: 2px;
+  }
+}
+
+.honor-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+
+  input {
+    min-width: 18px;
+    min-height: 18px;
   }
 }
 
@@ -554,5 +686,85 @@
     color: var(--blue);
     font-weight: 700;
     text-decoration: none;
+
+    &:focus-visible {
+      outline: 3px solid rgba(0, 122, 255, 0.35);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+  }
+}
+
+@media (max-width: 968px) {
+  .course-learn {
+    padding-top: 92px;
+  }
+
+  .learn-nav {
+    flex-wrap: nowrap;
+    margin: 0 -1rem 0.5rem;
+    overflow-x: auto;
+    padding: 0.15rem 1rem 0.7rem;
+    scrollbar-width: thin;
+  }
+
+  .back-link {
+    flex: 0 0 auto;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.76);
+    padding: 0.45rem 0.75rem;
+  }
+
+  .learn-sidebar {
+    max-height: 42vh;
+    overflow: auto;
+  }
+
+  .lesson-pager {
+    display: flex;
+  }
+}
+
+@media (max-width: 640px) {
+  .course-learn {
+    padding-bottom: 40px;
+  }
+
+  .learn-header__title {
+    font-size: 1.55rem;
+  }
+
+  .learn-content__head,
+  .quiz-panel__head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .lecture-item {
+    gap: 0.45rem;
+  }
+
+  .lecture-item__select {
+    gap: 0.55rem;
+  }
+
+  .material-card,
+  .quiz-panel,
+  .certificate-panel {
+    padding: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link,
+  .learn-progress__fill,
+  .lecture-item,
+  .lecture-item__check,
+  .quiz-option {
+    transition: none;
   }
 }

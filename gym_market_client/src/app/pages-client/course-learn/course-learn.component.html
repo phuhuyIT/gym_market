@@ -1,24 +1,34 @@
 <div class="course-learn">
   <div class="container">
+    <a class="skip-link" href="#lesson-content">Skip to lesson content</a>
 
     <!-- Header -->
     <header class="learn-header">
-      <button class="back-link" (click)="goToDetails()">← Course details</button>
-      <a class="back-link" [routerLink]="['/client/course-progress', courseId]">Progress</a>
-      <a class="back-link" [routerLink]="['/client/course-announcements', courseId]">Announcements</a>
-      <a class="back-link" [routerLink]="['/client/course-live-sessions', courseId]">Live</a>
-      <a class="back-link" routerLink="/client/calendar">Calendar</a>
-      <a class="back-link" [routerLink]="['/client/course-cohorts', courseId]">Groups</a>
-      <a class="back-link" [routerLink]="['/client/course-discussions', courseId]">Q&amp;A</a>
-      <a class="back-link" [routerLink]="['/client/course-assignments', courseId]">Assignments</a>
-      <a class="back-link" [routerLink]="['/client/course-grades', courseId]">Grades</a>
-      <a class="back-link" routerLink="/client/certificates">Certificates</a>
+      <nav class="learn-nav" aria-label="Course tools">
+        <button class="back-link" type="button" (click)="goToDetails()" aria-label="Back to course details">← Course details</button>
+        <a class="back-link" [routerLink]="['/client/course-progress', courseId]">Progress</a>
+        <a class="back-link" [routerLink]="['/client/course-announcements', courseId]">Announcements</a>
+        <a class="back-link" [routerLink]="['/client/course-live-sessions', courseId]">Live</a>
+        <a class="back-link" routerLink="/client/calendar">Calendar</a>
+        <a class="back-link" [routerLink]="['/client/course-cohorts', courseId]">Groups</a>
+        <a class="back-link" [routerLink]="['/client/course-discussions', courseId]">Q&amp;A</a>
+        <a class="back-link" [routerLink]="['/client/course-assignments', courseId]">Assignments</a>
+        <a class="back-link" [routerLink]="['/client/course-grades', courseId]">Grades</a>
+        <a class="back-link" routerLink="/client/certificates">Certificates</a>
+      </nav>
       <h1 class="learn-header__title section-title">
         {{ course?.title || 'Course content' }}
       </h1>
 
       @if (!accessDenied && lectures.length > 0) {
-        <div class="learn-progress">
+        <div
+          class="learn-progress"
+          role="progressbar"
+          aria-label="Lecture completion progress"
+          [attr.aria-valuenow]="progressPercent"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
           <div class="learn-progress__meta">
             <span>{{ completedCount }} / {{ lectures.length }} lectures completed</span>
             <span class="learn-progress__pct">{{ progressPercent }}%</span>
@@ -53,8 +63,8 @@
       <div class="learn-layout">
 
         <!-- Sidebar: lecture list -->
-        <aside class="learn-sidebar gl">
-          <h3 class="learn-sidebar__title">Learning path</h3>
+        <aside class="learn-sidebar gl" aria-labelledby="learning-path-title">
+          <h3 class="learn-sidebar__title" id="learning-path-title">Learning path</h3>
           <div class="module-list">
             @for (group of groupedLectures(); track group.moduleId) {
               <section class="module-group">
@@ -65,30 +75,40 @@
                       class="lecture-item"
                       [class.lecture-item--active]="selectedLecture?.lectureId === lecture.lectureId"
                       [class.lecture-item--locked]="lecture.isLocked"
-                      (click)="selectLecture(lecture)"
                     >
-                      <span
+                      <button
                         class="lecture-item__check"
+                        type="button"
                         [class.lecture-item__check--done]="isCompleted(lecture.lectureId)"
                         [class.lecture-item__check--locked]="lecture.isLocked"
-                        (click)="$event.stopPropagation(); toggleCompleted(lecture)"
+                        (click)="toggleCompleted(lecture)"
+                        [attr.aria-label]="completionButtonLabel(lecture)"
+                        [attr.aria-pressed]="lecture.isLocked ? null : isCompleted(lecture.lectureId)"
                         [title]="lecture.isLocked ? lockLabel(lecture) : isCompleted(lecture.lectureId) ? 'Mark as not done' : 'Mark as done'"
                       >
                         {{ lecture.isLocked ? '•' : isCompleted(lecture.lectureId) ? '✓' : '' }}
-                      </span>
-                      <span class="lecture-item__order">{{ lecture.order }}</span>
-                      <span class="lecture-item__body">
-                        <span class="lecture-item__title">{{ lecture.title }}</span>
-                        <span class="lecture-item__duration">
-                          {{ lecture.activityType || 'Lesson' }}
-                          @if (lecture.duration) {
-                            · {{ lecture.duration }} min
+                      </button>
+                      <button
+                        class="lecture-item__select"
+                        type="button"
+                        (click)="selectLecture(lecture)"
+                        [attr.aria-current]="selectedLecture?.lectureId === lecture.lectureId ? 'step' : null"
+                        [attr.aria-label]="lectureButtonLabel(lecture)"
+                      >
+                        <span class="lecture-item__order" aria-hidden="true">{{ lecture.order }}</span>
+                        <span class="lecture-item__body">
+                          <span class="lecture-item__title">{{ lecture.title }}</span>
+                          <span class="lecture-item__duration">
+                            {{ lecture.activityType || 'Lesson' }}
+                            @if (lecture.duration) {
+                              · {{ lecture.duration }} min
+                            }
+                          </span>
+                          @if (lecture.isLocked) {
+                            <span class="lecture-item__lock">{{ lockLabel(lecture) }}</span>
                           }
                         </span>
-                        @if (lecture.isLocked) {
-                          <span class="lecture-item__lock">{{ lockLabel(lecture) }}</span>
-                        }
-                      </span>
+                      </button>
                     </li>
                   }
                 </ul>
@@ -98,7 +118,7 @@
         </aside>
 
         <!-- Main panel: materials of the selected lecture -->
-        <section class="learn-content">
+        <main class="learn-content" id="lesson-content" tabindex="-1">
           @if (selectedLecture) {
             <div class="learn-content__head">
               <div>
@@ -110,10 +130,21 @@
               </div>
               <gm-button
                 [variant]="isCompleted(selectedLecture.lectureId) ? 'secondary' : 'primary'"
+                [disabled]="!!selectedLecture.isLocked"
+                [ariaLabel]="completionButtonLabel(selectedLecture)"
                 (clicked)="toggleCompleted(selectedLecture)"
               >
                 {{ isCompleted(selectedLecture.lectureId) ? 'COMPLETED ✓' : 'MARK AS COMPLETE' }}
               </gm-button>
+            </div>
+
+            <div class="lesson-pager" aria-label="Lesson navigation">
+              <button type="button" (click)="selectPreviousLecture()" [disabled]="selectedLecture.lectureId === lectures[0]?.lectureId">
+                Previous
+              </button>
+              <button type="button" (click)="selectNextLecture()" [disabled]="selectedLecture.lectureId === lectures[lectures.length - 1]?.lectureId">
+                Next
+              </button>
             </div>
 
             @if (selectedLecture.isLocked) {
@@ -130,18 +161,18 @@
                     <span class="material-card__type">{{ materialType(material) }}</span>
                     @switch (materialType(material)) {
                       @case ('VIDEO') {
-                        <video class="material-card__video" controls [src]="material.materialContent"></video>
+                        <video class="material-card__video" controls [src]="material.materialContent" [attr.aria-label]="selectedLecture.title + ' video material'"></video>
                       }
                       @case ('IMAGE') {
-                        <img class="material-card__image" [src]="material.materialContent" alt="Lecture material" />
+                        <img class="material-card__image" [src]="material.materialContent" [alt]="selectedLecture.title + ' image material'" />
                       }
                       @case ('PDF') {
-                        <a class="material-card__link" [href]="material.materialContent" target="_blank" rel="noopener noreferrer">
+                        <a class="material-card__link" [href]="material.materialContent" target="_blank" rel="noopener noreferrer" [attr.aria-label]="'Open PDF material for ' + selectedLecture.title">
                           📄 Open PDF
                         </a>
                       }
                       @case ('LINK') {
-                        <a class="material-card__link" [href]="material.materialContent" target="_blank" rel="noopener noreferrer">
+                        <a class="material-card__link" [href]="material.materialContent" target="_blank" rel="noopener noreferrer" [attr.aria-label]="'Open link material for ' + selectedLecture.title">
                           🔗 Open link
                         </a>
                       }
@@ -161,16 +192,16 @@
           } @else {
             <p class="learn-content__empty">Select a lecture to start learning.</p>
           }
-        </section>
+        </main>
 
       </div>
 
       @if (quiz) {
-        <section class="quiz-panel gl">
+        <section class="quiz-panel gl" aria-labelledby="course-quiz-title">
           <div class="quiz-panel__head">
             <div>
               <p class="quiz-panel__eyebrow">Course checkpoint</p>
-              <h2 class="quiz-panel__title">{{ quiz.title }}</h2>
+              <h2 class="quiz-panel__title" id="course-quiz-title">{{ quiz.title }}</h2>
               <p class="quiz-panel__meta">
                 Pass score: {{ quiz.passingScorePercent }}%
                 @if (quiz.maxAttempts) {
@@ -190,7 +221,7 @@
           </div>
 
           @if (latestQuizAttempt) {
-            <div class="quiz-panel__attempt" [class.quiz-panel__attempt--pass]="latestQuizAttempt.passed">
+            <div class="quiz-panel__attempt" [class.quiz-panel__attempt--pass]="latestQuizAttempt.passed" role="status">
               Latest attempt: {{ latestQuizAttempt.score }} / {{ latestQuizAttempt.totalPoints }} points,
               {{ latestQuizAttempt.scorePercent }}%.
               {{ latestQuizAttempt.requiresManualGrading ? 'Pending trainer review' : latestQuizAttempt.passed ? 'Passed' : 'Try again when you are ready' }}
@@ -203,13 +234,13 @@
           @if (quiz.requireHonorCode || quiz.trackProctoringSignals) {
             <div class="quiz-panel__attempt">
               @if (quiz.requireHonorCode) {
-                <label>
-                  <input type="checkbox" [(ngModel)]="honorCodeAccepted" />
+                <label class="honor-code">
+                  <input type="checkbox" [(ngModel)]="honorCodeAccepted" [attr.aria-describedby]="quiz.trackProctoringSignals ? 'quiz-integrity-note' : null" />
                   I confirm this submission is my own work.
                 </label>
               }
               @if (quiz.trackProctoringSignals) {
-                <span>Focus changes and paste activity may be recorded for review.</span>
+                <span id="quiz-integrity-note">Focus changes and paste activity may be recorded for review.</span>
               }
             </div>
           }
@@ -223,14 +254,16 @@
                 </div>
                 <p class="quiz-question__prompt">{{ question.prompt }}</p>
                 @if (question.questionType === 'OpenText') {
+                  <label class="sr-only" [for]="'quiz-text-' + question.questionId">Answer for question {{ questionIndex + 1 }}</label>
                   <textarea
+                    [id]="'quiz-text-' + question.questionId"
                     class="quiz-question__text"
                     [(ngModel)]="quizTextAnswers[question.questionId]"
                     rows="4"
                     placeholder="Write your answer"
                   ></textarea>
                 } @else {
-                  <div class="quiz-options">
+                  <div class="quiz-options" role="group" [attr.aria-label]="'Answer options for question ' + (questionIndex + 1)">
                     @for (option of question.options; track option.optionId) {
                       <label
                         class="quiz-option"
@@ -311,6 +344,8 @@
           @if (!issuedCertificate && completionStatus.certificatesEnabled) {
             <gm-button
               [variant]="completionStatus.isCompleted ? 'primary' : 'secondary'"
+              [disabled]="!completionStatus.isCompleted || isCertificateIssuing"
+              [ariaLabel]="completionStatus.isCompleted ? 'Issue course certificate' : 'Certificate requirements are not complete'"
               (clicked)="issueCertificate()"
             >
               {{ isCertificateIssuing ? 'ISSUING...' : 'ISSUE CERTIFICATE' }}

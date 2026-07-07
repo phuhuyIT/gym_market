@@ -207,7 +207,29 @@ export class CourseLearnComponent implements OnInit {
 					this.toastService.show('Failed to load materials', 'error');
 					this.cdr.markForCheck();
 				},
-			});
+				});
+	}
+
+	selectPreviousLecture() {
+		if (this.lectures.length === 0) return;
+		const currentIndex = this.selectedLecture
+			? this.lectures.findIndex(lecture => lecture.lectureId === this.selectedLecture?.lectureId)
+			: 0;
+		const previous = this.lectures[Math.max(0, currentIndex - 1)];
+		if (previous) {
+			this.selectLecture(previous);
+		}
+	}
+
+	selectNextLecture() {
+		if (this.lectures.length === 0) return;
+		const currentIndex = this.selectedLecture
+			? this.lectures.findIndex(lecture => lecture.lectureId === this.selectedLecture?.lectureId)
+			: -1;
+		const next = this.lectures[Math.min(this.lectures.length - 1, currentIndex + 1)];
+		if (next) {
+			this.selectLecture(next);
+		}
 	}
 
 	// Normalised, case-insensitive type used by the template's @switch.
@@ -285,6 +307,22 @@ export class CourseLearnComponent implements OnInit {
 			}
 		}
 		return lecture.lockReason || 'Locked';
+	}
+
+	lectureButtonLabel(lecture: Lecture): string {
+		const state = lecture.isLocked
+			? this.lockLabel(lecture)
+			: this.isCompleted(lecture.lectureId)
+				? 'completed'
+				: 'not completed';
+		return `${lecture.title}, ${lecture.activityType || 'Lesson'}, ${state}`;
+	}
+
+	completionButtonLabel(lecture: Lecture): string {
+		if (lecture.isLocked) return this.lockLabel(lecture);
+		return this.isCompleted(lecture.lectureId)
+			? `Mark ${lecture.title} as not complete`
+			: `Mark ${lecture.title} as complete`;
 	}
 
 	private sortLectures(lectures: Lecture[]): Lecture[] {

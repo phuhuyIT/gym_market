@@ -9,6 +9,7 @@ import { Component, input, output , ChangeDetectionStrategy } from '@angular/cor
     <button
       [class]="'gm-btn gm-btn--' + variant()"
       [disabled]="disabled() || loading()"
+      [attr.aria-label]="ariaLabel() || null"
       (click)="clicked.emit()">
       @if (loading()) {
         <span class="gm-btn__spinner"></span>
@@ -22,5 +23,6 @@ export class GmButtonComponent {
   variant = input<'primary' | 'secondary' | 'ghost'>('primary');
   disabled = input(false);
   loading = input(false);
+  ariaLabel = input<string | null>(null);
   clicked = output<void>();
 }
