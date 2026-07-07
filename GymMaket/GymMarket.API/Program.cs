@@ -172,6 +172,7 @@ builder.Services.AddScoped<IRegistrationExpiryService, RegistrationExpiryService
 builder.Services.AddScoped<IReminderService, ReminderService>();
 builder.Services.AddScoped<INotificationDigestService, NotificationDigestService>();
 builder.Services.AddScoped<IPaymentEventService, PaymentEventService>();
+builder.Services.AddScoped<IDemoDataSeeder, DemoDataSeeder>();
 builder.Services.AddSingleton<IPresenceTracker, PresenceTracker>();
 builder.Services.AddHostedService<RegistrationExpiryHostedService>();
 builder.Services.AddHostedService<ReminderHostedService>();
@@ -205,6 +206,12 @@ builder.Services.AddSingleton<IMinioClient>(sp =>
 var app = builder.Build();
 
 await IdentityRoleSeeder.SeedAsync(app.Services);
+if (app.Configuration.GetValue<bool>("DemoData:Seed"))
+{
+    using var scope = app.Services.CreateScope();
+    var demoDataSeeder = scope.ServiceProvider.GetRequiredService<IDemoDataSeeder>();
+    await demoDataSeeder.EnsureSeededAsync();
+}
 
 app.UseExceptionHandler(appError =>
 {
